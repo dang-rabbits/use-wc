@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + Lit + TS</title>
+    <link rel="stylesheet" href="./src/index.css" />
+    <script type="module" src="/src/my-element.ts"></script>
+    <script type="module" src="/src/components/layout/layout.ts"></script>
+    <script type="module" src="/src/elements/select-next.ts"></script>
+  </head>
+  <body>
+    <!-- <flex-layout direction="row" align="center" gap="medium" class="full-height">
+      <img src="/vite.svg" alt="Vite Logo" width="50" />
+      <flex-layout direction="column" align="center" justify="center" fill class="full-height">
+        <h1>Vite + Lit + TS</h1>
+        <h3>Subtitle</h3>
+        <div style="outline: 1px solid red; width: 100%">
+          <flex-layout inline direction="column">
+            <strong>Zach</strong>
+            <time>2024-05-10</time>
+          </flex-layout>
+          <flex-layout inline direction="column">
+            <strong>Zach</strong>
+            <time>2024-05-10</time>
+          </flex-layout>
+          <flex-layout inline direction="column">
+            <strong>Zach</strong>
+            <time>2024-05-10</time>
+          </flex-layout>
+        </div>
+      </flex-layout>
+      <img src="/vite.svg" alt="Vite Logo" width="50" />
+    </flex-layout> -->
+
+    <form>
+      <select-next name="options" placeholder="hello">
+        <option-next value="1">One</option-next>
+        <option-next value="2" selected>Two</option-next>
+      </select-next>
+
+      <select-next name="options2" placeholder="hello">
+        <option-next value="1">One</option-next>
+        <option-next value="2" selected>Two</option-next>
+      </select-next>
+
+      <select-next class="custom-arrow" name="options3" multiple placeholder="hello">
+        <svg slot="arrow" fill="currentColor" viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' /></g></svg>
+        <option-next value="1">One</option-next>
+        <option-next value="2" selected>Two</option-next>
+      </select-next>
+
+      <select name="real-select" multiple>
+        <option value="1">One</option>
+        <option value="2">Two</option>
+      </select>
+
+      <select name="real-select">
+        <option value="1">One</option>
+        <option value="2">Two</option>
+      </select>
+
+      <button>submit</button>
+    </form>
+  </body>
+</html>

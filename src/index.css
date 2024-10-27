@@ -1,0 +1,143 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+}
+
+html, body, .full-height {
+  height: 100%;
+}
+
+:root {
+  --gap-xsmall: .25rem;
+  --gap-small: .5rem;
+  --gap-medium: 1rem;
+  --gap-large: 1.5rem;
+  --gap-xlarge: 1.75rem;
+  --gap-super: 2rem;
+}
+
+[gap="xsmall"] {
+  gap: var(--gap-xsmall);
+}
+
+[gap="small"] {
+  gap: var(--gap-small);
+}
+
+[gap="medium"] {
+  gap: var(--gap-medium);
+}
+
+[gap="large"] {
+  gap: var(--gap-large);
+}
+
+[gap="xlarge"] {
+  gap: var(--gap-xlarge);
+}
+
+[gap="super"] {
+  gap: var(--gap-super);
+}
+
+flex-layout {
+  display: flex;
+}
+
+flex-layout[inline] {
+  display: inline-flex;
+}
+
+flex-layout[direction='row'] {
+  flex-direction: row;
+}
+
+flex-layout[direction='column'] {
+  flex-direction: column;
+}
+
+flex-layout[align='start'] {
+  align-items: start;
+}
+
+flex-layout[align='center'] {
+  align-items: center;
+}
+
+flex-layout[align='end'] {
+  align-items: end;
+}
+
+flex-layout[justify='start'] {
+  justify-content: start;
+}
+
+flex-layout[justify='center'] {
+  justify-content: center;
+}
+
+flex-layout[justify='end'] {
+  justify-content: end;
+}
+
+flex-layout[fill] {
+  flex-shrink: 1;
+  flex-grow: 1;
+  min-height: 0;
+  min-width: 0;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+}
+
+
+/* select-next [popover]:popover-open {
+  display: block;
+}
+
+select-next [popover]:not(:popover-open) {
+  display: none;
+} */
+
+.custom-arrow::part(trigger) {
+  gap: 2rem;
+}
+.custom-arrow::part(trigger-label) {
+  color: red;
+}
+.custom-arrow::part(trigger-arrow) {
+  color: blue;
+}
