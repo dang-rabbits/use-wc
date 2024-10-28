@@ -67,7 +67,7 @@ export class SelectNext extends LitElement {
       if (this.multiple) {
         target.toggleSelected();
         this.#value.delete(this.#dataKey);
-        this.selected.forEach((option) => {
+        this.options?.forEach((option) => {
           if (option.selected && option.value) {
             this.#value.append(this.#dataKey, option.value);
           }
@@ -76,7 +76,7 @@ export class SelectNext extends LitElement {
         this.options?.forEach((option) => {
           option.selected = option === target;
         });
-        this.#value.append(this.#dataKey, target.value);
+        this.#value.set(this.#dataKey, target.value);
       }
 
       this.#internals.setFormValue(this.value);
