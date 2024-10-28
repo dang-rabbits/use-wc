@@ -9,6 +9,7 @@
     <script type="module" src="/src/my-element.ts"></script>
     <script type="module" src="/src/components/layout/layout.ts"></script>
     <script type="module" src="/src/elements/select-next.ts"></script>
+    <script type="module" src="/src/elements/select-option.ts"></script>
   </head>
   <body>
     <!-- <flex-layout direction="row" align="center" gap="medium" class="full-height">
@@ -36,19 +37,20 @@
 
     <form>
       <select-next name="options" placeholder="hello">
-        <option-next value="1">One</option-next>
-        <option-next value="2" selected>Two</option-next>
+        <select-option value="1">One</select-option>
+        <select-option value="2" selected>Two</select-option>
       </select-next>
 
       <select-next name="options2" placeholder="hello">
-        <option-next value="1">One</option-next>
-        <option-next value="2" selected>Two</option-next>
+        <select-option value="1">One</select-option>
+          <hr />
+        <select-option value="2" selected>Two</select-option>
       </select-next>
 
       <select-next class="custom-arrow" name="options3" multiple placeholder="hello">
         <svg slot="arrow" fill="currentColor" viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg'><g><path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' /></g></svg>
-        <option-next value="1">One</option-next>
-        <option-next value="2" selected>Two</option-next>
+        <select-option value="1">One</select-option>
+        <select-option value="2" selected="false">Two</select-option>
       </select-next>
 
       <select name="real-select" multiple>

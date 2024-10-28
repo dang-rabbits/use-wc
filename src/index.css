@@ -133,11 +133,25 @@ select-next [popover]:not(:popover-open) {
 } */
 
 .custom-arrow::part(trigger) {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  padding: .25rem 1rem;
+  border-radius: 50px;
   gap: 2rem;
+}
+.custom-arrow::part(trigger):hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 .custom-arrow::part(trigger-label) {
   color: red;
 }
 .custom-arrow::part(trigger-arrow) {
-  color: blue;
+  color: light-dark(maroon, pink);
 }
+
+/* .custom-arrow select-option:state(selected) {
+  background-color: light-dark(#00f, #fff);
+  color: light-dark(#fff, #00f);
+} */

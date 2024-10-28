@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
+import { SelectOption } from './select-option';
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO valid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
@@ -30,11 +31,11 @@ export class SelectNext extends LitElement {
   @property({ type: Boolean })
   listbox = false;
 
-  @queryAssignedElements({ selector: 'option-next'})
-  options?: Array<HTMLElement>;
+  @queryAssignedElements({ selector: 'select-option'})
+  options?: Array<SelectOption>;
 
-  @queryAssignedElements({ selector: 'option-next[selected="true]'})
-  selected!: Array<HTMLElement>;
+  @queryAssignedElements({ selector: 'select-option[selected]' })
+  selected!: Array<SelectOption>;
 
   @query('button')
   button!: HTMLButtonElement;
@@ -60,35 +61,33 @@ export class SelectNext extends LitElement {
   }
 
   #setValue(event: Event) {
-    const target = event.target as HTMLElement;
-    if (target.tagName === 'OPTION-NEXT') {
-      const selectedValue = target.getAttribute('value') ?? target.textContent;
+    const target = event.target as SelectOption;
 
-      if (selectedValue) {
-        if (this.multiple) {
-          const currentValue = this.#value.getAll(this.#dataKey);
-          if (currentValue?.includes(selectedValue)) {
-            this.#value.delete(this.#dataKey);
-            currentValue.forEach((value) => {
-              if (value !== selectedValue) {
-                this.#value.append(this.#dataKey, value);
-              }
-            });
-          } else {
-            this.#value.append(this.#dataKey, selectedValue);
+    if (target.tagName === 'SELECT-OPTION' && target.value) {
+      if (this.multiple) {
+        target.toggleSelected();
+        this.#value.delete(this.#dataKey);
+        this.selected.forEach((option) => {
+          if (option.selected && option.value) {
+            this.#value.append(this.#dataKey, option.value);
           }
-        } else {
-          this.#value.set(this.#dataKey, selectedValue);
-        }
+        });
+      } else {
+        this.options?.forEach((option) => {
+          option.selected = option === target;
+        });
+        this.#value.append(this.#dataKey, target.value);
       }
 
       this.#internals.setFormValue(this.value);
     }
   }
 
-  firstUpdated() {
+  #initializeValue() {
     const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
-    // FIXME we need to delete all values and re-append
+
+    this.#value.delete(this.#dataKey);
+
     if (this.multiple) {
       selectedValues.forEach((value) => {
         if (value) {
@@ -100,6 +99,12 @@ export class SelectNext extends LitElement {
         this.#value.set(this.#dataKey, selectedValues[0]);
       }
     }
+
+    this.#internals.setFormValue(this.value);
+  }
+
+  firstUpdated() {
+    this.#initializeValue();
   }
 
   get #dataKey() {
@@ -115,12 +120,12 @@ export class SelectNext extends LitElement {
       <button part="trigger" type="button" id="${this.getId()}" popovertarget="${this.#popoverId}">
         <span part="trigger-label">${this.placeholder}</span>
         <slot part="trigger-arrow" name="arrow">
-          <svg viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg' fill="currentColor">
+          <svg viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg' fill="currentColor" aria-hidden part="trigger-arrow-default">
             <path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' />
           </svg>
         </slot>
       </button>
-      <div part="popover" @click="${this.#setValue}" popover id="${this.#popoverId}">
+      <div id="${this.#popoverId}" part="popover" @click="${this.#setValue}" popover>
         <slot></slot>
       </div>
     `;
@@ -141,6 +146,10 @@ export class SelectNext extends LitElement {
 
     :host button > * {
       display: contents;
+    }
+
+    ::slotted(select-option) {
+      display: flex;
     }
   `;
 }
