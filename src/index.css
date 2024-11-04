@@ -22,6 +22,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -32,7 +33,9 @@ body {
   height: 100%;
 }
 
-html, body, .full-height {
+html,
+body,
+.full-height {
   height: 100%;
 }
 
@@ -141,17 +144,20 @@ select-next [popover]:not(:popover-open) {
   border-radius: 50px;
   gap: 2rem;
 }
+
 .custom-arrow::part(trigger):hover {
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: rgba(255, 0, 0, 0.2);
 }
+
+.custom-arrow::part(trigger):focus-visible {
+  outline: 2px dotted light-dark(#000, #fff);
+  outline-offset: 2px;
+}
+
 .custom-arrow::part(trigger-label) {
   color: red;
 }
+
 .custom-arrow::part(trigger-arrow) {
   color: light-dark(maroon, pink);
 }
-
-/* .custom-arrow select-option:state(selected) {
-  background-color: light-dark(#00f, #fff);
-  color: light-dark(#fff, #00f);
-} */

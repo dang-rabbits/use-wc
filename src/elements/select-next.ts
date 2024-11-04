@@ -19,11 +19,15 @@ const FORM_DATA_KEY = '__value';
 export class SelectNext extends LitElement {
   static formAssociated = true;
 
+  #id: string;
+  #internals: ElementInternals;
+  #value = new FormData();
+
   @property()
   name?: string;
 
   @property()
-  placeholder?: string;
+  placeholder: string = '';
 
   @property({ type: Boolean })
   multiple = false;
@@ -31,20 +35,22 @@ export class SelectNext extends LitElement {
   @property({ type: Boolean })
   listbox = false;
 
-  @queryAssignedElements({ selector: 'select-option'})
-  options?: Array<SelectOption>;
+  @queryAssignedElements({ selector: 'select-option' })
+  options!: Array<SelectOption>;
 
-  @queryAssignedElements({ selector: 'select-option[selected]' })
-  selected!: Array<SelectOption>;
+  get selected() {
+    return this.options.filter((option) => option.selected);
+  }
 
-  @query('button')
-  button!: HTMLButtonElement;
+  get firstSelected() {
+    return this.options.find((option) => option.selected);
+  }
 
-  #id: string;
+  @query('button[part="trigger"]')
+  trigger!: HTMLButtonElement;
 
-  #internals: ElementInternals;
-
-  #value = new FormData();
+  @query('[part="trigger-label"]')
+  label!: HTMLSpanElement;
 
   constructor() {
     super();
@@ -56,31 +62,68 @@ export class SelectNext extends LitElement {
     return this.id ? this.id : this.#id;
   }
 
+  get #triggerId() {
+    return `${this.getId()}-trigger`;
+  }
+
   get #popoverId() {
     return `${this.getId()}-dropdown`;
   }
 
-  #setValue(event: Event) {
+  #handlePopoverClick(event: Event) {
     const target = event.target as SelectOption;
 
     if (target.tagName === 'SELECT-OPTION' && target.value) {
-      if (this.multiple) {
-        target.toggleSelected();
-        this.#value.delete(this.#dataKey);
-        this.options?.forEach((option) => {
-          if (option.selected && option.value) {
-            this.#value.append(this.#dataKey, option.value);
-          }
-        });
-      } else {
-        this.options?.forEach((option) => {
-          option.selected = option === target;
-        });
-        this.#value.set(this.#dataKey, target.value);
-      }
+      event.preventDefault();
+      this.#toggleOptionValue(target);
 
-      this.#internals.setFormValue(this.value);
+      if (this.multiple) {
+        this.trigger.focus();
+      } else {
+        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
+      }
     }
+  }
+
+  #toggleOptionValue(target: SelectOption) {
+    if (!target.value) {
+      return;
+    }
+
+    if (this.multiple) {
+      target.toggleSelected();
+      this.#value.delete(this.#dataKey);
+      this.options?.forEach((option) => {
+        if (option.selected && option.value) {
+          this.#value.append(this.#dataKey, option.value);
+        }
+      });
+    } else {
+      this.options?.forEach((option) => {
+        option.selected = option === target;
+      });
+      this.#value.set(this.#dataKey, target.value);
+    }
+
+    this.#internals.setFormValue(this.value);
+    this.#renderDisplayValue();
+  }
+
+  #renderDisplayValue() {
+    const displayValue = this.#displayValue;
+    this.label.textContent = displayValue ?? this.placeholder;
+
+    if (displayValue) {
+      this.#internals.states.delete('placeholder');
+    } else {
+      this.#internals.states.add('placeholder');
+    }
+  }
+
+  get #displayValue() {
+    const selected = this.options.filter((option) => option.selected);
+
+    return selected.length > 0 ? selected.map((option) => option.textContent).toLocaleString() : undefined;
   }
 
   #initializeValue() {
@@ -103,8 +146,27 @@ export class SelectNext extends LitElement {
     this.#internals.setFormValue(this.value);
   }
 
+  #activeOption: SelectOption | null = null;
+  get activeOption() {
+    return this.#activeOption;
+  }
+  set activeOption(option: SelectOption | null) {
+    this.#activeOption?.setActive(false);
+    this.#activeOption = option;
+    this.trigger.setAttribute('aria-activedescendant', option?.id ?? '');
+    option?.setActive(true);
+  }
+
+  #initializeActiveOption() {
+    const activeOption = this.firstSelected ?? this.options.at(0) ?? null;
+    this.activeOption = activeOption;
+    return activeOption?.id ?? '';
+  }
+
   firstUpdated() {
     this.#initializeValue();
+    this.#renderDisplayValue();
+    this.#initializeActiveOption();
   }
 
   get #dataKey() {
@@ -115,17 +177,77 @@ export class SelectNext extends LitElement {
     return this.#value;
   }
 
+  #getPopoverOpen() {
+    return this.trigger.popoverTargetElement?.matches(":popover-open");
+  }
+
+  #handleKeyDown(event: KeyboardEvent) {
+    const isOpen = this.#getPopoverOpen();
+
+    if (['ArrowDown', 'ArrowUp'].includes(event.key) && !isOpen) {
+      (this.trigger.popoverTargetElement as HTMLElement).showPopover();
+      return;
+    }
+
+    if (!isOpen) {
+      return;
+    }
+
+    if (['Enter', ' '].includes(event.key) && this.activeOption) {
+      event.preventDefault();
+      this.#toggleOptionValue(this.activeOption);
+      if (!this.multiple) {
+        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
+      }
+      return;
+    }
+
+    const options = this.options;
+    const activeId = this.activeOption?.id;
+    const activeIndex = activeId ? options.findIndex((option) => option.id === activeId) : -1;
+
+    let moveTo: SelectOption | undefined;
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        if (activeIndex > 0) {
+          moveTo = options.at(activeIndex - 1);
+        }
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        moveTo = options.at(activeIndex + 1);
+        break;
+      case 'Tab':
+        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
+        break;
+    }
+
+    if (moveTo) {
+      this.activeOption = moveTo;
+    }
+  }
+
+  #handlePopoverToggle(event: ToggleEvent) {
+    const opening = event.newState === 'open';
+    this.trigger.ariaExpanded = opening ? 'true' : 'false';
+
+    if (!opening) {
+      this.#initializeActiveOption();
+    }
+  }
+
   render() {
     return html`
-      <button part="trigger" type="button" id="${this.getId()}" popovertarget="${this.#popoverId}">
+      <button part="trigger" type="button" role="combobox" id="${this.#triggerId}" popovertarget="${this.#popoverId}" aria-controls="${this.#popoverId}" aria-haspopup="listbox" aria-activedescendant="" @keydown="${this.#handleKeyDown}" aria-expanded="false">
         <span part="trigger-label">${this.placeholder}</span>
         <slot part="trigger-arrow" name="arrow">
-          <svg viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg' fill="currentColor" aria-hidden part="trigger-arrow-default">
-            <path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' />
+          <svg fill="currentColor" part="trigger-arrow-default" aria-hidden>
+            <polygon points="4,4 8,0 0,0" />
           </svg>
         </slot>
       </button>
-      <div id="${this.#popoverId}" part="popover" @click="${this.#setValue}" popover>
+      <div id="${this.#popoverId}" role="listbox" part="popover" @click="${this.#handlePopoverClick}" popover @toggle="${this.#handlePopoverToggle}">
         <slot></slot>
       </div>
     `;
@@ -150,6 +272,15 @@ export class SelectNext extends LitElement {
 
     ::slotted(select-option) {
       display: flex;
+    }
+
+    svg[part="trigger-arrow-default"] {
+      width: .5rem;
+      height: .25rem;
+    }
+
+    :host(:state(placeholder)) span[part="trigger-label"] {
+      font-style: italic;
     }
   `;
 }

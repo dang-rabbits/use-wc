@@ -6,8 +6,8 @@ import { customElement, property } from 'lit/decorators.js'
  *
  * The children of this element are the content of the option and must not contain any interactive elements.
  *
- * @slot NodeList of `select-option` elements
- * @slot arrow
+ * @slot selected-indicator
+ * @slot
  */
 @customElement('select-option')
 export class SelectOption extends LitElement {
@@ -41,6 +41,10 @@ export class SelectOption extends LitElement {
     super();
     this.#internals = this.attachInternals();
 
+    if (!this.id) {
+      this.id = ':' + Math.random().toString(36).substring(2, 6) + ':';
+    }
+
     /**
      * Boolean attributes are reflected as true if they are present on the
      * element, we do not need to check for [attr]==='false'
@@ -56,13 +60,21 @@ export class SelectOption extends LitElement {
     this.selected = !this.selected;
   }
 
+  setActive(value: boolean) {
+    if (value) {
+      this.#internals.states.add("active");
+    } else {
+      this.#internals.states.delete("active");
+    }
+  }
+
   render() {
-    return html`<button>
+    return html`
       <slot part="selected-indicator" name="selected-indicator">
         <span part="selected-indicator-default">✔</span>
       </slot>
       <slot></slot>
-    </button>`;
+    `;
   }
 
   /**
@@ -74,11 +86,7 @@ export class SelectOption extends LitElement {
   static styles = css`
     :host {
       display: flex;
-    }
-
-    button {
-      appearance: none;
-      all: unset;
+      cursor: default;
     }
 
     slot[name="selected-indicator"] {
@@ -87,6 +95,11 @@ export class SelectOption extends LitElement {
 
     :host(:state(selected)) slot[name="selected-indicator"] {
       visibility: visible;
+    }
+
+    :host(:state(active)),
+    :host(:hover) {
+      background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
   `;
 }
