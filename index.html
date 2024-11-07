@@ -9,8 +9,8 @@
   <link rel="stylesheet" href="./src/index.css" />
   <script type="module" src="/src/my-element.ts"></script>
   <script type="module" src="/src/components/layout/layout.ts"></script>
-  <script type="module" src="/src/elements/select-option.ts"></script>
-  <script type="module" src="/src/elements/select-next.ts"></script>
+  <script type="module" src="/src/elements/use-option.ts"></script>
+  <script type="module" src="/src/elements/use-select.ts"></script>
 </head>
 
 <body>
@@ -38,18 +38,30 @@
     </flex-layout> -->
 
   <form>
-    <select-next name="options" placeholder="hello">
-      <select-option value="1">One</select-option>
+    <use-select name="options" placeholder="hello" tabindex="-1">
+      <use-option value="1">
+        <div>
+          <strong>One</strong><br>
+          <time>2024-05-09</time>
+        </div>
+      </use-option>
       <hr />
-      <select-option value="2" selected>Two</select-option>
-    </select-next>
+      <use-option value="2" selected>
+        <div>
+          <strong>Two</strong><br>
+          <time>2024-05-10</time>
+        </div>
+      </use-option>
+    </use-select>
 
-    <select-next name="options2" placeholder="hello" listbox>
-      <select-option value="1">One</select-option>
-      <select-option value="2" selected>Two</select-option>
-    </select-next>
+    <use-select name="options2" placeholder="hello" listbox>
+      <use-option value="">None</use-option>
+      <use-option value="1">One</use-option>
+      <use-option value="2" selected>Two</use-option>
+      <use-option value="3" disabled>Three</use-option>
+    </use-select>
 
-    <select-next class="custom-arrow" name="options3" multiple>
+    <use-select class="custom-arrow" name="options3" multiple>
       <svg slot="arrow" fill="currentColor" viewBox='0 0 140 140' width='12' height='12'
         xmlns='http://www.w3.org/2000/svg'>
         <g>
@@ -57,9 +69,9 @@
             d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' />
         </g>
       </svg>
-      <select-option value="1">One</select-option>
-      <select-option value="2" selected>Two</select-option>
-    </select-next>
+      <use-option value="1">One</use-option>
+      <use-option value="2" selected>Two</use-option>
+    </use-select>
 
     <select name="real-select" multiple>
       <option value="1">One</option>

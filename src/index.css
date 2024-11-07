@@ -127,11 +127,11 @@ flex-layout[fill] {
 }
 
 
-/* select-next [popover]:popover-open {
+/* use-select [popover]:popover-open {
   display: block;
 }
 
-select-next [popover]:not(:popover-open) {
+use-select [popover]:not(:popover-open) {
   display: none;
 } */
 

@@ -1,9 +1,9 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
-import { SelectOption } from './select-option';
+import { UseOption } from './use-option';
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
-// TODO valid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
+// TODO valid / invalid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO readonly https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO mutation
 
@@ -12,11 +12,11 @@ const FORM_DATA_KEY = '__value';
 /**
  * An example element.
  *
- * @slot NodeList of `select-option` elements
+ * @slot NodeList of `use-option` elements
  * @slot arrow
  */
-@customElement('select-next')
-export class SelectNext extends LitElement {
+@customElement('use-select')
+export class UseSelect extends LitElement {
   static formAssociated = true;
 
   #id: string;
@@ -35,8 +35,8 @@ export class SelectNext extends LitElement {
   @property({ type: Boolean })
   listbox = false;
 
-  @queryAssignedElements({ selector: 'select-option' })
-  options!: Array<SelectOption>;
+  @queryAssignedElements({ selector: 'use-option' })
+  options!: Array<UseOption>;
 
   get selected() {
     return this.options.filter((option) => option.selected);
@@ -71,22 +71,22 @@ export class SelectNext extends LitElement {
   }
 
   #handlePopoverClick(event: Event) {
-    const target = event.target as SelectOption;
+    const selectOption = (event.target as HTMLElement)?.closest('use-option') as UseOption;
 
-    if (target.tagName === 'SELECT-OPTION' && target.value) {
+    if (selectOption?.value != null) {
       event.preventDefault();
-      this.#toggleOptionValue(target);
+      this.#toggleOptionValue(selectOption);
 
       if (this.multiple) {
         this.trigger.focus();
-      } else {
+      } else if (!selectOption.disabled) {
         (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
       }
     }
   }
 
-  #toggleOptionValue(target: SelectOption) {
-    if (!target.value) {
+  #toggleOptionValue(target: UseOption) {
+    if (target.value == null || target.disabled) {
       return;
     }
 
@@ -111,7 +111,7 @@ export class SelectNext extends LitElement {
 
   #renderDisplayValue() {
     const displayValue = this.#displayValue;
-    this.label.textContent = displayValue ?? this.placeholder;
+    this.label.innerHTML = displayValue ?? this.placeholder;
 
     if (displayValue) {
       this.#internals.states.delete('placeholder');
@@ -121,7 +121,11 @@ export class SelectNext extends LitElement {
   }
 
   get #displayValue() {
-    const selected = this.options.filter((option) => option.selected);
+    const selected = this.selected;
+
+    if (!this.multiple) {
+      return selected.length > 0 ? selected[0].innerHTML : undefined;
+    }
 
     return selected.length > 0 ? selected.map((option) => option.textContent).toLocaleString() : undefined;
   }
@@ -146,11 +150,11 @@ export class SelectNext extends LitElement {
     this.#internals.setFormValue(this.value);
   }
 
-  #activeOption: SelectOption | null = null;
+  #activeOption: UseOption | null = null;
   get activeOption() {
     return this.#activeOption;
   }
-  set activeOption(option: SelectOption | null) {
+  set activeOption(option: UseOption | null) {
     this.#activeOption?.setActive(false);
     this.#activeOption = option;
     this.trigger.setAttribute('aria-activedescendant', option?.id ?? '');
@@ -206,7 +210,7 @@ export class SelectNext extends LitElement {
     const activeId = this.activeOption?.id;
     const activeIndex = activeId ? options.findIndex((option) => option.id === activeId) : -1;
 
-    let moveTo: SelectOption | undefined;
+    let moveTo: UseOption | undefined;
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
@@ -264,13 +268,14 @@ export class SelectNext extends LitElement {
       display: inline-flex;
       align-items: center;
       gap: .5rem;
+      text-align: start;
     }
 
     :host button > * {
       display: contents;
     }
 
-    ::slotted(select-option) {
+    ::slotted(use-option) {
       display: flex;
     }
 
@@ -287,6 +292,6 @@ export class SelectNext extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'select-next': SelectNext
+    'use-select': UseSelect
   }
 }

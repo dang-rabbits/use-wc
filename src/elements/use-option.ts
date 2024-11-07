@@ -2,15 +2,15 @@ import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 /**
- * `select-option` is a custom element that represents an option in a `select-next` custom element.
+ * `use-option` is a custom element that represents an option in a `use-select` custom element.
  *
  * The children of this element are the content of the option and must not contain any interactive elements.
  *
  * @slot selected-indicator
  * @slot
  */
-@customElement('select-option')
-export class SelectOption extends LitElement {
+@customElement('use-option')
+export class UseOption extends LitElement {
   @property({ type: Boolean })
   set selected(flag) {
     if (flag) {
@@ -22,6 +22,19 @@ export class SelectOption extends LitElement {
 
   get selected() {
     return this.#internals.states.has("selected");
+  }
+
+  @property({ type: Boolean })
+  set disabled(flag) {
+    if (flag) {
+      this.#internals.states.add("disabled");
+    } else {
+      this.#internals.states.delete("disabled");
+    }
+  }
+
+  get disabled() {
+    return this.#internals.states.has("disabled");
   }
 
   @property()
@@ -53,6 +66,10 @@ export class SelectOption extends LitElement {
      */
     if (this.hasAttribute("selected")) {
       this.#internals.states.add("selected");
+    }
+
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -97,15 +114,18 @@ export class SelectOption extends LitElement {
       visibility: visible;
     }
 
-    :host(:state(active)),
-    :host(:hover) {
+    :host(:is(:state(active), :hover)) {
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
+    }
+
+    :host(:state(disabled)) {
+      color: light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5));
     }
   `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'select-option': SelectOption
+    'use-option': UseOption
   }
 }
