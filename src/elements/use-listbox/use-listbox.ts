@@ -14,8 +14,6 @@ import createId from '../../utils/create-id';
 const FORM_DATA_KEY = '__value';
 
 /**
- * An example element.
- *
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
@@ -234,6 +232,10 @@ export class UseListbox extends LitElement {
    * @link https://github.com/w3c/csswg-drafts/issues/6867
    */
   static styles = css`
+    :host {
+      display: block;
+    }
+
     [part="listbox"] {
       border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
@@ -243,11 +245,8 @@ export class UseListbox extends LitElement {
       opacity: .5;
     }
 
-    [part="listbox"]:not(:focus) use-option:state(active) {
-      background-color: transparent;
-    }
-
-    :host(:focus:not(:hover)) ::slotted(use-option:state(active)),
+    /* https://github.com/w3c/csswg-drafts/issues/5893 */
+    [part="listbox"]:not(:hover):focus-visible ::slotted(use-option:state(active)),
     ::slotted(use-option:not(:state(disabled)):hover) {
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }

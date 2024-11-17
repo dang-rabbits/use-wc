@@ -14,7 +14,9 @@ import createId from '../../utils/create-id';
 const FORM_DATA_KEY = '__value';
 
 /**
- * An example element.
+ * ## Multiple
+ * 
+ * The `use-listbox` provides an attribute for selecting multiple options.
  *
  * @slot default NodeList of `use-option` elements
  * @slot arrow

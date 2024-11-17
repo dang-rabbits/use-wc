@@ -140,7 +140,7 @@ export const FormMultipleValues: Story = {
   },
 };
 
-export const CustomArrowViaSlot: Story = {
+export const CustomSelectedIndicatorSlot: Story = {
   render: () => html`
     <use-listbox>
       <svg slot="trigger-arrow" fill="currentColor" viewBox='0 0 140 140' width='12' height='12'
@@ -150,8 +150,14 @@ export const CustomArrowViaSlot: Story = {
             d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' />
         </g>
       </svg>
-      <use-option value="1" id="option-1" selected>One</use-option>
-      <use-option value="2" id="option-2">Two</use-option>
+      <use-option value="1" id="option-1" selected>
+        <span slot="selected-indicator">🔥</span>
+        Fire
+      </use-option>
+      <use-option value="2" id="option-2">
+        <span slot="selected-indicator">🌊</span>
+        Water
+      </use-option>
     </use-listbox>
   `
 }
@@ -159,15 +165,16 @@ export const CustomArrowViaSlot: Story = {
 export const CustomStyles: Story = {
   render: () => html`
     <style>
-      .custom-use-listbox::part(listbox) {
-        background-color: lightsalmon;
-        color: firebrick;
-        border: 2px solid firebrick;
-        border-radius: 4px;
+      .custom-use-listbox {
+        background-color: blanchedalmond;
+        color: orangered;
+        border: 2px solid orangered;
+        border-radius: 6px;
         padding: 4px;
-        box-shadow: 0 2px 0 #000, 0 8px 0 -2px firebrick;
+        box-shadow: 1px 1px 0 orangered, 2px 2px 0 orangered, 3px 3px 0 orangered;
         font-size: 16px;
-        font-family: "Comic Sans MS", "Comic Sans", cursive;
+        font-weight: 700;
+        letter-spacing: 2px;
       }
 
       .custom-use-listbox use-option {
@@ -181,24 +188,26 @@ export const CustomStyles: Story = {
       }
 
       .custom-use-listbox use-option::part(selected-indicator)::before {
-        content: "\\2665";
+        content: "\\1F525";
         margin-inline-end: 8px;
       }
 
-      .custom-use-listbox:focus:not(:hover) use-option:state(active),
+      .custom-use-listbox:not(:has(use-option:hover)):focus use-option:state(active),
       .custom-use-listbox use-option:not(:state(disabled)):hover {
-        background-color: firebrick;
-        color: lightsalmon;
+        background-color: orangered;
+        color: blanchedalmond;
       }
 
       .custom-use-listbox::part(listbox):focus-visible {
         outline: 2px dashed currentColor;
-        outline-offset: 2px;
+        outline-offset: 4px;
+        box-shadow: none;
       }
     </style>
     <use-listbox class="custom-use-listbox">
-      <use-option value="1" id="option-1" selected>One</use-option>
-      <use-option value="2" id="option-2">Two</use-option>
+      <use-option value="1" id="option-1">Overcompensate</use-option>
+      <use-option value="2" id="option-2" selected>Routines In The Night</use-option>
+      <use-option value="3" id="option-3">Paladin Strait</use-option>
     </use-listbox>
   `
 }

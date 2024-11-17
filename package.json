@@ -1,15 +1,15 @@
 {
-  "name": "dang-wc",
+  "name": "@dang-rabbits/use-wc",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc && npm run analyze && vite build",
     "preview": "vite preview",
     "analyze": "custom-elements-manifest analyze",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "npm run analyze && storybook build"
   },
   "dependencies": {
     "lit": "^3.2.0"
