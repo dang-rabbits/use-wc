@@ -1,23 +1,32 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
-import { UseOption } from './use-option';
+import { UseOption } from '../use-options/use-option';
+import createId from '../../utils/create-id';
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO valid / invalid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO readonly https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO mutation
+// TODO required
+// TODO typeahead
+// TODO groups
 
 const FORM_DATA_KEY = '__value';
 
 /**
  * An example element.
  *
- * @slot NodeList of `use-option` elements
+ * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
 @customElement('use-select')
 export class UseSelect extends LitElement {
   static formAssociated = true;
+
+  static shadowRootOptions = {
+    ...LitElement.shadowRootOptions,
+    delegatesFocus: true,
+  };
 
   #id: string;
   #internals: ElementInternals;
@@ -30,13 +39,13 @@ export class UseSelect extends LitElement {
   placeholder: string = '';
 
   @property({ type: Boolean })
-  multiple = false;
+  set disabled(flag) {
+    this.#initializeDisabled(flag);
+  }
 
-  @property({ type: Boolean })
-  listbox = false;
-
-  @queryAssignedElements({ selector: 'use-option' })
-  options!: Array<UseOption>;
+  get disabled() {
+    return this.#internals.states.has("disabled");
+  }
 
   get selected() {
     return this.options.filter((option) => option.selected);
@@ -46,16 +55,22 @@ export class UseSelect extends LitElement {
     return this.options.find((option) => option.selected);
   }
 
-  @query('button[part="trigger"]')
-  trigger!: HTMLButtonElement;
+  @queryAssignedElements({ selector: 'use-option' })
+  options!: Array<UseOption>;
 
-  @query('[part="trigger-label"]')
+  trigger: HTMLButtonElement | null = null;
+
+  @query('[part="trigger-label"]', true)
   label!: HTMLSpanElement;
 
   constructor() {
     super();
-    this.#id = ':' + Math.random().toString(36).substring(2, 6) + ':';
+    this.#id = createId();
     this.#internals = this.attachInternals();
+
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
+    }
   }
 
   getId() {
@@ -77,10 +92,10 @@ export class UseSelect extends LitElement {
       event.preventDefault();
       this.#toggleOptionValue(selectOption);
 
-      if (this.multiple) {
-        this.trigger.focus();
-      } else if (!selectOption.disabled) {
-        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
+      if (selectOption.disabled) {
+        this.trigger?.focus();
+      } else {
+        (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
       }
     }
   }
@@ -90,20 +105,10 @@ export class UseSelect extends LitElement {
       return;
     }
 
-    if (this.multiple) {
-      target.toggleSelected();
-      this.#value.delete(this.#dataKey);
-      this.options?.forEach((option) => {
-        if (option.selected && option.value) {
-          this.#value.append(this.#dataKey, option.value);
-        }
-      });
-    } else {
-      this.options?.forEach((option) => {
-        option.selected = option === target;
-      });
-      this.#value.set(this.#dataKey, target.value);
-    }
+    this.options?.forEach((option) => {
+      option.selected = option === target;
+    });
+    this.#value.set(this.#dataKey, target.value);
 
     this.#internals.setFormValue(this.value);
     this.#renderDisplayValue();
@@ -123,10 +128,6 @@ export class UseSelect extends LitElement {
   get #displayValue() {
     const selected = this.selected;
 
-    if (!this.multiple) {
-      return selected.length > 0 ? selected[0].innerHTML : undefined;
-    }
-
     return selected.length > 0 ? selected.map((option) => option.textContent).toLocaleString() : undefined;
   }
 
@@ -135,16 +136,8 @@ export class UseSelect extends LitElement {
 
     this.#value.delete(this.#dataKey);
 
-    if (this.multiple) {
-      selectedValues.forEach((value) => {
-        if (value) {
-          this.#value.append(this.#dataKey, value);
-        }
-      });
-    } else {
-      if (selectedValues[0]) {
-        this.#value.set(this.#dataKey, selectedValues[0]);
-      }
+    if (selectedValues[0]) {
+      this.#value.set(this.#dataKey, selectedValues[0]);
     }
 
     this.#internals.setFormValue(this.value);
@@ -157,7 +150,7 @@ export class UseSelect extends LitElement {
   set activeOption(option: UseOption | null) {
     this.#activeOption?.setActive(false);
     this.#activeOption = option;
-    this.trigger.setAttribute('aria-activedescendant', option?.id ?? '');
+    this.trigger?.setAttribute('aria-activedescendant', option?.id ?? '');
     option?.setActive(true);
   }
 
@@ -167,29 +160,47 @@ export class UseSelect extends LitElement {
     return activeOption?.id ?? '';
   }
 
+  async #initializeDisabled(disabled: boolean) {
+    await this.updateComplete;
+
+    if (disabled) {
+      this.#internals.states.add("disabled");
+      this.trigger?.setAttribute('disabled', 'disabled');
+    } else {
+      this.#internals.states.delete("disabled");
+      this.trigger?.removeAttribute('disabled');
+    }
+
+    if (this.trigger) {
+      this.trigger.disabled = disabled;
+    }
+  }
+
   firstUpdated() {
+    this.trigger = this.shadowRoot?.querySelector('button[part="trigger"]') ?? null;
+
     this.#initializeValue();
     this.#renderDisplayValue();
-    this.#initializeActiveOption();
   }
 
   get #dataKey() {
     return this.name ?? FORM_DATA_KEY;
   }
 
-  get value() {
+  get value(): FormData {
     return this.#value;
   }
 
   #getPopoverOpen() {
-    return this.trigger.popoverTargetElement?.matches(":popover-open");
+    return this.trigger?.popoverTargetElement?.matches(":popover-open");
   }
 
   #handleKeyDown(event: KeyboardEvent) {
     const isOpen = this.#getPopoverOpen();
 
-    if (['ArrowDown', 'ArrowUp'].includes(event.key) && !isOpen) {
-      (this.trigger.popoverTargetElement as HTMLElement).showPopover();
+    if (!isOpen && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+      event.preventDefault();
+      (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
     }
 
@@ -200,9 +211,6 @@ export class UseSelect extends LitElement {
     if (['Enter', ' '].includes(event.key) && this.activeOption) {
       event.preventDefault();
       this.#toggleOptionValue(this.activeOption);
-      if (!this.multiple) {
-        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
-      }
       return;
     }
 
@@ -223,7 +231,7 @@ export class UseSelect extends LitElement {
         moveTo = options.at(activeIndex + 1);
         break;
       case 'Tab':
-        (this.trigger.popoverTargetElement as HTMLElement).hidePopover();
+        (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
         break;
     }
 
@@ -234,24 +242,45 @@ export class UseSelect extends LitElement {
 
   #handlePopoverToggle(event: ToggleEvent) {
     const opening = event.newState === 'open';
-    this.trigger.ariaExpanded = opening ? 'true' : 'false';
 
-    if (!opening) {
+    if (this.trigger) {
+      this.trigger.ariaExpanded = opening ? 'true' : 'false';
+    }
+
+    if (opening) {
       this.#initializeActiveOption();
     }
   }
 
   render() {
     return html`
-      <button part="trigger" type="button" role="combobox" id="${this.#triggerId}" popovertarget="${this.#popoverId}" aria-controls="${this.#popoverId}" aria-haspopup="listbox" aria-activedescendant="" @keydown="${this.#handleKeyDown}" aria-expanded="false">
+      <button
+        part="trigger"
+        type="button"
+        role="combobox"
+        id=${this.#triggerId}
+        popovertarget=${this.#popoverId}
+        aria-controls=${this.#popoverId}
+        aria-haspopup="listbox"
+        aria-expanded="false"
+        ?disabled=${this.disabled}
+        @keydown=${this.#handleKeyDown}
+      >
         <span part="trigger-label">${this.placeholder}</span>
-        <slot part="trigger-arrow" name="arrow">
+        <slot part="trigger-arrow" name="trigger-arrow">
           <svg fill="currentColor" part="trigger-arrow-default" aria-hidden>
             <polygon points="4,4 8,0 0,0" />
           </svg>
         </slot>
       </button>
-      <div id="${this.#popoverId}" role="listbox" part="popover" @click="${this.#handlePopoverClick}" popover @toggle="${this.#handlePopoverToggle}">
+      <div
+        id=${this.#popoverId}
+        role="listbox"
+        part="listbox"
+        popover
+        @click=${this.#handlePopoverClick}
+        @toggle=${this.#handlePopoverToggle}
+      >
         <slot></slot>
       </div>
     `;
@@ -275,10 +304,6 @@ export class UseSelect extends LitElement {
       display: contents;
     }
 
-    ::slotted(use-option) {
-      display: flex;
-    }
-
     svg[part="trigger-arrow-default"] {
       width: .5rem;
       height: .25rem;
@@ -286,6 +311,15 @@ export class UseSelect extends LitElement {
 
     :host(:state(placeholder)) span[part="trigger-label"] {
       font-style: italic;
+    }
+
+    :host(:state(disabled)) {
+      pointer-events: none;
+    }
+
+    :host(:focus:not(:hover)) ::slotted(use-option:state(active)),
+    ::slotted(:not(:state(disabled)):hover) {
+      background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
   `;
 }

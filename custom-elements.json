@@ -1,0 +1,707 @@
+{
+  "schemaVersion": "1.0.0",
+  "readme": "",
+  "modules": [
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/index.ts",
+      "declarations": [],
+      "exports": []
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-listbox/use-listbox.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An example element.",
+          "name": "UseListbox",
+          "slots": [
+            {
+              "description": "NodeList of `use-option` elements",
+              "name": "default"
+            },
+            {
+              "name": "arrow"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "multiple",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "description": "UseOption[]",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "firstSelected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "type": {
+                "text": "Array<UseOption>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "HTMLSpanElement"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getId"
+            },
+            {
+              "kind": "field",
+              "name": "activeOption"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "FormData"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-listbox",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseListbox",
+          "declaration": {
+            "name": "UseListbox",
+            "module": "src/elements/use-listbox/use-listbox.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-listbox",
+          "declaration": {
+            "name": "UseListbox",
+            "module": "src/elements/use-listbox/use-listbox.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-listbox/use-select.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<UseListbox>"
+          },
+          "default": "{ component: 'use-listbox', subcomponents: { 'use-option': 'use-option' }, title: 'Web Components/use-listbox', tags: ['autodocs', '!dev'], args: { placeholder: 'Select a number', disabled: false, name: 'example', }, render: (args: UseListbox) => { return html` <use-listbox name=${args.name} placeholder=${args.placeholder} ?disabled=${args.disabled} > <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-listbox> `; }, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Default",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{}"
+        },
+        {
+          "kind": "variable",
+          "name": "Disabled",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ args: { disabled: true, } }"
+        },
+        {
+          "kind": "variable",
+          "name": "Placeholder",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ args: { placeholder: 'Select a number', } }"
+        },
+        {
+          "kind": "variable",
+          "name": "DisabledOption",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-listbox> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\" disabled>Two</use-option> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-listbox> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Multiple",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-listbox multiple> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-listbox> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "OptionsDivider",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-listbox> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> <hr /> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-listbox> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomArrowViaSlot",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-listbox> <svg slot=\"trigger-arrow\" fill=\"currentColor\" viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg'> <g> <path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' /> </g> </svg> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-listbox> ` }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomStyles",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <style> .custom-use-listbox { font-family: sans-serif; } .custom-use-listbox::part(trigger) { all: unset; display: inline-flex; align-items: center; border: 2px solid light-dark(#ccc, #999); padding: .25rem 1rem; border-radius: 50px; gap: 2rem; } .custom-use-listbox::part(trigger):hover { background-color: rgba(0, 255, 0, 0.05); } .custom-use-listbox::part(trigger):focus-visible { outline: 2px dotted light-dark(#000, #fff); outline-offset: 2px; } .custom-use-listbox::part(trigger-label) { color: green; } .custom-use-listbox::part(trigger-arrow) { color: light-dark(darkgreen, lightgreen); } </style> <use-listbox class=\"custom-use-listbox\"> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-listbox> ` }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Default",
+          "declaration": {
+            "name": "Default",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Disabled",
+          "declaration": {
+            "name": "Disabled",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Placeholder",
+          "declaration": {
+            "name": "Placeholder",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "DisabledOption",
+          "declaration": {
+            "name": "DisabledOption",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Multiple",
+          "declaration": {
+            "name": "Multiple",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "OptionsDivider",
+          "declaration": {
+            "name": "OptionsDivider",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomArrowViaSlot",
+          "declaration": {
+            "name": "CustomArrowViaSlot",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomStyles",
+          "declaration": {
+            "name": "CustomStyles",
+            "module": "src/elements/use-listbox/use-select.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-options/use-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
+          "name": "UseOption",
+          "slots": [
+            {
+              "name": "selected-indicator"
+            },
+            {}
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "attribute": "value"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected"
+            },
+            {
+              "kind": "method",
+              "name": "setActive",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "value",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseOption",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-options/use-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-option",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-options/use-option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-select/use-select.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<UseSelect>"
+          },
+          "default": "{ component: 'use-select', subcomponents: { 'use-option': 'use-option' }, title: 'Web Components/use-select', tags: ['autodocs', '!dev'], args: { placeholder: 'Select a number', disabled: false, name: 'example', }, render: (args: UseSelect) => { return html` <use-select name=${args.name} placeholder=${args.placeholder} ?disabled=${args.disabled} > <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-select> `; }, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Default",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{}"
+        },
+        {
+          "kind": "variable",
+          "name": "Disabled",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ args: { disabled: true, } }"
+        },
+        {
+          "kind": "variable",
+          "name": "Placeholder",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ args: { placeholder: 'Select a number', } }"
+        },
+        {
+          "kind": "variable",
+          "name": "DisabledOption",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-select> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\" disabled>Two</use-option> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-select> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Multiple",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-select multiple> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-select> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "OptionsDivider",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-select> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> <hr /> <use-option value=\"3\" id=\"option-3\">Three</use-option> </use-select> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomArrowViaSlot",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-select> <svg slot=\"trigger-arrow\" fill=\"currentColor\" viewBox='0 0 140 140' width='12' height='12' xmlns='http://www.w3.org/2000/svg'> <g> <path d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' /> </g> </svg> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-select> ` }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomStyles",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <style> .custom-use-select { font-family: sans-serif; } .custom-use-select::part(trigger) { all: unset; display: inline-flex; align-items: center; border: 2px solid light-dark(#ccc, #999); padding: .25rem 1rem; border-radius: 50px; gap: 2rem; } .custom-use-select::part(trigger):hover { background-color: rgba(0, 255, 0, 0.05); } .custom-use-select::part(trigger):focus-visible { outline: 2px dotted light-dark(#000, #fff); outline-offset: 2px; } .custom-use-select::part(trigger-label) { color: green; } .custom-use-select::part(trigger-arrow) { color: light-dark(darkgreen, lightgreen); } </style> <use-select class=\"custom-use-select\"> <use-option value=\"1\" id=\"option-1\" selected>One</use-option> <use-option value=\"2\" id=\"option-2\">Two</use-option> </use-select> ` }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Default",
+          "declaration": {
+            "name": "Default",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Disabled",
+          "declaration": {
+            "name": "Disabled",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Placeholder",
+          "declaration": {
+            "name": "Placeholder",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "DisabledOption",
+          "declaration": {
+            "name": "DisabledOption",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Multiple",
+          "declaration": {
+            "name": "Multiple",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "OptionsDivider",
+          "declaration": {
+            "name": "OptionsDivider",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomArrowViaSlot",
+          "declaration": {
+            "name": "CustomArrowViaSlot",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomStyles",
+          "declaration": {
+            "name": "CustomStyles",
+            "module": "src/elements/use-select/use-select.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-select/use-select.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "An example element.",
+          "name": "UseSelect",
+          "slots": [
+            {
+              "description": "NodeList of `use-option` elements",
+              "name": "default"
+            },
+            {
+              "name": "arrow"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "firstSelected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "type": {
+                "text": "Array<UseOption>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "trigger",
+              "type": {
+                "text": "HTMLButtonElement | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "HTMLSpanElement"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getId"
+            },
+            {
+              "kind": "field",
+              "name": "activeOption"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "FormData"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-select",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseSelect",
+          "declaration": {
+            "name": "UseSelect",
+            "module": "src/elements/use-select/use-select.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-select",
+          "declaration": {
+            "name": "UseSelect",
+            "module": "src/elements/use-select/use-select.ts"
+          }
+        }
+      ]
+    }
+  ]
+}

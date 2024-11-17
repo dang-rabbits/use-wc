@@ -1,5 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
+import createId from '../../utils/create-id';
 
 /**
  * `use-option` is a custom element that represents an option in a `use-select` custom element.
@@ -55,7 +56,7 @@ export class UseOption extends LitElement {
     this.#internals = this.attachInternals();
 
     if (!this.id) {
-      this.id = ':' + Math.random().toString(36).substring(2, 6) + ':';
+      this.id = createId();
     }
 
     /**
@@ -103,10 +104,12 @@ export class UseOption extends LitElement {
   static styles = css`
     :host {
       display: flex;
+      align-items: center;
       cursor: default;
     }
 
     slot[name="selected-indicator"] {
+      display: contents;
       visibility: hidden;
     }
 
@@ -114,12 +117,8 @@ export class UseOption extends LitElement {
       visibility: visible;
     }
 
-    :host(:is(:state(active), :hover)) {
-      background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
-    }
-
     :host(:state(disabled)) {
-      color: light-dark(rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5));
+      opacity: .5;
     }
   `;
 }
