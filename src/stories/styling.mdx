@@ -1,0 +1,125 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Styling" />
+
+# Styling
+
+Authoring CSS selectors can be complicated due to the inherint limitations of `part` and other Shadow DOM selectors. To overcome this there are plans to provide an opinionated theming layer built using CSS custom properties (aka, CSS variables). The custom property names will borrow concepts from semantic design token naming conventions. This approach will allow adopting teams to utilize their own design system core and alias tokens.
+
+```css
+/* your theme.css */
+body.light-theme {
+  --usewc-color-brand-primary: #00f;
+  --usewc-color-secondary: #00f;
+  --usewc-color-attention: #f00;
+  --usewc-color-danger: #f00;
+  --usewc-color-success: #f00;
+  --usewc-color-info: #f00;
+  --usewc-color-warning: #f00;
+  --usewc-color-focus-ring: #00f;
+
+  --usewc-color-input-background-static: #eaeaea;
+  --usewc-color-input-background-focus: #fff;
+  --usewc-color-input-background-hover: #fff;
+  --usewc-color-input-background-valid: #fff;
+  --usewc-color-input-background-invalid: #fff;
+  --usewc-color-input-border-static: #ccc;
+  --usewc-color-input-border-focus: #00f;
+  --usewc-color-input-border-valid: #0f0;
+  --usewc-color-input-border-invalid: #f00;
+  --usewc-color-input-text-static: #333;
+  --usewc-color-input-text-placeholder: #888;
+  --usewc-color-input-trigger-static: #ccc;
+  --usewc-color-input-trigger-hover: #ccc;
+
+  --usewc-color-selector-background-static: #fff;
+  --usewc-color-selector-background-hover: #eaeaea;
+  --usewc-color-selector-background-focus: #eaeaea;
+  --usewc-color-selector-border-static: #ccc;
+  --usewc-color-selector-border-hover: #ccc;
+  --usewc-color-selector-border-focus: #ccc;
+
+  --usewc-size-input-border: 1px;
+  --usewc-size-button-border: 1px;
+  --usewc-size-selector-border: 1px;
+  --usewc-size-focus-ring: 2px;
+
+  --usewc-space-input-padding-inline: 1rem;
+  --usewc-space-input-padding-block: .5rem;
+  --usewc-space-input-gap: 1rem;
+  --usewc-space-input-focus-ring: 2px;
+  --usewc-space-action-focus-ring: -1px;
+  --usewc-space-selector-focus-ring: -1px;
+
+  --usewc-effect-focus-ring-style: solid;
+  --usewc-effect-input-border-radius: .25rem;
+  --usewc-effect-action-button-border-radius: .25rem;
+  --usewc-effect-selector-checkbox-border-radius: .25rem;
+  --usewc-effect-selector-radio-border-radius: .25rem;
+  --usewc-effect-selector-switch-border-radius: .25rem;
+}
+
+/* imported use-wc.css */
+use-select::part(trigger) {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  border: var(--usewc-size-input-border) solid var(--usewc-color-input-border-static);
+  padding: var(--usewc-space-input-padding-block) var(--usewc-space-input-padding-inline);
+  gap: var(--usewc-space-input-gap);
+}
+
+use-select::part(trigger):hover {
+  background-color: var(--usewc-color-input-background-hover);
+}
+
+use-select::part(trigger):focus-visible {
+  outline: var(--usewc-size-focus-ring) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
+  outline-offset: var(--usewc-space-input-focus-ring);
+}
+
+use-select::part(trigger-label) {
+  color: var(--usewc-color-input-text-static);
+}
+
+use-select::part(trigger-arrow) {
+  color: var(--usewc-color-input-trigger-static);
+}
+```
+
+#### Proposed Naming Conventions
+
+##### Token Categories
+
+- `color`
+- `size`
+- `space`
+- `font`
+- `shadow`
+- `effect`
+
+##### Component Categories
+
+- `input` - anything that can hold a value
+- `selector` - an input that toggles between two or three states (on / off, true / false, checked / unchecked / mixed)
+  - `checkbox` - a selector that toggles between checked and unchecked
+  - `radio` - a selector that toggles between checked and unchecked, but only one can be checked at a time
+  - `switch` - a selector that toggles between checked and unchecked
+- `action` - a button or link that triggers an action
+  - `button` - a button that triggers an action
+  - `link` - a link that triggers an action
+
+##### Properties
+
+- `background`
+- `border`
+- `text`
+- `focus-ring`
+- `padding-inline`
+- `padding-block`
+- `focus-ring`
+
+
+## Inspiration
+
+- [https://medium.com/eightshapes-llc/naming-tokens-in-design-systems-9e86c7444676](https://medium.com/eightshapes-llc/naming-tokens-in-design-systems-9e86c7444676)
