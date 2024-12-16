@@ -12,7 +12,9 @@
     "build-storybook": "npm run analyze && storybook build"
   },
   "dependencies": {
-    "lit": "^3.2.0"
+    "@gfellerph/focusgroup-polyfill": "^0.0.1-experimental.4",
+    "lit": "^3.2.0",
+    "tabbable": "^6.2.0"
   },
   "devDependencies": {
     "@custom-elements-manifest/analyzer": "^0.10.3",
