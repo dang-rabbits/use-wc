@@ -25,7 +25,13 @@ const meta: Meta<UseWidget> = {
       </use-widget>
       <use-widget aria-label="widget two">
         <button>hello</button>
-        <button>hello</button>
+        <div>
+          <use-listbox>
+            <use-option>hello</use-option>
+            <use-option>hello</use-option>
+            <use-option>hello</use-option>
+          </use-listbox>
+        </div>
         <button>hello</button>
       </use-widget>
       <use-widget aria-label="widget three">
@@ -41,3 +47,16 @@ export default meta;
 type Story = StoryObj<UseWidget>;
 
 export const Default: Story = {};
+
+export const Inert: Story = {
+  render: () => {
+    return html`
+      <use-widget aria-label="inert widget" inert>
+        <button>hello</button>
+        <button>hello</button>
+        <input />
+        <button>hello</button>
+      </use-widget>
+  `;
+  }
+};

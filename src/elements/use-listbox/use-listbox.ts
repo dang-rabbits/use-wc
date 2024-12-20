@@ -188,20 +188,24 @@ export class UseListbox extends LitElement {
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
+        event.stopPropagation();
         if (activeIndex > 0) {
           moveTo = options.at(activeIndex - 1);
         }
         break;
       case 'ArrowDown':
         event.preventDefault();
+        event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
         break;
       case 'Home':
         event.preventDefault();
+        event.stopPropagation();
         moveTo = options.at(0);
         break;
       case 'End':
         event.preventDefault();
+        event.stopPropagation();
         moveTo = options.at(options.length - 1);
         break;
     }
