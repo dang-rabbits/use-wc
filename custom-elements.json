@@ -10,6 +10,285 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-dropdown/use-dropdown.stories.ts",
+      "declarations": [
+        {
+          "kind": "variable",
+          "name": "meta",
+          "type": {
+            "text": "Meta<UseDropdown>"
+          },
+          "default": "{ component: 'use-dropdown', title: 'Web Components/use-dropdown', tags: ['autodocs', '!dev'], args: { disabled: false, }, render: (args) => { return html` <use-dropdown ?disabled=${args.disabled} label=\"Dropdown\"> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <button role=\"menuitem\">menu item 3</button> <a role=\"menuitem\" href=\"https://usewc.com/\">Use WC</a> </use-dropdown> `; }, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Default",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{}"
+        },
+        {
+          "kind": "variable",
+          "name": "Inert",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => { return html` <use-dropdown label=\"inert dropdown\" inert> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <button role=\"menuitem\">menu item 3</button> <a role=\"menuitem\" href=\"https://usewc.com/\">Use WC</a> </use-dropdown> `; } }"
+        },
+        {
+          "kind": "variable",
+          "name": "Disabled",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ args: { disabled: true }, }"
+        },
+        {
+          "kind": "variable",
+          "name": "NestedMenus",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-dropdown label=\"Menu\"> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <button role=\"menuitem\">menu item 3</button> <use-dropdown label=\"Neste menu\"> <button role=\"menuitem\">nested menu item 1</button> <button role=\"menuitem\">nested menu item 2</button> <button role=\"menuitem\">nested menu item 3</button> </use-dropdown> </use-dropdown> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Groups",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-dropdown label=\"Menu\"> <div role=\"group\" aria-label=\"Group\"> <div>Group</div> <button role=\"menuitem\">group item 1</button> <button role=\"menuitem\">group item 2</button> <button role=\"menuitem\">group item 3</button> </div> <div role=\"group\" aria-label=\"Group\"> <div>Group</div> <button role=\"menuitem\">group item 1</button> <button role=\"menuitem\">group item 2</button> <button role=\"menuitem\">group item 3</button> </div> </use-dropdown> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "Dividers",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <use-dropdown label=\"Menu\"> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <hr /> <button role=\"menuitem\">menu item 3</button> </use-dropdown> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomTrigger",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <style> .custom-trigger::part(trigger-arrow) { display: none; } </style> <use-dropdown class=\"custom-trigger\"> <span slot=\"trigger-label\" style=\"display: contents\"> <svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"> <rect y=\"2\" width=\"24\" height=\"2\" fill=\"currentColor\"/> <rect y=\"11\" width=\"24\" height=\"2\" fill=\"currentColor\"/> <rect y=\"20\" width=\"24\" height=\"2\" fill=\"currentColor\"/> </svg> Menu </span> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <button role=\"menuitem\">menu item 3</button> </use-dropdown> `, }"
+        },
+        {
+          "kind": "variable",
+          "name": "CheckboxSelect",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ parameters: { docs: { descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/' } }, render: () => html` <use-dropdown label=\"Checkbox options\"> <button role=\"menuitemcheckbox\" aria-checked=\"true\" type=\"button\">✅ option 1</button> <button role=\"menuitemcheckbox\" aria-checked=\"false\" type=\"button\">option 2</button> <button role=\"menuitemcheckbox\" aria-checked=\"false\" type=\"button\">option 3</button> </use-dropdown> ` }"
+        },
+        {
+          "kind": "variable",
+          "name": "RadioSelect",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ parameters: { docs: { descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/' } }, render: () => html` <use-dropdown label=\"Radio options\"> <button role=\"menuitemradio\" aria-checked=\"true\" type=\"button\">✅ option 1</button> <button role=\"menuitemradio\" aria-checked=\"false\" type=\"button\">option 2</button> <button role=\"menuitemradio\" aria-checked=\"false\" type=\"button\">option 3</button> </use-dropdown> ` }"
+        },
+        {
+          "kind": "variable",
+          "name": "CustomStyles",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => html` <style> .custom-use-dropdown::part(trigger), .custom-use-dropdown::part(popover) { background-color: blanchedalmond; color: orangered; border: 2px solid orangered; border-radius: 6px; padding: 4px; box-shadow: 1px 1px 0 orangered, 2px 2px 0 orangered, 3px 3px 0 orangered; font-size: 16px; font-weight: 700; } .custom-use-dropdown::part(trigger):focus-visible { outline: 2px dashed currentColor; outline-offset: 4px; box-shadow: none; } .custom-use-dropdown::part(trigger):is(:hover, :focus) { background-color: orangered; color: blanchedalmond; } .custom-use-dropdown :is(button, a) { all: unset; box-sizing: border-box; display: block; width: 100%; font-weight: 400; border-radius: 6px; padding: 4px; cursor: default; &:is(:hover, :focus) { background-color: orangered; color: blanchedalmond; } } .custom-use-dropdown hr { margin: 4px 0; border: none; border-top: 2px dotted orangered; } </style> <use-dropdown class=\"custom-use-dropdown\" label=\"Menu\"> <button role=\"menuitem\">menu item 1</button> <button role=\"menuitem\">menu item 2</button> <button role=\"menuitem\">menu item 3</button> <hr /> <a role=\"menuitem\" href=\"#\">Example link 1</a> <a role=\"menuitem\" href=\"#\">Example link 2</a> </use-dropdown> `, }"
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "default",
+          "declaration": {
+            "name": "meta",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Default",
+          "declaration": {
+            "name": "Default",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Inert",
+          "declaration": {
+            "name": "Inert",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Disabled",
+          "declaration": {
+            "name": "Disabled",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "NestedMenus",
+          "declaration": {
+            "name": "NestedMenus",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Groups",
+          "declaration": {
+            "name": "Groups",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "Dividers",
+          "declaration": {
+            "name": "Dividers",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomTrigger",
+          "declaration": {
+            "name": "CustomTrigger",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CheckboxSelect",
+          "declaration": {
+            "name": "CheckboxSelect",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "RadioSelect",
+          "declaration": {
+            "name": "RadioSelect",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "CustomStyles",
+          "declaration": {
+            "name": "CustomStyles",
+            "module": "src/elements/use-dropdown/use-dropdown.stories.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-dropdown/use-dropdown.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "This component provides a generic dropdown menu. The popover portion can contain `button`s, links (`a`), horizontal rulers (`hr`), or nested `use-dropdown` elements.",
+          "name": "UseDropdown",
+          "slots": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "trigger-label"
+            },
+            {
+              "name": "trigger-arrow"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "trigger",
+              "type": {
+                "text": "HTMLButtonElement | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "method",
+              "name": "getId"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-dropdown",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseDropdown",
+          "declaration": {
+            "name": "UseDropdown",
+            "module": "src/elements/use-dropdown/use-dropdown.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-dropdown",
+          "declaration": {
+            "name": "UseDropdown",
+            "module": "src/elements/use-dropdown/use-dropdown.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-focusgroup/use-focusgroup.stories.ts",
       "declarations": [
         {
@@ -455,94 +734,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/elements/use-options/use-option.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
-          "name": "UseOption",
-          "slots": [
-            {
-              "name": "selected-indicator"
-            },
-            {}
-          ],
-          "members": [
-            {
-              "kind": "field",
-              "name": "selected",
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "value",
-              "attribute": "value"
-            },
-            {
-              "kind": "method",
-              "name": "toggleSelected"
-            },
-            {
-              "kind": "method",
-              "name": "setActive",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ]
-            }
-          ],
-          "attributes": [
-            {
-              "name": "selected",
-              "fieldName": "selected"
-            },
-            {
-              "name": "disabled",
-              "fieldName": "disabled"
-            },
-            {
-              "name": "value",
-              "fieldName": "value"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "use-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "UseOption",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-options/use-option.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "use-option",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-options/use-option.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/elements/use-select/use-select.stories.ts",
       "declarations": [
         {
@@ -850,6 +1041,260 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-options/use-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
+          "name": "UseOption",
+          "slots": [
+            {
+              "name": "selected-indicator"
+            },
+            {}
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "attribute": "value"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected"
+            },
+            {
+              "kind": "method",
+              "name": "setActive",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "value",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseOption",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-options/use-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-option",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-options/use-option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-tree/use-tree.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "UseTree",
+          "slots": [
+            {
+              "description": "NodeList of `use-option` elements",
+              "name": "default"
+            },
+            {
+              "name": "arrow"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "attribute": "name"
+            },
+            {
+              "kind": "field",
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "placeholder"
+            },
+            {
+              "kind": "field",
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "multiple",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "selected",
+              "description": "UseOption[]",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "firstSelected",
+              "readonly": true
+            },
+            {
+              "kind": "field",
+              "name": "options",
+              "type": {
+                "text": "Array<UseOption>"
+              }
+            },
+            {
+              "kind": "field",
+              "name": "listbox",
+              "type": {
+                "text": "HTMLDivElement"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "getId"
+            },
+            {
+              "kind": "field",
+              "name": "activeOption"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "FormData"
+              },
+              "readonly": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "name",
+              "type": {
+                "text": "string | undefined"
+              },
+              "fieldName": "name"
+            },
+            {
+              "name": "placeholder",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "placeholder"
+            },
+            {
+              "name": "multiple",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "multiple"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-tree",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseTree",
+          "declaration": {
+            "name": "UseTree",
+            "module": "src/elements/use-tree/use-tree.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-tree",
+          "declaration": {
+            "name": "UseTree",
+            "module": "src/elements/use-tree/use-tree.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-widget/use-widget.stories.ts",
       "declarations": [
         {
@@ -858,7 +1303,7 @@
           "type": {
             "text": "Meta<UseWidget>"
           },
-          "default": "{ component: 'use-widget', title: 'Web Components/use-widget', tags: ['autodocs', '!dev'], args: {}, render: () => { return html` <style> use-widget { display: block; border: 1px solid light-dark(rgba(0,0,0,.25), rgba(255,255,255,.25)); padding: 1rem; margin: 1rem; } </style> <use-widget aria-label=\"widget one\"> <button>hello</button> <button>hello</button> <input /> <button>hello</button> </use-widget> <use-widget aria-label=\"widget two\"> <button>hello</button> <button>hello</button> <button>hello</button> </use-widget> <use-widget aria-label=\"widget three\"> <button>hello</button> <button>hello</button> <button>hello</button> </use-widget> `; }, }"
+          "default": "{ component: 'use-widget', title: 'Web Components/use-widget', tags: ['autodocs', '!dev'], args: {}, render: () => { return html` <style> use-widget { display: block; border: 1px solid light-dark(rgba(0,0,0,.25), rgba(255,255,255,.25)); padding: 1rem; margin: 1rem; } </style> <use-widget aria-label=\"widget one\"> <button>hello</button> <button>hello</button> <input /> <button>hello</button> </use-widget> <use-widget aria-label=\"widget two\"> <button>hello</button> <div> <use-listbox> <use-option>hello</use-option> <use-option>hello</use-option> <use-option>hello</use-option> </use-listbox> </div> <button>hello</button> </use-widget> <use-widget aria-label=\"widget three\"> <button>hello</button> <button>hello</button> <button>hello</button> </use-widget> `; }, }"
         },
         {
           "kind": "variable",
@@ -867,6 +1312,14 @@
             "text": "Story"
           },
           "default": "{}"
+        },
+        {
+          "kind": "variable",
+          "name": "Inert",
+          "type": {
+            "text": "Story"
+          },
+          "default": "{ render: () => { return html` <use-widget aria-label=\"inert widget\" inert> <button>hello</button> <button>hello</button> <input /> <button>hello</button> </use-widget> `; } }"
         }
       ],
       "exports": [
@@ -885,6 +1338,14 @@
             "name": "Default",
             "module": "src/elements/use-widget/use-widget.stories.ts"
           }
+        },
+        {
+          "kind": "js",
+          "name": "Inert",
+          "declaration": {
+            "name": "Inert",
+            "module": "src/elements/use-widget/use-widget.stories.ts"
+          }
         }
       ]
     },
@@ -894,7 +1355,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Nested controls are removed from the tab flow until the user activates the widget with `Enter` or `F2`. Clicking on a control will also activate the widget. Widgets are deactivated with `Escape` or `F2` keys or when the user clicks outside of the widget.\n\n`use-widget` can be used for easily navigating customizable dashboard widgets that contain multiple interactive elements. It can also be used for table and grid cells that contain multiple interactive elements, as described in the [WCAG Grid Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).\n\n## To do\n\n- [ ] Convert to a standard web component instead of LitElement\n\n## Sources\n\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Grid (Interactive Tabular Data and Layout Containers) Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/)",
+          "description": "Nested controls are removed from the tab flow until the user activates the widget with `Enter` or `F2`. Clicking on a control will also activate the widget. Widgets are deactivated with `Escape` or `F2` keys or when the user clicks outside of the widget.\n\n`use-widget` can be used for easily navigating customizable dashboard widgets that contain multiple interactive elements. It can also be used for table and grid cells that contain multiple interactive elements, as described in the [WCAG Grid Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).\n\n## To do\n\n- [ ] Convert to a standard web component instead of LitElement\n- [ ] implement Arrow Key navigation for tabbable elements when activated\n\n## Sources\n\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Grid (Interactive Tabular Data and Layout Containers) Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/)",
           "name": "UseWidget",
           "slots": [
             {}
@@ -910,7 +1371,7 @@
               "parameters": [
                 {
                   "name": "autofocus",
-                  "default": "false",
+                  "default": "true",
                   "type": {
                     "text": "boolean"
                   }
