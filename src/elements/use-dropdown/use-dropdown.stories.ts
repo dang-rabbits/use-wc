@@ -24,7 +24,11 @@ const meta: Meta<UseDropdown> = {
 export default meta;
 type Story = StoryObj<UseDropdown>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    showPanel: false,
+  }
+};
 
 export const Inert: Story = {
   render: () => {
@@ -91,28 +95,92 @@ export const Dividers: Story = {
   `,
 };
 
-export const CustomTrigger: Story = {
+export const DisabledItems: Story = {
+  parameters: {
+    docs: {
+      description: 'Screen reader users will need to know of disabled items. Use `aria-disabled="true"` to indicate that an item is disabled and disable the `click` event handler within the callback directly.'
+    },
+  },
   render: () => html`
-    <style>
-      .custom-trigger::part(trigger-arrow) {
-        display: none;
-      }
-    </style>
-    <use-dropdown class="custom-trigger">
-      <span slot="trigger-label" style="display: contents">
-        <svg width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <rect y="2" width="24" height="2" fill="currentColor"/>
-          <rect y="11" width="24" height="2" fill="currentColor"/>
-          <rect y="20" width="24" height="2" fill="currentColor"/>
-        </svg>
-        Menu
-      </span>
+    <use-dropdown label="Menu">
+      <button role="menuitem">menu item 1</button>
+      <button role="menuitem" aria-disabled="true">menu item 2</button>
+      <button role="menuitem">menu item 3</button>
+    </use-dropdown>
+  `,
+};
+
+export const CustomAccessibleItems: Story = {
+  render: () => html`
+    <use-dropdown label="Menu">
+      <div role="menuitem" onclick="alert('hello')">menu item 1</div>
+      <div role="menuitem" onclick="alert('hello')">menu item 2</div>
+      <div role="menuitem" onclick="alert('hello')">menu item 3</div>
+    </use-dropdown>
+  `,
+};
+
+export const CustomTriggerContent: Story = {
+  render: () => html`
+    <use-dropdown>
+      <svg slot="trigger-content" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Menu">
+        <rect y="2" width="24" height="2" fill="currentColor"/>
+        <rect y="11" width="24" height="2" fill="currentColor"/>
+        <rect y="20" width="24" height="2" fill="currentColor"/>
+      </svg>
       <button role="menuitem">menu item 1</button>
       <button role="menuitem">menu item 2</button>
       <button role="menuitem">menu item 3</button>
     </use-dropdown>
   `,
 };
+
+export const CustomItemLayout: Story = {
+  parameters: {
+    docs: {
+      description: 'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.'
+    }
+  },
+  render: () => html`
+    <use-dropdown label="Menu">
+      <button role="menuitem">menu item 1</button>
+      <button role="menuitem">menu item 2</button>
+      <hr />
+      <div style="display: flex; justify-content: space-between; width: 100vw; max-width: 200px;">
+        <div id="custom-menu-layout-item-label">Zoom</div>
+        <div style="display: inline-flex; gap: 8px; align-items: center;">
+          <button role="menuitem" menu-item="keep-open" aria-label="Zoom Out">-</button>
+          <div>100%</div>
+          <button role="menuitem" menu-item="keep-open" aria-label="Zoom In">+</button>
+        </div>
+      </div>
+    </use-dropdown>
+  `,
+}
+
+export const SplitMenuItemButton: Story = {
+  render: () => html`
+    <use-dropdown label="Menu">
+      <button role="menuitem">menu item 1</button>
+      <button role="menuitem">menu item 2</button>
+      <div style="display: flex; gap: 8px; width: 100vw; max-width: 200px;">
+        <button role="menuitem" style="flex: 1 1 auto;">menu item 3</button>
+        <use-dropdown>
+          <div slot="trigger-content">▶</div>
+          <button role="menuitem">nested menu item 1</button>
+          <button role="menuitem">nested menu item 2</button>
+          <button role="menuitem">nested menu item 3</button>
+        </use-dropdown>
+      </div>
+    </use-dropdown>
+  `,
+}
+
+// TODO
+// export const CustomArrow: Story = {}
+
+// TODO
+// export const PopoverHeader: Story = {}
 
 export const CheckboxSelect: Story = {
   parameters: {
@@ -144,11 +212,35 @@ export const RadioSelect: Story = {
   `
 }
 
+export const InjectedItems: Story = {
+  render: () => {
+    function injectItems() {
+      const dropdown = document.getElementById('inject-dropdown');
+      if (dropdown) {
+        dropdown.innerHTML = dropdown.innerHTML + `
+          <button role="menuitem">injected item 1</button>
+          <button role="menuitem">injected item 2</button>
+          <button role="menuitem">injected item 3</button>
+        `;
+      }
+    }
+
+    return html`
+      <use-dropdown id="inject-dropdown" label="Menu">
+        <button role="menuitem">menu item 1</button>
+        <button role="menuitem">menu item 2</button>
+        <button role="menuitem">menu item 3</button>
+      </use-dropdown>
+      <button type="button" @click=${injectItems}>Inject items</button>
+    `;
+  },
+}
+
 export const CustomStyles: Story = {
   render: () => html`
     <style>
       .custom-use-dropdown::part(trigger),
-      .custom-use-dropdown::part(popover) {
+      .custom-use-dropdown::part(menu) {
         background-color: blanchedalmond;
         color: orangered;
         border: 2px solid orangered;
@@ -200,5 +292,68 @@ export const CustomStyles: Story = {
       <a role="menuitem" href="#">Example link 1</a>
       <a role="menuitem" href="#">Example link 2</a>
     </use-dropdown>
+  `,
+};
+
+export const CSSAnchorPositioning: Story = {
+  render: () => html`
+    <style>
+      .css-anchor-positioning use-dropdown {
+        anchor-scope: --use-dropdown-trigger;
+      }
+
+      .css-anchor-positioning use-dropdown::part(trigger) {
+        white-space: nowrap;
+        anchor-name: --use-dropdown-trigger;
+      }
+
+      .css-anchor-positioning use-dropdown::part(menu) {
+        margin: unset;
+        inset: unset;
+        position: absolute;
+        position-anchor: --use-dropdown-trigger;
+
+        inset-block-start: calc(anchor(end) + 0.5rem);
+        inset-inline-start: anchor(start);
+        position-try-fallbacks: flip-block, flip-inline, flip-inline flip-block;
+      }
+
+      .css-anchor-positioning use-dropdown use-dropdown::part(menu) {
+        margin-inline-start: 0.5rem;
+        inset-block-start: anchor(start);
+        inset-inline-start: anchor(end);
+      }
+    </style>
+    <div class="css-anchor-positioning">
+      <use-dropdown label="Menu">
+        <button role="menuitem">menu item 1</button>
+        <button role="menuitem">menu item 2</button>
+        <button role="menuitem">menu item 3</button>
+
+        <use-dropdown label="Nested menu">
+          <button role="menuitem">nested menu item 1</button>
+          <button role="menuitem">nested menu item 2</button>
+          <button role="menuitem">nested menu item 3</button>
+
+          <use-dropdown label="Nested menu">
+            <button role="menuitem">nested menu item 1</button>
+            <button role="menuitem">nested menu item 2</button>
+            <button role="menuitem">nested menu item 3</button>
+          </use-dropdown>
+
+          <use-dropdown label="Nested menu">
+            <button role="menuitem">nested menu item 1</button>
+            <button role="menuitem">nested menu item 2</button>
+            <button role="menuitem">nested menu item 3</button>
+          </use-dropdown>
+        </use-dropdown>
+
+        <use-dropdown label="Nested menu 2">
+          <button role="menuitem">nested menu item 1</button>
+          <button role="menuitem">nested menu item 2</button>
+          <button role="menuitem">nested menu item 3</button>
+        </use-dropdown>
+      </use-dropdown>
+    </div>
   `,
 };

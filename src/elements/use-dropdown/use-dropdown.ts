@@ -1,19 +1,33 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import createId from '../../utils/create-id';
-import { getTabIndex, isTabbable } from 'tabbable';
+import { getTabIndex } from 'tabbable';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-dropdown-tabindex';
 
-// TODO typeahead
-// TODO HOME / END keys
-// TODO checkboxes https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/
-// TODO radio https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/
+const TABBABLE_SELECTOR = `
+  :is(
+    [role="menuitem"],
+    [role="menuitemcheckbox"],
+    [role="menuitemradio"],
+    use-dropdown
+  ):not(:is(
+    [disabled],
+    [hidden],
+    [inert],
+    [aria-hidden="true"]
+  ))
+`;
 
 /**
- * This component provides a generic dropdown menu. The popover portion can contain `button`s, links (`a`), horizontal rulers (`hr`), or nested `use-dropdown` elements.
+ * When the popover is opened the tabbable elements are found and indexed for keyboard navigation. The first tabbable element is focused when the popover is opened. The following selector is used to find tabbable elements:
+ *
+ * ```css
+ * :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown):not([disabled])
+ * ```
  *
  * @slot default
+ * @slot trigger-content
  * @slot trigger-label
  * @slot trigger-arrow
  */
@@ -28,6 +42,9 @@ export class UseDropdown extends LitElement {
 
   #id: string;
   #internals: ElementInternals;
+  #itemLabels: string[] = [];
+  #isNested = this.parentElement?.closest('use-dropdown') != null;
+  trigger: HTMLButtonElement | null = null;
 
   @property({ type: Boolean })
   set disabled(flag) {
@@ -38,8 +55,6 @@ export class UseDropdown extends LitElement {
     return this.#internals.states.has("disabled");
   }
 
-  trigger: HTMLButtonElement | null = null;
-
   @property()
   label!: string;
 
@@ -47,6 +62,8 @@ export class UseDropdown extends LitElement {
     super();
     this.#id = createId();
     this.#internals = this.attachInternals();
+    this.#initializeTabbables();
+    console.log(this.#tabbables)
 
     if (this.hasAttribute("disabled")) {
       this.#internals.states.add("disabled");
@@ -66,27 +83,14 @@ export class UseDropdown extends LitElement {
   }
 
   #findTabbables() {
-    const walker = document.createTreeWalker(this, NodeFilter.SHOW_ELEMENT, {
-      acceptNode: (node) => {
-        if (node instanceof HTMLElement && (isTabbable(node) || node.shadowRoot?.delegatesFocus)) {
-          return NodeFilter.FILTER_ACCEPT;
-        }
-        return NodeFilter.FILTER_SKIP;
-      }
+    return Array.from(this.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter((element) => {
+      return element.parentElement?.closest('use-dropdown') === this;
     });
-
-    const elements = [];
-
-    while (walker.nextNode()) {
-      elements.push(walker.currentNode);
-    }
-
-    return elements as HTMLElement[];
   }
 
   #getTabIndex(element: HTMLElement) {
-    if (element.shadowRoot?.delegatesFocus && element.getAttribute('tabindex') === null) {
-      return '0';
+    if (element.shadowRoot?.delegatesFocus || element.getAttribute('tabindex') === null) {
+      return null;
     }
 
     return String(getTabIndex(element));
@@ -94,22 +98,19 @@ export class UseDropdown extends LitElement {
 
   #initializeTabbables() {
     this.#tabbables = this.#findTabbables();
+    this.#itemLabels = [];
 
-    this.#tabbables.forEach((element) => {
-      element.setAttribute(INITIAL_TABINDEX_ATTR, this.#getTabIndex(element));
-      element.setAttribute('tabindex', '-1');
-    });
-  }
-
-  #resetTabbables() {
-    this.#tabbables.forEach((element) => {
-      const initialTabIndex = element.getAttribute(INITIAL_TABINDEX_ATTR);
-      if (initialTabIndex !== null) {
-        element.setAttribute('tabindex', initialTabIndex);
-      } else {
-        element.removeAttribute('tabindex');
+    this.#tabbables.forEach((element, index) => {
+      const text = element.textContent?.trim();
+      if (text && Boolean(text)) {
+        this.#itemLabels[index] = text;
       }
-      element.removeAttribute(INITIAL_TABINDEX_ATTR);
+
+      const tabindex = this.#getTabIndex(element);
+      if (tabindex != null) {
+        element.setAttribute(INITIAL_TABINDEX_ATTR, tabindex);
+      }
+      element.setAttribute('tabindex', '-1');
     });
   }
 
@@ -118,7 +119,21 @@ export class UseDropdown extends LitElement {
       return;
     }
 
+    const target = event.target as HTMLElement;
+
+    if (target.getAttribute('menu-item')?.includes('keep-open')) {
+      return;
+    }
+
+    this.#closePopover();
+  }
+
+  #closePopover(returnFocus = true) {
     (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
+
+    if (returnFocus) {
+      this.trigger?.focus();
+    }
   }
 
   async #initializeDisabled(disabled: boolean) {
@@ -145,22 +160,16 @@ export class UseDropdown extends LitElement {
     return this.trigger?.popoverTargetElement?.matches(":popover-open");
   }
 
-  #isNested() {
-    const closest = this.closest('use-dropdown');
-    return closest !== null && closest !== this;
-  }
-
   #handleKeyDown(event: KeyboardEvent) {
     const isOpen = this.#getPopoverOpen();
-    const isNested = this.#isNested();
 
-    if (!isOpen && !isNested && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+    if (!isOpen && !this.#isNested && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
       event.preventDefault();
       (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
     }
 
-    if (!isOpen && isNested && ['ArrowRight', 'ArrowLeft', 'Enter', ' '].includes(event.key)) {
+    if (!isOpen && this.#isNested && ['ArrowRight', 'ArrowLeft', 'Enter', ' '].includes(event.key)) {
       event.preventDefault();
       (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
@@ -168,6 +177,13 @@ export class UseDropdown extends LitElement {
 
     if (!isOpen) {
       return;
+    }
+
+    if (isOpen && this.#isNested && event.key === 'ArrowLeft') {
+      this.#closePopover();
+      event.preventDefault();
+      event.stopPropagation();
+      return
     }
 
     const options = this.#tabbables;
@@ -187,9 +203,31 @@ export class UseDropdown extends LitElement {
         event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
         break;
+      case 'Home':
+        event.preventDefault();
+        event.stopPropagation();
+        moveTo = options[0];
+        break;
+      case 'End':
+        event.preventDefault();
+        event.stopPropagation();
+        moveTo = options[options.length - 1];
+        break;
       case 'Tab':
         (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
         break;
+      case 'Escape':
+        event.stopPropagation();
+        this.trigger?.focus();
+        break;
+    }
+
+    // TODO improve this to handle multiple items with the same first letter
+    if (!moveTo && event.key.match(/^[\w\d]$/)) {
+      const index = this.#itemLabels.findIndex((label) => label.toLowerCase().startsWith(event.key.toLowerCase()));
+      if (index > -1) {
+        moveTo = options[index];
+      }
     }
 
     moveTo?.focus();
@@ -203,12 +241,16 @@ export class UseDropdown extends LitElement {
     }
 
     if (opening) {
-      this.#initializeTabbables();
       this.#tabbables[0]?.focus();
-    } else {
-      this.#resetTabbables();
-      this.trigger?.focus();
     }
+  }
+
+  #handleSlotChange() {
+    this.#initializeTabbables();
+  }
+
+  get #triggerIconText() {
+    return this.#isNested ? '▶' : '▼';
   }
 
   render() {
@@ -218,32 +260,29 @@ export class UseDropdown extends LitElement {
         type="button"
         id=${this.#triggerId}
         popovertarget=${this.#popoverId}
+        popovertargetaction="toggle"
         aria-controls=${this.#popoverId}
-        aria-haspopup="listbox"
+        aria-haspopup="menu"
         aria-expanded="false"
         ?disabled=${this.disabled}
         @keydown=${this.#handleKeyDown}
       >
-        <span part="trigger-label">
-          <slot name="trigger-label">${this.label}</slot>
-        </span>
-        <slot part="trigger-arrow" name="trigger-arrow">
-          <svg fill="currentColor" part="trigger-arrow-default" aria-hidden>
-            <polygon points="4,4 8,0 0,0" />
-          </svg>
+        <slot name="trigger-content">
+          <slot part="trigger-label" name="trigger-label">${this.label}</slot>
+          <slot part="trigger-icon" name="trigger-icon">${this.#triggerIconText}</slot>
         </slot>
       </button>
       <div
         id=${this.#popoverId}
         role="menu"
-        part="popover"
+        part="menu"
         popover
         aria-labelledby=${this.#triggerId}
         @click=${this.#handlePopoverClick}
         @toggle=${this.#handlePopoverToggle}
         @keydown=${this.#handleKeyDown}
       >
-        <slot></slot>
+        <slot @slotchange=${this.#handleSlotChange}></slot>
       </div>
     `;
   }
@@ -255,34 +294,14 @@ export class UseDropdown extends LitElement {
    * @link https://github.com/w3c/csswg-drafts/issues/6867
    */
   static styles = css`
-    :host button {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      text-align: start;
-    }
-
-    :host button > * {
-      display: contents;
-    }
-
-    svg[part="trigger-arrow-default"] {
-      width: .5rem;
-      height: .25rem;
-    }
-
     :host(:state(disabled)) {
       pointer-events: none;
     }
 
-    [part="popover"]:popover-open {
+    [part="menu"]:popover-open {
       display: flex;
       flex-direction: column;
       justify-items: stretch;
-    }
-
-    [part="popover"] :is(button, use-dropdown, hr) {
-      width: 100%;
     }
 
     ::slotted(hr) {
