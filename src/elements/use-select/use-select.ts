@@ -1,6 +1,6 @@
 import { LitElement, css, html } from 'lit'
 import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
-import { UseOption } from '../use-options/use-option';
+import { UseOption } from '../use-option/use-option';
 import createId from '../../utils/create-id';
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
@@ -15,7 +15,7 @@ const FORM_DATA_KEY = '__value';
 
 /**
  * ## Multiple
- * 
+ *
  * The `use-listbox` provides an attribute for selecting multiple options.
  *
  * @slot default NodeList of `use-option` elements

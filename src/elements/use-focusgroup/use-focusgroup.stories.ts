@@ -13,7 +13,19 @@ const meta: Meta<UseFocusgroup> = {
         <button>hello</button>
         <button>hello</button>
         <button>hello</button>
+        <use-dropdown label="Menu">
+          <button>hello</button>
+          <button>hello</button>
+        </use-dropdown>
+        <use-listbox>
+          <use-option>hello</use-option>
+          <use-option>world</use-option>
+        </use-listbox>
       </use-focusgroup>
+      <use-dropdown label="Menu">
+        <button>hello</button>
+        <button>hello</button>
+      </use-dropdown>
   `;
   },
 };
@@ -31,6 +43,10 @@ export const Polyfill: Story = {
       <use-widget>
         <input />
       </use-widget>
+      <use-dropdown label="Menu">
+        <button>hello</button>
+        <button>hello</button>
+      </use-dropdown>
       <use-select>
         <use-option>hello</use-option>
       </use-select>

@@ -30,6 +30,8 @@ const TABBABLE_SELECTOR = `
  * @slot trigger-content
  * @slot trigger-label
  * @slot trigger-arrow
+ *
+ * @state open `use-dropdown:state(open)`: The open state of the dropdown.
  */
 @customElement('use-dropdown')
 export class UseDropdown extends LitElement {
@@ -63,7 +65,6 @@ export class UseDropdown extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
     this.#initializeTabbables();
-    console.log(this.#tabbables)
 
     if (this.hasAttribute("disabled")) {
       this.#internals.states.add("disabled");
@@ -242,6 +243,9 @@ export class UseDropdown extends LitElement {
 
     if (opening) {
       this.#tabbables[0]?.focus();
+      this.#internals.states.add("open");
+    } else {
+      this.#internals.states.delete("open");
     }
   }
 

@@ -296,6 +296,13 @@ export const CustomStyles: Story = {
 };
 
 export const CSSAnchorPositioning: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story: `<baseline-status featureId="anchor-positioning"></baseline-status>`
+      }
+    }
+  },
   render: () => html`
     <style>
       .css-anchor-positioning use-dropdown {
