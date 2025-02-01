@@ -1,7 +1,7 @@
 // custom-elements-manifest.config.mjs
 export default {
     litelement: true,
-    globs: ['src/elements/**/*.ts'],
+    globs: ['src/elements/**/*.ts', '!src/elements/**/*.stories.ts'],
     plugins: [
         {
             name: 'web-components-private-fields-filter',

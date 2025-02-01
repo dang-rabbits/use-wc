@@ -1,7 +1,11 @@
-import { customElement } from 'lit/decorators.js'
 import { getTabIndex, tabbable } from 'tabbable';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-focusgroup-tabindex';
+const INITIAL_TABINDEX_VALUE = 'initial';
+
+function isUseFocusgroup(element: HTMLElement): element is UseFocusgroup {
+  return element instanceof UseFocusgroup;
+}
 
 /**
  * Nested controls are removed from the tab flow until the user navigates the nested controls with arrow keys.
@@ -10,57 +14,125 @@ const INITIAL_TABINDEX_ATTR = 'data-usewc-focusgroup-tabindex';
  *
  * ## To do
  *
- * - [ ] add `axis=inline|block` attribute
- * - [ ] add `nomemory` attribute
+ * - [ ] add `grid` navigation feature
+ *
+ * ## Long term plan
+ *
+ * This web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.
+ *
+ * <baseline-status featureId="focusgroup"></baseline-status>
  *
  * ## Sources
  *
+ * - [Open UI focusgroup Explainer](https://open-ui.org/components/focusgroup.explainer/)
  * - [tabbable](https://www.npmjs.com/package/tabbable)
  * - [Toolbar Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)
+ * - [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)
  */
-@customElement('use-focusgroup')
 export class UseFocusgroup extends HTMLElement {
+  static observedAttributes = ['features'];
+
+  /**
+   * A list of space-separated features that can be used to customize the behavior of the focusgroup.
+   *
+   * The following options are available:
+   *
+   * - `inline` opts into keyboard navigation via left and right arrow keys
+   * - `block` opts into keyboard navigation via up and down arrow keys
+   * - `wrap` arrow navigation should wrap around when reaching the end
+   * - `no-memory` whether the focusgroup should not remember the last focused element
+   *
+   * If nothing if neither `inline` nor `block` is specified, both are assumed.
+   *
+   * @attr {string} features
+   */
+  features: string = '';
+
+  /**
+   * The most recently focused element in the focusgroup.
+   */
+  focusedElement: HTMLElement | null = null;
+
   #tabbables: HTMLElement[] = [];
+  #arrowLeftKey!: string;
+  #arrowRightKey!: string;
+  #arrowDownKey!: string;
+  #arrowUpKey!: string;
+  #noMemory: boolean = false;
+  #wrap: boolean = true;
+  #parent: HTMLElement | null | undefined = null;
+  #nested: boolean = false;
+
+  constructor() {
+    super();
+  }
 
   connectedCallback() {
-    window.requestAnimationFrame(() => {
+    this.#initializeFeatures();
+    this.#parent = this.parentElement?.closest('use-focusgroup');
+    this.#nested = this.#parent != null;
+
+    setTimeout(() => {
       this.#initializeTabbables();
-    })
+    }, 0);
     this.#initializeListeners();
+  }
+
+  #initializeFeatures() {
+    this.features = this.getAttribute('features') ?? '';
+    const features = ` ${this.features} `;
+    const inline = features.includes(' inline ');
+    const block = features.includes(' block ');
+    const both = (!block && !inline) || (block && inline);
+
+    this.#arrowLeftKey = both || inline ? 'ArrowLeft' : 'ArrowLeft-DISABLED';
+    this.#arrowRightKey = both || inline ? 'ArrowRight' : 'ArrowRight-DISABLED';
+    this.#arrowDownKey = both || block ? 'ArrowDown' : 'ArrowDown-DISABLED';
+    this.#arrowUpKey = both || block ? 'ArrowUp' : 'ArrowUp-DISABLED';
+    this.#noMemory = features.includes(' no-memory ');
+    this.#wrap = features.includes(' wrap ');
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (name === 'features') {
+      this.#initializeFeatures();
+    }
   }
 
   #initializeListeners() {
     this.addEventListener('keydown', (event) => {
       let moveTo = -1;
       const target = event.target as HTMLElement;
+      const parent = target.closest('use-focusgroup');
+
       switch (event.key) {
-        case 'ArrowRight':
-        // case 'ArrowDown':
+        case this.#arrowRightKey:
+        case this.#arrowDownKey:
           if (target.matches('select, input, textarea')) {
             break;
           }
 
-          const currentIndex = this.#tabbables.indexOf(event.target as HTMLElement);
+          const currentIndex = this.#tabbables.indexOf((this === parent ? event.target : parent) as HTMLElement);
 
           if (currentIndex < this.#tabbables.length - 1) {
             moveTo = currentIndex + 1;
-          } else {
+          } else if (this.#wrap) {
             moveTo = 0;
           }
 
           break;
 
-        case 'ArrowLeft':
-        // case 'ArrowUp':
+        case this.#arrowLeftKey:
+        case this.#arrowUpKey:
           if (target.matches('select, input, textarea')) {
             break;
           }
 
-          const currentIndex2 = this.#tabbables.indexOf(event.target as HTMLElement);
+          const currentIndex2 = this.#tabbables.indexOf((this === parent ? event.target : parent) as HTMLElement);
 
           if (currentIndex2 > 0) {
             moveTo = currentIndex2 - 1;
-          } else {
+          } else if (this.#wrap) {
             moveTo = this.#tabbables.length - 1;
           }
 
@@ -71,29 +143,86 @@ export class UseFocusgroup extends HTMLElement {
         event.preventDefault();
         event.stopPropagation();
 
-        const targetEl = this.#tabbables[moveTo];
-        targetEl.focus();
-
-        if (this.getAttribute('no-memory') === null) {
-          this.#tabbables.forEach((element) => {
-            if (element.getAttribute(INITIAL_TABINDEX_ATTR)) {
-              element.setAttribute('tabindex', '-1');
-            }
-          });
-
-          const tabindex = targetEl.getAttribute(INITIAL_TABINDEX_ATTR);
-          if (tabindex === 'default') {
-            targetEl.removeAttribute('tabindex');
-          } else if (tabindex) {
-            targetEl.setAttribute('tabindex', tabindex);
-          }
-        }
+        this.#tabbables[moveTo].focus();
       }
+    });
+
+    this.addEventListener('focusout', (event) => {
+      if (!this.contains(event.relatedTarget as HTMLElement)) {
+        return;
+      }
+
+      if (this.#nested && this.#parent?.contains(event.target as HTMLElement)) {
+        this.#removeTabbable(event.target as HTMLElement);
+      }
+
+      if (!this.#nested) {
+        this.#removeTabbable(event.target as HTMLElement);
+      }
+    });
+
+    this.addEventListener('focusin', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      this.#makeTabbable(event.target as HTMLElement);
     });
   }
 
+  focus() {
+    if (this.focusedElement) {
+      this.focusedElement.focus();
+    } else {
+      this.#tabbables[0].focus();
+    }
+  }
+
+  #makeTabbable(element?: HTMLElement | null) {
+    if (element == null) {
+      return;
+    }
+
+    if (!this.#noMemory) {
+      this.focusedElement = element;
+      this.#tabbables.forEach((element) => {
+        this.#removeTabbable(element);
+      });
+
+      if (!isUseFocusgroup(element)) {
+        const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
+        if (tabindex === INITIAL_TABINDEX_VALUE) {
+          element.removeAttribute('tabindex');
+        } else if (tabindex) {
+          element.setAttribute('tabindex', tabindex);
+        }
+      }
+    }
+  };
+
+  #removeTabbable(element: HTMLElement) {
+    if (!isUseFocusgroup(element) && element.getAttribute(INITIAL_TABINDEX_ATTR)) {
+      element.setAttribute('tabindex', '-1');
+    }
+  }
+
   #findTabbables() {
-    return tabbable(this, { getShadowRoot: true }).map((node) => {
+    const allTabbables = tabbable(this, { getShadowRoot: true });
+    const filteredTabbables = [];
+
+    let parentPushed = false;
+    for (const node of allTabbables) {
+      const parent = node.closest('use-focusgroup');
+      if (this !== parent) {
+        if (this.contains(parent) && !parentPushed) {
+          filteredTabbables.push(parent);
+          parentPushed = true;
+        }
+      } else {
+        filteredTabbables.push(node);
+        parentPushed = false;
+      }
+    }
+
+    return filteredTabbables.map((node) => {
       // @ts-expect-error - `getRootNode` doesn't return an object with `host` but it works in the browser
       return node.getRootNode()?.host ?? node;
     });
@@ -105,7 +234,7 @@ export class UseFocusgroup extends HTMLElement {
     }
 
     if (element.getAttribute('tabindex') === null) {
-      return 'default';
+      return INITIAL_TABINDEX_VALUE;
     }
 
     return String(getTabIndex(element));
@@ -113,15 +242,34 @@ export class UseFocusgroup extends HTMLElement {
 
   #initializeTabbables() {
     this.#tabbables = this.#findTabbables();
-    this.#tabbables.forEach((element, index) => {
-      element.setAttribute(INITIAL_TABINDEX_ATTR, this.#getTabIndex(element));
+    this.#resetTabbables();
+  }
 
-      if (index > 0) {
+  #resetTabbables() {
+    // TODO what if the first element is a nested focusgroup?
+    // TODO what if the last element is a nested focusgroup?
+
+    this.#tabbables.forEach((element, index) => {
+      if (isUseFocusgroup(element)) {
+        return;
+      }
+
+      if (!element.hasAttribute(INITIAL_TABINDEX_ATTR)) {
+        element.setAttribute(INITIAL_TABINDEX_ATTR, this.#getTabIndex(element));
+      }
+
+      if (this.#noMemory || (index === 0 && !this.focusedElement)) {
+        this.focusedElement = element;
+      }
+
+      if (this.#nested || index > 0) {
         element.setAttribute('tabindex', '-1');
       }
     });
   }
 }
+
+customElements.define('use-focusgroup', UseFocusgroup);
 
 declare global {
   interface HTMLElementTagNameMap {
