@@ -20,9 +20,9 @@ const meta: Meta<UseFocusgroup> = {
   render: (args: UseFocusgroup) => {
     return html`
       <use-focusgroup features=${args.features}>
-        <button>hello</button>
-        <button>hello</button>
-        <button>hello</button>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
       </use-focusgroup>
     `;
   },
@@ -39,24 +39,51 @@ export const Inline: Story = {
   },
 };
 
+export const Block: Story = {
+  args: {
+    features: 'block',
+  },
+  render: () => {
+    return html`
+      <use-focusgroup features="block" style="display: flex; gap: 1rem; flex-direction: column;">
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+      </use-focusgroup>
+    `;
+  }
+};
+
+export const Wrap: Story = {
+  args: {
+    features: 'wrap',
+  },
+};
+
+export const NoMemory: Story = {
+  args: {
+    features: 'no-memory',
+  },
+};
+
 export const Nested: Story = {
-  render: (args: UseFocusgroup) => {
+  render: () => {
     return html`
       <use-focusgroup features="inline" style="display: flex; gap: 1rem; flex-direction: row;">
-        <button>hello</button>
+        <button type="button">hello</button>
         <use-focusgroup features="block" style="display: flex; gap: 1rem; flex-direction: column;">
-          <button>hello</button>
-          <button>hello</button>
-          <button>hello</button>
+          <button type="button">hello</button>
+          <button type="button">hello</button>
+          <button type="button">hello</button>
         </use-focusgroup>
-        <button>hello</button>
+        <button type="button">hello</button>
       </use-focusgroup>
     `;
   },
 };
 
 export const Toolbar: Story = {
-  render: (args: UseFocusgroup) => {
+  render: () => {
     return html`
       <style>
         .custom-toolbar {

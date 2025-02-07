@@ -15,6 +15,7 @@ function isUseFocusgroup(element: HTMLElement): element is UseFocusgroup {
  * ## To do
  *
  * - [ ] add `grid` navigation feature
+ * - [ ] add `autofocus` attribute support
  *
  * ## Long term plan
  *
@@ -93,7 +94,7 @@ export class UseFocusgroup extends HTMLElement {
     this.#wrap = features.includes(' wrap ');
   }
 
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+  attributeChangedCallback(name: string) {
     if (name === 'features') {
       this.#initializeFeatures();
     }
@@ -187,7 +188,9 @@ export class UseFocusgroup extends HTMLElement {
         this.#removeTabbable(element);
       });
 
-      if (!isUseFocusgroup(element)) {
+      if (isUseFocusgroup(element)) {
+        // element.promoteFocusable();
+      } else {
         const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
         if (tabindex === INITIAL_TABINDEX_VALUE) {
           element.removeAttribute('tabindex');
@@ -199,6 +202,10 @@ export class UseFocusgroup extends HTMLElement {
   };
 
   #removeTabbable(element: HTMLElement) {
+    if (this.#noMemory) {
+      return;
+    }
+
     if (!isUseFocusgroup(element) && element.getAttribute(INITIAL_TABINDEX_ATTR)) {
       element.setAttribute('tabindex', '-1');
     }
@@ -245,12 +252,33 @@ export class UseFocusgroup extends HTMLElement {
     this.#resetTabbables();
   }
 
-  #resetTabbables() {
-    // TODO what if the first element is a nested focusgroup?
-    // TODO what if the last element is a nested focusgroup?
+  #promoted = false;
 
+  /**
+   * Whether the use-focusgroup is promoted to the top of the tab order inside a parent use-focusgroup.
+   *
+   * @prop {boolean} promoted
+   * @readonly
+   * @default false
+   */
+  get promoted() {
+    return this.#promoted;
+  }
+
+  /**
+   * Promotes the use-focusgroup to the top of the tab order inside a parent use-focusgroup.
+   */
+  promote() {
+    this.#promoted = true;
+  }
+
+  #resetTabbables() {
     this.#tabbables.forEach((element, index) => {
       if (isUseFocusgroup(element)) {
+        if (index === 0) {
+          element.promote();
+        }
+
         return;
       }
 
@@ -262,7 +290,7 @@ export class UseFocusgroup extends HTMLElement {
         this.focusedElement = element;
       }
 
-      if (this.#nested || index > 0) {
+      if ((this.#nested && !this.#promoted) || index > 0) {
         element.setAttribute('tabindex', '-1');
       }
     });
