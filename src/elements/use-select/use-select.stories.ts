@@ -6,7 +6,7 @@ const meta: Meta<UseSelect> = {
   component: 'use-select',
   subcomponents: { 'use-option': 'use-option' },
   title: 'Web Components/use-select',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'form-input'],
   args: {
     placeholder: 'Select a number',
     disabled: false,
@@ -15,7 +15,7 @@ const meta: Meta<UseSelect> = {
   render: (args: UseSelect) => {
     return html`
       <use-select
-        name=${args.name}
+        .name=${args.name}
         placeholder=${args.placeholder}
         ?disabled=${args.disabled}
       >

@@ -6,7 +6,7 @@ const meta: Meta<UseListbox> = {
   component: 'use-listbox',
   subcomponents: { 'use-option': 'use-option' },
   title: 'Web Components/use-listbox',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'form-input'],
   args: {
     placeholder: 'Select a number',
     disabled: false,
@@ -16,7 +16,7 @@ const meta: Meta<UseListbox> = {
   render: (args: UseListbox) => {
     return html`
       <use-listbox
-        name=${args.name}
+        .name=${args.name}
         placeholder=${args.placeholder}
         ?disabled=${args.disabled}
         ?multiple=${args.multiple}

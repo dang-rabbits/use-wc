@@ -112,7 +112,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Nested controls are removed from the tab flow until the user navigates the nested controls with arrow keys.\n\n`use-focusgroup` is most useful for things like WYSIWYG toolbars, sets of tabs, or lists of navigation links (like a list of emails in a master detail layout).\n\n## To do\n\n- [ ] add `grid` navigation feature\n\n## Long term plan\n\nThis web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.\n\n<baseline-status featureId=\"focusgroup\"></baseline-status>\n\n## Sources\n\n- [Open UI focusgroup Explainer](https://open-ui.org/components/focusgroup.explainer/)\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Toolbar Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)\n- [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)",
+          "description": "Nested controls are removed from the tab flow until the user navigates the nested controls with arrow keys.\n\n`use-focusgroup` is most useful for things like WYSIWYG toolbars, sets of tabs, or lists of navigation links (like a list of emails in a master detail layout).\n\n## To do\n\n- [ ] add `grid` navigation feature\n- [ ] add `autofocus` attribute support\n\n## Long term plan\n\nThis web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.\n\n<baseline-status featureId=\"focusgroup_attribute\"></baseline-status>\n\n## Sources\n\n- [Open UI focusgroup Explainer](https://open-ui.org/components/focusgroup.explainer/)\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Toolbar Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)\n- [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)",
           "name": "UseFocusgroup",
           "members": [
             {
@@ -356,99 +356,11 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/elements/use-option/use-option.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
-          "name": "UseOption",
-          "slots": [
-            {
-              "name": "selected-indicator"
-            },
-            {}
-          ],
-          "members": [
-            {
-              "kind": "field",
-              "name": "selected",
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "value",
-              "attribute": "value"
-            },
-            {
-              "kind": "method",
-              "name": "toggleSelected"
-            },
-            {
-              "kind": "method",
-              "name": "setActive",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ]
-            }
-          ],
-          "attributes": [
-            {
-              "name": "selected",
-              "fieldName": "selected"
-            },
-            {
-              "name": "disabled",
-              "fieldName": "disabled"
-            },
-            {
-              "name": "value",
-              "fieldName": "value"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "use-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "UseOption",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-option/use-option.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "use-option",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-option/use-option.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/elements/use-select/use-select.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "## Multiple\n\nThe `use-listbox` provides an attribute for selecting multiple options.",
+          "description": "## Multiple\n\nThe `use-listbox` provides an attribute for selecting multiple options.\n\n## Long term plan\n\nThis web component was built with the intent to be replaced by browser-native `base-select` support once it becomes baseline.\n\n<baseline-status featureId=\"base-select\"></baseline-status>",
           "name": "UseSelect",
           "slots": [
             {
@@ -599,15 +511,103 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-option/use-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
+          "name": "UseOption",
+          "slots": [
+            {
+              "name": "selected-indicator"
+            },
+            {}
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "attribute": "value"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected"
+            },
+            {
+              "kind": "method",
+              "name": "setActive",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "value",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseOption",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-option/use-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-option",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-option/use-option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-tree/use-tree.ts",
       "declarations": [
         {
           "kind": "class",
-          "description": "",
+          "description": "Custom input control for managing selected values in a hierarchy.",
           "name": "UseTree",
           "slots": [
             {
-              "description": "NodeList of `use-option` elements",
+              "description": "NodeList of `use-treeitem` elements",
               "name": "default"
             },
             {
@@ -626,29 +626,11 @@
             },
             {
               "kind": "field",
-              "name": "shadowRootOptions",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
-            },
-            {
-              "kind": "field",
               "name": "name",
               "type": {
                 "text": "string | undefined"
               },
               "attribute": "name"
-            },
-            {
-              "kind": "field",
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "attribute": "placeholder"
             },
             {
               "kind": "field",
@@ -668,7 +650,7 @@
             {
               "kind": "field",
               "name": "selected",
-              "description": "UseOption[]",
+              "description": "UseTreeItem[]",
               "readonly": true
             },
             {
@@ -678,17 +660,25 @@
             },
             {
               "kind": "field",
-              "name": "options",
+              "name": "items",
               "type": {
-                "text": "Array<UseOption>"
+                "text": "Array<UseTreeitem>"
               }
             },
             {
               "kind": "field",
-              "name": "listbox",
+              "name": "tree",
               "type": {
                 "text": "HTMLDivElement"
               }
+            },
+            {
+              "kind": "field",
+              "name": "lazyItems",
+              "type": {
+                "text": "Array<UseTreeitem>"
+              },
+              "default": "[]"
             },
             {
               "kind": "method",
@@ -703,8 +693,15 @@
               "name": "value",
               "type": {
                 "text": "FormData"
-              },
-              "readonly": true
+              }
+            },
+            {
+              "kind": "method",
+              "name": "lazyQueryItems"
+            },
+            {
+              "kind": "method",
+              "name": "queryLazyAvailableItems"
             }
           ],
           "attributes": [
@@ -714,14 +711,6 @@
                 "text": "string | undefined"
               },
               "fieldName": "name"
-            },
-            {
-              "name": "placeholder",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "fieldName": "placeholder"
             },
             {
               "name": "multiple",
@@ -759,6 +748,95 @@
           "declaration": {
             "name": "UseTree",
             "module": "src/elements/use-tree/use-tree.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-treeitem/use-treeitem.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.\n\n## To Do\n\n- [ ] When the parent is no longer disabled, update the items without their own `[disabled]`",
+          "name": "UseTreeitem",
+          "slots": [
+            {
+              "name": "selected-indicator"
+            },
+            {}
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "expanded",
+              "attribute": "expanded"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "attribute": "value"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected"
+            },
+            {
+              "kind": "method",
+              "name": "toggle"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "expanded",
+              "fieldName": "expanded"
+            },
+            {
+              "name": "value",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-treeitem",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseTreeitem",
+          "declaration": {
+            "name": "UseTreeitem",
+            "module": "src/elements/use-treeitem/use-treeitem.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-treeitem",
+          "declaration": {
+            "name": "UseTreeitem",
+            "module": "src/elements/use-treeitem/use-treeitem.ts"
           }
         }
       ]

@@ -5,7 +5,7 @@ import { UseFocusgroup } from './use-focusgroup';
 const meta: Meta<UseFocusgroup> = {
   component: 'use-focusgroup',
   title: 'Web Components/use-focusgroup',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'utility'],
   args: {
     features: '',
   },

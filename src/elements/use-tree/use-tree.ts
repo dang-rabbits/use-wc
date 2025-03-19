@@ -1,30 +1,21 @@
 import { LitElement, css, html } from 'lit'
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
-import { UseOption } from '../use-option/use-option';
+import { customElement, property, query } from 'lit/decorators.js'
 import createId from '../../utils/create-id';
-
-// TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
-// TODO valid / invalid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
-// TODO readonly https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
-// TODO mutation
-// TODO required
-// TODO typeahead
-// TODO groups
+import { UseTreeitem } from '../use-treeitem/use-treeitem';
 
 const FORM_DATA_KEY = '__value';
 
+// TODO `mode?: 'single' | 'multiple' | 'leaf'`
+
 /**
- * @slot default NodeList of `use-option` elements
+ * Custom input control for managing selected values in a hierarchy.
+ *
+ * @slot default NodeList of `use-treeitem` elements
  * @slot arrow
  */
 @customElement('use-tree')
 export class UseTree extends LitElement {
   static formAssociated = true;
-
-  static shadowRootOptions = {
-    ...LitElement.shadowRootOptions,
-    delegatesFocus: true,
-  };
 
   #id: string;
   #internals: ElementInternals;
@@ -33,15 +24,16 @@ export class UseTree extends LitElement {
   @property()
   name?: string;
 
-  @property()
-  placeholder: string = '';
-
   @property({ type: Boolean, reflect: true })
   multiple = false;
 
   @property({ type: Boolean })
   set disabled(flag) {
-    this.#initializeDisabled(flag);
+    if (flag) {
+      this.#internals.states.add("disabled");
+    } else {
+      this.#internals.states.delete("disabled");
+    }
   }
 
   get disabled() {
@@ -49,22 +41,24 @@ export class UseTree extends LitElement {
   }
 
   /**
-   * UseOption[]
+   * UseTreeItem[]
    * @readonly
    */
   get selected() {
-    return this.options.filter((option) => option.selected);
+    return this.lazyQueryItems().filter((item) => item.selected);
   }
 
   get firstSelected() {
-    return this.options.find((option) => option.selected);
+    return this.lazyQueryItems().find((item) => item.selected);
   }
 
-  @queryAssignedElements({ selector: 'use-option' })
-  options!: Array<UseOption>;
+  @query('use-treeitem')
+  items!: Array<UseTreeitem>;
 
-  @query('[part="listbox"]', true)
-  listbox!: HTMLDivElement;
+  @query('[part="tree"]', true)
+  tree!: HTMLDivElement;
+
+  lazyItems: Array<UseTreeitem> = [];
 
   constructor() {
     super();
@@ -74,99 +68,188 @@ export class UseTree extends LitElement {
     if (this.hasAttribute("disabled")) {
       this.#internals.states.add("disabled");
     }
+
+    this.addEventListener('focusin', this.#handleFocusIn);
+    this.addEventListener('focusout', this.#handleFocusOut);
+  }
+
+  #mouseDownTarget = null as HTMLElement | null;
+  #handleMouseDown(event: MouseEvent) {
+    this.#mouseDownTarget = event.target as HTMLElement;
+    this.#mouseDownTarget?.setAttribute('tabindex', '0');
+  }
+
+  #handleFocusIn(event: HTMLElementEventMap['focusin']) {
+    let target = event.target as HTMLElement | null;
+
+    if (this.#mouseDownTarget) {
+      target = this.#mouseDownTarget;
+    } else if (target === this) {
+      target = this.activeOption;
+    }
+
+    this.activeOption = target as UseTreeitem;
+    target?.focus();
+    this.setAttribute('tabindex', '-1');
+  }
+
+  #handleFocusOut(event: HTMLElementEventMap['focusout']) {
+    if (event.relatedTarget === this) {
+      if (this.#activeOption) {
+        this.activeOption = this.#activeOption;
+        this.#activeOption.focus();
+        this.setAttribute('tabindex', '-1');
+      }
+
+      return;
+    }
+
+    if (this.contains(event.relatedTarget as Node)) {
+      return;
+    }
+
+    this.setAttribute('tabindex', '0');
+  }
+
+  #handleClick(event: HTMLElementEventMap['click']) {
+    this.#mouseDownTarget = null;
+
+    if (this.disabled) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    const selectOption = target?.closest<UseTreeitem>('use-treeitem');
+
+    if (selectOption?.disabled) {
+      return;
+    }
+
+    if (selectOption?.value != null) {
+      event.preventDefault();
+      // this.activeOption = selectOption;
+      const isToggleIndicator = event.composedPath().some((el) =>
+        el instanceof HTMLElement ? el.getAttribute('part') === 'toggle-indicator' : false
+      );
+
+      if (!isToggleIndicator) {
+        this.#toggleOptionValue(selectOption);
+      }
+    }
   }
 
   getId() {
     return this.id ? this.id : this.#id;
   }
 
-  #handleClick(event: Event) {
-    const selectOption = (event.target as HTMLElement)?.closest('use-option') as UseOption;
-
-    if (selectOption?.value != null) {
-      event.preventDefault();
-      this.#toggleOptionValue(selectOption);
-      this.activeOption = selectOption;
-    }
-  }
-
-  #toggleOptionValue(target: UseOption) {
-    if (target.value == null || target.disabled) {
+  #toggleOptionValue(target: UseTreeitem) {
+    let newValue = this.#value.getAll(this.#dataKey) as string[];
+    const targetValue = target.value;
+    if (targetValue == null || target.disabled) {
       return;
     }
 
-    if (this.multiple) {
-      target.toggleSelected();
-      this.#value.delete(this.#dataKey);
-      this.options?.forEach((option) => {
-        if (option.selected && option.value) {
-          this.#value.append(this.#dataKey, option.value);
-        }
-      });
+    if (target.selected) {
+      newValue = newValue.filter((value) => value !== targetValue);
+    } else if (this.multiple) {
+      newValue.push(targetValue);
     } else {
-      this.options?.forEach((option) => {
-        option.selected = option === target;
-      });
-      this.#value.set(this.#dataKey, target.value);
+      newValue = [targetValue];
     }
 
-    this.#internals.setFormValue(this.value);
+    this.value = newValue;
   }
 
   #initializeValue() {
     const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
-
-    this.#value.delete(this.#dataKey);
-
     if (this.multiple) {
-      selectedValues.forEach((value) => {
-        if (value) {
-          this.#value.append(this.#dataKey, value);
-        }
-      });
-    } else {
-      if (selectedValues[0]) {
-        this.#value.set(this.#dataKey, selectedValues[0]);
-      }
+      this.value = selectedValues.map(((value) => value ?? null)).filter((value) => value != null);
+    } else if (selectedValues[0] && selectedValues[0].length > 0) {
+      this.value = selectedValues[0];
     }
-
-    this.#internals.setFormValue(this.value);
   }
 
-  #activeOption: UseOption | null = null;
+  #activeOption: UseTreeitem | null = null;
   get activeOption() {
     return this.#activeOption;
   }
-  set activeOption(option: UseOption | null) {
-    this.#activeOption?.setActive(false);
+  set activeOption(option: UseTreeitem | null) {
+    this.#activeOption?.setAttribute('tabindex', '-1');
     this.#activeOption = option;
-    this.listbox.setAttribute('aria-activedescendant', option?.id ?? '');
-    option?.setActive(true);
-  }
-
-  async #initializeDisabled(disabled: boolean) {
-    await this.updateComplete;
-    if (disabled) {
-      this.#internals.states.add("disabled");
-      this.listbox.removeAttribute('tabindex');
-    } else {
-      this.#internals.states.delete("disabled");
-      this.listbox.setAttribute('tabindex', '0');
-    }
+    option?.setAttribute('tabindex', '0');
   }
 
   firstUpdated() {
     this.#initializeValue();
 
-    this.activeOption = this.firstSelected ?? this.options.at(0) ?? null;
+    this.setAttribute('role', 'tree');
+
+    if (!this.hasAttribute('disabled')) {
+      this.activeOption = this.firstSelected ?? this.lazyQueryItems().at(0) ?? null;
+      this.setAttribute('tabindex', '0');
+    }
   }
 
   get #dataKey() {
     return this.name ?? FORM_DATA_KEY;
   }
 
+  set value(value: string[] | string) {
+    this.#value.delete(this.#dataKey);
+
+    if (this.multiple) {
+      if (Array.isArray(value)) {
+        console.log('multiple array', value);
+        value.forEach((v) => {
+          this.#value.append(this.#dataKey, v);
+        });
+      } else {
+        console.log('multiple single', value);
+        this.#value.append(this.#dataKey, value);
+      }
+    } else if (Array.isArray(value) && value.length > 0) {
+      this.#value.set(this.#dataKey, value[0]);
+    } else if (typeof value === 'string' && value.length > 0) {
+      this.#value.set(this.#dataKey, value);
+    }
+
+    const values = this.#value.getAll(this.#dataKey);
+    const options = this.queryLazyAvailableItems();
+    console.log('potato', values, options);
+
+    options.forEach((option) => {
+      option.selected = values.includes(option.getAttribute('value') ?? option.textContent ?? '');
+    });
+
+    this.#internals.setFormValue(this.#value);
+  }
+
   get value(): FormData {
     return this.#value;
+  }
+
+  lazyQueryItems() {
+    return Array.from(this.querySelectorAll('use-treeitem'));
+  }
+
+  queryLazyAvailableItems() {
+    return this.lazyQueryItems().filter((item) => {
+      if (item.disabled) {
+        return false;
+      }
+
+      if (this.parentElement === item) {
+        return true;
+      }
+
+      const parent = item.parentElement?.closest('[role="treeitem"]') as UseTreeitem;
+
+      if (parent && parent.expanded) {
+        return true;
+      }
+
+      return item.parentElement === this || item.parentElement?.closest('use-treeitem')?.expanded;
+    });
   }
 
   #handleKeyDown(event: KeyboardEvent) {
@@ -180,11 +263,11 @@ export class UseTree extends LitElement {
       return;
     }
 
-    const options = this.options;
+    const options = this.queryLazyAvailableItems();
     const activeId = this.activeOption?.id;
     const activeIndex = activeId ? options.findIndex((option) => option.id === activeId) : -1;
 
-    let moveTo: UseOption | undefined;
+    let moveTo: UseTreeitem | undefined;
     switch (event.key) {
       case 'ArrowUp':
         event.preventDefault();
@@ -197,6 +280,25 @@ export class UseTree extends LitElement {
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
+        break;
+      // TODO RTL support
+      case 'ArrowRight':
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.activeOption && !this.activeOption.expanded) {
+          this.activeOption.toggle();
+        }
+        break;
+      // TODO RTL support
+      case 'ArrowLeft':
+        event.preventDefault();
+        event.stopPropagation();
+        if (this.activeOption && this.activeOption.expanded) {
+          this.activeOption.toggle();
+        } else if (this.activeOption?.parentElement instanceof UseTreeitem) {
+          this.activeOption.parentElement.toggle();
+          moveTo = this.activeOption.parentElement;
+        }
         break;
       case 'Home':
         event.preventDefault();
@@ -212,7 +314,12 @@ export class UseTree extends LitElement {
 
     if (moveTo) {
       this.activeOption = moveTo;
+      this.activeOption.focus();
     }
+  }
+
+  #handleSlotChange(event: any) {
+    console.log(event);
   }
 
   render() {
@@ -220,11 +327,11 @@ export class UseTree extends LitElement {
       <div
         role="tree"
         part="tree"
-        tabindex=${0}
+        @mousedown=${this.#handleMouseDown}
         @click=${this.#handleClick}
         @keydown=${this.#handleKeyDown}
       >
-        <slot></slot>
+        <slot @slotchange=${this.#handleSlotChange}></slot>
       </div>
     `;
   }
@@ -240,25 +347,15 @@ export class UseTree extends LitElement {
       display: block;
     }
 
-    [part="listbox"] {
-      border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
-    }
-
-    :host(:state(disabled)) {
+    :host([disabled]) {
       pointer-events: none;
       opacity: .5;
-    }
-
-    /* https://github.com/w3c/csswg-drafts/issues/5893 */
-    [part="listbox"]:not(:hover):focus-visible ::slotted(use-option:state(active)),
-    ::slotted(use-option:not(:state(disabled)):hover) {
-      background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
   `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-tree': UseListbox
+    'use-tree': UseTree
   }
 }

@@ -21,7 +21,7 @@ function isUseFocusgroup(element: HTMLElement): element is UseFocusgroup {
  *
  * This web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.
  *
- * <baseline-status featureId="focusgroup"></baseline-status>
+ * <baseline-status featureId="focusgroup_attribute"></baseline-status>
  *
  * ## Sources
  *

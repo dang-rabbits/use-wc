@@ -5,7 +5,7 @@ import { UseDropdown } from './use-dropdown';
 const meta: Meta<UseDropdown> = {
   component: 'use-dropdown',
   title: 'Web Components/use-dropdown',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'utility'],
   args: {
     disabled: false,
   },
