@@ -5,7 +5,7 @@ import { UseWidget } from './use-widget';
 const meta: Meta<UseWidget> = {
   component: 'use-widget',
   title: 'Web Components/use-widget',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'utility'],
   args: {},
   render: () => {
     return html`

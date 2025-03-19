@@ -18,6 +18,12 @@ const FORM_DATA_KEY = '__value';
  *
  * The `use-listbox` provides an attribute for selecting multiple options.
  *
+ * ## Long term plan
+ *
+ * This web component was built with the intent to be replaced by browser-native `base-select` support once it becomes baseline.
+ *
+ * <baseline-status featureId="base-select"></baseline-status>
+ *
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */

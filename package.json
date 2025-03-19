@@ -3,6 +3,18 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/use-wc.umd.cjs",
+  "module": "./dist/use-wc.js",
+  "types": "./dist/use-wc.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/use-wc.js",
+      "require": "./dist/use-wc.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && npm run analyze && vite build",
@@ -31,6 +43,8 @@
     "prettier": "^3.3.3",
     "storybook": "^8.4.7",
     "typescript": "^5.5.3",
-    "vite": "^5.4.8"
+    "vite": "^5.4.8",
+    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-externalize-deps": "^0.9.0"
   }
 }

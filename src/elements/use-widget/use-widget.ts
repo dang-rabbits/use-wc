@@ -107,6 +107,7 @@ export class UseWidget extends LitElement {
 
     this.addEventListener('keydown', (event) => {
       const target = event.target as HTMLElement;
+
       switch (event.key) {
         case 'Enter':
           this.enableWidget();
@@ -123,38 +124,44 @@ export class UseWidget extends LitElement {
             this.enableWidget();
           }
           break;
+      }
 
-          case 'ArrowRight':
-          case 'ArrowDown':
-            if (target.matches('select, input, textarea')) {
-              break;
-            }
+      if (!this.#active) {
+        return;
+      }
 
-            const currentIndex = this.#tabbables.indexOf(event.target as HTMLElement);
-
-            if (currentIndex < this.#tabbables.length - 1) {
-              this.#tabbables[currentIndex + 1].focus();
-            } else {
-              this.#tabbables[0].focus();
-            }
-
+      switch (event.key) {
+        case 'ArrowRight':
+        case 'ArrowDown':
+          if (target.matches('select, input, textarea')) {
             break;
+          }
 
-          case 'ArrowLeft':
-          case 'ArrowUp':
-            if (target.matches('select, input, textarea')) {
-              break;
-            }
+          const currentIndex = this.#tabbables.indexOf(event.target as HTMLElement);
 
-            const currentIndex2 = this.#tabbables.indexOf(event.target as HTMLElement);
+          if (currentIndex < this.#tabbables.length - 1) {
+            this.#tabbables[currentIndex + 1].focus();
+          } else {
+            this.#tabbables[0].focus();
+          }
 
-            if (currentIndex2 > 0) {
-              this.#tabbables[currentIndex2 - 1].focus();
-            } else {
-              this.#tabbables[this.#tabbables.length - 1].focus();
-            }
+          break;
 
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          if (target.matches('select, input, textarea')) {
             break;
+          }
+
+          const currentIndex2 = this.#tabbables.indexOf(event.target as HTMLElement);
+
+          if (currentIndex2 > 0) {
+            this.#tabbables[currentIndex2 - 1].focus();
+          } else {
+            this.#tabbables[this.#tabbables.length - 1].focus();
+          }
+
+          break;
       }
     });
 
