@@ -60,3 +60,20 @@ export const Inert: Story = {
   `;
   }
 };
+
+export const Details: Story = {
+  render: () => {
+    return html`
+      <use-widget aria-label="details widget" details>
+        <button>hello</button>
+        <button>hello</button>
+        <details>
+          <summary>hello</summary>
+          <button type="button">hello</button>
+          <button type="button">hello</button>
+          <button type="button">hello</button>
+        </details>
+      </use-widget>
+  `;
+  }
+};

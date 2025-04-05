@@ -5,7 +5,8 @@ const config: StorybookConfig = {
   addons: [
     "@storybook/addon-a11y",
     "@storybook/addon-links",
-    "@storybook/addon-essentials"
+    "@storybook/addon-essentials",
+    "storybook-addon-tag-badges"
   ],
   framework: {
     name: "@storybook/web-components-vite",

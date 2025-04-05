@@ -2,7 +2,7 @@ import { LitElement, html } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { getTabIndex, isTabbable } from 'tabbable';
 
-const INITIAL_TABINDEX_ATTR = 'data-usewc-initial-tabindex';
+const INITIAL_TABINDEX_ATTR = 'data-usewc-widget-tabindex';
 
 /**
  * Nested controls are removed from the tab flow until the user activates the widget with `Enter` or `F2`. Clicking on a control will also activate the widget. Widgets are deactivated with `Escape` or `F2` keys or when the user clicks outside of the widget.
@@ -82,6 +82,8 @@ export class UseWidget extends LitElement {
       if (autofocus) {
         this.#tabbables.at(0)?.focus();
       }
+
+      this.setAttribute('tabindex', '-1');
     }
   }
 
@@ -99,6 +101,8 @@ export class UseWidget extends LitElement {
       if (returnFocus) {
         this.focus();
       }
+
+      this.setAttribute('tabindex', '0');
     }
   }
 
@@ -145,6 +149,9 @@ export class UseWidget extends LitElement {
             this.#tabbables[0].focus();
           }
 
+          event.preventDefault();
+          event.stopPropagation();
+
           break;
 
         case 'ArrowLeft':
@@ -161,6 +168,9 @@ export class UseWidget extends LitElement {
             this.#tabbables[this.#tabbables.length - 1].focus();
           }
 
+          event.preventDefault();
+          event.stopPropagation();
+
           break;
       }
     });
@@ -169,11 +179,14 @@ export class UseWidget extends LitElement {
       this.enableWidget(false);
     });
 
-    this.addEventListener('blur', (event) => {
+    this.addEventListener('focusout', (event) => {
       if (!this.contains(event.relatedTarget as Node)) {
         this.disableWidget(false);
       }
-      // `blur` doesn't bubble up so we need to capture it: https://stackoverflow.com/a/49311941/28250656
+    });
+
+    this.addEventListener('toggle', () => {
+      this.initializeWidget();
     }, true);
   }
 
