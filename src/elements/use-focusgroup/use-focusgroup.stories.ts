@@ -91,7 +91,12 @@ export const Toolbar: Story = {
           gap: 1rem;
         }
       </style>
-      <use-focusgroup role="toolbar" inline aria-orientation="horizontal" class="custom-toolbar">
+      <use-focusgroup role="toolbar" features="inline" aria-orientation="horizontal" class="custom-toolbar">
+        <use-dropdown label="font">
+          <button type="button" role="menuitem">Arial</button>
+          <button type="button" role="menuitem">Times New Roman</button>
+          <button type="button" role="menuitem">Courier New</button>
+        </use-dropdown>
         <div role="group" aria-label="text formatting">
           <button type="button">bold</button>
           <button type="button">italic</button>
@@ -109,4 +114,35 @@ export const Toolbar: Story = {
       </use-focusgroup>
     `;
   },
+};
+
+export const WithWidgets: Story = {
+  render: () => html`
+    <use-focusgroup>
+      <button type="button">hello</button>
+      <button type="button">hello</button>
+      <button type="button">hello</button>
+      <use-widget>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+      </use-widget>
+    </use-focusgroup>
+  `,
+};
+
+export const Disclosure: Story = {
+  render: () => html`
+    <use-focusgroup>
+      <button type="button">hello</button>
+      <button type="button">hello</button>
+      <button type="button">hello</button>
+      <details>
+        <summary>hello</summary>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+        <button type="button">hello</button>
+      </details>
+    </use-focusgroup>
+  `,
 };

@@ -167,6 +167,12 @@ export class UseFocusgroup extends HTMLElement {
       event.preventDefault();
       this.#makeTabbable(event.target as HTMLElement);
     });
+
+    // TODO implement something similar with mutation observer for when `[hidden]` is removed
+    // https://stackoverflow.com/questions/73205375/is-there-an-event-that-triggers-when-a-child-element-was-removed-and-added
+    this.addEventListener('toggle', () => {
+      this.#initializeTabbables(true);
+    }, true);
   }
 
   focus() {
@@ -188,9 +194,7 @@ export class UseFocusgroup extends HTMLElement {
         this.#removeTabbable(element);
       });
 
-      if (isUseFocusgroup(element)) {
-        // element.promoteFocusable();
-      } else {
+      if (!isUseFocusgroup(element)) {
         const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
         if (tabindex === INITIAL_TABINDEX_VALUE) {
           element.removeAttribute('tabindex');
@@ -247,7 +251,10 @@ export class UseFocusgroup extends HTMLElement {
     return String(getTabIndex(element));
   }
 
-  #initializeTabbables() {
+  #initializeTabbables(restore = false) {
+    if (restore) {
+      this.#restoreTabbables();
+    }
     this.#tabbables = this.#findTabbables();
     this.#resetTabbables();
   }
@@ -270,6 +277,18 @@ export class UseFocusgroup extends HTMLElement {
    */
   promote() {
     this.#promoted = true;
+  }
+
+  #restoreTabbables() {
+    this.#tabbables.forEach((element) => {
+      const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
+      if (tabindex === INITIAL_TABINDEX_VALUE) {
+        element.removeAttribute('tabindex');
+      } else if (tabindex) {
+        element.setAttribute('tabindex', tabindex);
+      }
+      element.removeAttribute(INITIAL_TABINDEX_ATTR);
+    });
   }
 
   #resetTabbables() {

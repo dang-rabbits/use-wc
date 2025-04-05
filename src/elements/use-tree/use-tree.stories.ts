@@ -3,10 +3,10 @@ import { UseTree } from './use-tree';
 import { html } from 'lit';
 
 const meta: Meta<UseTree> = {
-  component: 'use-listbox',
+  component: 'use-tree',
   subcomponents: { 'use-treeitem': 'use-treeitem' },
   title: 'Web Components/use-tree',
-  tags: ['autodocs', '!dev', 'form-input'],
+  tags: ['autodocs', '!dev', 'input'],
   args: {
     disabled: false,
     multiple: false,
@@ -153,57 +153,42 @@ export const FormMultipleValues: Story = {
 export const CustomSelectedIndicatorSlot: Story = {
   render: () => html`
     <use-tree>
+      <span slot="expanded-indicator">⬇️</span>
+      <span slot="collapsed-indicator">➡️</span>
+      <span slot="selected-indicator">✅</span>
       <use-treeitem value="1" id="option-1" selected>
-        <span slot="expanded-indicator">⬇️</span>
-        <span slot="collapsed-indicator">➡️</span>
-        <span slot="selected-indicator">✅</span>
         First
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           First A
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           First B
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           First C
         </use-treeitem>
       </use-treeitem>
       <use-treeitem value="2" id="option-2">
-        <span slot="expanded-indicator">⬇️</span>
-        <span slot="collapsed-indicator">➡️</span>
-        <span slot="selected-indicator">✅</span>
         Second
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Second A
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Second B
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Second C
         </use-treeitem>
       </use-treeitem>
       <use-treeitem value="3" id="option-3">
-        <span slot="expanded-indicator">⬇️</span>
-        <span slot="collapsed-indicator">➡️</span>
-        <span slot="selected-indicator">✅</span>
         Third
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Third A
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Third B
         </use-treeitem>
         <use-treeitem>
-          <span slot="selected-indicator">✅</span>
           Third C
         </use-treeitem>
       </use-treeitem>

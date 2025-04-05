@@ -6,7 +6,7 @@ const meta: Meta<UseListbox> = {
   component: 'use-listbox',
   subcomponents: { 'use-option': 'use-option' },
   title: 'Web Components/use-listbox',
-  tags: ['autodocs', '!dev', 'form-input'],
+  tags: ['autodocs', '!dev', 'input'],
   args: {
     placeholder: 'Select a number',
     disabled: false,

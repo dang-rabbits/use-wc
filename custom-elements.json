@@ -356,6 +356,192 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-menu/use-menu.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "When the popover is opened the tabbable elements are found and indexed for keyboard navigation. The first tabbable element is focused when the popover is opened. The following selector is used to find tabbable elements:\n\n```css\n:is([role=\"menuitem\"], [role=\"menuitemcheckbox\"], [role=\"menuitemradio\"], use-menu):not([disabled])\n```",
+          "name": "UseMenu",
+          "slots": [
+            {
+              "name": "default"
+            },
+            {
+              "name": "trigger-content"
+            },
+            {
+              "name": "trigger-label"
+            },
+            {
+              "name": "trigger-arrow"
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "shadowRootOptions",
+              "type": {
+                "text": "object"
+              },
+              "static": true,
+              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
+            },
+            {
+              "kind": "field",
+              "name": "trigger",
+              "type": {
+                "text": "HTMLButtonElement | null"
+              },
+              "default": "null"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "attribute": "label"
+            },
+            {
+              "kind": "method",
+              "name": "getId"
+            }
+          ],
+          "attributes": [
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "label",
+              "type": {
+                "text": "string"
+              },
+              "fieldName": "label"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-menu",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseMenu",
+          "declaration": {
+            "name": "UseMenu",
+            "module": "src/elements/use-menu/use-menu.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-menu",
+          "declaration": {
+            "name": "UseMenu",
+            "module": "src/elements/use-menu/use-menu.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-option/use-option.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
+          "name": "UseOption",
+          "slots": [
+            {
+              "name": "selected-indicator"
+            },
+            {}
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "attribute": "selected"
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "attribute": "disabled"
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "attribute": "value"
+            },
+            {
+              "kind": "method",
+              "name": "toggleSelected"
+            },
+            {
+              "kind": "method",
+              "name": "setActive",
+              "parameters": [
+                {
+                  "name": "value",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ]
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "value",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-option",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseOption",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-option/use-option.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-option",
+          "declaration": {
+            "name": "UseOption",
+            "module": "src/elements/use-option/use-option.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-select/use-select.ts",
       "declarations": [
         {
@@ -505,94 +691,6 @@
           "declaration": {
             "name": "UseSelect",
             "module": "src/elements/use-select/use-select.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
-      "path": "src/elements/use-option/use-option.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "`use-option` is a custom element that represents an option in a `use-select` custom element.\n\nThe children of this element are the content of the option and must not contain any interactive elements.",
-          "name": "UseOption",
-          "slots": [
-            {
-              "name": "selected-indicator"
-            },
-            {}
-          ],
-          "members": [
-            {
-              "kind": "field",
-              "name": "selected",
-              "attribute": "selected"
-            },
-            {
-              "kind": "field",
-              "name": "disabled",
-              "attribute": "disabled"
-            },
-            {
-              "kind": "field",
-              "name": "value",
-              "attribute": "value"
-            },
-            {
-              "kind": "method",
-              "name": "toggleSelected"
-            },
-            {
-              "kind": "method",
-              "name": "setActive",
-              "parameters": [
-                {
-                  "name": "value",
-                  "type": {
-                    "text": "boolean"
-                  }
-                }
-              ]
-            }
-          ],
-          "attributes": [
-            {
-              "name": "selected",
-              "fieldName": "selected"
-            },
-            {
-              "name": "disabled",
-              "fieldName": "disabled"
-            },
-            {
-              "name": "value",
-              "fieldName": "value"
-            }
-          ],
-          "superclass": {
-            "name": "LitElement",
-            "package": "lit"
-          },
-          "tagName": "use-option",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "UseOption",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-option/use-option.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "use-option",
-          "declaration": {
-            "name": "UseOption",
-            "module": "src/elements/use-option/use-option.ts"
           }
         }
       ]
