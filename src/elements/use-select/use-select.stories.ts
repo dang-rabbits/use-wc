@@ -14,15 +14,11 @@ const meta: Meta<UseSelect> = {
   },
   render: (args: UseSelect) => {
     return html`
-      <use-select
-        .name=${args.name}
-        placeholder=${args.placeholder}
-        ?disabled=${args.disabled}
-      >
+      <use-select .name=${args.name} placeholder=${args.placeholder} ?disabled=${args.disabled}>
         <use-option value="1" id="option-1" selected>One</use-option>
         <use-option value="2" id="option-2">Two</use-option>
       </use-select>
-  `;
+    `;
   },
 };
 
@@ -34,13 +30,13 @@ export const Default: Story = {};
 export const Disabled: Story = {
   args: {
     disabled: true,
-  }
+  },
 };
 
 export const Placeholder: Story = {
   args: {
     placeholder: 'Select a number',
-  }
+  },
 };
 
 export const DisabledOptions: Story = {
@@ -100,18 +96,25 @@ export const Form: Story = {
 export const CustomArrowViaSlot: Story = {
   render: () => html`
     <use-select>
-      <svg slot="trigger-arrow" fill="currentColor" viewBox='0 0 140 140' width='12' height='12'
-        xmlns='http://www.w3.org/2000/svg'>
+      <svg
+        slot="trigger-arrow"
+        fill="currentColor"
+        viewBox="0 0 140 140"
+        width="12"
+        height="12"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <g>
           <path
-            d='m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z' />
+            d="m121.3,34.6c-1.6-1.6-4.2-1.6-5.8,0l-51,51.1-51.1-51.1c-1.6-1.6-4.2-1.6-5.8,0-1.6,1.6-1.6,4.2 0,5.8l53.9,53.9c0.8,0.8 1.8,1.2 2.9,1.2 1,0 2.1-0.4 2.9-1.2l53.9-53.9c1.7-1.6 1.7-4.2 0.1-5.8z"
+          />
         </g>
       </svg>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
     </use-select>
-  `
-}
+  `,
+};
 
 export const CustomStyles: Story = {
   render: () => html`
@@ -125,7 +128,7 @@ export const CustomStyles: Story = {
         display: inline-flex;
         align-items: center;
         border: 2px solid light-dark(#ccc, #999);
-        padding: .25rem 1rem;
+        padding: 0.25rem 1rem;
         border-radius: 50px;
         gap: 2rem;
       }
@@ -151,6 +154,5 @@ export const CustomStyles: Story = {
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
     </use-select>
-  `
-}
-
+  `,
+};

@@ -17,7 +17,7 @@ const meta: Meta<UseMenu> = {
         <button role="menuitem">menu item 3</button>
         <a role="menuitem" href="https://usewc.com/">Use WC</a>
       </use-menu>
-  `;
+    `;
   },
 };
 
@@ -27,7 +27,7 @@ type Story = StoryObj<UseMenu>;
 export const Default: Story = {
   parameters: {
     showPanel: false,
-  }
+  },
 };
 
 export const Inert: Story = {
@@ -39,13 +39,13 @@ export const Inert: Story = {
         <button role="menuitem">menu item 3</button>
         <a role="menuitem" href="https://usewc.com/">Use WC</a>
       </use-menu>
-  `;
-  }
+    `;
+  },
 };
 
 export const Disabled: Story = {
   args: {
-    disabled: true
+    disabled: true,
   },
 };
 
@@ -98,7 +98,8 @@ export const Dividers: Story = {
 export const DisabledItems: Story = {
   parameters: {
     docs: {
-      description: 'Screen reader users will need to know of disabled items. Use `aria-disabled="true"` to indicate that an item is disabled and disable the `click` event handler within the callback directly.'
+      description:
+        'Screen reader users will need to know of disabled items. Use `aria-disabled="true"` to indicate that an item is disabled and disable the `click` event handler within the callback directly.',
     },
   },
   render: () => html`
@@ -123,8 +124,9 @@ export const CustomAccessibleItems: Story = {
 export const CustomItemLayout: Story = {
   parameters: {
     docs: {
-      description: 'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.'
-    }
+      description:
+        'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.',
+    },
   },
   render: () => html`
     <use-menu label="Menu">
@@ -141,7 +143,7 @@ export const CustomItemLayout: Story = {
       </div>
     </use-menu>
   `,
-}
+};
 
 export const SplitMenuItemButton: Story = {
   render: () => html`
@@ -159,7 +161,7 @@ export const SplitMenuItemButton: Story = {
       </div>
     </use-menu>
   `,
-}
+};
 
 export const ChangeInitialItem: Story = {
   render: () => html`
@@ -174,8 +176,8 @@ export const ChangeInitialItem: Story = {
 export const CheckboxSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/'
-    }
+      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+    },
   },
   render: () => html`
     <use-menu label="Checkbox options">
@@ -183,14 +185,14 @@ export const CheckboxSelect: Story = {
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 2</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 3</button>
     </use-menu>
-  `
-}
+  `,
+};
 
 export const RadioSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/'
-    }
+      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+    },
   },
   render: () => html`
     <use-menu label="Radio options">
@@ -198,15 +200,17 @@ export const RadioSelect: Story = {
       <button role="menuitemradio" aria-checked="false" type="button">option 2</button>
       <button role="menuitemradio" aria-checked="false" type="button">option 3</button>
     </use-menu>
-  `
-}
+  `,
+};
 
 export const InjectedItems: Story = {
   render: () => {
     function injectItems() {
       const dropdown = document.getElementById('inject-dropdown');
       if (dropdown) {
-        dropdown.innerHTML = dropdown.innerHTML + `
+        dropdown.innerHTML =
+          dropdown.innerHTML +
+          `
           <button role="menuitem">injected item 1</button>
           <button role="menuitem">injected item 2</button>
           <button role="menuitem">injected item 3</button>
@@ -223,7 +227,7 @@ export const InjectedItems: Story = {
       <button type="button" @click=${injectItems}>Inject items</button>
     `;
   },
-}
+};
 
 export const CustomStyles: Story = {
   render: () => html`
@@ -235,7 +239,10 @@ export const CustomStyles: Story = {
         border: 2px solid orangered;
         border-radius: 6px;
         padding: 4px;
-        box-shadow: 1px 1px 0 orangered, 2px 2px 0 orangered, 3px 3px 0 orangered;
+        box-shadow:
+          1px 1px 0 orangered,
+          2px 2px 0 orangered,
+          3px 3px 0 orangered;
         font-size: 16px;
         font-weight: 700;
       }

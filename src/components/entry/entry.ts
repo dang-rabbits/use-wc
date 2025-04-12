@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 /**
  * An example element.
@@ -18,7 +18,7 @@ export class DangEntry extends LitElement {
         </div>
         <slot class="dang-entry--decor-start" name="decor-end"></slot>
       </div>
-    `
+    `;
   }
 
   static styles = css`
@@ -91,11 +91,11 @@ export class DangEntry extends LitElement {
         background-color: #f9f9f9;
       }
     }
-  `
+  `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'dang-entry': DangEntry
+    'dang-entry': DangEntry;
   }
 }

@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 import { getTabIndex } from 'tabbable';
 
@@ -53,7 +53,7 @@ export class UseMenu extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled");
+    return this.#internals.states.has('disabled');
   }
 
   @property()
@@ -65,8 +65,8 @@ export class UseMenu extends LitElement {
     this.#internals = this.attachInternals();
     this.#initializeTabbables();
 
-    if (this.hasAttribute("disabled")) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled')) {
+      this.#internals.states.add('disabled');
     }
   }
 
@@ -91,7 +91,7 @@ export class UseMenu extends LitElement {
   #initializeTabbables() {
     this.#tabbables = this.#findTabbables();
     this.#itemLabels = [];
-    const active = this.#tabbables.find((element => element.matches('[aria-current]'))) ?? this.#tabbables[0];
+    const active = this.#tabbables.find((element) => element.matches('[aria-current]')) ?? this.#tabbables[0];
 
     this.#tabbables.forEach((element, index) => {
       const text = element.textContent?.trim();
@@ -118,10 +118,10 @@ export class UseMenu extends LitElement {
     await this.updateComplete;
 
     if (disabled) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
       this.trigger?.setAttribute('disabled', 'disabled');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
       this.trigger?.removeAttribute('disabled');
     }
 
@@ -132,10 +132,6 @@ export class UseMenu extends LitElement {
 
   firstUpdated() {
     this.trigger = this.shadowRoot?.querySelector('button[part="trigger"]') ?? null;
-  }
-
-  #getPopoverOpen() {
-    return this.trigger?.popoverTargetElement?.matches(":popover-open");
   }
 
   #handleKeyDown(event: KeyboardEvent) {
@@ -189,12 +185,7 @@ export class UseMenu extends LitElement {
 
   render() {
     return html`
-      <div
-        role="menu"
-        part="menu"
-        @click=${this.#handlePopoverClick}
-        @keydown=${this.#handleKeyDown}
-      >
+      <div role="menu" part="menu" @click=${this.#handlePopoverClick} @keydown=${this.#handleKeyDown}>
         <slot @slotchange=${this.#handleSlotChange}></slot>
       </div>
     `;
@@ -211,7 +202,7 @@ export class UseMenu extends LitElement {
       pointer-events: none;
     }
 
-    [part="menu"]:popover-open {
+    [part='menu']:popover-open {
       display: flex;
       flex-direction: column;
       justify-items: stretch;
@@ -221,7 +212,7 @@ export class UseMenu extends LitElement {
       margin-inline: 0;
     }
 
-    ::slotted([role="group"]) {
+    ::slotted([role='group']) {
       display: contents;
     }
   `;
@@ -229,6 +220,6 @@ export class UseMenu extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-menu': UseMenu
+    'use-menu': UseMenu;
   }
 }

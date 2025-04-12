@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 
 /**
@@ -15,27 +15,27 @@ export class UseOption extends LitElement {
   @property({ type: Boolean })
   set selected(flag) {
     if (flag) {
-      this.#internals.states.add("selected");
+      this.#internals.states.add('selected');
     } else {
-      this.#internals.states.delete("selected");
+      this.#internals.states.delete('selected');
     }
   }
 
   get selected() {
-    return this.#internals.states.has("selected");
+    return this.#internals.states.has('selected');
   }
 
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
     }
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled");
+    return this.#internals.states.has('disabled');
   }
 
   @property()
@@ -43,7 +43,7 @@ export class UseOption extends LitElement {
     if (v != null) {
       this.setAttribute('value', v);
     }
-  };
+  }
 
   get value() {
     return this.getAttribute('value') ?? this.textContent;
@@ -65,12 +65,12 @@ export class UseOption extends LitElement {
      *
      * @link https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
      */
-    if (this.hasAttribute("selected")) {
-      this.#internals.states.add("selected");
+    if (this.hasAttribute('selected')) {
+      this.#internals.states.add('selected');
     }
 
-    if (this.hasAttribute("disabled")) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled')) {
+      this.#internals.states.add('disabled');
     }
   }
 
@@ -80,9 +80,9 @@ export class UseOption extends LitElement {
 
   setActive(value: boolean) {
     if (value) {
-      this.#internals.states.add("active");
+      this.#internals.states.add('active');
     } else {
-      this.#internals.states.delete("active");
+      this.#internals.states.delete('active');
     }
   }
 
@@ -108,23 +108,23 @@ export class UseOption extends LitElement {
       cursor: default;
     }
 
-    slot[name="selected-indicator"] {
+    slot[name='selected-indicator'] {
       display: contents;
       visibility: hidden;
     }
 
-    :host(:state(selected)) slot[name="selected-indicator"] {
+    :host(:state(selected)) slot[name='selected-indicator'] {
       visibility: visible;
     }
 
     :host(:state(disabled)) {
-      opacity: .5;
+      opacity: 0.5;
     }
   `;
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-option': UseOption
+    'use-option': UseOption;
   }
 }

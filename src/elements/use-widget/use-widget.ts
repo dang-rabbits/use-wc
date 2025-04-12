@@ -1,5 +1,5 @@
-import { LitElement, html } from 'lit'
-import { customElement } from 'lit/decorators.js'
+import { LitElement, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 import { getTabIndex, isTabbable } from 'tabbable';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-widget-tabindex';
@@ -37,7 +37,7 @@ export class UseWidget extends LitElement {
           return NodeFilter.FILTER_ACCEPT;
         }
         return NodeFilter.FILTER_SKIP;
-      }
+      },
     });
 
     const elements = [];
@@ -185,20 +185,22 @@ export class UseWidget extends LitElement {
       }
     });
 
-    this.addEventListener('toggle', () => {
-      this.initializeWidget();
-    }, true);
+    this.addEventListener(
+      'toggle',
+      () => {
+        this.initializeWidget();
+      },
+      true
+    );
   }
 
   render() {
-    return html`
-      <slot></slot>
-    `;
+    return html`<slot></slot> `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-widget': UseWidget
+    'use-widget': UseWidget;
   }
 }

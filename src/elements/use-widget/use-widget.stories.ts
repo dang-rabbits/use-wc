@@ -12,7 +12,7 @@ const meta: Meta<UseWidget> = {
       <style>
         use-widget {
           display: block;
-          border: 1px solid light-dark(rgba(0,0,0,.25), rgba(255,255,255,.25));
+          border: 1px solid light-dark(rgba(0, 0, 0, 0.25), rgba(255, 255, 255, 0.25));
           padding: 1rem;
           margin: 1rem;
         }
@@ -39,7 +39,7 @@ const meta: Meta<UseWidget> = {
         <button>hello</button>
         <button>hello</button>
       </use-widget>
-  `;
+    `;
   },
 };
 
@@ -57,8 +57,8 @@ export const Inert: Story = {
         <input />
         <button>hello</button>
       </use-widget>
-  `;
-  }
+    `;
+  },
 };
 
 export const Details: Story = {
@@ -74,6 +74,6 @@ export const Details: Story = {
           <button type="button">hello</button>
         </details>
       </use-widget>
-  `;
-  }
+    `;
+  },
 };

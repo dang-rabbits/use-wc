@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js';
 import { UseOption } from '../use-option/use-option';
 import createId from '../../utils/create-id';
 
@@ -52,7 +52,7 @@ export class UseSelect extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled");
+    return this.#internals.states.has('disabled');
   }
 
   get selected() {
@@ -76,8 +76,8 @@ export class UseSelect extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
 
-    if (this.hasAttribute("disabled")) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled')) {
+      this.#internals.states.add('disabled');
     }
   }
 
@@ -172,10 +172,10 @@ export class UseSelect extends LitElement {
     await this.updateComplete;
 
     if (disabled) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
       this.trigger?.setAttribute('disabled', 'disabled');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
       this.trigger?.removeAttribute('disabled');
     }
 
@@ -200,7 +200,7 @@ export class UseSelect extends LitElement {
   }
 
   #getPopoverOpen() {
-    return this.trigger?.popoverTargetElement?.matches(":popover-open");
+    return this.trigger?.popoverTargetElement?.matches(':popover-open');
   }
 
   #handleKeyDown(event: KeyboardEvent) {
@@ -304,7 +304,7 @@ export class UseSelect extends LitElement {
     :host button {
       display: inline-flex;
       align-items: center;
-      gap: .5rem;
+      gap: 0.5rem;
       text-align: start;
     }
 
@@ -312,12 +312,12 @@ export class UseSelect extends LitElement {
       display: contents;
     }
 
-    svg[part="trigger-arrow-default"] {
-      width: .5rem;
-      height: .25rem;
+    svg[part='trigger-arrow-default'] {
+      width: 0.5rem;
+      height: 0.25rem;
     }
 
-    :host(:state(placeholder)) span[part="trigger-label"] {
+    :host(:state(placeholder)) span[part='trigger-label'] {
       font-style: italic;
     }
 
@@ -334,6 +334,6 @@ export class UseSelect extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-select': UseSelect
+    'use-select': UseSelect;
   }
 }

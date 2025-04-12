@@ -17,7 +17,7 @@ const meta: Meta<UseDropdown> = {
         <button role="menuitem">menu item 3</button>
         <a role="menuitem" href="https://usewc.com/">Use WC</a>
       </use-dropdown>
-  `;
+    `;
   },
 };
 
@@ -27,7 +27,7 @@ type Story = StoryObj<UseDropdown>;
 export const Default: Story = {
   parameters: {
     showPanel: false,
-  }
+  },
 };
 
 export const Inert: Story = {
@@ -39,13 +39,13 @@ export const Inert: Story = {
         <button role="menuitem">menu item 3</button>
         <a role="menuitem" href="https://usewc.com/">Use WC</a>
       </use-dropdown>
-  `;
-  }
+    `;
+  },
 };
 
 export const Disabled: Story = {
   args: {
-    disabled: true
+    disabled: true,
   },
 };
 
@@ -98,7 +98,8 @@ export const Dividers: Story = {
 export const DisabledItems: Story = {
   parameters: {
     docs: {
-      description: 'Screen reader users will need to know of disabled items. Use `aria-disabled="true"` to indicate that an item is disabled and disable the `click` event handler within the callback directly.'
+      description:
+        'Screen reader users will need to know of disabled items. Use `aria-disabled="true"` to indicate that an item is disabled and disable the `click` event handler within the callback directly.',
     },
   },
   render: () => html`
@@ -123,10 +124,17 @@ export const CustomAccessibleItems: Story = {
 export const CustomTriggerContent: Story = {
   render: () => html`
     <use-dropdown>
-      <svg slot="trigger-content" width="12" height="12" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-label="Menu">
-        <rect y="2" width="24" height="2" fill="currentColor"/>
-        <rect y="11" width="24" height="2" fill="currentColor"/>
-        <rect y="20" width="24" height="2" fill="currentColor"/>
+      <svg
+        slot="trigger-content"
+        width="12"
+        height="12"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-label="Menu"
+      >
+        <rect y="2" width="24" height="2" fill="currentColor" />
+        <rect y="11" width="24" height="2" fill="currentColor" />
+        <rect y="20" width="24" height="2" fill="currentColor" />
       </svg>
       <button role="menuitem">menu item 1</button>
       <button role="menuitem">menu item 2</button>
@@ -138,8 +146,9 @@ export const CustomTriggerContent: Story = {
 export const CustomItemLayout: Story = {
   parameters: {
     docs: {
-      description: 'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.'
-    }
+      description:
+        'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.',
+    },
   },
   render: () => html`
     <use-dropdown label="Menu">
@@ -156,7 +165,7 @@ export const CustomItemLayout: Story = {
       </div>
     </use-dropdown>
   `,
-}
+};
 
 export const SplitMenuItemButton: Story = {
   render: () => html`
@@ -174,7 +183,7 @@ export const SplitMenuItemButton: Story = {
       </div>
     </use-dropdown>
   `,
-}
+};
 
 // TODO
 // export const CustomArrow: Story = {}
@@ -185,8 +194,8 @@ export const SplitMenuItemButton: Story = {
 export const CheckboxSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/'
-    }
+      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+    },
   },
   render: () => html`
     <use-dropdown label="Checkbox options">
@@ -194,14 +203,14 @@ export const CheckboxSelect: Story = {
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 2</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 3</button>
     </use-dropdown>
-  `
-}
+  `,
+};
 
 export const RadioSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/'
-    }
+      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+    },
   },
   render: () => html`
     <use-dropdown label="Radio options">
@@ -209,15 +218,17 @@ export const RadioSelect: Story = {
       <button role="menuitemradio" aria-checked="false" type="button">option 2</button>
       <button role="menuitemradio" aria-checked="false" type="button">option 3</button>
     </use-dropdown>
-  `
-}
+  `,
+};
 
 export const InjectedItems: Story = {
   render: () => {
     function injectItems() {
       const dropdown = document.getElementById('inject-dropdown');
       if (dropdown) {
-        dropdown.innerHTML = dropdown.innerHTML + `
+        dropdown.innerHTML =
+          dropdown.innerHTML +
+          `
           <button role="menuitem">injected item 1</button>
           <button role="menuitem">injected item 2</button>
           <button role="menuitem">injected item 3</button>
@@ -234,7 +245,7 @@ export const InjectedItems: Story = {
       <button type="button" @click=${injectItems}>Inject items</button>
     `;
   },
-}
+};
 
 export const CustomStyles: Story = {
   render: () => html`
@@ -246,7 +257,10 @@ export const CustomStyles: Story = {
         border: 2px solid orangered;
         border-radius: 6px;
         padding: 4px;
-        box-shadow: 1px 1px 0 orangered, 2px 2px 0 orangered, 3px 3px 0 orangered;
+        box-shadow:
+          1px 1px 0 orangered,
+          2px 2px 0 orangered,
+          3px 3px 0 orangered;
         font-size: 16px;
         font-weight: 700;
       }
@@ -299,9 +313,9 @@ export const CSSAnchorPositioning: Story = {
   parameters: {
     docs: {
       description: {
-        story: `<baseline-status featureId="anchor-positioning"></baseline-status>`
-      }
-    }
+        story: `<baseline-status featureId="anchor-positioning"></baseline-status>`,
+      },
+    },
   },
   render: () => html`
     <style>
@@ -322,7 +336,10 @@ export const CSSAnchorPositioning: Story = {
 
         inset-block-start: calc(anchor(end) + 0.5rem);
         inset-inline-start: anchor(start);
-        position-try-fallbacks: flip-block, flip-inline, flip-inline flip-block;
+        position-try-fallbacks:
+          flip-block,
+          flip-inline,
+          flip-inline flip-block;
       }
 
       .css-anchor-positioning use-dropdown use-dropdown::part(menu) {
