@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js';
 import { UseOption } from '../use-option/use-option';
 import createId from '../../utils/create-id';
 
@@ -45,7 +45,7 @@ export class UseListbox extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled");
+    return this.#internals.states.has('disabled');
   }
 
   /**
@@ -71,8 +71,8 @@ export class UseListbox extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
 
-    if (this.hasAttribute("disabled")) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled')) {
+      this.#internals.states.add('disabled');
     }
   }
 
@@ -147,10 +147,10 @@ export class UseListbox extends LitElement {
   async #initializeDisabled(disabled: boolean) {
     await this.updateComplete;
     if (disabled) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
       this.listbox.removeAttribute('tabindex');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
       this.listbox.setAttribute('tabindex', '0');
     }
   }
@@ -217,13 +217,7 @@ export class UseListbox extends LitElement {
 
   render() {
     return html`
-      <div
-        role="listbox"
-        part="listbox"
-        tabindex=${0}
-        @click=${this.#handleClick}
-        @keydown=${this.#handleKeyDown}
-      >
+      <div role="listbox" part="listbox" tabindex=${0} @click=${this.#handleClick} @keydown=${this.#handleKeyDown}>
         <slot></slot>
       </div>
     `;
@@ -240,17 +234,17 @@ export class UseListbox extends LitElement {
       display: block;
     }
 
-    [part="listbox"] {
+    [part='listbox'] {
       border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
 
     :host(:state(disabled)) {
       pointer-events: none;
-      opacity: .5;
+      opacity: 0.5;
     }
 
     /* https://github.com/w3c/csswg-drafts/issues/5893 */
-    [part="listbox"]:not(:hover):focus-visible ::slotted(use-option:state(active)),
+    [part='listbox']:not(:hover):focus-visible ::slotted(use-option:state(active)),
     ::slotted(use-option:not(:state(disabled)):hover) {
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
@@ -259,6 +253,6 @@ export class UseListbox extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-listbox': UseListbox
+    'use-listbox': UseListbox;
   }
 }

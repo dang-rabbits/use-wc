@@ -130,11 +130,7 @@ export class UseTree extends LitElement {
       // this.activeOption = selectOption;
       const isToggleIndicator = event
         .composedPath()
-        .some((el) =>
-          el instanceof HTMLElement
-            ? el.getAttribute('part') === 'toggle-indicator'
-            : false,
-        );
+        .some((el) => (el instanceof HTMLElement ? el.getAttribute('part') === 'toggle-indicator' : false));
 
       if (!isToggleIndicator) {
         this.#toggleOptionValue(selectOption);
@@ -165,13 +161,9 @@ export class UseTree extends LitElement {
   }
 
   #initializeValue() {
-    const selectedValues = this.selected.map(
-      (option) => option.getAttribute('value') ?? option.textContent,
-    );
+    const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
     if (this.multiple) {
-      this.value = selectedValues
-        .map((value) => value ?? null)
-        .filter((value) => value != null);
+      this.value = selectedValues.map((value) => value ?? null).filter((value) => value != null);
     } else if (selectedValues[0] && selectedValues[0].length > 0) {
       this.value = selectedValues[0];
     }
@@ -180,43 +172,31 @@ export class UseTree extends LitElement {
   #initializeTreeItems() {
     const lazyItems = this.lazyQueryItems();
     const expandedNodeIcon = (
-      this.shadowRoot?.querySelector(
-        'slot[name="expanded-indicator"]',
-      ) as HTMLSlotElement | null
+      this.shadowRoot?.querySelector('slot[name="expanded-indicator"]') as HTMLSlotElement | null
     )?.assignedElements({ flatten: true })[0] as HTMLElement;
 
     const collapsedNodeIcon = (
-      this.shadowRoot?.querySelector(
-        'slot[name="collapsed-indicator"]',
-      ) as HTMLSlotElement | null
+      this.shadowRoot?.querySelector('slot[name="collapsed-indicator"]') as HTMLSlotElement | null
     )?.assignedElements({ flatten: true })[0] as HTMLElement;
 
     const selectedNodeIcon = (
-      this.shadowRoot?.querySelector(
-        'slot[name="selected-indicator"]',
-      ) as HTMLSlotElement | null
+      this.shadowRoot?.querySelector('slot[name="selected-indicator"]') as HTMLSlotElement | null
     )?.assignedElements({ flatten: true })[0] as HTMLElement;
 
     lazyItems.forEach((item) => {
-      const expandedNodeClone = expandedNodeIcon?.cloneNode(
-        true,
-      ) as HTMLElement;
+      const expandedNodeClone = expandedNodeIcon?.cloneNode(true) as HTMLElement;
       if (expandedNodeClone) {
         expandedNodeClone.slot = 'expanded-indicator';
         item.appendChild(expandedNodeClone);
       }
 
-      const collapsedNodeClone = collapsedNodeIcon?.cloneNode(
-        true,
-      ) as HTMLElement;
+      const collapsedNodeClone = collapsedNodeIcon?.cloneNode(true) as HTMLElement;
       if (collapsedNodeClone) {
         collapsedNodeClone.slot = 'collapsed-indicator';
         item.appendChild(collapsedNodeClone);
       }
 
-      const selectedNodeClone = selectedNodeIcon?.cloneNode(
-        true,
-      ) as HTMLElement;
+      const selectedNodeClone = selectedNodeIcon?.cloneNode(true) as HTMLElement;
       if (selectedNodeClone) {
         selectedNodeClone.slot = 'selected-indicator';
         item.appendChild(selectedNodeClone);
@@ -241,8 +221,7 @@ export class UseTree extends LitElement {
     this.setAttribute('role', 'tree');
 
     if (!this.hasAttribute('disabled')) {
-      this.activeOption =
-        this.firstSelected ?? this.lazyQueryItems().at(0) ?? null;
+      this.activeOption = this.firstSelected ?? this.lazyQueryItems().at(0) ?? null;
       this.setAttribute('tabindex', '0');
     }
   }
@@ -272,9 +251,7 @@ export class UseTree extends LitElement {
     const options = this.queryLazyAvailableItems();
 
     options.forEach((option) => {
-      option.selected = values.includes(
-        option.getAttribute('value') ?? option.textContent ?? '',
-      );
+      option.selected = values.includes(option.getAttribute('value') ?? option.textContent ?? '');
     });
 
     this.#internals.setFormValue(this.#value);
@@ -298,18 +275,13 @@ export class UseTree extends LitElement {
         return true;
       }
 
-      const parent = item.parentElement?.closest(
-        '[role="treeitem"]',
-      ) as UseTreeitem;
+      const parent = item.parentElement?.closest('[role="treeitem"]') as UseTreeitem;
 
       if (parent && parent.expanded) {
         return true;
       }
 
-      return (
-        item.parentElement === this ||
-        item.parentElement?.closest('use-treeitem')?.expanded
-      );
+      return item.parentElement === this || item.parentElement?.closest('use-treeitem')?.expanded;
     });
   }
 
@@ -326,9 +298,7 @@ export class UseTree extends LitElement {
 
     const options = this.queryLazyAvailableItems();
     const activeId = this.activeOption?.id;
-    const activeIndex = activeId
-      ? options.findIndex((option) => option.id === activeId)
-      : -1;
+    const activeIndex = activeId ? options.findIndex((option) => option.id === activeId) : -1;
 
     let moveTo: UseTreeitem | undefined;
     switch (event.key) {
@@ -392,11 +362,7 @@ export class UseTree extends LitElement {
       >
         <slot name="expanded-indicator" part="expanded-indicator"></slot>
         <slot name="collapsed-indicator" part="collapsed-indicator"></slot>
-        <slot
-          name="selected-indicator"
-          part="selected-indicator"
-          aria-hidden="true"
-        ></slot>
+        <slot name="selected-indicator" part="selected-indicator" aria-hidden="true"></slot>
         <slot></slot>
       </div>
     `;

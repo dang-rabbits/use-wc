@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 
 /**
@@ -19,40 +19,40 @@ export class UseTreeitem extends LitElement {
   @property({ type: Boolean })
   set selected(flag) {
     if (flag) {
-      this.#internals.states.add("selected");
+      this.#internals.states.add('selected');
     } else {
-      this.#internals.states.delete("selected");
+      this.#internals.states.delete('selected');
     }
   }
 
   get selected() {
-    return this.#internals.states.has("selected");
+    return this.#internals.states.has('selected');
   }
 
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
     }
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled") && !this.#isParentDisabled();
+    return this.#internals.states.has('disabled') && !this.#isParentDisabled();
   }
 
   @property({ type: Boolean })
   set expanded(flag) {
     if (flag) {
-      this.#internals.states.add("expanded");
+      this.#internals.states.add('expanded');
     } else {
-      this.#internals.states.delete("expanded");
+      this.#internals.states.delete('expanded');
     }
   }
 
   get expanded() {
-    return this.#internals.states.has("expanded");
+    return this.#internals.states.has('expanded');
   }
 
   @property()
@@ -60,7 +60,7 @@ export class UseTreeitem extends LitElement {
     if (v != null) {
       this.setAttribute('value', v);
     }
-  };
+  }
 
   get value() {
     return this.getAttribute('value') ?? this.textContent;
@@ -82,12 +82,12 @@ export class UseTreeitem extends LitElement {
      *
      * @link https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#boolean-attributes
      */
-    if (this.hasAttribute("selected")) {
-      this.#internals.states.add("selected");
+    if (this.hasAttribute('selected')) {
+      this.#internals.states.add('selected');
     }
 
-    if (this.hasAttribute("disabled") || this.#isParentDisabled()) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled') || this.#isParentDisabled()) {
+      this.#internals.states.add('disabled');
     }
 
     if (this.parentElement instanceof UseTreeitem) {
@@ -95,7 +95,7 @@ export class UseTreeitem extends LitElement {
     }
 
     if (this.querySelector('use-treeitem')) {
-      this.#internals.states.add("has-children");
+      this.#internals.states.add('has-children');
     }
   }
 
@@ -149,48 +149,48 @@ export class UseTreeitem extends LitElement {
       cursor: default;
     }
 
-    slot[name="selected-indicator"] {
+    slot[name='selected-indicator'] {
       display: contents;
       visibility: hidden;
     }
 
-    slot[name="selected-indicator"],
-    slot[name="expanded-indicator"],
-    slot[name="collapsed-indicator"] {
+    slot[name='selected-indicator'],
+    slot[name='expanded-indicator'],
+    slot[name='collapsed-indicator'] {
       font-family: monospace;
     }
 
-    slot[name="expanded-indicator"] {
+    slot[name='expanded-indicator'] {
       display: none;
     }
 
-    slot[name="collapsed-indicator"] {
+    slot[name='collapsed-indicator'] {
       display: contents;
     }
 
-    [part="toggle-indicator"] {
+    [part='toggle-indicator'] {
       visibility: hidden;
       display: contents;
     }
 
-    :host(:state(has-children)) [part="toggle-indicator"] {
+    :host(:state(has-children)) [part='toggle-indicator'] {
       visibility: visible;
     }
 
-    :host(:state(expanded)) slot[name="collapsed-indicator"] {
+    :host(:state(expanded)) slot[name='collapsed-indicator'] {
       display: none;
     }
 
-    :host(:state(expanded)) slot[name="expanded-indicator"] {
+    :host(:state(expanded)) slot[name='expanded-indicator'] {
       display: contents;
     }
 
-    :host(:state(selected)) slot[name="selected-indicator"] {
+    :host(:state(selected)) slot[name='selected-indicator'] {
       visibility: visible;
     }
 
     :host(:state(disabled)) {
-      opacity: .5;
+      opacity: 0.5;
     }
 
     ::slotted(use-treeitem) {
@@ -202,13 +202,13 @@ export class UseTreeitem extends LitElement {
       display: block;
     }
 
-    [part="content"] {
+    [part='content'] {
       display: flex;
       align-items: center;
     }
 
-    :host(:focus) [part="content"],
-    [part="content"]:hover {
+    :host(:focus) [part='content'],
+    [part='content']:hover {
       outline: none;
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
@@ -217,6 +217,6 @@ export class UseTreeitem extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-treeitem': UseTreeitem
+    'use-treeitem': UseTreeitem;
   }
 }

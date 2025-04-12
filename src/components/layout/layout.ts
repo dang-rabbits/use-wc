@@ -1,7 +1,6 @@
-import { LitElement, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
-import {  GapType } from '../../styles/gap';
-
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import { GapType } from '../../styles/gap';
 
 /**
  * An example element.
@@ -39,6 +38,6 @@ export class FlexLayout extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'flex-layout': FlexLayout
+    'flex-layout': FlexLayout;
   }
 }

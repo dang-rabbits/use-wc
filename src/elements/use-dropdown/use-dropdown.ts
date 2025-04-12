@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, css, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 import { getTabIndex } from 'tabbable';
 
@@ -54,7 +54,7 @@ export class UseDropdown extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has("disabled");
+    return this.#internals.states.has('disabled');
   }
 
   @property()
@@ -66,8 +66,8 @@ export class UseDropdown extends LitElement {
     this.#internals = this.attachInternals();
     this.#initializeTabbables();
 
-    if (this.hasAttribute("disabled")) {
-      this.#internals.states.add("disabled");
+    if (this.hasAttribute('disabled')) {
+      this.#internals.states.add('disabled');
     }
   }
 
@@ -141,10 +141,10 @@ export class UseDropdown extends LitElement {
     await this.updateComplete;
 
     if (disabled) {
-      this.#internals.states.add("disabled");
+      this.#internals.states.add('disabled');
       this.trigger?.setAttribute('disabled', 'disabled');
     } else {
-      this.#internals.states.delete("disabled");
+      this.#internals.states.delete('disabled');
       this.trigger?.removeAttribute('disabled');
     }
 
@@ -158,7 +158,7 @@ export class UseDropdown extends LitElement {
   }
 
   #getPopoverOpen() {
-    return this.trigger?.popoverTargetElement?.matches(":popover-open");
+    return this.trigger?.popoverTargetElement?.matches(':popover-open');
   }
 
   #handleKeyDown(event: KeyboardEvent) {
@@ -184,7 +184,7 @@ export class UseDropdown extends LitElement {
       this.#closePopover();
       event.preventDefault();
       event.stopPropagation();
-      return
+      return;
     }
 
     const options = this.#tabbables;
@@ -243,9 +243,9 @@ export class UseDropdown extends LitElement {
 
     if (opening) {
       this.#tabbables[0]?.focus();
-      this.#internals.states.add("open");
+      this.#internals.states.add('open');
     } else {
-      this.#internals.states.delete("open");
+      this.#internals.states.delete('open');
     }
   }
 
@@ -302,7 +302,7 @@ export class UseDropdown extends LitElement {
       pointer-events: none;
     }
 
-    [part="menu"]:popover-open {
+    [part='menu']:popover-open {
       display: flex;
       flex-direction: column;
       justify-items: stretch;
@@ -312,7 +312,7 @@ export class UseDropdown extends LitElement {
       margin-inline: 0;
     }
 
-    ::slotted([role="group"]) {
+    ::slotted([role='group']) {
       display: contents;
     }
   `;
@@ -320,6 +320,6 @@ export class UseDropdown extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-dropdown': UseDropdown
+    'use-dropdown': UseDropdown;
   }
 }

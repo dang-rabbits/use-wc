@@ -14,11 +14,7 @@ const meta: Meta<UseTree> = {
   },
   render: (args: UseTree) => {
     return html`
-      <use-tree
-        .name=${args.name}
-        ?disabled=${args.disabled}
-        ?multiple=${args.multiple}
-      >
+      <use-tree .name=${args.name} ?disabled=${args.disabled} ?multiple=${args.multiple}>
         <use-treeitem value="1" id="option-1" selected>One</use-treeitem>
         <use-treeitem value="2" id="option-2">Two</use-treeitem>
         <use-treeitem value="3" id="option-3">
@@ -43,7 +39,7 @@ export const Default: Story = {};
 export const Disabled: Story = {
   args: {
     disabled: true,
-  }
+  },
 };
 
 export const DisabledOptions: Story = {
@@ -67,7 +63,7 @@ export const DisabledOptions: Story = {
 export const Multiple: Story = {
   args: {
     multiple: true,
-  }
+  },
 };
 
 export const FormSingleValue: Story = {
@@ -116,7 +112,8 @@ export const FormMultipleValues: Story = {
       e.preventDefault();
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
-      const queryString = decodeURIComponent(new URLSearchParams(formData as any).toString());
+      // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
+      const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
       const formOutput = document.querySelector('#form-data-multiple');
       if (formOutput) {
         formOutput.textContent = queryString;
@@ -158,43 +155,25 @@ export const CustomSelectedIndicatorSlot: Story = {
       <span slot="selected-indicator">✅</span>
       <use-treeitem value="1" id="option-1" selected>
         First
-        <use-treeitem>
-          First A
-        </use-treeitem>
-        <use-treeitem>
-          First B
-        </use-treeitem>
-        <use-treeitem>
-          First C
-        </use-treeitem>
+        <use-treeitem> First A </use-treeitem>
+        <use-treeitem> First B </use-treeitem>
+        <use-treeitem> First C </use-treeitem>
       </use-treeitem>
       <use-treeitem value="2" id="option-2">
         Second
-        <use-treeitem>
-          Second A
-        </use-treeitem>
-        <use-treeitem>
-          Second B
-        </use-treeitem>
-        <use-treeitem>
-          Second C
-        </use-treeitem>
+        <use-treeitem> Second A </use-treeitem>
+        <use-treeitem> Second B </use-treeitem>
+        <use-treeitem> Second C </use-treeitem>
       </use-treeitem>
       <use-treeitem value="3" id="option-3">
         Third
-        <use-treeitem>
-          Third A
-        </use-treeitem>
-        <use-treeitem>
-          Third B
-        </use-treeitem>
-        <use-treeitem>
-          Third C
-        </use-treeitem>
+        <use-treeitem> Third A </use-treeitem>
+        <use-treeitem> Third B </use-treeitem>
+        <use-treeitem> Third C </use-treeitem>
       </use-treeitem>
     </use-tree>
-  `
-}
+  `,
+};
 
 export const CustomStyles: Story = {
   render: () => html`
@@ -205,7 +184,10 @@ export const CustomStyles: Story = {
         border: 2px solid mediumvioletred;
         border-radius: 6px;
         padding: 4px;
-        box-shadow: 1px 1px 0 mediumvioletred, 2px 2px 0 mediumvioletred, 3px 3px 0 mediumvioletred;
+        box-shadow:
+          1px 1px 0 mediumvioletred,
+          2px 2px 0 mediumvioletred,
+          3px 3px 0 mediumvioletred;
         font-size: 16px;
         font-weight: 700;
         letter-spacing: 2px;
@@ -235,15 +217,15 @@ export const CustomStyles: Story = {
       }
 
       .custom-use-tree use-treeitem::part(collapsed-indicator)::before {
-        content: "\\25BA";
+        content: '\\25BA';
       }
 
       .custom-use-tree use-treeitem::part(expanded-indicator)::before {
-        content: "\\25BC";
+        content: '\\25BC';
       }
 
       .custom-use-tree use-treeitem::part(selected-indicator)::before {
-        content: "🐲";
+        content: '🐲';
       }
 
       .custom-use-tree use-treeitem:focus-visible {
@@ -288,8 +270,8 @@ export const CustomStyles: Story = {
         </use-treeitem>
       </use-treeitem>
     </use-tree>
-  `
-}
+  `,
+};
 
 export const ProgrammaticallyChangeSelection: Story = {
   render: () => {
@@ -332,7 +314,7 @@ export const ProgrammaticallyChangeSelection: Story = {
       <hr />
       <h6>Payload</h6>
       <pre id="form-data-programmatic"></pre>
-    `
+    `;
   },
 };
 
@@ -342,7 +324,8 @@ export const ProgrammaticallyChangeSelectionMultiple: Story = {
       e.preventDefault();
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
-      const queryString = decodeURIComponent(new URLSearchParams(formData as any).toString());
+      // @ts-expect-error - ttps://github.com/microsoft/TypeScript/issues/30584
+      const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
       const formOutput = document.querySelector('#form-data-programmatic-multiple');
       if (formOutput) {
         formOutput.textContent = queryString;
@@ -377,6 +360,6 @@ export const ProgrammaticallyChangeSelectionMultiple: Story = {
       <hr />
       <h6>Payload</h6>
       <pre id="form-data-programmatic-multiple"></pre>
-    `
+    `;
   },
 };

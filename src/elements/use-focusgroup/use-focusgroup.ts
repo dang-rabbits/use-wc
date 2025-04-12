@@ -1,4 +1,4 @@
-import { getTabIndex, tabbable } from 'tabbable';
+import { FocusableElement, getTabIndex, tabbable } from 'tabbable';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-focusgroup-tabindex';
 const INITIAL_TABINDEX_VALUE = 'initial';
@@ -77,6 +77,10 @@ export class UseFocusgroup extends HTMLElement {
       this.#initializeTabbables();
     }, 0);
     this.#initializeListeners();
+  }
+
+  disconnectedCallback() {
+    this.#unwatchMutations();
   }
 
   #initializeFeatures() {
@@ -168,11 +172,30 @@ export class UseFocusgroup extends HTMLElement {
       this.#makeTabbable(event.target as HTMLElement);
     });
 
-    // TODO implement something similar with mutation observer for when `[hidden]` is removed
-    // https://stackoverflow.com/questions/73205375/is-there-an-event-that-triggers-when-a-child-element-was-removed-and-added
-    this.addEventListener('toggle', () => {
+    this.addEventListener(
+      'toggle',
+      () => {
+        this.#initializeTabbables(true);
+      },
+      true
+    );
+  }
+
+  #observer: MutationObserver | null = null;
+  #watchMutations() {
+    if (this.#observer) {
+      return;
+    }
+
+    this.#observer = new MutationObserver(() => {
       this.#initializeTabbables(true);
-    }, true);
+    });
+    this.#observer.observe(this, { attributes: false, childList: true, subtree: true });
+  }
+
+  #unwatchMutations() {
+    this.#observer?.disconnect();
+    this.#observer = null;
   }
 
   focus() {
@@ -203,7 +226,7 @@ export class UseFocusgroup extends HTMLElement {
         }
       }
     }
-  };
+  }
 
   #removeTabbable(element: HTMLElement) {
     if (this.#noMemory) {
@@ -217,20 +240,15 @@ export class UseFocusgroup extends HTMLElement {
 
   #findTabbables() {
     const allTabbables = tabbable(this, { getShadowRoot: true });
-    const filteredTabbables = [];
+    const filteredTabbables: FocusableElement[] = [];
 
-    let parentPushed = false;
     for (const node of allTabbables) {
       const parent = node.closest('use-focusgroup');
-      if (this !== parent) {
-        if (this.contains(parent) && !parentPushed) {
-          filteredTabbables.push(parent);
-          parentPushed = true;
-        }
-      } else {
-        filteredTabbables.push(node);
-        parentPushed = false;
+      if (parent && filteredTabbables.includes(parent)) {
+        continue;
       }
+
+      filteredTabbables.push(parent && this !== parent ? parent : node);
     }
 
     return filteredTabbables.map((node) => {
@@ -255,8 +273,9 @@ export class UseFocusgroup extends HTMLElement {
     if (restore) {
       this.#restoreTabbables();
     }
-    this.#tabbables = this.#findTabbables();
-    this.#resetTabbables();
+    this.#enableRovingFocus();
+    this.#unwatchMutations();
+    this.#watchMutations();
   }
 
   #promoted = false;
@@ -291,7 +310,8 @@ export class UseFocusgroup extends HTMLElement {
     });
   }
 
-  #resetTabbables() {
+  #enableRovingFocus() {
+    this.#tabbables = this.#findTabbables();
     this.#tabbables.forEach((element, index) => {
       if (isUseFocusgroup(element)) {
         if (index === 0) {
@@ -320,6 +340,6 @@ customElements.define('use-focusgroup', UseFocusgroup);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-focusgroup': UseFocusgroup
+    'use-focusgroup': UseFocusgroup;
   }
 }

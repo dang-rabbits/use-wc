@@ -15,7 +15,7 @@ const meta: Meta<UseFocusgroup> = {
         type: 'text',
         options: 'inline',
       },
-    }
+    },
   },
   render: (args: UseFocusgroup) => {
     return html`
@@ -51,7 +51,7 @@ export const Block: Story = {
         <button type="button">hello</button>
       </use-focusgroup>
     `;
-  }
+  },
 };
 
 export const Wrap: Story = {
@@ -145,4 +145,27 @@ export const Disclosure: Story = {
       </details>
     </use-focusgroup>
   `,
+};
+
+export const InjectButtons: Story = {
+  render: () => {
+    function handleInject() {
+      const focusgroup = document.querySelector('#injectable') as UseFocusgroup;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.innerText = 'injected';
+      focusgroup.appendChild(button);
+      focusgroup.appendChild(button.cloneNode(true));
+      focusgroup.appendChild(button.cloneNode(true));
+    }
+
+    return html`
+      <use-focusgroup id="injectable" style="display: flex; gap: 1rem; flex-direction: row;">
+        <button type="button">markup</button>
+        <button type="button">markup</button>
+        <button type="button">markup</button>
+      </use-focusgroup>
+      <button @click=${handleInject} type="button">Inject</button>
+    `;
+  },
 };
