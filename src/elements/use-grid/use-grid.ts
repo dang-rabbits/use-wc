@@ -15,12 +15,14 @@ export class UseGrid extends LitElement {
   static formAssociated = true;
   #internals: ElementInternals;
 
-  /** Selection mode: 'multiple', 'single', or 'none' */
   @property({ type: String, reflect: true, attribute: 'selectmode' })
   selectmode: 'multiple' | 'single' | 'none' = 'none';
 
   @property({ type: String, reflect: true })
   name = '';
+
+  @property({ type: String, reflect: true })
+  role = 'grid';
 
   @property({ type: Boolean, reflect: true })
   disabled = false;
@@ -80,6 +82,8 @@ export class UseGrid extends LitElement {
   }
 
   firstUpdated() {
+    this.#initializeGridRows();
+
     const firstCell = this.querySelector('use-gridrow:not([disabled]) use-gridcell') as UseGridCell | null;
     if (firstCell) {
       firstCell.tabIndex = 0;
@@ -113,22 +117,7 @@ export class UseGrid extends LitElement {
       const row = active.closest('use-gridrow');
       // Only allow selection if the row is not in thead (header)
       if (row && !row.hasAttribute('disabled') && this.selectmode !== 'none' && !row.closest('use-gridhead')) {
-        if (this.selectmode === 'single') {
-          // If already selected, deselect
-          if (row.hasAttribute('selected')) {
-            row.removeAttribute('selected');
-          } else {
-            this.querySelectorAll('use-gridrow[selected]').forEach((r) => r.removeAttribute('selected'));
-            row.setAttribute('selected', '');
-          }
-        } else if (this.selectmode === 'multiple') {
-          // Toggle selection
-          if (row.hasAttribute('selected')) {
-            row.removeAttribute('selected');
-          } else {
-            row.setAttribute('selected', '');
-          }
-        }
+        this.#toggleRowSelection(row);
         event.preventDefault();
         return;
       }
@@ -215,9 +204,8 @@ export class UseGrid extends LitElement {
       !selectRow.closest('use-gridhead') &&
       selectRow.getAttribute('value') != null
     ) {
-      // Toggle selection logic similar to keyboard
       const rowValue = selectRow.getAttribute('value') ?? selectRow.textContent ?? '';
-      let newValue = this.#value.getAll(this.name || 'value') as string[];
+      let newValue = this.#value.getAll(this.#dataKey) as string[];
       if (selectRow.hasAttribute('selected')) {
         newValue = newValue.filter((v) => v !== rowValue);
       } else if (this.selectmode === 'multiple') {
@@ -230,7 +218,6 @@ export class UseGrid extends LitElement {
     }
   }
 
-  // FIXME when clicking on a widget or button with 'enter' then all the rows become selected, even the header
   #handleClick(event: HTMLElementEventMap['click']) {
     if (this.disabled) {
       return;
@@ -243,7 +230,7 @@ export class UseGrid extends LitElement {
       return;
     }
 
-    if (selectRow?.value != null) {
+    if (selectRow?.value && selectRow?.value != '' && selectRow?.value != null) {
       event.preventDefault();
       const isToggleIndicator = event
         .composedPath()
@@ -267,9 +254,55 @@ export class UseGrid extends LitElement {
   render() {
     return html`
       <div role="grid" part="grid">
+        <slot name="selected-indicator" part="selected-indicator">
+          <span part="selected-indicator-default" aria-hidden="true">✔</span>
+        </slot>
+        <slot name="deselected-indicator" part="deselected-indicator">
+          <span part="deselected-indicator-default" aria-hidden="true">&nbsp;</span>
+        </slot>
         <slot></slot>
       </div>
     `;
+  }
+
+  #lazyQueryGridRows() {
+    return Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
+  }
+
+  // #selectedIndicatorCache: HTMLSlotElement | undefined;
+  // get selectedIndicator() {
+  //   if (!this.#selectedIndicatorCache) {
+  //     this.#selectedIndicatorCache = (
+  //       this.shadowRoot?.querySelector('slot[name="selected-indicator"]') as HTMLSlotElement
+  //     )?.assignedElements({ flatten: true })[0];
+  //   }
+
+  //   return this.#selectedIndicatorCache;
+  // }
+
+  // #deselectedIndicatorCache: HTMLSlotElement | null = null;
+  // get deselectedIndicator() {
+  //   if (!this.#deselectedIndicatorCache) {
+  //     this.#deselectedIndicatorCache = this.shadowRoot
+  //       ?.querySelector('slot[name="deselected-indicator"]')
+  //       ?.assignedElemenets({ flatten: true })[0];
+  //   }
+  //   return this.#deselectedIndicatorCache;
+  // }
+
+  #initializeGridRows() {
+    this.#lazyQueryGridRows().forEach((item) => {
+      ['selected', 'deselected'].forEach((slot) => {
+        const nodeClone = (this.shadowRoot?.querySelector(`slot[name="${slot}-indicator"]`) as HTMLSlotElement | null)
+          ?.assignedElements({ flatten: true })[0]
+          ?.cloneNode(true) as HTMLElement;
+
+        if (nodeClone) {
+          nodeClone.slot = `${slot}-indicator`;
+          item.appendChild(nodeClone);
+        }
+      });
+    });
   }
 
   static styles = css`
@@ -278,6 +311,9 @@ export class UseGrid extends LitElement {
     }
     ::slotted(use-gridhead) {
       font-weight: bold;
+    }
+    slot[name] {
+      display: none;
     }
   `;
 }

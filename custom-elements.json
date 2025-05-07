@@ -108,6 +108,462 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-grid/index.ts",
+      "declarations": [],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-grid"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-gridhead"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-gridbody"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-gridrow"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-gridcell"
+          }
+        },
+        {
+          "kind": "js",
+          "name": "*",
+          "declaration": {
+            "name": "*",
+            "package": "./use-gridcellwidget"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-grid/use-grid.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Accessible grid component following WAI-ARIA grid pattern and local spec.",
+          "name": "UseGrid",
+          "slots": [
+            {
+              "description": "Grid content (use-gridhead/use-gridbody rows)",
+              "name": ""
+            }
+          ],
+          "members": [
+            {
+              "kind": "field",
+              "name": "formAssociated",
+              "type": {
+                "text": "boolean"
+              },
+              "static": true,
+              "default": "true"
+            },
+            {
+              "kind": "field",
+              "name": "selectmode",
+              "type": {
+                "text": "'multiple' | 'single' | 'none'"
+              },
+              "default": "'none'",
+              "attribute": "selectmode",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "name",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "'grid'",
+              "attribute": "role",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "FormData"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selectmode",
+              "type": {
+                "text": "'multiple' | 'single' | 'none'"
+              },
+              "default": "'none'",
+              "fieldName": "selectmode"
+            },
+            {
+              "name": "name",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "name"
+            },
+            {
+              "name": "role",
+              "type": {
+                "text": "string"
+              },
+              "default": "'grid'",
+              "fieldName": "role"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disabled"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-grid",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseGrid",
+          "declaration": {
+            "name": "UseGrid",
+            "module": "src/elements/use-grid/use-grid.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-grid",
+          "declaration": {
+            "name": "UseGrid",
+            "module": "src/elements/use-grid/use-grid.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-grid/use-gridbody.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "UseGridBody",
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "tagName": "use-gridbody",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseGridBody",
+          "declaration": {
+            "name": "UseGridBody",
+            "module": "src/elements/use-grid/use-gridbody.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-gridbody",
+          "declaration": {
+            "name": "UseGridBody",
+            "module": "src/elements/use-grid/use-gridbody.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-grid/use-gridcell.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "UseGridCell",
+          "members": [
+            {
+              "kind": "field",
+              "name": "mode",
+              "type": {
+                "text": "'widget' | 'default'"
+              },
+              "default": "'default'",
+              "attribute": "mode",
+              "reflects": true
+            },
+            {
+              "kind": "method",
+              "name": "initializeWidget",
+              "inheritedFrom": {
+                "name": "UseWidget",
+                "module": "src/elements/use-widget/use-widget.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "enableWidget",
+              "parameters": [
+                {
+                  "name": "autofocus",
+                  "default": "true",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "UseWidget",
+                "module": "src/elements/use-widget/use-widget.ts"
+              }
+            },
+            {
+              "kind": "method",
+              "name": "disableWidget",
+              "parameters": [
+                {
+                  "name": "returnFocus",
+                  "default": "true",
+                  "type": {
+                    "text": "boolean"
+                  }
+                }
+              ],
+              "inheritedFrom": {
+                "name": "UseWidget",
+                "module": "src/elements/use-widget/use-widget.ts"
+              }
+            }
+          ],
+          "attributes": [
+            {
+              "name": "mode",
+              "type": {
+                "text": "'widget' | 'default'"
+              },
+              "default": "'default'",
+              "fieldName": "mode"
+            }
+          ],
+          "superclass": {
+            "name": "UseWidget",
+            "module": "/src/elements/use-widget/use-widget"
+          },
+          "tagName": "use-gridcell",
+          "customElement": true,
+          "slots": [
+            {
+              "inheritedFrom": {
+                "name": "UseWidget",
+                "module": "src/elements/use-widget/use-widget.ts"
+              }
+            }
+          ]
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseGridCell",
+          "declaration": {
+            "name": "UseGridCell",
+            "module": "src/elements/use-grid/use-gridcell.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-gridcell",
+          "declaration": {
+            "name": "UseGridCell",
+            "module": "src/elements/use-grid/use-gridcell.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-grid/use-gridhead.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "UseGridHead",
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "tagName": "use-gridhead",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseGridHead",
+          "declaration": {
+            "name": "UseGridHead",
+            "module": "src/elements/use-grid/use-gridhead.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-gridhead",
+          "declaration": {
+            "name": "UseGridHead",
+            "module": "src/elements/use-grid/use-gridhead.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
+      "path": "src/elements/use-grid/use-gridrow.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "",
+          "name": "UseGridRow",
+          "members": [
+            {
+              "kind": "field",
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "selected",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "attribute": "disabled",
+              "reflects": true
+            },
+            {
+              "kind": "field",
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "attribute": "value",
+              "reflects": true
+            }
+          ],
+          "attributes": [
+            {
+              "name": "selected",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "selected"
+            },
+            {
+              "name": "disabled",
+              "type": {
+                "text": "boolean"
+              },
+              "default": "false",
+              "fieldName": "disabled"
+            },
+            {
+              "name": "value",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "fieldName": "value"
+            }
+          ],
+          "superclass": {
+            "name": "LitElement",
+            "package": "lit"
+          },
+          "tagName": "use-gridrow",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseGridRow",
+          "declaration": {
+            "name": "UseGridRow",
+            "module": "src/elements/use-grid/use-gridrow.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-gridrow",
+          "declaration": {
+            "name": "UseGridRow",
+            "module": "src/elements/use-grid/use-gridrow.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-focusgroup/use-focusgroup.ts",
       "declarations": [
         {

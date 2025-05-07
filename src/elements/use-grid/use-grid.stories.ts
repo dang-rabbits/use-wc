@@ -10,15 +10,15 @@ import './use-gridcell';
 const meta: Meta = {
   title: 'Web Components/use-grid',
   component: 'use-grid',
-  tags: ['autodocs', '!dev'],
+  tags: ['autodocs', '!dev', 'utility'],
 };
 export default meta;
 
 type Story = StoryObj;
 
-export const SingleSelect: Story = {
+export const Default: Story = {
   render: () => html`
-    <use-grid selectmode="single">
+    <use-grid>
       <use-gridhead>
         <use-gridrow>
           <use-gridcell>Header 1</use-gridcell>
@@ -39,6 +39,29 @@ export const SingleSelect: Story = {
   `,
 };
 
+export const SingleSelect: Story = {
+  render: () => html`
+    <use-grid selectmode="single">
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Header 1</use-gridcell>
+          <use-gridcell>Header 2</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="1">
+          <use-gridcell>Row 1, Cell 1</use-gridcell>
+          <use-gridcell>Row 1, Cell 2</use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="2">
+          <use-gridcell>Row 2, Cell 1</use-gridcell>
+          <use-gridcell>Row 2, Cell 2</use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
+};
+
 export const MultipleSelect: Story = {
   render: () => html`
     <use-grid selectmode="multiple">
@@ -49,11 +72,11 @@ export const MultipleSelect: Story = {
         </use-gridrow>
       </use-gridhead>
       <use-gridbody>
-        <use-gridrow>
+        <use-gridrow value="1">
           <use-gridcell>Row 1, Cell 1</use-gridcell>
           <use-gridcell>Row 1, Cell 2</use-gridcell>
         </use-gridrow>
-        <use-gridrow>
+        <use-gridrow value="2">
           <use-gridcell>Row 2, Cell 1</use-gridcell>
           <use-gridcell>Row 2, Cell 2</use-gridcell>
         </use-gridrow>
@@ -94,23 +117,23 @@ export const CellWithControls: Story = {
     <use-grid selectmode="multiple">
       <use-gridhead>
         <use-gridrow>
-          <use-gridcell>Header 1</use-gridcell>
-          <use-gridcell>Header 2</use-gridcell>
+          <use-gridcell>Item</use-gridcell>
+          <use-gridcell>Actions</use-gridcell>
         </use-gridrow>
       </use-gridhead>
       <use-gridbody>
-        <use-gridrow>
-          <use-gridcell> Cell 1 </use-gridcell>
+        <use-gridrow value="123">
+          <use-gridcell>John Doe</use-gridcell>
           <use-gridcell mode="widget">
-            <button type="button">Button 1</button>
-            <button type="button">Button 2</button>
+            <button type="button">Edit</button>
+            <button type="button">Delete</button>
           </use-gridcell>
         </use-gridrow>
-        <use-gridrow>
-          <use-gridcell> Cell 3 </use-gridcell>
+        <use-gridrow value="789">
+          <use-gridcell>Jane Doe</use-gridcell>
           <use-gridcell mode="widget">
-            <button type="button">Button 3</button>
-            <button type="button">Button 4</button>
+            <button type="button">Edit</button>
+            <button type="button">Delete</button>
           </use-gridcell>
         </use-gridrow>
       </use-gridbody>
@@ -203,5 +226,36 @@ export const FormMultipleValue: Story = {
       <button type="submit">Submit</button>
       <div id="form-data-multiple"></div>
     </form>
+  `,
+};
+
+export const CustomIndicators: Story = {
+  render: () => html`
+    <use-grid selectmode="multiple">
+      <span slot="selected-indicator" aria-hidden="true">♥️</span>
+      <span slot="deselected-indicator" aria-hidden="true">💔</span>
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Item</use-gridcell>
+          <use-gridcell>Actions</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="123">
+          <use-gridcell>John Doe</use-gridcell>
+          <use-gridcell mode="widget">
+            <button type="button">Edit</button>
+            <button type="button">Delete</button>
+          </use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="789">
+          <use-gridcell>Jane Doe</use-gridcell>
+          <use-gridcell mode="widget">
+            <button type="button">Edit</button>
+            <button type="button">Delete</button>
+          </use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
   `,
 };
