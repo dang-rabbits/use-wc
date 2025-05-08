@@ -95,15 +95,15 @@ export const DisabledRow: Story = {
         </use-gridrow>
       </use-gridhead>
       <use-gridbody>
-        <use-gridrow>
+        <use-gridrow value="1">
           <use-gridcell>Row 1, Cell 1</use-gridcell>
           <use-gridcell>Row 1, Cell 2</use-gridcell>
         </use-gridrow>
-        <use-gridrow disabled>
+        <use-gridrow value="2" disabled>
           <use-gridcell>Row 2, Cell 1</use-gridcell>
           <use-gridcell>Row 2, Cell 2</use-gridcell>
         </use-gridrow>
-        <use-gridrow>
+        <use-gridrow value="3">
           <use-gridcell>Row 3, Cell 1</use-gridcell>
           <use-gridcell>Row 3, Cell 2</use-gridcell>
         </use-gridrow>
@@ -253,6 +253,94 @@ export const CustomIndicators: Story = {
           <use-gridcell mode="widget">
             <button type="button">Edit</button>
             <button type="button">Delete</button>
+          </use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
+};
+
+export const CustomStyles: Story = {
+  render: () => html``,
+};
+
+export const MasterDetail: Story = {
+  render: () => html`
+    <style>
+      .master-detail {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+
+        ::part(selected-indicator),
+        ::part(deselected-indicator) {
+          display: none;
+        }
+      }
+
+      .master-detail use-gridrow {
+        display: grid;
+        grid-template:
+          'name time'
+          'desc desc';
+        grid-gap: 0.5rem;
+        align-items: center;
+        justify-items: stretch;
+        flex-direction: column;
+        padding: 0.5rem;
+
+        .md-name {
+          grid-area: name;
+          font-weight: bold;
+        }
+
+        .md-time {
+          grid-area: time;
+          font-size: 0.8rem;
+          color: gray;
+          text-align: right;
+        }
+
+        .md-desc {
+          grid-area: desc;
+        }
+
+        &:is(:hover, :focus-within) {
+          background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        &[selected] {
+          box-shadow: inset 2px 0 0 0 blue;
+        }
+      }
+
+      .master-detail use-gridcell {
+        flex: initial;
+      }
+    </style>
+    <use-grid class="master-detail" selectmode="single">
+      <use-gridbody>
+        <use-gridrow value="1">
+          <use-gridcell mode="action" class="md-name">
+            <a href="#">RE: Garden gnomes</a>
+          </use-gridcell>
+          <use-gridcell class="md-time">
+            <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
+          </use-gridcell>
+          <use-gridcell class="md-desc">
+            Our HOA rules state a publicly visible garden cannot have more than 113 garden gnomes.
+          </use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="2">
+          <use-gridcell mode="action" class="md-name">
+            <a href="#">RE: Garden gnomes</a>
+          </use-gridcell>
+          <use-gridcell class="md-time">
+            <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
+          </use-gridcell>
+          <use-gridcell class="md-desc">
+            Our HOA rules state a public visible yard cannot have more than 113 garden gnomes.
           </use-gridcell>
         </use-gridrow>
       </use-gridbody>

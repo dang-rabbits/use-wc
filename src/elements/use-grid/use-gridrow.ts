@@ -1,12 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
-// - [ ] aria-selected
-// - [ ] aria-disabled
-// - [ ] aria-readonly
-// - [ ] aria-checked
-// - [ ] row header
-
 @customElement('use-gridrow')
 export class UseGridRow extends LitElement {
   @property({ type: Boolean, reflect: true })
@@ -18,8 +12,13 @@ export class UseGridRow extends LitElement {
   @property({ type: String, reflect: true })
   value = '';
 
+  firstUpdated() {
+    if (!this.hasAttribute('role')) {
+      this.setAttribute('role', 'row');
+    }
+  }
+
   updated() {
-    this.setAttribute('role', 'row');
     this.toggleAttribute('aria-selected', this.selected);
     this.toggleAttribute('aria-disabled', this.disabled);
   }
@@ -39,8 +38,7 @@ export class UseGridRow extends LitElement {
     :host([disabled]) {
       opacity: 0.5;
     }
-    :host-context(:is(use-grid[selectmode='none'], use-gridhead))
-      :is([part='deselected-indicator'], [part='selected-indicator']) {
+    :host-context(:is(use-grid[selectmode='none'])) :is([part='deselected-indicator'], [part='selected-indicator']) {
       display: none;
     }
     :is([part='selected-indicator'], [part='deselected-indicator']) {

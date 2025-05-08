@@ -4,6 +4,8 @@ import { UseGridRow } from './use-gridrow';
 import { UseGridCell } from './use-gridcell';
 
 const FORM_DATA_KEY = '__value';
+const indicators = ['selected', 'deselected'] as const;
+type Indicator = (typeof indicators)[number];
 
 /**
  * Accessible grid component following WAI-ARIA grid pattern and local spec.
@@ -87,19 +89,6 @@ export class UseGrid extends LitElement {
     const firstCell = this.querySelector('use-gridrow:not([disabled]) use-gridcell') as UseGridCell | null;
     if (firstCell) {
       firstCell.tabIndex = 0;
-    }
-
-    // Clone custom selected-indicator to all use-gridrow
-    const slot = this.shadowRoot?.querySelector('slot[name="selected-indicator"]') as HTMLSlotElement | null;
-    const indicator = slot?.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
-    if (indicator) {
-      this.querySelectorAll('use-gridrow').forEach((row) => {
-        // Remove any previous custom indicator
-        row.querySelectorAll('[slot="selected-indicator"]').forEach((el) => el.remove());
-        const clone = indicator.cloneNode(true) as HTMLElement;
-        clone.slot = 'selected-indicator';
-        row.appendChild(clone);
-      });
     }
   }
 
@@ -265,41 +254,29 @@ export class UseGrid extends LitElement {
     `;
   }
 
-  #lazyQueryGridRows() {
-    return Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
+  #lazyQueryGridBodyRows() {
+    return Array.from(this.querySelectorAll('use-gridbody use-gridrow')) as Array<UseGridRow>;
   }
 
-  // #selectedIndicatorCache: HTMLSlotElement | undefined;
-  // get selectedIndicator() {
-  //   if (!this.#selectedIndicatorCache) {
-  //     this.#selectedIndicatorCache = (
-  //       this.shadowRoot?.querySelector('slot[name="selected-indicator"]') as HTMLSlotElement
-  //     )?.assignedElements({ flatten: true })[0];
-  //   }
+  #indicatorSlotCache: Partial<Record<Indicator, HTMLElement>> = {};
+  #getIndicator(indicator: Indicator) {
+    if (!this.#indicatorSlotCache[indicator]) {
+      this.#indicatorSlotCache[indicator] = (
+        this.shadowRoot?.querySelector(`slot[name="${indicator}-indicator"]`) as HTMLSlotElement
+      )?.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
+    }
 
-  //   return this.#selectedIndicatorCache;
-  // }
-
-  // #deselectedIndicatorCache: HTMLSlotElement | null = null;
-  // get deselectedIndicator() {
-  //   if (!this.#deselectedIndicatorCache) {
-  //     this.#deselectedIndicatorCache = this.shadowRoot
-  //       ?.querySelector('slot[name="deselected-indicator"]')
-  //       ?.assignedElemenets({ flatten: true })[0];
-  //   }
-  //   return this.#deselectedIndicatorCache;
-  // }
+    return this.#indicatorSlotCache[indicator];
+  }
 
   #initializeGridRows() {
-    this.#lazyQueryGridRows().forEach((item) => {
-      ['selected', 'deselected'].forEach((slot) => {
-        const nodeClone = (this.shadowRoot?.querySelector(`slot[name="${slot}-indicator"]`) as HTMLSlotElement | null)
-          ?.assignedElements({ flatten: true })[0]
-          ?.cloneNode(true) as HTMLElement;
+    this.#lazyQueryGridBodyRows().forEach((row) => {
+      indicators.forEach((indicator) => {
+        const nodeClone = this.#getIndicator(indicator)?.cloneNode(true) as HTMLElement;
 
         if (nodeClone) {
-          nodeClone.slot = `${slot}-indicator`;
-          item.appendChild(nodeClone);
+          nodeClone.slot = `${indicator}-indicator`;
+          row.appendChild(nodeClone);
         }
       });
     });

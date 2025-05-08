@@ -3,11 +3,15 @@ import { UseWidget } from '../use-widget/use-widget';
 
 export class UseGridCell extends UseWidget {
   @property({ type: String, reflect: true })
-  mode: 'widget' | 'default' = 'default';
+  mode: 'widget' | 'action' | 'default' = 'default';
 
   connectedCallback() {
-    if (this.getAttribute('mode') === 'widget') {
+    if (this.mode === 'widget') {
       super.connectedCallback();
+    }
+
+    if (this.mode === 'action') {
+      this.setAttribute('tabindex', '0');
     }
 
     // Role will be set by parent context (header/body)
@@ -16,6 +20,16 @@ export class UseGridCell extends UseWidget {
     }
 
     this.tabIndex = -1;
+  }
+
+  focus() {
+    // FIXME arrow kay nav is not working when action el is focused
+    if (this.mode === 'action') {
+      // TODO convert to `tabbable()`
+      this.querySelector('button, a')?.focus();
+    } else {
+      super.focus();
+    }
   }
 }
 
