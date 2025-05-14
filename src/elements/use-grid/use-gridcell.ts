@@ -1,17 +1,15 @@
 import { property } from 'lit/decorators.js';
 import { UseWidget } from '../use-widget/use-widget';
+import { focusable, tabbable } from 'tabbable';
 
 export class UseGridCell extends UseWidget {
   @property({ type: String, reflect: true })
   mode: 'widget' | 'action' | 'default' = 'default';
+  #action: HTMLElement | null = null;
 
   connectedCallback() {
     if (this.mode === 'widget') {
       super.connectedCallback();
-    }
-
-    if (this.mode === 'action') {
-      this.setAttribute('tabindex', '0');
     }
 
     // Role will be set by parent context (header/body)
@@ -19,16 +17,32 @@ export class UseGridCell extends UseWidget {
       this.setAttribute('role', 'gridcell');
     }
 
+    setTimeout(() => {
+      this.#initializeActions();
+    }, 0);
+
     this.tabIndex = -1;
   }
 
-  focus() {
-    // FIXME arrow kay nav is not working when action el is focused
+  #initializeActions() {
     if (this.mode === 'action') {
-      // TODO convert to `tabbable()`
-      this.querySelector('button, a')?.focus();
-    } else {
-      super.focus();
+      tabbable(this).forEach((el) => {
+        el.tabIndex = -1;
+        if (!this.#action) {
+          this.#action = el as HTMLElement;
+        }
+      });
+
+      this.addEventListener('focusin', (e) => {
+        this.#action?.focus();
+        this.tabIndex = -1;
+      });
+
+      this.addEventListener('focusout', (e) => {
+        if (!this.closest('use-grid')?.contains(e.relatedTarget as HTMLElement)) {
+          this.tabIndex = 0;
+        }
+      });
     }
   }
 }

@@ -282,7 +282,7 @@ export const MasterDetail: Story = {
       .master-detail use-gridrow {
         display: grid;
         grid-template:
-          'name time'
+          'name meta'
           'desc desc';
         grid-gap: 0.5rem;
         align-items: center;
@@ -295,8 +295,8 @@ export const MasterDetail: Story = {
           font-weight: bold;
         }
 
-        .md-time {
-          grid-area: time;
+        .md-meta {
+          grid-area: meta;
           font-size: 0.8rem;
           color: gray;
           text-align: right;
@@ -325,9 +325,14 @@ export const MasterDetail: Story = {
           <use-gridcell mode="action" class="md-name">
             <a href="#">RE: Garden gnomes</a>
           </use-gridcell>
-          <use-gridcell class="md-time">
-            <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
-          </use-gridcell>
+          <div class="md-meta">
+            <use-gridcell>
+              <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
+            </use-gridcell>
+            <use-gridcell mode="action" class="md-delete">
+              <button type="button" aria-label="delete">&times;</button>
+            </use-gridcell>
+          </div>
           <use-gridcell class="md-desc">
             Our HOA rules state a publicly visible garden cannot have more than 113 garden gnomes.
           </use-gridcell>
@@ -336,9 +341,14 @@ export const MasterDetail: Story = {
           <use-gridcell mode="action" class="md-name">
             <a href="#">RE: Garden gnomes</a>
           </use-gridcell>
-          <use-gridcell class="md-time">
-            <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
-          </use-gridcell>
+          <div class="md-meta">
+            <use-gridcell>
+              <time datetime="2023-10-01T12:00:00Z">Oct 1, 2023</time>
+            </use-gridcell>
+            <use-gridcell mode="action" class="md-delete">
+              <button type="button" aria-label="delete">&times;</button>
+            </use-gridcell>
+          </div>
           <use-gridcell class="md-desc">
             Our HOA rules state a public visible yard cannot have more than 113 garden gnomes.
           </use-gridcell>

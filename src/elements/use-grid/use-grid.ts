@@ -93,7 +93,7 @@ export class UseGrid extends LitElement {
   }
 
   #onKeyDown = (event: KeyboardEvent) => {
-    const active = document.activeElement as HTMLElement;
+    const active = document.activeElement?.closest('use-gridcell') as HTMLElement;
     // Only consider cells in enabled rows
     const cells = Array.from(this.querySelectorAll<HTMLElement>('use-gridrow:not([disabled]) use-gridcell'));
     if (!cells.length) return;
