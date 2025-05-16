@@ -6,19 +6,21 @@ import './use-gridhead';
 import './use-gridbody';
 import './use-gridrow';
 import './use-gridcell';
+import { UseGrid } from './use-grid';
 
-const meta: Meta = {
+const meta: Meta<UseGrid> = {
   title: 'Web Components/use-grid',
   component: 'use-grid',
   tags: ['autodocs', '!dev', 'utility'],
 };
 export default meta;
 
-type Story = StoryObj;
+type Story = StoryObj<UseGrid>;
 
 export const Default: Story = {
-  render: () => html`
-    <use-grid>
+  tags: ['!autodocs', '!dev'],
+  render: (args) => html`
+    <use-grid ?disabled=${args.disabled} .name=${args.name} .role=${args.role} .selectmode=${args.selectmode}>
       <use-gridhead>
         <use-gridrow>
           <use-gridcell>Header 1</use-gridcell>
@@ -260,8 +262,79 @@ export const CustomIndicators: Story = {
   `,
 };
 
-export const CustomStyles: Story = {
-  render: () => html``,
+export const ProgrammaticSelectionSetter: Story = {
+  render: () => html`
+    <use-grid name="programmatic-selection" selectmode="single">
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Item</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="123">
+          <use-gridcell>John Doe</use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="789">
+          <use-gridcell>Jane Doe</use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+    <button
+      type="button"
+      @click=${() => {
+        const grid = document.querySelector('use-grid[name="programmatic-selection"]') as UseGrid;
+        grid.value = '123';
+      }}
+    >
+      Toggle First Row Selection
+    </button>
+  `,
+};
+
+export const HeaderControls: Story = {
+  render: () => {
+    function handleHeaderKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Enter') {
+        if (event.ctrlKey) {
+          alert('Header alt action triggered!');
+        } else {
+          alert('Header default action triggered!');
+        }
+      }
+    }
+
+    return html`
+      <use-grid selectmode="multiple">
+        <use-gridhead>
+          <use-gridrow>
+            <use-gridcell mode="action" aria-sort="none" @keydown=${handleHeaderKeyDown}>
+              Item
+              <button type="button" tabindex="-1">Sort</button>
+              <button type="button" tabindex="-1">Filter</button>
+              <button type="button" tabindex="-1">Options</button>
+            </use-gridcell>
+            <use-gridcell>Actions</use-gridcell>
+          </use-gridrow>
+        </use-gridhead>
+        <use-gridbody>
+          <use-gridrow value="123">
+            <use-gridcell>John Doe</use-gridcell>
+            <use-gridcell mode="widget">
+              <button type="button">Edit</button>
+              <button type="button">Delete</button>
+            </use-gridcell>
+          </use-gridrow>
+          <use-gridrow value="789">
+            <use-gridcell>Jane Doe</use-gridcell>
+            <use-gridcell mode="widget">
+              <button type="button">Edit</button>
+              <button type="button">Delete</button>
+            </use-gridcell>
+          </use-gridrow>
+        </use-gridbody>
+      </use-grid>
+    `;
+  },
 };
 
 export const MasterDetail: Story = {

@@ -8,7 +8,14 @@ const indicators = ['selected', 'deselected'] as const;
 type Indicator = (typeof indicators)[number];
 
 /**
- * Accessible grid component following WAI-ARIA grid pattern and local spec.
+ * Accessible grid component following [WAI-ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
+ *
+ * ## Grid Cell Modes
+ * The `mode` attribute of the `use-gridcell` element determines how the cell behaves in terms of focus and interaction. The possible values are:
+ *
+ * - `'none'` - the cell itself is focusable and it does not contain any interactive elements.
+ * - `'widget'` - the cell itself is focusable and it contains more than one interactive element. To access the interactive elements, the user must press `Enter` or `F2`, and to restore focus to the cell, the user must press `Esc` or `F2`.
+ * - `'action'` - the cell itself is not focusable and it contains more than one interactive element. The user can tab to the interactive elements directly.
  *
  * @slot - Grid content (use-gridhead/use-gridbody rows)
  */
@@ -58,10 +65,10 @@ export class UseGrid extends LitElement {
     }
 
     const values = this.#value.getAll(this.#dataKey);
-    const options = Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
+    const rows = Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
 
-    options.forEach((option) => {
-      option.selected = values.includes(option.getAttribute('value') ?? option.textContent ?? '');
+    rows.forEach((row) => {
+      row.selected = values.includes(row.getAttribute('value') ?? row.textContent ?? '');
     });
 
     this.#internals.setFormValue(this.#value);

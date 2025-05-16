@@ -1,6 +1,6 @@
 import { property } from 'lit/decorators.js';
 import { UseWidget } from '../use-widget/use-widget';
-import { focusable, tabbable } from 'tabbable';
+import { tabbable } from 'tabbable';
 
 export class UseGridCell extends UseWidget {
   @property({ type: String, reflect: true })
@@ -33,9 +33,11 @@ export class UseGridCell extends UseWidget {
         }
       });
 
-      this.addEventListener('focusin', (e) => {
-        this.#action?.focus();
-        this.tabIndex = -1;
+      this.addEventListener('focusin', () => {
+        if (this.#action) {
+          this.#action.focus();
+          this.tabIndex = -1;
+        }
       });
 
       this.addEventListener('focusout', (e) => {

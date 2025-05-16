@@ -10,6 +10,88 @@
     },
     {
       "kind": "javascript-module",
+      "path": "src/elements/use-focusgroup/use-focusgroup.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "description": "Nested controls are removed from the tab flow until the user navigates the nested controls with arrow keys.\n\n`use-focusgroup` is most useful for things like WYSIWYG toolbars, sets of tabs, or lists of navigation links (like a list of emails in a master detail layout).\n\n## To do\n\n- [ ] add `grid` navigation feature\n- [ ] add `autofocus` attribute support\n\n## Long term plan\n\nThis web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.\n\n<baseline-status featureId=\"focusgroup_attribute\"></baseline-status>\n\n## Sources\n\n- [Open UI focusgroup Explainer](https://open-ui.org/components/focusgroup.explainer/)\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Toolbar Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)\n- [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)",
+          "name": "UseFocusgroup",
+          "members": [
+            {
+              "kind": "field",
+              "name": "features",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "A list of space-separated features that can be used to customize the behavior of the focusgroup.\n\nThe following options are available:\n\n- `inline` opts into keyboard navigation via left and right arrow keys\n- `block` opts into keyboard navigation via up and down arrow keys\n- `wrap` arrow navigation should wrap around when reaching the end\n- `no-memory` whether the focusgroup should not remember the last focused element\n\nIf nothing if neither `inline` nor `block` is specified, both are assumed.",
+              "attribute": "features"
+            },
+            {
+              "kind": "field",
+              "name": "focusedElement",
+              "type": {
+                "text": "HTMLElement | null"
+              },
+              "default": "null",
+              "description": "The most recently focused element in the focusgroup."
+            },
+            {
+              "kind": "method",
+              "name": "focus"
+            },
+            {
+              "kind": "field",
+              "name": "promoted",
+              "description": "Whether the use-focusgroup is promoted to the top of the tab order inside a parent use-focusgroup.",
+              "readonly": true,
+              "default": "false"
+            },
+            {
+              "kind": "method",
+              "name": "promote",
+              "description": "Promotes the use-focusgroup to the top of the tab order inside a parent use-focusgroup."
+            }
+          ],
+          "attributes": [
+            {
+              "name": "features",
+              "type": {
+                "text": "string"
+              },
+              "default": "''",
+              "description": "A list of space-separated features that can be used to customize the behavior of the focusgroup.\n\nThe following options are available:\n\n- `inline` opts into keyboard navigation via left and right arrow keys\n- `block` opts into keyboard navigation via up and down arrow keys\n- `wrap` arrow navigation should wrap around when reaching the end\n- `no-memory` whether the focusgroup should not remember the last focused element\n\nIf nothing if neither `inline` nor `block` is specified, both are assumed.",
+              "fieldName": "features"
+            }
+          ],
+          "superclass": {
+            "name": "HTMLElement"
+          },
+          "tagName": "use-focusgroup",
+          "customElement": true
+        }
+      ],
+      "exports": [
+        {
+          "kind": "js",
+          "name": "UseFocusgroup",
+          "declaration": {
+            "name": "UseFocusgroup",
+            "module": "src/elements/use-focusgroup/use-focusgroup.ts"
+          }
+        },
+        {
+          "kind": "custom-element-definition",
+          "name": "use-focusgroup",
+          "declaration": {
+            "name": "UseFocusgroup",
+            "module": "src/elements/use-focusgroup/use-focusgroup.ts"
+          }
+        }
+      ]
+    },
+    {
+      "kind": "javascript-module",
       "path": "src/elements/use-dropdown/use-dropdown.ts",
       "declarations": [
         {
@@ -31,15 +113,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "shadowRootOptions",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
-            },
             {
               "kind": "field",
               "name": "trigger",
@@ -167,7 +240,7 @@
       "declarations": [
         {
           "kind": "class",
-          "description": "Accessible grid component following WAI-ARIA grid pattern and local spec.",
+          "description": "Accessible grid component following [WAI-ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).\n\n## Grid Cell Modes\nThe `mode` attribute of the `use-gridcell` element determines how the cell behaves in terms of focus and interaction. The possible values are:\n\n- `'none'` - the cell itself is focusable and it does not contain any interactive elements.\n- `'widget'` - the cell itself is focusable and it contains more than one interactive element. To access the interactive elements, the user must press `Enter` or `F2`, and to restore focus to the cell, the user must press `Esc` or `F2`.\n- `'action'` - the cell itself is not focusable and it contains more than one interactive element. The user can tab to the interactive elements directly.",
           "name": "UseGrid",
           "slots": [
             {
@@ -176,15 +249,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "formAssociated",
-              "type": {
-                "text": "boolean"
-              },
-              "static": true,
-              "default": "true"
-            },
             {
               "kind": "field",
               "name": "selectmode",
@@ -341,7 +405,7 @@
               "kind": "field",
               "name": "mode",
               "type": {
-                "text": "'widget' | 'default'"
+                "text": "'widget' | 'action' | 'default'"
               },
               "default": "'default'",
               "attribute": "mode",
@@ -394,7 +458,7 @@
             {
               "name": "mode",
               "type": {
-                "text": "'widget' | 'default'"
+                "text": "'widget' | 'action' | 'default'"
               },
               "default": "'default'",
               "fieldName": "mode"
@@ -564,88 +628,6 @@
     },
     {
       "kind": "javascript-module",
-      "path": "src/elements/use-focusgroup/use-focusgroup.ts",
-      "declarations": [
-        {
-          "kind": "class",
-          "description": "Nested controls are removed from the tab flow until the user navigates the nested controls with arrow keys.\n\n`use-focusgroup` is most useful for things like WYSIWYG toolbars, sets of tabs, or lists of navigation links (like a list of emails in a master detail layout).\n\n## To do\n\n- [ ] add `grid` navigation feature\n- [ ] add `autofocus` attribute support\n\n## Long term plan\n\nThis web component was built with the intent to be replaced by browser-native focusgroup support once it becomes baseline. Hopefully migration will be as simple as changing the tag name from `use-focusgroup` to `div` and the `options` attribute to `focusgroup`.\n\n<baseline-status featureId=\"focusgroup_attribute\"></baseline-status>\n\n## Sources\n\n- [Open UI focusgroup Explainer](https://open-ui.org/components/focusgroup.explainer/)\n- [tabbable](https://www.npmjs.com/package/tabbable)\n- [Toolbar Pattern](https://www.w3.org/WAI/ARIA/apg/patterns/toolbar/)\n- [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)",
-          "name": "UseFocusgroup",
-          "members": [
-            {
-              "kind": "field",
-              "name": "features",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "description": "A list of space-separated features that can be used to customize the behavior of the focusgroup.\n\nThe following options are available:\n\n- `inline` opts into keyboard navigation via left and right arrow keys\n- `block` opts into keyboard navigation via up and down arrow keys\n- `wrap` arrow navigation should wrap around when reaching the end\n- `no-memory` whether the focusgroup should not remember the last focused element\n\nIf nothing if neither `inline` nor `block` is specified, both are assumed.",
-              "attribute": "features"
-            },
-            {
-              "kind": "field",
-              "name": "focusedElement",
-              "type": {
-                "text": "HTMLElement | null"
-              },
-              "default": "null",
-              "description": "The most recently focused element in the focusgroup."
-            },
-            {
-              "kind": "method",
-              "name": "focus"
-            },
-            {
-              "kind": "field",
-              "name": "promoted",
-              "description": "Whether the use-focusgroup is promoted to the top of the tab order inside a parent use-focusgroup.",
-              "readonly": true,
-              "default": "false"
-            },
-            {
-              "kind": "method",
-              "name": "promote",
-              "description": "Promotes the use-focusgroup to the top of the tab order inside a parent use-focusgroup."
-            }
-          ],
-          "attributes": [
-            {
-              "name": "features",
-              "type": {
-                "text": "string"
-              },
-              "default": "''",
-              "description": "A list of space-separated features that can be used to customize the behavior of the focusgroup.\n\nThe following options are available:\n\n- `inline` opts into keyboard navigation via left and right arrow keys\n- `block` opts into keyboard navigation via up and down arrow keys\n- `wrap` arrow navigation should wrap around when reaching the end\n- `no-memory` whether the focusgroup should not remember the last focused element\n\nIf nothing if neither `inline` nor `block` is specified, both are assumed.",
-              "fieldName": "features"
-            }
-          ],
-          "superclass": {
-            "name": "HTMLElement"
-          },
-          "tagName": "use-focusgroup",
-          "customElement": true
-        }
-      ],
-      "exports": [
-        {
-          "kind": "js",
-          "name": "UseFocusgroup",
-          "declaration": {
-            "name": "UseFocusgroup",
-            "module": "src/elements/use-focusgroup/use-focusgroup.ts"
-          }
-        },
-        {
-          "kind": "custom-element-definition",
-          "name": "use-focusgroup",
-          "declaration": {
-            "name": "UseFocusgroup",
-            "module": "src/elements/use-focusgroup/use-focusgroup.ts"
-          }
-        }
-      ]
-    },
-    {
-      "kind": "javascript-module",
       "path": "src/elements/use-listbox/use-listbox.ts",
       "declarations": [
         {
@@ -662,24 +644,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "formAssociated",
-              "type": {
-                "text": "boolean"
-              },
-              "static": true,
-              "default": "true"
-            },
-            {
-              "kind": "field",
-              "name": "shadowRootOptions",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
-            },
             {
               "kind": "field",
               "name": "name",
@@ -833,15 +797,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "shadowRootOptions",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
-            },
             {
               "kind": "field",
               "name": "trigger",
@@ -1016,24 +971,6 @@
           "members": [
             {
               "kind": "field",
-              "name": "formAssociated",
-              "type": {
-                "text": "boolean"
-              },
-              "static": true,
-              "default": "true"
-            },
-            {
-              "kind": "field",
-              "name": "shadowRootOptions",
-              "type": {
-                "text": "object"
-              },
-              "static": true,
-              "default": "{ ...LitElement.shadowRootOptions, delegatesFocus: true, }"
-            },
-            {
-              "kind": "field",
               "name": "name",
               "type": {
                 "text": "string | undefined"
@@ -1169,15 +1106,6 @@
             }
           ],
           "members": [
-            {
-              "kind": "field",
-              "name": "formAssociated",
-              "type": {
-                "text": "boolean"
-              },
-              "static": true,
-              "default": "true"
-            },
             {
               "kind": "field",
               "name": "name",

@@ -2,10 +2,7 @@ import { create } from '@storybook/theming';
 import logo from './logo.svg';
 import logoDark from './logo-dark.svg';
 import { addons } from '@storybook/manager-api';
-import {
-  defaultConfig,
-  type TagBadgeParameters,
-} from 'storybook-addon-tag-badges'
+import { defaultConfig, type TagBadgeParameters } from 'storybook-addon-tag-badges';
 
 const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
 
