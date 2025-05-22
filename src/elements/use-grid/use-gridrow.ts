@@ -9,6 +9,9 @@ export class UseGridRow extends LitElement {
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
+  @property({ type: Boolean, reflect: true })
+  readonly = false;
+
   @property({ type: String, reflect: true })
   value = '';
 
@@ -19,8 +22,9 @@ export class UseGridRow extends LitElement {
   }
 
   updated() {
-    this.toggleAttribute('aria-selected', this.selected);
-    this.toggleAttribute('aria-disabled', this.disabled);
+    this.setAttribute('aria-selected', this.selected ? 'true' : 'false');
+    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
+    this.setAttribute('aria-readonly', this.readonly ? 'true' : 'false');
   }
 
   render() {

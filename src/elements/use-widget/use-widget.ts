@@ -117,6 +117,10 @@ export class UseWidget extends LitElement {
 
       switch (event.key) {
         case 'Enter':
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          event.preventDefault();
+
           this.enableWidget();
           break;
 

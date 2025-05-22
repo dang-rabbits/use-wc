@@ -24,6 +24,10 @@ export class UseGrid extends LitElement {
   static formAssociated = true;
   #internals: ElementInternals;
 
+  get internals() {
+    return this.#internals;
+  }
+
   @property({ type: String, reflect: true, attribute: 'selectmode' })
   selectmode: 'multiple' | 'single' | 'none' = 'none';
 
@@ -36,11 +40,31 @@ export class UseGrid extends LitElement {
   @property({ type: Boolean, reflect: true })
   disabled = false;
 
-  #value: FormData = new FormData();
+  @property({ type: Boolean, reflect: true })
+  readonly = false;
+
+  #value: string[] | string | null = null;
 
   constructor() {
     super();
     this.#internals = this.attachInternals();
+  }
+
+  #observer: MutationObserver | null = null;
+  #watchMutations() {
+    if (this.#observer) {
+      return;
+    }
+
+    this.#observer = new MutationObserver(() => {
+      this.#initializeGridRows();
+    });
+    this.#observer.observe(this, { attributes: false, childList: true, subtree: true });
+  }
+
+  #unwatchMutations() {
+    this.#observer?.disconnect();
+    this.#observer = null;
   }
 
   get #dataKey() {
@@ -48,33 +72,46 @@ export class UseGrid extends LitElement {
   }
 
   set value(value: string[] | string) {
-    this.#value.delete(this.#dataKey);
+    const newValue = new FormData();
 
     if (this.selectmode === 'multiple') {
       if (Array.isArray(value)) {
         value.forEach((v) => {
-          this.#value.append(this.#dataKey, v);
+          newValue.append(this.#dataKey, v);
         });
       } else {
-        this.#value.append(this.#dataKey, value);
+        newValue.append(this.#dataKey, value);
       }
     } else if (Array.isArray(value) && value.length > 0) {
-      this.#value.set(this.#dataKey, value[0]);
+      newValue.set(this.#dataKey, value[0]);
     } else if (typeof value === 'string' && value.length > 0) {
-      this.#value.set(this.#dataKey, value);
+      newValue.set(this.#dataKey, value);
     }
 
-    const values = this.#value.getAll(this.#dataKey);
+    const values = newValue.getAll(this.#dataKey);
     const rows = Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
 
     rows.forEach((row) => {
       row.selected = values.includes(row.getAttribute('value') ?? row.textContent ?? '');
     });
 
-    this.#internals.setFormValue(this.#value);
+    this.#internals.setFormValue(newValue);
+
+    // @ts-expect-error - we're not using File
+    this.#value = this.selectmode === 'multiple' ? values : values[0];
+
+    this.dispatchEvent(
+      new CustomEvent('use-change', {
+        detail: {
+          value: this.selectmode === 'multiple' ? values : newValue.get(this.#dataKey),
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
-  get value(): FormData {
+  get value(): string[] | string | null {
     return this.#value;
   }
 
@@ -87,16 +124,12 @@ export class UseGrid extends LitElement {
   disconnectedCallback() {
     this.removeEventListener('keydown', this.#onKeyDown);
     this.removeEventListener('click', this.#handleClick);
+    this.#unwatchMutations();
     super.disconnectedCallback();
   }
 
   firstUpdated() {
     this.#initializeGridRows();
-
-    const firstCell = this.querySelector('use-gridrow:not([disabled]) use-gridcell') as UseGridCell | null;
-    if (firstCell) {
-      firstCell.tabIndex = 0;
-    }
   }
 
   #onKeyDown = (event: KeyboardEvent) => {
@@ -107,12 +140,11 @@ export class UseGrid extends LitElement {
     const currentIndex = cells.indexOf(active);
     if (currentIndex === -1) return;
 
-    // Handle Shift + Space for row selection
     if (event.key === ' ' && event.shiftKey) {
-      // Find the parent use-gridrow of the focused cell
+      if (this.selectmode === 'none' || this.readonly || this.disabled) return;
+
       const row = active.closest('use-gridrow');
-      // Only allow selection if the row is not in thead (header)
-      if (row && !row.hasAttribute('disabled') && this.selectmode !== 'none' && !row.closest('use-gridhead')) {
+      if (row && !row.hasAttribute('disabled') && !row.closest('use-gridhead')) {
         this.#toggleRowSelection(row);
         event.preventDefault();
         return;
@@ -201,7 +233,7 @@ export class UseGrid extends LitElement {
       selectRow.getAttribute('value') != null
     ) {
       const rowValue = selectRow.getAttribute('value') ?? selectRow.textContent ?? '';
-      let newValue = this.#value.getAll(this.#dataKey) as string[];
+      let newValue = (this.#value as string[]) ?? [];
       if (selectRow.hasAttribute('selected')) {
         newValue = newValue.filter((v) => v !== rowValue);
       } else if (this.selectmode === 'multiple') {
@@ -215,14 +247,14 @@ export class UseGrid extends LitElement {
   }
 
   #handleClick(event: HTMLElementEventMap['click']) {
-    if (this.disabled) {
+    if (this.disabled || this.readonly) {
       return;
     }
 
     const target = event.target as HTMLElement;
     const selectRow = target?.closest<UseGridRow>('use-gridrow');
 
-    if (selectRow?.disabled) {
+    if (selectRow?.disabled || selectRow?.readonly) {
       return;
     }
 
@@ -277,8 +309,19 @@ export class UseGrid extends LitElement {
   }
 
   #initializeGridRows() {
+    this.#unwatchMutations();
+    const selectedValues: string[] = [];
+
     this.#lazyQueryGridBodyRows().forEach((row) => {
+      if (row.selected && row.value) {
+        selectedValues.push(row.value);
+      }
+
       indicators.forEach((indicator) => {
+        if (row.shadowRoot?.querySelector(`slot[name="${indicator}-indicator"]`)) {
+          return;
+        }
+
         const nodeClone = this.#getIndicator(indicator)?.cloneNode(true) as HTMLElement;
 
         if (nodeClone) {
@@ -287,6 +330,15 @@ export class UseGrid extends LitElement {
         }
       });
     });
+
+    this.value = selectedValues;
+
+    const firstCell = this.querySelector('use-gridrow:not([disabled]) use-gridcell') as UseGridCell | null;
+    if (firstCell) {
+      firstCell.tabIndex = 0;
+    }
+
+    this.#watchMutations();
   }
 
   static styles = css`
