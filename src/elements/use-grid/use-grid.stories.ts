@@ -707,9 +707,7 @@ export const MasterDetail: Story = {
                 <button type="button" aria-label="delete">&times;</button>
               </use-gridcell>
             </div>
-            <use-gridcell class="md-desc">
-              Our HOA rules state a public visible yard cannot have more than 113 garden gnomes.
-            </use-gridcell>
+            <use-gridcell class="md-desc"> Too many gnomes. </use-gridcell>
           </use-gridrow>
         </use-gridbody>
       </use-grid>
