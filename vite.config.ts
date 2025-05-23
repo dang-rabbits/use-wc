@@ -1,7 +1,7 @@
-import { resolve } from 'node:path'
-import { defineConfig } from 'vite'
-import dts from 'vite-plugin-dts'
-import { externalizeDeps } from 'vite-plugin-externalize-deps'
+import { resolve } from 'node:path';
+import { defineConfig } from 'vite';
+import dts from 'vite-plugin-dts';
+import { externalizeDeps } from 'vite-plugin-externalize-deps';
 
 export default defineConfig({
   build: {
@@ -11,5 +11,5 @@ export default defineConfig({
       fileName: 'use-wc',
     },
   },
-  plugins: [dts(), externalizeDeps()]
-})
+  plugins: [dts(), externalizeDeps()],
+});

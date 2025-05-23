@@ -77,3 +77,26 @@ export const Details: Story = {
     `;
   },
 };
+
+export const InjectWhileActive: Story = {
+  render: () => {
+    function handleInject() {
+      const focusgroup = document.querySelector('#injectable') as UseWidget;
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.innerText = 'injected';
+      focusgroup.appendChild(button);
+      focusgroup.appendChild(button.cloneNode(true));
+      focusgroup.appendChild(button.cloneNode(true));
+    }
+
+    return html`
+      <use-widget id="injectable">
+        <button type="button">markup</button>
+        <button type="button">markup</button>
+        <hr />
+        <button @click=${handleInject} type="button">inject</button>
+      </use-widget>
+    `;
+  },
+};

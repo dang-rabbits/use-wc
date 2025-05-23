@@ -66,6 +66,9 @@ export class UseWidget extends LitElement {
       element.setAttribute(INITIAL_TABINDEX_ATTR, this.#getTabIndex(element));
       element.setAttribute('tabindex', '-1');
     });
+
+    this.#unwatchMutations();
+    this.#watchMutations();
   }
 
   enableWidget(autofocus: boolean = true) {
@@ -114,6 +117,10 @@ export class UseWidget extends LitElement {
 
       switch (event.key) {
         case 'Enter':
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          event.preventDefault();
+
           this.enableWidget();
           break;
 
@@ -194,8 +201,29 @@ export class UseWidget extends LitElement {
     );
   }
 
+  disconnectedCallback() {
+    this.#unwatchMutations();
+  }
+
+  #observer: MutationObserver | null = null;
+  #watchMutations() {
+    if (this.#observer) {
+      return;
+    }
+
+    this.#observer = new MutationObserver(() => {
+      this.initializeWidget();
+    });
+    this.#observer.observe(this, { attributes: false, childList: true, subtree: true });
+  }
+
+  #unwatchMutations() {
+    this.#observer?.disconnect();
+    this.#observer = null;
+  }
+
   render() {
-    return html`<slot></slot> `;
+    return html`<slot></slot>`;
   }
 }
 
