@@ -1,6 +1,6 @@
 [Documentation (usewc.com)](https://usewc.com)
 
-![Storybook documentation](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg) ![NPM Version](https://img.shields.io/npm/v/use-wc)
+[![Storybook documentation](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://usewc.com) ![NPM Version](https://img.shields.io/npm/v/use-wc/latest) ![NPM Version (with dist tag)](https://img.shields.io/npm/v/use-wc/pre)
 
 # About `use-wc`
 
@@ -20,5 +20,5 @@ Provide reusable components with built-in accessibility, internationalization, a
 ## Install
 
 ```sh
-npm i use-wc
+npm i use-wc@pre
 ```
