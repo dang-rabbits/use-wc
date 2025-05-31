@@ -3,6 +3,11 @@ on:
   push:
     branches:
       - main
+      - next
+      - alpha
+      - beta
+      - pre
+      - rc
 
 permissions:
   contents: read
