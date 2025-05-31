@@ -110,10 +110,6 @@ export class UseMenu extends LitElement {
     });
   }
 
-  #handlePopoverClick(event: Event) {
-    // TODO
-  }
-
   async #initializeDisabled(disabled: boolean) {
     await this.updateComplete;
 
@@ -185,7 +181,7 @@ export class UseMenu extends LitElement {
 
   render() {
     return html`
-      <div role="menu" part="menu" @click=${this.#handlePopoverClick} @keydown=${this.#handleKeyDown}>
+      <div role="menu" part="menu" @keydown=${this.#handleKeyDown}>
         <slot @slotchange=${this.#handleSlotChange}></slot>
       </div>
     `;
