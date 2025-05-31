@@ -1,6 +1,6 @@
 {
   "name": "use-wc",
-  "private": true,
+  "private": false,
   "version": "0.0.0-semantic-release",
   "type": "module",
   "files": [
