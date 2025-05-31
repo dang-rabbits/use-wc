@@ -1,17 +1,6 @@
-import { Meta } from '@storybook/blocks';
+import { Markdown, Meta } from '@storybook/blocks';
+import readme from '../../readme.md?raw';
 
 <Meta title="About use-wc" />
 
-# About `use-wc`
-
-`use-wc` is a library of accessible web components for rapidly developing highly customizable user interfaces. These web components are only intended to extend native HTML elements where they fall short. One example of this is using the `use-select` and `use-option` web components to get the same functionality as `select` with `option`.
-
-## Mission
-
-Provide reusable components with built-in accessibility, internationalization, and theming using baseline web standards and APIs.
-
-## Guiding Principles
-
-1. Predefined styles only apply to custom element names, named parts, and default slots.
-2. Third-party libraries should only be used if there isn't a baseline API available (like `floating-ui`) or the library provides battle-tested, single-use logic (like `tabbable`)
-3. Input-type controls must return serializable data (`typeof string` or `FormData`) as its `value` property so it can be used inside `form` elements
+<Markdown>{readme}</Markdown>
