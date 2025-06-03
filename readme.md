@@ -1,4 +1,4 @@
-[Documentation (usewc.com)](https://usewc.com)
+[Documentation (usewc.com)](https://usewc.com) | [GitHub](https://github.com/dang-rabbits/use-wc)
 
 [![Storybook documentation](https://raw.githubusercontent.com/storybooks/brand/master/badge/badge-storybook.svg)](https://usewc.com) ![NPM Version](https://img.shields.io/npm/v/use-wc/latest) ![NPM Version (with dist tag)](https://img.shields.io/npm/v/use-wc/pre)
 

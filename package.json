@@ -1,5 +1,12 @@
 {
   "name": "use-wc",
+  "homepage": "https://usewc.com",
+  "bugs": "https://github.com/dang-rabbits/use-wc/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dang-rabbits/use-wc"
+  },
+  "license": "MIT",
   "private": false,
   "version": "0.0.0-semantic-release",
   "type": "module",
