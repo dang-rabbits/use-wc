@@ -1,6 +1,6 @@
 // Storybook stories for use-grid
 import { html } from 'lit';
-import type { Meta, StoryObj } from '@storybook/web-components';
+import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import './use-grid';
 import './use-gridhead';
 import './use-gridbody';

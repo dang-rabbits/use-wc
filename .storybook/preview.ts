@@ -1,6 +1,6 @@
-import type { Preview } from '@storybook/web-components';
-import { setCustomElementsManifest } from '@storybook/web-components';
-import { themes } from '@storybook/theming';
+import type { Preview } from '@storybook/web-components-vite';
+import { setCustomElementsManifest } from '@storybook/web-components-vite';
+import { themes } from 'storybook/theming';
 
 import '../src/elements';
 
