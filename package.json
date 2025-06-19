@@ -11,7 +11,8 @@
   "version": "0.0.0-semantic-release",
   "type": "module",
   "files": [
-    "dist"
+    "dist",
+    "custom-elements.json"
   ],
   "main": "./dist/use-wc.umd.cjs",
   "module": "./dist/use-wc.js",

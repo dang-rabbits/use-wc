@@ -13,6 +13,7 @@ dist
 dist-ssr
 *.local
 storybook-static
+custom-elements.json
 
 # Editor directories and files
 .vscode/*
