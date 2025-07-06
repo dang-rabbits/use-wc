@@ -247,68 +247,6 @@ export const InjectedItems: Story = {
   },
 };
 
-export const CustomStyles: Story = {
-  render: () => html`
-    <style>
-      .custom-use-dropdown::part(trigger),
-      .custom-use-dropdown::part(menu) {
-        background-color: blanchedalmond;
-        color: orangered;
-        border: 2px solid orangered;
-        border-radius: 6px;
-        padding: 4px;
-        box-shadow:
-          1px 1px 0 orangered,
-          2px 2px 0 orangered,
-          3px 3px 0 orangered;
-        font-size: 16px;
-        font-weight: 700;
-      }
-
-      .custom-use-dropdown::part(trigger):focus-visible {
-        outline: 2px dashed currentColor;
-        outline-offset: 4px;
-        box-shadow: none;
-      }
-
-      .custom-use-dropdown::part(trigger):is(:hover, :focus) {
-        background-color: orangered;
-        color: blanchedalmond;
-      }
-
-      .custom-use-dropdown :is(button, a) {
-        all: unset;
-        box-sizing: border-box;
-        display: block;
-        width: 100%;
-        font-weight: 400;
-        border-radius: 6px;
-        padding: 4px;
-        cursor: default;
-
-        &:is(:hover, :focus) {
-          background-color: orangered;
-          color: blanchedalmond;
-        }
-      }
-
-      .custom-use-dropdown hr {
-        margin: 4px 0;
-        border: none;
-        border-top: 2px dotted orangered;
-      }
-    </style>
-    <use-dropdown class="custom-use-dropdown" label="Menu">
-      <button role="menuitem">menu item 1</button>
-      <button role="menuitem">menu item 2</button>
-      <button role="menuitem">menu item 3</button>
-      <hr />
-      <a role="menuitem" href="#">Example link 1</a>
-      <a role="menuitem" href="#">Example link 2</a>
-    </use-dropdown>
-  `,
-};
-
 export const CSSAnchorPositioning: Story = {
   parameters: {
     docs: {
@@ -377,6 +315,103 @@ export const CSSAnchorPositioning: Story = {
           <button role="menuitem">nested menu item 2</button>
           <button role="menuitem">nested menu item 3</button>
         </use-dropdown>
+      </use-dropdown>
+    </div>
+  `,
+};
+
+export const CustomStyles: Story = {
+  render: () => html`
+    <style>
+      .custom-use-dropdown::part(trigger),
+      .custom-use-dropdown::part(menu) {
+        background-color: blanchedalmond;
+        color: orangered;
+        border: 2px solid orangered;
+        border-radius: 6px;
+        padding: 4px;
+        box-shadow:
+          1px 1px 0 orangered,
+          2px 2px 0 orangered,
+          3px 3px 0 orangered;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .custom-use-dropdown::part(trigger):focus-visible {
+        outline: 2px dashed currentColor;
+        outline-offset: 4px;
+        box-shadow: none;
+      }
+
+      .custom-use-dropdown::part(trigger):is(:hover, :focus) {
+        background-color: orangered;
+        color: blanchedalmond;
+      }
+
+      .custom-use-dropdown :is(button, a) {
+        all: unset;
+        box-sizing: border-box;
+        display: block;
+        width: 100%;
+        font-weight: 400;
+        border-radius: 6px;
+        padding: 4px;
+        cursor: default;
+
+        &:is(:hover, :focus) {
+          background-color: orangered;
+          color: blanchedalmond;
+        }
+      }
+
+      .custom-use-dropdown hr {
+        margin: 4px 0;
+        border: none;
+        border-top: 2px dotted orangered;
+      }
+
+      .css-anchor-positioning-custom use-dropdown {
+        anchor-scope: --use-dropdown-trigger;
+      }
+
+      .css-anchor-positioning-custom use-dropdown {
+        anchor-scope: --use-dropdown-trigger;
+      }
+
+      .css-anchor-positioning-custom use-dropdown::part(trigger) {
+        white-space: nowrap;
+        anchor-name: --use-dropdown-trigger;
+      }
+
+      .css-anchor-positioning-custom use-dropdown::part(menu) {
+        margin: unset;
+        inset: unset;
+        position: absolute;
+        position-anchor: --use-dropdown-trigger;
+
+        inset-block-start: calc(anchor(end) + 0.5rem);
+        inset-inline-start: anchor(start);
+        position-try-fallbacks:
+          flip-block,
+          flip-inline,
+          flip-inline flip-block;
+      }
+
+      .css-anchor-positioning-custom use-dropdown use-dropdown::part(menu) {
+        margin-inline-start: 0.5rem;
+        inset-block-start: anchor(start);
+        inset-inline-start: anchor(end);
+      }
+    </style>
+    <div class="css-anchor-positioning-custom">
+      <use-dropdown class="custom-use-dropdown" label="Menu">
+        <button role="menuitem">menu item 1</button>
+        <button role="menuitem">menu item 2</button>
+        <button role="menuitem">menu item 3</button>
+        <hr />
+        <a role="menuitem" href="#">Example link 1</a>
+        <a role="menuitem" href="#">Example link 2</a>
       </use-dropdown>
     </div>
   `,

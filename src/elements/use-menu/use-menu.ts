@@ -20,18 +20,28 @@ const TABBABLE_SELECTOR = `
 `;
 
 /**
- * When the popover is opened the tabbable elements are found and indexed for keyboard navigation. The first tabbable element is focused when the popover is opened. The following selector is used to find tabbable elements:
+ * The first tabbable element is focused when the menu gains focus.
+ *
+ * Menu is not used for navigation, it is intended for related action items that
+ * allows a user to manipulate a user interface or content.
+ *
+ * The following selector is used to find tabbable elements:
  *
  * ```css
- * :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-menu):not([disabled])
+ * :is(
+ *   [role="menuitem"],
+ *   [role="menuitemcheckbox"],
+ *   [role="menuitemradio"],
+ *   use-menu
+ * ):not(:is(
+ *   [disabled],
+ *   [hidden],
+ *   [inert],
+ *   [aria-hidden="true"]
+ * ))
  * ```
  *
  * @slot default
- * @slot trigger-content
- * @slot trigger-label
- * @slot trigger-arrow
- *
- * @state open `use-menu:state(open)`: The open state of the dropdown.
  */
 @customElement('use-menu')
 export class UseMenu extends LitElement {
@@ -47,7 +57,7 @@ export class UseMenu extends LitElement {
   #itemLabels: string[] = [];
   trigger: HTMLButtonElement | null = null;
 
-  @property({ type: Boolean })
+  @property({ type: Boolean, reflect: true })
   set disabled(flag) {
     this.#initializeDisabled(flag);
   }

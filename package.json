@@ -14,6 +14,7 @@
     "dist",
     "custom-elements.json"
   ],
+  "customElements": "custom-elements.json",
   "main": "./dist/use-wc.umd.cjs",
   "module": "./dist/use-wc.js",
   "types": "./dist/use-wc.d.ts",

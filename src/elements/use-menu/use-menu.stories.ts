@@ -49,22 +49,6 @@ export const Disabled: Story = {
   },
 };
 
-export const NestedMenus: Story = {
-  render: () => html`
-    <use-menu label="Menu">
-      <button role="menuitem">menu item 1</button>
-      <button role="menuitem">menu item 2</button>
-      <button role="menuitem">menu item 3</button>
-
-      <use-menu label="Neste menu">
-        <button role="menuitem">nested menu item 1</button>
-        <button role="menuitem">nested menu item 2</button>
-        <button role="menuitem">nested menu item 3</button>
-      </use-menu>
-    </use-menu>
-  `,
-};
-
 export const Groups: Story = {
   render: () => html`
     <use-menu label="Menu">
@@ -117,48 +101,6 @@ export const CustomAccessibleItems: Story = {
       <div role="menuitem" tabindex="0" onclick="alert('hello')">menu item 1</div>
       <div role="menuitem" onclick="alert('hello')">menu item 2</div>
       <div role="menuitem" onclick="alert('hello')">menu item 3</div>
-    </use-menu>
-  `,
-};
-
-export const CustomItemLayout: Story = {
-  parameters: {
-    docs: {
-      description:
-        'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.',
-    },
-  },
-  render: () => html`
-    <use-menu label="Menu">
-      <button role="menuitem">menu item 1</button>
-      <button role="menuitem">menu item 2</button>
-      <hr />
-      <div style="display: flex; justify-content: space-between; width: 100vw; max-width: 200px;">
-        <div id="custom-menu-layout-item-label">Zoom</div>
-        <div style="display: inline-flex; gap: 8px; align-items: center;">
-          <button role="menuitem" menu-item="keep-open" aria-label="Zoom Out">-</button>
-          <div>100%</div>
-          <button role="menuitem" menu-item="keep-open" aria-label="Zoom In">+</button>
-        </div>
-      </div>
-    </use-menu>
-  `,
-};
-
-export const SplitMenuItemButton: Story = {
-  render: () => html`
-    <use-menu label="Menu">
-      <button role="menuitem">menu item 1</button>
-      <button role="menuitem">menu item 2</button>
-      <div style="display: flex; gap: 8px; width: 100vw; max-width: 200px;">
-        <button role="menuitem" style="flex: 1 1 auto;">menu item 3</button>
-        <use-menu>
-          <div slot="trigger-content">▶</div>
-          <button role="menuitem">nested menu item 1</button>
-          <button role="menuitem">nested menu item 2</button>
-          <button role="menuitem">nested menu item 3</button>
-        </use-menu>
-      </div>
     </use-menu>
   `,
 };

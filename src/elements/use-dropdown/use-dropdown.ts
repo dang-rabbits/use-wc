@@ -20,11 +20,28 @@ const TABBABLE_SELECTOR = `
 `;
 
 /**
- * When the popover is opened the tabbable elements are found and indexed for keyboard navigation. The first tabbable element is focused when the popover is opened. The following selector is used to find tabbable elements:
+ * When the popover is opened the tabbable elements are found and indexed for
+ * keyboard navigation. The first tabbable element is focused when the popover is opened. The
+ * following selector is used to find tabbable elements:
  *
  * ```css
- * :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown):not([disabled])
+ * :is(
+ *   [role="menuitem"],
+ *   [role="menuitemcheckbox"],
+ *   [role="menuitemradio"],
+ *   use-menu
+ * ):not(:is(
+ *   [disabled],
+ *   [hidden],
+ *   [inert],
+ *   [aria-hidden="true"]
+ * ))
  * ```
+ *
+ * Menu items are not used for navigation, they are intended for related action
+ * items that allows a user to manipulate a user interface or content. Read the
+ * WCAG guidance for more details:
+ * [https://www.w3.org/WAI/ARIA/apg/patterns/menubar/](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)
  *
  * @slot default
  * @slot trigger-content
