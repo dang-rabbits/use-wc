@@ -1,4 +1,7 @@
 // custom-elements-manifest.config.mjs
+
+import { customElementVsCodePlugin } from 'custom-element-vs-code-integration';
+
 export default {
   litelement: true,
   globs: ['src/elements/**/*.ts', '!src/elements/**/*.stories.ts'],
@@ -20,5 +23,6 @@ export default {
         }
       },
     },
+    customElementVsCodePlugin(),
   ],
 };

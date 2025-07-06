@@ -12,7 +12,9 @@
   "type": "module",
   "files": [
     "dist",
-    "custom-elements.json"
+    "custom-elements.json",
+    "vscode.html-custom-data.json",
+    "vscode.css-custom-data.json"
   ],
   "customElements": "custom-elements.json",
   "main": "./dist/use-wc.umd.cjs",
@@ -45,6 +47,7 @@
     "@storybook/addon-links": "^9.0.6",
     "@storybook/web-components-vite": "^9.0.6",
     "baseline-status": "^1.0.10",
+    "custom-element-vs-code-integration": "^1.5.0",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
