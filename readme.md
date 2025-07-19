@@ -22,3 +22,14 @@ Provide reusable components with built-in accessibility, internationalization, a
 ```sh
 npm i use-wc@pre
 ```
+
+### VS Code & its forks
+
+To get intellisense working with your VS Code-based IDE, add the following to your project's `.vscode/settings.json` file:
+
+```json
+{
+  // ...
+  "html.customData": ["node_modules/use-wc/vscode.html-custom-data.json"]
+}
+```

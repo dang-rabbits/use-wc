@@ -1,4 +1,5 @@
 import './use-dropdown/use-dropdown';
+import './use-duration/use-duration';
 import './use-option/use-option';
 import './use-select/use-select';
 import './use-listbox/use-listbox';

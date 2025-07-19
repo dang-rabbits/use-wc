@@ -232,3 +232,14 @@ export const CustomStyles: Story = {
     </use-menu>
   `,
 };
+
+export const InPopover: Story = {
+  render: () => html`
+    <button type="button" popovertarget="custom-dropdown">Menu</button>
+    <use-menu id="custom-dropdown" label="Menu" popover>
+      <button role="menuitem" type="button" autofocus>menu item 1</button>
+      <button role="menuitem" type="button">menu item 2</button>
+      <button role="menuitem" type="button">menu item 3</button>
+    </use-menu>
+  `,
+};
