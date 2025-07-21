@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "duration-fns": "^3.0.2",
-    "lit": "^3.2.0",
+    "lit": "^3.3.1",
     "tabbable": "^6.2.0"
   },
   "devDependencies": {

@@ -8,3 +8,4 @@ import './use-widget/use-widget';
 import './use-treeitem/use-treeitem';
 import './use-tree/use-tree';
 import './use-menu/use-menu';
+import './use-time/use-time';

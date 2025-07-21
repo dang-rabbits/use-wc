@@ -3,6 +3,8 @@ import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 import * as duration from 'duration-fns';
 
+// FIXME setting value programmatically doesn't work second time after changing value manually
+
 type DurationPart = { type: string; value: string; unit?: string };
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
