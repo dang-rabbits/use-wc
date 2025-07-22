@@ -1,10 +1,8 @@
 import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, query } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 import * as duration from 'duration-fns';
 import getDateTimeAriaLabels, { DateTimeAriaLabels, DEFAULT_ARIA_LABELS } from '../../utils/date-time-aria-labels';
-
-// FIXME setting value programmatically doesn't work second time after changing value manually
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   year: 'years',
@@ -35,6 +33,15 @@ export class UseDuration extends LitElement {
 
   #internals: ElementInternals;
   #formId: string | undefined;
+
+  @query('input[part="segment-input segment-input-year"]') yearInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-month"]') monthInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-week"]') weekInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-day"]') dayInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-hour"]') hourInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-minute"]') minuteInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-second"]') secondInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-millisecond"]') millisecondInput!: HTMLInputElement;
 
   constructor() {
     super();
@@ -117,6 +124,7 @@ export class UseDuration extends LitElement {
   }
   set value(value: string) {
     this.#initializeValue(value);
+    this.#updateInputValues();
   }
   #valueData: Partial<duration.Duration> = {};
 
@@ -178,6 +186,40 @@ export class UseDuration extends LitElement {
       this.#valueData[ISO_DURATION_SEGMENTS[segment]] = isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
       this.value = duration.toString(this.#valueData);
     };
+  }
+
+  #updateInputValues() {
+    if (this.yearInput) {
+      this.yearInput.value = String(this.#valueData.years ?? 0);
+    }
+
+    if (this.monthInput) {
+      this.monthInput.value = String(this.#valueData.months ?? 0);
+    }
+
+    if (this.weekInput) {
+      this.weekInput.value = String(this.#valueData.weeks ?? 0);
+    }
+
+    if (this.dayInput) {
+      this.dayInput.value = String(this.#valueData.days ?? 0);
+    }
+
+    if (this.hourInput) {
+      this.hourInput.value = String(this.#valueData.hours ?? 0);
+    }
+
+    if (this.minuteInput) {
+      this.minuteInput.value = String(this.#valueData.minutes ?? 0);
+    }
+
+    if (this.secondInput) {
+      this.secondInput.value = String(this.#valueData.seconds ?? 0);
+    }
+
+    if (this.millisecondInput) {
+      this.millisecondInput.value = String(this.#valueData.milliseconds ?? 0);
+    }
   }
 
   #initialAriaLabels() {
