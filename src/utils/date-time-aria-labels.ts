@@ -3,6 +3,9 @@ type DurationPart = { type: string; value: string; unit?: string };
 export const DEFAULT_ARIA_LABELS = {
   am: 'AM' as string,
   pm: 'PM' as string,
+  year: 'year' as string,
+  month: 'month' as string,
+  day: 'day' as string,
   hour: 'hour' as string,
   minute: 'minute' as string,
   second: 'second' as string,
@@ -37,12 +40,15 @@ export default function getDateTimeAriaLabels(locale: string, { plural = true }:
       })
       .filter((part: DurationPart) => part.type === 'unit' && part.unit);
 
+    const year = parts.find((part: DurationPart) => part.unit === 'year')?.value ?? 'year';
+    const month = parts.find((part: DurationPart) => part.unit === 'month')?.value ?? 'month';
+    const day = parts.find((part: DurationPart) => part.unit === 'day')?.value ?? 'day';
     const hour = parts.find((part: DurationPart) => part.unit === 'hour')?.value ?? 'hour';
     const minute = parts.find((part: DurationPart) => part.unit === 'minute')?.value ?? 'minute';
     const second = parts.find((part: DurationPart) => part.unit === 'second')?.value ?? 'second';
     const millisecond = parts.find((part: DurationPart) => part.unit === 'millisecond')?.value ?? 'millisecond';
 
-    INTL_ARIA_LABELS.set(cacheKey, { am, pm, hour, minute, second, millisecond, dayPeriod });
+    INTL_ARIA_LABELS.set(cacheKey, { am, pm, hour, minute, second, millisecond, dayPeriod, year, month, day });
   }
 
   return INTL_ARIA_LABELS.get(cacheKey)!;
