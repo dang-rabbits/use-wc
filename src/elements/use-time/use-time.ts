@@ -23,7 +23,7 @@ export class UseTime extends LitElement {
   #internals: ElementInternals;
   #formId: string | undefined;
   #maxHours: number = 23;
-  #dayPeriods = DEFAULT_ARIA_LABELS;
+  #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
 
   constructor() {
     super();
@@ -40,7 +40,7 @@ export class UseTime extends LitElement {
     try {
       const [hour = '0', minute = '0', secondFull = '00.000'] = value.split(':');
       const [second, fractionalSecond] = secondFull.split('.');
-      const dayPeriod = Number(hour) >= 12 ? this.#dayPeriods.pm : this.#dayPeriods.am;
+      const dayPeriod = Number(hour) >= 12 ? this.#ariaLabels.pm : this.#ariaLabels.am;
 
       this.#valueData = {
         hour: this.#hoursTo24(hour, dayPeriod),
@@ -60,7 +60,7 @@ export class UseTime extends LitElement {
     const hourNumber = Number(hour);
 
     if (this.#maxHours === 12) {
-      if (dayPeriod === this.#dayPeriods.am) {
+      if (dayPeriod === this.#ariaLabels.am) {
         return hourNumber === 12 ? '00' : hourNumber.toString();
       } else {
         if (hourNumber > 12) {
@@ -192,7 +192,7 @@ export class UseTime extends LitElement {
       const date = new Date(2024, 0, 1, 12, 30, 45); // Sample time for formatting
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
       this.#maxHours = parts.some((part) => part.type === 'dayPeriod') ? 12 : 23;
-      this.#dayPeriods = getDateTimeAriaLabels(this.locale);
+      this.#ariaLabels = getDateTimeAriaLabels(this.locale);
 
       return parts;
     } catch {
@@ -247,7 +247,7 @@ export class UseTime extends LitElement {
   }
 
   #getOtherDayPeriod(dayPeriod: string) {
-    return dayPeriod === this.#dayPeriods.am ? this.#dayPeriods.pm : this.#dayPeriods.am;
+    return dayPeriod === this.#ariaLabels.am ? this.#ariaLabels.pm : this.#ariaLabels.am;
   }
 
   #updateInternalValue() {
@@ -256,7 +256,7 @@ export class UseTime extends LitElement {
 
     if (this.hours) {
       if (this.#maxHours === 12) {
-        if (dayPeriod === this.#dayPeriods.am) {
+        if (dayPeriod === this.#ariaLabels.am) {
           output.push(hour === '12' ? '00' : hour.padStart(2, '0'));
         } else {
           const hourNumber = Number(hour);
@@ -298,7 +298,7 @@ export class UseTime extends LitElement {
             value=${this.#valueData[part.type]}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            aria-label=${this.#dayPeriods[part.type === 'fractionalSecond' ? 'millisecond' : part.type]}
+            aria-label=${this.#ariaLabels[part.type === 'fractionalSecond' ? 'millisecond' : part.type]}
             min="0"
             max=${this.#getMaxValue(part.type)}
             part="segment-input segment-input-${part.type}"

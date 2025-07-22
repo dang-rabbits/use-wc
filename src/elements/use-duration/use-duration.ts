@@ -2,10 +2,9 @@ import { LitElement, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import createId from '../../utils/create-id';
 import * as duration from 'duration-fns';
+import getDateTimeAriaLabels, { DateTimeAriaLabels, DEFAULT_ARIA_LABELS } from '../../utils/date-time-aria-labels';
 
 // FIXME setting value programmatically doesn't work second time after changing value manually
-
-type DurationPart = { type: string; value: string; unit?: string };
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   year: 'years',
@@ -17,8 +16,6 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   second: 'seconds',
   millisecond: 'milliseconds',
 } as const;
-
-const SEGMENT_LABEL_CACHE = new Map<string, Map<string, string>>();
 
 /**
  * Displays the parts of an ISO 8601 duration string using [`Intl.DurationFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DurationFormat).
@@ -132,7 +129,7 @@ export class UseDuration extends LitElement {
 
   #formatParts: Array<{ type: string; value: string; unit?: string }> = [];
 
-  #ariaLabels: Map<string, string> = new Map();
+  #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
 
   #initialFormatParts() {
     try {
@@ -184,35 +181,7 @@ export class UseDuration extends LitElement {
   }
 
   #initialAriaLabels() {
-    if (SEGMENT_LABEL_CACHE.has(this.locale)) {
-      return SEGMENT_LABEL_CACHE.get(this.locale)!;
-    }
-
-    try {
-      SEGMENT_LABEL_CACHE.set(
-        this.locale,
-        new Map<string, string>(
-          // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/60608
-          new Intl.DurationFormat(this.locale, { style: 'long' })
-            .formatToParts({
-              years: 2,
-              months: 2,
-              weeks: 2,
-              days: 2,
-              hours: 2,
-              minutes: 2,
-              seconds: 2,
-              milliseconds: 2,
-            })
-            .filter((part: DurationPart) => part.type === 'unit' && part.unit)
-            .map((part: DurationPart) => [part.unit, part.value])
-        )
-      );
-    } catch {
-      return new Map();
-    }
-
-    return SEGMENT_LABEL_CACHE.get(this.locale)!;
+    return getDateTimeAriaLabels(this.locale, { plural: true });
   }
 
   render() {
@@ -228,8 +197,8 @@ export class UseDuration extends LitElement {
                   ?disabled=${this.disabled}
                   ?readonly=${this.readOnly}
                   aria-label=${this.format === 'digital' && part.type === 'fraction'
-                    ? this.#ariaLabels.get('millisecond')
-                    : this.#ariaLabels.get(unit)}
+                    ? this.#ariaLabels.millisecond
+                    : this.#ariaLabels[unit as keyof DateTimeAriaLabels]}
                   min="0"
                   part="segment-input segment-input-${unit}"
                   id="${this.#segmentId(unit)}"
