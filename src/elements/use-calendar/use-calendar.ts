@@ -19,7 +19,7 @@ export class UseCalendar extends LitElement {
     }
 
     [part='grid-header'],
-    [part='grid-body'] {
+    [part='grid-body'] [part='row'] {
       display: grid;
       grid-template-rows: auto repeat(6, 1fr);
       grid-template-columns: repeat(7, 1fr);
@@ -86,11 +86,11 @@ export class UseCalendar extends LitElement {
     return String(day);
   }
 
-  #renderDayCell(day: number) {
+  #renderDayCell(day: number, rowIndex: number, columnIndex: number) {
     const date = this.getDateForDay(day);
 
     return html`
-      <div part="day">
+      <div part="day" role="gridcell" aria-rowindex="${rowIndex}" aria-colindex="${columnIndex}">
         <slot name="date-${date}">${this.renderDay({ day, date })}</slot>
       </div>
     `;
@@ -110,23 +110,39 @@ export class UseCalendar extends LitElement {
   }
 
   render() {
-    const days = [];
+    const rows: Array<Array<TemplateResult | string>> = [];
     const daysInMonth = this.#daysInMonth;
     const firstDay = this.#firstDayOfWeek;
 
+    let rowIndex = 1;
+    let columnIndex = 1;
+
     for (let i = 0; i < firstDay; i++) {
-      days.push(html`<div part="grid-empty"></div>`);
+      rows[rowIndex] = rows[rowIndex] || [];
+      rows[rowIndex].push(
+        html`<div part="grid-empty" role="gridcell" aria-rowindex="${rowIndex + 1}" aria-colindex="${columnIndex}">
+          &nbsp;
+        </div>`
+      );
+      columnIndex++;
     }
 
     for (let d = 1; d <= daysInMonth; d++) {
-      days.push(this.#renderDayCell(d));
+      const day = this.#renderDayCell(d, rowIndex + 1, columnIndex);
+      rows[rowIndex] = rows[rowIndex] || [];
+      rows[rowIndex].push(day);
+      columnIndex++;
+      if (columnIndex === 8) {
+        rowIndex++;
+        columnIndex = 1;
+      }
     }
 
     const weekdayNames = this.#weekdayNames();
     return html`
       <div part="header">
         <slot name="header-start"></slot>
-        <slot name="title">
+        <slot name="title" id="calendar-title">
           ${this.#title.map((part) => html`<span part="title-${part.type}">${part.value}</span>`)}
         </slot>
         <slot part="controls" name="controls">
@@ -140,9 +156,16 @@ export class UseCalendar extends LitElement {
         </slot>
         <slot name="header-end"></slot>
       </div>
-      <div part="grid">
-        <div part="grid-header">${weekdayNames.map((name) => html`<div part="grid-header-cell">${name}</div>`)}</div>
-        <div part="grid-body">${days}</div>
+      <div part="grid" role="grid" aria-labelledby="calendar-title">
+        <div part="grid-header" role="row" aria-rowindex="1">
+          ${weekdayNames.map(
+            (name, index) =>
+              html`<div part="grid-header-cell" role="columnheader" aria-colindex="${index + 1}">${name}</div>`
+          )}
+        </div>
+        <div part="grid-body" role="rowgroup">
+          ${rows.map((row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)}
+        </div>
       </div>
     `;
   }
