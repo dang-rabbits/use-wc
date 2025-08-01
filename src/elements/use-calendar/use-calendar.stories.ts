@@ -21,6 +21,13 @@ export const Controls: StoryObj<UseCalendar> = {
   },
 };
 
+/** Add keyboard navigation to the calendar day cells */
+export const Navigation: StoryObj<UseCalendar> = {
+  render: () => {
+    return html` <use-calendar id="navigate-calendar" navigation></use-calendar> `;
+  },
+};
+
 export const CustomDayContent: StoryObj<UseCalendar> = {
   render: () => {
     return html`
