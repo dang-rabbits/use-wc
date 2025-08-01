@@ -53,3 +53,32 @@ export default function getDateTimeAriaLabels(locale: string, { plural = true }:
 
   return INTL_ARIA_LABELS.get(cacheKey)!;
 }
+
+const DAY_NAMES = new Map<string, string[]>();
+export function getDayNames(locale = 'en', format: 'long' | 'short' | 'narrow' = 'long') {
+  const cacheKey = `${locale}-${format}`;
+
+  if (!DAY_NAMES.has(cacheKey)) {
+    const formatter = new Intl.DateTimeFormat(locale, { weekday: format });
+    const days = [1, 2, 3, 4, 5, 6, 7].map((day) => formatter.format(new Date(2024, 0, day)));
+    const localeInfo = new Intl.Locale(locale);
+    // @ts-expect-error - getWeekInfo is not typed
+    const firstDayOfWeek = localeInfo.getWeekInfo().firstDay;
+    DAY_NAMES.set(cacheKey, days.slice(firstDayOfWeek - 1).concat(days.slice(0, firstDayOfWeek - 1)));
+  }
+
+  return DAY_NAMES.get(cacheKey)!;
+}
+
+const MONTH_NAMES = new Map<string, string[]>();
+export function getMonthNames(locale = 'en', format: 'long' | 'short' | 'narrow' = 'long') {
+  const cacheKey = `${locale}-${format}`;
+  if (!MONTH_NAMES.has(cacheKey)) {
+    const formatter = new Intl.DateTimeFormat(locale, { month: format });
+    MONTH_NAMES.set(
+      cacheKey,
+      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) => formatter.format(new Date(2024, month - 1, 1)))
+    );
+  }
+  return MONTH_NAMES.get(cacheKey)!;
+}
