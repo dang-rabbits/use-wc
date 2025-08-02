@@ -2,9 +2,14 @@ import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
 import '../use-calendarday/use-calendarday';
 import { getDayNames } from '../../utils/date-time-aria-labels';
+import { map } from 'lit/directives/map.js';
 
 // TODO `controls` and `controlslist` attributes
 // TODO slotchange event handler
+
+type LitHtml = typeof html;
+
+export type UseCalendarRenderDay = (data: { day: number; date: string }, html: LitHtml) => TemplateResult | string;
 
 /**
  * Displays a calendar grid of the current month.
@@ -13,6 +18,11 @@ import { getDayNames } from '../../utils/date-time-aria-labels';
  */
 @customElement('use-calendar')
 export class UseCalendar extends LitElement {
+  static formAssociated = true;
+
+  #internals: ElementInternals;
+  #value = new FormData();
+
   static styles = css`
     :host {
       text-align: center;
@@ -34,7 +44,24 @@ export class UseCalendar extends LitElement {
     [part='header'] slot:not(:empty) {
       display: block;
     }
+
+    [selected] {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
   `;
+
+  constructor() {
+    super();
+    this.#internals = this.attachInternals();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.value = this.getAttribute('value') || '';
+  }
+
+  @query('[part="grid-body"]')
+  private gridBody!: HTMLDivElement;
 
   /** 1970-9999 */
   @property({ type: Number, attribute: true, reflect: true })
@@ -50,11 +77,60 @@ export class UseCalendar extends LitElement {
   @property({ type: Boolean, attribute: true, reflect: true })
   controls: boolean = false;
 
-  @property({ type: Boolean, attribute: true, reflect: true })
-  navigation: boolean = false;
+  @property({ type: String, attribute: true, reflect: true })
+  navigation: 'on' | 'off' = 'on';
+  get navigationEnabled() {
+    return this.navigation === 'on';
+  }
 
-  @query('[part="grid-body"]')
-  gridBody!: HTMLDivElement;
+  // TODO add 'range' option
+  // TODO add 'multiple' option - difficult because we don't want to force / parse comma separated values
+  // alternative: provide an example with checkboxes in the cells
+  @property({ type: String, attribute: true, reflect: true })
+  selectmode?: 'single' | 'multiple';
+
+  @property({ type: String, attribute: true })
+  name?: string = '';
+
+  @property({ type: Array, attribute: false })
+  private selected: string[] = [];
+
+  get #dataKey() {
+    return this.name || 'value';
+  }
+
+  get value(): FormData {
+    return this.#value;
+  }
+
+  set value(value: string[] | string) {
+    this.#value.delete(this.#dataKey);
+    const parsedValue = Array.isArray(value) ? value : value.trim().split(' ');
+
+    if (this.selectmode === 'multiple') {
+      if (Array.isArray(value)) {
+        value.forEach((v) => {
+          this.#value.append(this.#dataKey, v);
+        });
+      } else {
+        this.#value.append(this.#dataKey, value);
+      }
+    } else if (this.selectmode === 'single') {
+      if (Array.isArray(value) && value.length > 0) {
+        this.#value.set(this.#dataKey, value[0]);
+      } else if (typeof value === 'string' && value.length > 0) {
+        this.#value.set(this.#dataKey, value);
+      }
+    }
+
+    this.#internals.setFormValue(this.#value);
+
+    this.selected = parsedValue;
+
+    if (this.navigationEnabled && this.selectmode === 'single') {
+      this.goTo(parsedValue[0]);
+    }
+  }
 
   get #daysInMonth() {
     return new Date(this.year, this.month, 0).getDate();
@@ -88,9 +164,7 @@ export class UseCalendar extends LitElement {
     return `${this.year}-${this.month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   }
 
-  renderDay({ day }: { day: number; date: string }): TemplateResult | string {
-    return String(day);
-  }
+  renderDay: UseCalendarRenderDay = ({ day }) => String(day);
 
   #renderDayCell(day: number, rowIndex: number, columnIndex: number) {
     const date = this.getDateForDay(day);
@@ -98,28 +172,48 @@ export class UseCalendar extends LitElement {
     return html`
       <div
         part="day"
+        ?selected=${this.selected.includes(date)}
         role="gridcell"
         use-day=${day}
+        use-date=${date}
         tabindex="-1"
         aria-rowindex="${rowIndex}"
         aria-colindex="${columnIndex}"
       >
-        <slot name="date-${date}">${this.renderDay({ day, date })}</slot>
+        <slot name="date-${date}">${this.renderDay({ day, date }, html)}</slot>
       </div>
     `;
   }
 
-  previousMonth() {
+  public previousMonth() {
     this.month = this.month - 1;
   }
 
-  today() {
+  public today() {
     this.year = new Date().getFullYear();
     this.month = new Date().getMonth() + 1;
   }
 
-  nextMonth() {
+  public nextMonth() {
     this.month = this.month + 1;
+  }
+
+  public goTo(yearOrDate: number | string, month?: number, day?: number) {
+    if (typeof yearOrDate === 'string') {
+      const [year, month, day] = yearOrDate.split('-').map(Number) as [number, number, number];
+      this.year = year;
+      this.month = month;
+      this.#activeDay = day;
+    } else {
+      this.year = yearOrDate;
+      this.month = month || 1;
+
+      if (day) this.#activeDay = day;
+    }
+  }
+
+  focus() {
+    this.gridBody.focus();
   }
 
   #activeDay = 1;
@@ -135,8 +229,14 @@ export class UseCalendar extends LitElement {
     const target = event.target as HTMLElement;
     const day = target?.closest('[part="day"]');
     if (day) {
-      this.#activeDay = Number(day.getAttribute('use-day')) || 1;
-      this.gridBody.setAttribute('tabindex', '-1');
+      if (this.selectmode === 'single') {
+        this.value = day.getAttribute('use-date') || '';
+      }
+
+      if (this.navigationEnabled) {
+        this.#activeDay = Number(day.getAttribute('use-day')) || 1;
+        this.gridBody.setAttribute('tabindex', '-1');
+      }
     }
   }
 
@@ -247,14 +347,14 @@ export class UseCalendar extends LitElement {
         <div
           part="grid-body"
           role="rowgroup"
-          tabindex=${this.navigation ? '0' : '-1'}
-          @focusin=${this.navigation ? this.#handleFocusIn : undefined}
-          @focusout=${this.navigation ? this.#handleFocusOut : undefined}
-          @mousedown=${this.navigation ? this.#handleMouseDown : undefined}
-          @click=${this.navigation ? this.#handleClick : undefined}
-          @keydown=${this.navigation ? this.#handleKeyDown : undefined}
+          tabindex=${this.navigationEnabled ? '0' : '-1'}
+          @focusin=${this.navigationEnabled ? this.#handleFocusIn : undefined}
+          @focusout=${this.navigationEnabled ? this.#handleFocusOut : undefined}
+          @mousedown=${this.navigationEnabled ? this.#handleMouseDown : undefined}
+          @click=${this.navigationEnabled ? this.#handleClick : undefined}
+          @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
         >
-          ${rows.map((row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)}
+          ${map(rows, (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)}
         </div>
       </div>
     `;

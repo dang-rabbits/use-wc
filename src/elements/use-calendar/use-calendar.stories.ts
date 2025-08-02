@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
-import { UseCalendar } from './use-calendar';
-import { useHtml } from '../../utils/use-html';
+import { UseCalendar, UseCalendarRenderDay } from './use-calendar';
 
 const meta: Meta<UseCalendar> = {
   component: 'use-calendar',
@@ -21,10 +20,24 @@ export const Controls: StoryObj<UseCalendar> = {
   },
 };
 
-/** Add keyboard navigation to the calendar day cells */
-export const Navigation: StoryObj<UseCalendar> = {
+export const DisableNavigation: StoryObj<UseCalendar> = {
   render: () => {
-    return html` <use-calendar id="navigate-calendar" navigation></use-calendar> `;
+    return html` <use-calendar id="navigate-calendar" navigation="off"></use-calendar> `;
+  },
+};
+
+/** The `calendar.goTo()` method can be used to focus on a specific date. */
+export const FocusOnSpecificDate: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleClick = () => {
+      const calendar = document.querySelector('#focus-calendar') as UseCalendar;
+      calendar.goTo('2025-04-16');
+    };
+
+    return html`
+      <use-calendar id="focus-calendar"></use-calendar>
+      <button @click=${handleClick}>Go to 2025-04-16</button>
+    `;
   },
 };
 
@@ -53,10 +66,60 @@ export const CustomDayLabel: StoryObj<UseCalendar> = {
   },
 };
 
+export const SingleValue: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleSubmit = (event: SubmitEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.target as HTMLFormElement);
+      // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
+      const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
+      const output = document.getElementById('single-value-output') as HTMLPreElement;
+      output.textContent = queryString;
+    };
+
+    return html`
+      <form @submit=${handleSubmit}>
+        <use-calendar
+          year="2020"
+          month="4"
+          controls
+          selectmode="single"
+          value="2025-04-25"
+          name="perfect-date"
+        ></use-calendar>
+        <button type="submit">Submit</button>
+      </form>
+      <pre id="single-value-output"></pre>
+    `;
+  },
+};
+
+export const SetValueProgrammatically: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleClick = () => {
+      const calendar = document.querySelector('#set-perfect-date') as UseCalendar;
+      calendar.value = '2025-04-16';
+    };
+
+    return html`
+      <use-calendar
+        id="set-perfect-date"
+        year="2025"
+        month="4"
+        selectmode="single"
+        name="perfect-date"
+        value="2025-04-25"
+        controls
+      ></use-calendar>
+      <button @click=${handleClick}>Set Value</button>
+    `;
+  },
+};
+
 class CustomCalendar extends UseCalendar {
-  renderDay({ day, date }: { day: number; date: string }) {
-    return useHtml`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;
-  }
+  renderDay: UseCalendarRenderDay = ({ day, date }, html) => {
+    return html`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;
+  };
 }
 customElements.define('custom-calendar', CustomCalendar);
 
@@ -73,19 +136,23 @@ customElements.define('custom-calendar', CustomCalendar);
  * }
  * ```
  *
- * For simplicity, and reducing risk of duplicate dependencies, `use-wc` exports lit's `html` function as `useHtml` and
- * can be imported via `import { useHtml } from 'use-wc';`
- *
  * Example:
  * ```ts
- * import { useHtml, UseCalendar } from 'use-wc';
+ * import { UseCalendar, UseCalendarRenderDay } from 'use-wc';
  * class CustomCalendar extends UseCalendar {
- *   renderDay({ day, date }: { day: number; date: string }) {
- *     return partial`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;
- *   }
+ *   renderDay: UseCalendarRenderDay = ({ day, date }, html) => {
+ *     return html`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;
+ *   };
  * }
  * customElements.define('custom-calendar', CustomCalendar);
  * ```
+ *
+ * ### Note on approach
+ *
+ * This approach of extending the web component base class goes against the
+ * HTML-first intent of the `use-wc` library. Unfortunately, there isn't a
+ * native HTML approach for element attribute and content interpolation, which
+ * is critical for building a custom cell template to suit all needs.
  */
 export const CustomDayTemplate: StoryObj<UseCalendar> = {
   render: () => {
