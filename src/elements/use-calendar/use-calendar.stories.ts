@@ -26,6 +26,20 @@ export const DisableNavigation: StoryObj<UseCalendar> = {
   },
 };
 
+export const WidgetMode: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`
+      <use-calendar id="widget-calendar" mode="widget" year="2025" month="4">
+        <use-calendarday date="2025-04-16">
+          <button type="button">First</button>
+          <button type="button">Second</button>
+          <button type="button">Third</button>
+        </use-calendarday>
+      </use-calendar>
+    `;
+  },
+};
+
 /** The `calendar.goTo()` method can be used to focus on a specific date. */
 export const FocusOnSpecificDate: StoryObj<UseCalendar> = {
   render: () => {
@@ -147,7 +161,7 @@ customElements.define('custom-calendar', CustomCalendar);
  * customElements.define('custom-calendar', CustomCalendar);
  * ```
  *
- * ### Note on approach
+ * #### Note on approach
  *
  * This approach of extending the web component base class goes against the
  * HTML-first intent of the `use-wc` library. Unfortunately, there isn't a

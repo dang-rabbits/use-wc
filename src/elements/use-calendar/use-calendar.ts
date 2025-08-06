@@ -3,6 +3,10 @@ import { customElement, property, query } from 'lit/decorators.js';
 import '../use-calendarday/use-calendarday';
 import { getDayNames } from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
+import { tabbable } from 'tabbable';
+import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
+
+const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
 // TODO `controls` and `controlslist` attributes
 // TODO slotchange event handler
@@ -58,6 +62,10 @@ export class UseCalendar extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.value = this.getAttribute('value') || '';
+  }
+
+  firstUpdated() {
+    this.#initializeTabbables();
   }
 
   @query('[part="grid-body"]')
@@ -164,6 +172,63 @@ export class UseCalendar extends LitElement {
     return `${this.year}-${this.month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
   }
 
+  #focusableElements = new Map<string, HTMLElement[]>();
+
+  #initializeTabbables() {
+    this.#focusableElements.clear();
+
+    tabbable(this)
+      .concat(tabbable(this.gridBody))
+      .forEach((el) => {
+        el.setAttribute(INITIAL_TABINDEX_ATTR, getTabIndex(el));
+        el.tabIndex = -1;
+        const date = this.#getTargetCellDate(el as HTMLElement);
+
+        if (!date) return;
+
+        if (!this.#focusableElements.has(date)) {
+          this.#focusableElements.set(date, []);
+        }
+
+        this.#focusableElements.get(date)?.push(el as HTMLElement);
+      });
+  }
+
+  #handleCellFocusIn(event: HTMLElementEventMap['focusin']) {
+    const target = event.currentTarget as HTMLElement;
+    const date = target.getAttribute('data-usewc-date');
+    if (!date) return;
+
+    const focusableElements = this.#focusableElements.get(date);
+    if (!focusableElements) return;
+
+    focusableElements.forEach((el) => {
+      const tabindex = el.getAttribute(INITIAL_TABINDEX_ATTR);
+      if (tabindex === INITIAL_TABINDEX_VALUE) {
+        el.removeAttribute('tabindex');
+      } else if (tabindex) {
+        el.setAttribute('tabindex', tabindex);
+      }
+      el.removeAttribute(INITIAL_TABINDEX_ATTR);
+    });
+  }
+
+  #handleCellFocusOut(event: HTMLElementEventMap['focusout']) {
+    const target = event.target as HTMLElement;
+    const date = target.getAttribute('data-usewc-date');
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    const focusableElements = this.#focusableElements.get(date || '');
+
+    if (!date || !focusableElements || focusableElements.includes(relatedTarget)) {
+      return;
+    }
+
+    focusableElements.forEach((el) => {
+      el.setAttribute(INITIAL_TABINDEX_ATTR, getTabIndex(el));
+      el.tabIndex = -1;
+    });
+  }
+
   renderDay: UseCalendarRenderDay = ({ day }) => String(day);
 
   #renderDayCell(day: number, rowIndex: number, columnIndex: number) {
@@ -171,11 +236,13 @@ export class UseCalendar extends LitElement {
 
     return html`
       <div
+        @focusin=${this.#handleCellFocusIn}
+        @focusout=${this.#handleCellFocusOut}
         part="day"
         ?selected=${this.selected.includes(date)}
         role="gridcell"
-        use-day=${day}
-        use-date=${date}
+        data-usewc-day=${day}
+        data-usewc-date=${date}
         tabindex="-1"
         aria-rowindex="${rowIndex}"
         aria-colindex="${columnIndex}"
@@ -220,48 +287,62 @@ export class UseCalendar extends LitElement {
 
   #mouseDownTarget = null as HTMLElement | null;
   #handleMouseDown(event: MouseEvent) {
-    this.#mouseDownTarget = (event.target as HTMLElement).closest('[part="day"]') as HTMLElement;
-    this.#activeDay = Number(this.#mouseDownTarget?.getAttribute('use-day')) || 1;
+    this.#mouseDownTarget = this.#getTargetCell(event.target as HTMLElement);
+    this.#activeDay = Number(this.#mouseDownTarget?.getAttribute('data-usewc-day')) || 1;
+  }
+
+  #getTargetCellDate(target?: HTMLElement) {
+    return (
+      target?.closest('[data-usewc-date]')?.getAttribute('data-usewc-date') ||
+      target?.closest('[slot^="date-"]')?.getAttribute('slot')?.replace('date-', '')
+    );
+  }
+
+  #getTargetCell(target?: HTMLElement) {
+    const targetDate = this.#getTargetCellDate(target);
+    return this.shadowRoot?.querySelector(`[data-usewc-date="${targetDate}"]`) as HTMLElement;
   }
 
   #handleClick(event: HTMLElementEventMap['click']) {
     this.#mouseDownTarget = null;
     const target = event.target as HTMLElement;
-    const day = target?.closest('[part="day"]');
+    const day = this.#getTargetCell(target);
     if (day) {
       if (this.selectmode === 'single') {
-        this.value = day.getAttribute('use-date') || '';
+        this.value = day.getAttribute('data-usewc-date') || '';
       }
 
       if (this.navigationEnabled) {
-        this.#activeDay = Number(day.getAttribute('use-day')) || 1;
+        this.#activeDay = Number(day.getAttribute('data-usewc-day')) || 1;
         this.gridBody.setAttribute('tabindex', '-1');
       }
     }
   }
 
   #handleFocusIn(event: HTMLElementEventMap['focusin']) {
-    let target = event.target as HTMLElement | null;
+    const target = event.target as HTMLElement | null;
+    const cell = this.shadowRoot?.querySelector(`[data-usewc-day="${this.#activeDay.toString()}"]`) as HTMLElement;
 
-    if (this.#mouseDownTarget) {
-      target = this.#mouseDownTarget;
-    } else if (target === this.gridBody) {
-      target = this.shadowRoot?.querySelector(`[use-day="${this.#activeDay.toString()}"]`) as HTMLElement;
+    this.gridBody.setAttribute('tabindex', '-1');
+
+    if (event.target === this.gridBody) {
+      cell?.focus();
+      return;
     }
 
-    target?.focus();
-    this.gridBody.setAttribute('tabindex', '-1');
+    if (this.contains(target)) {
+      cell?.setAttribute('tabindex', '0');
+    }
   }
 
   #handleFocusOut(event: HTMLElementEventMap['focusout']) {
-    if (event.relatedTarget === this) {
-      this.gridBody.setAttribute('tabindex', '-1');
-      return;
-    }
-
     if (this.contains(event.relatedTarget as Node)) {
       return;
     }
+
+    this.gridBody.querySelectorAll('[data-usewc-day]').forEach((el) => {
+      el.setAttribute('tabindex', '-1');
+    });
 
     this.gridBody.setAttribute('tabindex', '0');
   }
@@ -280,7 +361,7 @@ export class UseCalendar extends LitElement {
     }
 
     if (moveTo) {
-      const target = this.shadowRoot?.querySelector(`[use-day="${moveTo.toString()}"]`);
+      const target = this.shadowRoot?.querySelector(`[data-usewc-day="${moveTo.toString()}"]`);
       if (target) {
         (target as HTMLElement).focus();
         event.preventDefault();
