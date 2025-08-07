@@ -5,6 +5,7 @@ import { getDayNames } from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
 import { tabbable } from 'tabbable';
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
+import { keyed } from 'lit/directives/keyed.js';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
@@ -96,6 +97,9 @@ export class UseCalendar extends LitElement {
   // alternative: provide an example with checkboxes in the cells
   @property({ type: String, attribute: true, reflect: true })
   selectmode?: 'single' | 'multiple';
+
+  @property({ type: String, attribute: true })
+  focusmode: 'cell' | 'control' = 'cell';
 
   @property({ type: String, attribute: true })
   name?: string = '';
@@ -214,15 +218,21 @@ export class UseCalendar extends LitElement {
   }
 
   #handleCellFocusOut(event: HTMLElementEventMap['focusout']) {
-    const target = event.target as HTMLElement;
-    const date = target.getAttribute('data-usewc-date');
+    const currentTarget = event.currentTarget as HTMLElement;
+    const date = currentTarget.getAttribute('data-usewc-date');
     const relatedTarget = event.relatedTarget as HTMLElement;
     const focusableElements = this.#focusableElements.get(date || '');
 
     if (!date || !focusableElements || focusableElements.includes(relatedTarget)) {
+      if (currentTarget.contains(relatedTarget)) {
+        currentTarget.setAttribute('tabindex', '-1');
+      }
+
       return;
     }
 
+    // FIXME nested controls should keep tabindex when tabbing out of the grid
+    // and they should be removed when clicking into a different cell
     focusableElements.forEach((el) => {
       el.setAttribute(INITIAL_TABINDEX_ATTR, getTabIndex(el));
       el.tabIndex = -1;
@@ -254,15 +264,18 @@ export class UseCalendar extends LitElement {
 
   public previousMonth() {
     this.month = this.month - 1;
+    this.#initializeControls();
   }
 
   public today() {
     this.year = new Date().getFullYear();
     this.month = new Date().getMonth() + 1;
+    this.#initializeControls();
   }
 
   public nextMonth() {
     this.month = this.month + 1;
+    this.#initializeControls();
   }
 
   public goTo(yearOrDate: number | string, month?: number, day?: number) {
@@ -270,13 +283,19 @@ export class UseCalendar extends LitElement {
       const [year, month, day] = yearOrDate.split('-').map(Number) as [number, number, number];
       this.year = year;
       this.month = month;
-      this.#activeDay = day;
+      this.#initializeControls(day);
     } else {
       this.year = yearOrDate;
       this.month = month || 1;
 
-      if (day) this.#activeDay = day;
+      if (day) this.#initializeControls(day);
     }
+  }
+
+  async #initializeControls(day = 1) {
+    await this.updateComplete;
+    this.#activeDay = day;
+    this.#initializeTabbables();
   }
 
   focus() {
@@ -326,7 +345,7 @@ export class UseCalendar extends LitElement {
     this.gridBody.setAttribute('tabindex', '-1');
 
     if (event.target === this.gridBody) {
-      cell?.focus();
+      this.#focusOnDay(this.#activeDay);
       return;
     }
 
@@ -348,7 +367,7 @@ export class UseCalendar extends LitElement {
   }
 
   #handleKeyDown(event: HTMLElementEventMap['keydown']) {
-    const currentDay = Number(this.#activeDay);
+    const currentDay = this.#activeDay;
     let moveTo;
     if (event.key === 'ArrowRight') {
       moveTo = currentDay + 1;
@@ -361,13 +380,24 @@ export class UseCalendar extends LitElement {
     }
 
     if (moveTo) {
-      const target = this.shadowRoot?.querySelector(`[data-usewc-day="${moveTo.toString()}"]`);
-      if (target) {
-        (target as HTMLElement).focus();
-        event.preventDefault();
-        event.stopPropagation();
-        this.#activeDay = moveTo;
-      }
+      this.#focusOnDay(moveTo);
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  #focusOnDay(moveTo: number) {
+    this.#activeDay = moveTo;
+
+    if (this.focusmode === 'control') {
+      this.#focusableElements.get(this.getDateForDay(moveTo))?.[0]?.focus();
+      return;
+    }
+
+    const target = this.shadowRoot?.querySelector(`[data-usewc-day="${moveTo.toString()}"]`);
+
+    if (target) {
+      (target as HTMLElement).focus();
     }
   }
 
@@ -435,7 +465,10 @@ export class UseCalendar extends LitElement {
           @click=${this.navigationEnabled ? this.#handleClick : undefined}
           @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
         >
-          ${map(rows, (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)}
+          ${keyed(
+            `${this.year}-${this.month}`,
+            map(rows, (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)
+          )}
         </div>
       </div>
     `;

@@ -170,6 +170,6 @@ customElements.define('custom-calendar', CustomCalendar);
  */
 export const CustomDayTemplate: StoryObj<UseCalendar> = {
   render: () => {
-    return html`<custom-calendar year="2020" month="4" controls> </custom-calendar>`;
+    return html`<custom-calendar year="2020" month="4" controls focusmode="control"> </custom-calendar>`;
   },
 };
