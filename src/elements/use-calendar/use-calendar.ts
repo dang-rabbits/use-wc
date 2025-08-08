@@ -231,12 +231,12 @@ export class UseCalendar extends LitElement {
       return;
     }
 
-    // FIXME nested controls should keep tabindex when tabbing out of the grid
-    // and they should be removed when clicking into a different cell
-    focusableElements.forEach((el) => {
-      el.setAttribute(INITIAL_TABINDEX_ATTR, getTabIndex(el));
-      el.tabIndex = -1;
-    });
+    if (this.contains(relatedTarget) || this.gridBody.contains(relatedTarget)) {
+      focusableElements.forEach((el) => {
+        el.setAttribute(INITIAL_TABINDEX_ATTR, getTabIndex(el));
+        el.tabIndex = -1;
+      });
+    }
   }
 
   renderDay: UseCalendarRenderDay = ({ day }) => String(day);
@@ -368,6 +368,15 @@ export class UseCalendar extends LitElement {
 
   #handleKeyDown(event: HTMLElementEventMap['keydown']) {
     const currentDay = this.#activeDay;
+
+    if ([' ', 'Enter'].includes(event.key) && this.selectmode === 'single') {
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.value = this.getDateForDay(currentDay);
+      return;
+    }
+
     let moveTo;
     if (event.key === 'ArrowRight') {
       moveTo = currentDay + 1;
@@ -390,8 +399,11 @@ export class UseCalendar extends LitElement {
     this.#activeDay = moveTo;
 
     if (this.focusmode === 'control') {
-      this.#focusableElements.get(this.getDateForDay(moveTo))?.[0]?.focus();
-      return;
+      const target = this.#focusableElements.get(this.getDateForDay(moveTo))?.at(0);
+      if (target) {
+        target.focus();
+        return;
+      }
     }
 
     const target = this.shadowRoot?.querySelector(`[data-usewc-day="${moveTo.toString()}"]`);

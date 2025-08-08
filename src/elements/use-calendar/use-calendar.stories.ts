@@ -71,7 +71,7 @@ export const CustomDayContent: StoryObj<UseCalendar> = {
 export const CustomDayLabel: StoryObj<UseCalendar> = {
   render: () => {
     return html`
-      <use-calendar year="2020" month="4" controls>
+      <use-calendar year="2020" month="4" controls focusmode="control">
         <use-calendarday date="2020-04-16">
           <a href="#birthday" target="_self" slot="label">16</a>
         </use-calendarday>
