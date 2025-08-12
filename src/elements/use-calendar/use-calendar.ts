@@ -10,7 +10,6 @@ import { keyed } from 'lit/directives/keyed.js';
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
 // TODO `controls` and `controlslist` attributes
-// TODO slotchange event handler
 
 type LitHtml = typeof html;
 
@@ -30,6 +29,7 @@ export class UseCalendar extends LitElement {
 
   static styles = css`
     :host {
+      display: block;
       text-align: center;
     }
 
@@ -50,7 +50,7 @@ export class UseCalendar extends LitElement {
       display: block;
     }
 
-    [selected] {
+    [part='day-selected'] {
       background-color: rgba(0, 0, 0, 0.25);
     }
   `;
@@ -139,9 +139,24 @@ export class UseCalendar extends LitElement {
 
     this.selected = parsedValue;
 
-    if (this.navigationEnabled && this.selectmode === 'single') {
+    if (this.navigationEnabled && this.selectmode === 'single' && parsedValue[0]) {
       this.goTo(parsedValue[0]);
     }
+  }
+
+  #internalSetValue(value: string[] | string) {
+    this.value = value;
+
+    this.dispatchEvent(
+      new CustomEvent('use-change', {
+        detail: {
+          value: value,
+          valueAsDate: new Date(value[0]),
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   get #daysInMonth() {
@@ -241,6 +256,10 @@ export class UseCalendar extends LitElement {
 
   renderDay: UseCalendarRenderDay = ({ day }) => String(day);
 
+  get #todayDate() {
+    return this.getDateForDay(new Date().getDate());
+  }
+
   #renderDayCell(day: number, rowIndex: number, columnIndex: number) {
     const date = this.getDateForDay(day);
 
@@ -248,8 +267,11 @@ export class UseCalendar extends LitElement {
       <div
         @focusin=${this.#handleCellFocusIn}
         @focusout=${this.#handleCellFocusOut}
-        part="day"
-        ?selected=${this.selected.includes(date)}
+        part=${[
+          'day',
+          this.selected.includes(date) ? 'day-selected' : '',
+          this.#todayDate === date ? 'day-today' : '',
+        ].join(' ')}
         role="gridcell"
         data-usewc-day=${day}
         data-usewc-date=${date}
@@ -328,7 +350,7 @@ export class UseCalendar extends LitElement {
     const day = this.#getTargetCell(target);
     if (day) {
       if (this.selectmode === 'single') {
-        this.value = day.getAttribute('data-usewc-date') || '';
+        this.#internalSetValue(day.getAttribute('data-usewc-date') || '');
       }
 
       if (this.navigationEnabled) {
@@ -373,7 +395,7 @@ export class UseCalendar extends LitElement {
       event.preventDefault();
       event.stopPropagation();
 
-      this.value = this.getDateForDay(currentDay);
+      this.#internalSetValue(this.getDateForDay(currentDay));
       return;
     }
 
@@ -446,15 +468,15 @@ export class UseCalendar extends LitElement {
     return html`
       <div part="header">
         <slot name="header-start"></slot>
-        <slot name="title" id="calendar-title">
+        <slot part="title" name="title" id="calendar-title">
           ${this.#title.map((part) => html`<span part="title-${part.type}">${part.value}</span>`)}
         </slot>
         <slot part="controls" name="controls">
           ${this.controls
             ? html`
-                <button type="button" @click=${this.previousMonth}>◄</button>
-                <button type="button" @click=${this.today}>●</button>
-                <button type="button" @click=${this.nextMonth}>►</button>
+                <button type="button" part="control control-previous" @click=${this.previousMonth}>◄</button>
+                <button type="button" part="control control-today" @click=${this.today}>●</button>
+                <button type="button" part="control control-next" @click=${this.nextMonth}>►</button>
               `
             : ''}
         </slot>

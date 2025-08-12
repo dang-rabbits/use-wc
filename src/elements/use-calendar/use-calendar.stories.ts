@@ -173,3 +173,157 @@ export const CustomDayTemplate: StoryObj<UseCalendar> = {
     return html`<custom-calendar year="2020" month="4" controls focusmode="control"> </custom-calendar>`;
   },
 };
+
+export const ProgrammaticallyAddDayInfo: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleClick = () => {
+      const calendar = document.querySelector('#programmatically-add-day-info-calendar') as UseCalendar;
+      const day = document.createElement('use-calendarday');
+      day.date = '2020-04-16';
+      day.innerHTML = 'This is a custom day';
+      calendar.appendChild(day);
+    };
+
+    return html`
+      <use-calendar
+        id="programmatically-add-day-info-calendar"
+        year="2020"
+        month="4"
+        controls
+        focusmode="control"
+      ></use-calendar>
+      <button @click=${handleClick}>Add Day Info</button>
+    `;
+  },
+};
+
+/**
+ * When the value for the `use-calendar` component is manually changed by
+ * interaction then a custom `use-change` event is emitted (programmatically
+ * changing the value will not emit the event):
+ *
+ * ```ts
+ * {
+ *   value: string;
+ *   valueAsDate: Date;
+ * }
+ * ```
+ *
+ * ```ts
+ * const calendar = document.querySelector('use-calendar');
+ * calendar.addEventListener('use-change', (event) => {
+ *   console.log(event.detail.value);
+ * });
+ * ```
+ */
+export const ChangeEvent: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleChange = (event: CustomEvent<{ value: string }>) => {
+      const output = document.getElementById('change-event-output') as HTMLPreElement;
+      output.textContent = event.detail.value;
+    };
+
+    return html`
+      <use-calendar selectmode="single" value="" controls @use-change=${handleChange}></use-calendar>
+      <pre id="change-event-output"></pre>
+    `;
+  },
+};
+
+export const CustomStyles: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`
+      <style>
+        .custom-styles {
+          color: white;
+          max-width: 400px;
+          margin: 0 auto;
+          gap: 1px;
+          padding: 0.25rem;
+          border-radius: 0.5rem;
+          background-image: linear-gradient(15deg, salmon, hotpink);
+        }
+
+        .custom-styles::part(header) {
+          padding-inline-start: 0.75rem;
+          padding-inline-end: 0.25rem;
+          padding-block: 0.25rem 0.5rem;
+          border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+        }
+
+        .custom-styles::part(title) {
+          font-size: 1.25rem;
+        }
+
+        .custom-styles::part(grid-header-cell) {
+          padding-block: 0.5rem;
+          font-weight: bold;
+        }
+
+        .custom-styles::part(controls) {
+          display: flex;
+          gap: 0.0625rem;
+          align-items: center;
+        }
+
+        .custom-styles::part(control) {
+          appearance: none;
+          border: none;
+          padding: 0.5rem;
+          background: rgba(255, 255, 255, 0.125);
+          color: white;
+          cursor: pointer;
+          font-size: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          line-height: 1rem;
+          aspect-ratio: 1;
+          height: 2rem;
+        }
+
+        .custom-styles::part(control-previous) {
+          border-top-left-radius: 50%;
+          border-bottom-left-radius: 50%;
+        }
+
+        .custom-styles::part(control-next) {
+          border-top-right-radius: 50%;
+          border-bottom-right-radius: 50%;
+        }
+
+        .custom-styles::part(control):is(:hover, :focus) {
+          background: rgba(255, 255, 255, 0.25);
+        }
+
+        .custom-styles::part(day) {
+          cursor: default;
+          aspect-ratio: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: calc(0.5rem - 0.125rem);
+        }
+
+        .custom-styles::part(day):is(:hover, :focus) {
+          background-color: rgba(255, 255, 255, 0.125);
+        }
+
+        .custom-styles::part(day):is(:focus-visible) {
+          outline: 2px solid #fff;
+        }
+
+        .custom-styles::part(day-today) {
+          font-weight: 900;
+        }
+
+        .custom-styles::part(day-selected):is(:hover, :focus),
+        .custom-styles::part(day-selected) {
+          background-color: white;
+          color: #f3007e;
+        }
+      </style>
+      <use-calendar selectmode="single" controls class="custom-styles"></use-calendar>
+    `;
+  },
+};
