@@ -87,9 +87,9 @@ export class UseCalendar extends LitElement {
   controls: boolean = false;
 
   @property({ type: String, attribute: true, reflect: true })
-  navigation: 'on' | 'off' = 'on';
+  navigation: 'on' | 'off' | 'wrap' = 'on';
   get navigationEnabled() {
-    return this.navigation === 'on';
+    return ['on', 'wrap'].includes(this.navigation);
   }
 
   // TODO add 'range' option
@@ -388,6 +388,18 @@ export class UseCalendar extends LitElement {
     this.gridBody.setAttribute('tabindex', '0');
   }
 
+  async #navigatePreviousMonth() {
+    this.previousMonth();
+    await this.updateComplete;
+    this.#focusOnDay(this.#daysInMonth);
+  }
+
+  async #navigateNextMonth() {
+    this.nextMonth();
+    await this.updateComplete;
+    this.#focusOnDay(1);
+  }
+
   #handleKeyDown(event: HTMLElementEventMap['keydown']) {
     const currentDay = this.#activeDay;
 
@@ -396,6 +408,16 @@ export class UseCalendar extends LitElement {
       event.stopPropagation();
 
       this.#internalSetValue(this.getDateForDay(currentDay));
+      return;
+    }
+
+    if (currentDay === 1 && event.key === 'ArrowLeft' && this.navigation === 'wrap') {
+      this.#navigatePreviousMonth();
+      return;
+    }
+
+    if (currentDay === this.#daysInMonth && event.key === 'ArrowRight' && this.navigation === 'wrap') {
+      this.#navigateNextMonth();
       return;
     }
 

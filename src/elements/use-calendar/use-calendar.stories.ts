@@ -26,7 +26,22 @@ export const DisableNavigation: StoryObj<UseCalendar> = {
   },
 };
 
-export const WidgetMode: StoryObj<UseCalendar> = {
+/**
+ * When the `navigation` attribute is set to `wrap` the calendar will wrap
+ * around to the first or last day of the month when the user navigates past the
+ * first or last day of the current month.
+ */
+export const WrapNavigation: StoryObj<UseCalendar> = {
+  render: () => {
+    return html` <use-calendar id="navigate-calendar" navigation="wrap"></use-calendar> `;
+  },
+};
+
+/**
+ * `use-calendar` will automatically remove all nested controls from the tab
+ * flow and reenable them when the user navigates to their parent cell.
+ */
+export const NestedCellControls: StoryObj<UseCalendar> = {
   render: () => {
     return html`
       <use-calendar id="widget-calendar" mode="widget" year="2025" month="4">
@@ -34,6 +49,23 @@ export const WidgetMode: StoryObj<UseCalendar> = {
           <button type="button">First</button>
           <button type="button">Second</button>
           <button type="button">Third</button>
+        </use-calendarday>
+      </use-calendar>
+    `;
+  },
+};
+
+/**
+ * When your cells have a single control then you can set the `focusmode`
+ * attribute to `control` to focus on the control when the user navigates to
+ * the cell.
+ */
+export const FocusMode: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`
+      <use-calendar year="2020" month="4" controls focusmode="control">
+        <use-calendarday date="2020-04-16">
+          <a href="#birthday" target="_self" slot="label">16</a>
         </use-calendarday>
       </use-calendar>
     `;
@@ -63,18 +95,6 @@ export const CustomDayContent: StoryObj<UseCalendar> = {
         <use-calendarday date="2020-04-16">🥳</use-calendarday>
         <use-calendarday date="2020-06-28">🏴‍☠️</use-calendarday>
         <use-calendarday date="2020-10-18">🌷</use-calendarday>
-      </use-calendar>
-    `;
-  },
-};
-
-export const CustomDayLabel: StoryObj<UseCalendar> = {
-  render: () => {
-    return html`
-      <use-calendar year="2020" month="4" controls focusmode="control">
-        <use-calendarday date="2020-04-16">
-          <a href="#birthday" target="_self" slot="label">16</a>
-        </use-calendarday>
       </use-calendar>
     `;
   },
