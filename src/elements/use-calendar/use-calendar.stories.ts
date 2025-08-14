@@ -26,14 +26,15 @@ export const DisableNavigation: StoryObj<UseCalendar> = {
   },
 };
 
-/**
- * When the `navigation` attribute is set to `wrap` the calendar will wrap
- * around to the first or last day of the month when the user navigates past the
- * first or last day of the current month.
- */
-export const WrapNavigation: StoryObj<UseCalendar> = {
+export const DisableWrapNavigation: StoryObj<UseCalendar> = {
   render: () => {
-    return html` <use-calendar id="navigate-calendar" navigation="wrap"></use-calendar> `;
+    return html` <use-calendar id="navigate-calendar" navigation="nowrap"></use-calendar> `;
+  },
+};
+
+export const HiddenMonths: StoryObj<UseCalendar> = {
+  render: () => {
+    return html` <use-calendar id="navigate-calendar" hiddenmonths="previous next"></use-calendar> `;
   },
 };
 
@@ -331,6 +332,10 @@ export const CustomStyles: StoryObj<UseCalendar> = {
 
         .custom-styles::part(day):is(:focus-visible) {
           outline: 2px solid #fff;
+        }
+
+        .custom-styles::part(day-empty) {
+          opacity: 0.5;
         }
 
         .custom-styles::part(day-today) {

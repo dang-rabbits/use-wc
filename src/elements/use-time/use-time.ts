@@ -229,11 +229,12 @@ export class UseTime extends LitElement {
     };
   }
 
-  #handleSegmentKeydown(segment: TimeSegment) {
+  #handleSegmentKeydown() {
     return (event: KeyboardEvent) => {
-      if (segment === 'dayPeriod' && !['Enter', 'Tab'].includes(event.key)) {
+      if (!['Enter', 'Tab'].includes(event.key)) {
         event.preventDefault();
 
+        // FIXME does not work with virtual keyboards
         if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
           const target = event.target as HTMLInputElement;
           // @ts-expect-error - This method is only called when dayPeriod is defined
@@ -307,7 +308,7 @@ export class UseTime extends LitElement {
             id="${this.#segmentId(part.type)}"
             form=${this.#formId}
             @input=${this.#handleSegmentInput(part.type)}
-            @keydown=${this.#handleSegmentKeydown(part.type)}
+            @keydown=${part.type === 'dayPeriod' ? this.#handleSegmentKeydown() : undefined}
           />`;
     });
   }
