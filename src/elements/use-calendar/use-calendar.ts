@@ -27,55 +27,7 @@ export class UseCalendar extends LitElement {
 
   #internals: ElementInternals;
   #value = new FormData();
-
-  static styles = css`
-    :host {
-      display: block;
-      text-align: center;
-    }
-
-    [part='grid-header'],
-    [part='grid-body'] [part='row'] {
-      display: grid;
-      grid-template-rows: auto repeat(6, 1fr);
-      grid-template-columns: repeat(7, 1fr);
-    }
-
-    [part='header'] {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    [part='header'] slot:not(:empty) {
-      display: block;
-    }
-
-    [part*='day-selected'] {
-      background-color: rgba(0, 0, 0, 0.25);
-    }
-
-    [part*='day-empty'] {
-      opacity: 0.5;
-    }
-  `;
-
-  constructor() {
-    super();
-    this.#internals = this.attachInternals();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-    this.value = this.getAttribute('value') || '';
-    this.year = Number(this.getAttribute('year')) || new Date().getFullYear();
-    this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
-    this.#activeDate = new Date(this.year, this.month - 1, 1);
-  }
-
-  firstUpdated() {
-    this.#initializeTabbables();
-  }
+  #firstRender = false;
 
   @query('[part="grid-body"]')
   private gridBody!: HTMLDivElement;
@@ -127,6 +79,26 @@ export class UseCalendar extends LitElement {
   @property({ type: Array, attribute: false })
   private selected: string[] = [];
 
+  #activeDate = new Date(this.year, this.month - 1, 1);
+
+  constructor() {
+    super();
+    this.#internals = this.attachInternals();
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this.value = this.getAttribute('value') || '';
+    this.year = Number(this.getAttribute('year')) || new Date().getFullYear();
+    this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
+    this.#activeDate = new Date(this.year, this.month - 1, 1);
+  }
+
+  firstUpdated() {
+    this.#firstRender = true;
+    this.#initializeTabbables();
+  }
+
   get #dataKey() {
     return this.name || 'value';
   }
@@ -159,7 +131,7 @@ export class UseCalendar extends LitElement {
 
     this.selected = parsedValue;
 
-    if (this.navigationEnabled && this.selectmode === 'single' && parsedValue[0]) {
+    if (this.navigationEnabled && this.selectmode === 'single' && parsedValue[0] && this.#firstRender) {
       this.goTo(parsedValue[0]);
     }
   }
@@ -334,35 +306,38 @@ export class UseCalendar extends LitElement {
   }
 
   public previousMonth() {
-    this.month = this.month - 1;
-    this.#activeDate = new Date(this.year, this.month - 1, 1);
+    this.goTo(this.#activeDate.getFullYear(), this.#activeDate.getMonth(), 1);
     this.#initializeControls();
   }
 
   public today() {
-    this.year = new Date().getFullYear();
-    this.month = new Date().getMonth() + 1;
-    this.#activeDate = new Date(this.year, this.month - 1, new Date().getDate());
-    this.#initializeControls();
+    this.goTo(new Date());
   }
 
   public nextMonth() {
-    this.month = this.month + 1;
-    this.#activeDate = new Date(this.year, this.month - 1, 1);
-    this.#initializeControls();
+    this.goTo(this.#activeDate.getFullYear(), this.#activeDate.getMonth() + 2, 1);
   }
 
-  public goTo(yearOrDate: number | string, month?: number, day?: number) {
+  /**
+   * @param yearOrDate - year, date string, or date object
+   * @param month - month number (1-12)
+   * @param day - day number (1-31)
+   */
+  public async goTo(yearOrDate: number | string | Date, month?: number, day?: number) {
     if (typeof yearOrDate === 'string') {
-      this.#activeDate = new Date(yearOrDate);
+      const [year, month, day] = yearOrDate.split('-').map(Number);
+      this.#activeDate = new Date(year, month - 1, day);
+    } else if (yearOrDate instanceof Date) {
+      this.#activeDate = yearOrDate;
     } else {
-      this.#activeDate = new Date(yearOrDate, (month || 1) - 1, day || 1);
+      this.#activeDate = new Date(yearOrDate, (month || 1) - 1, day != null ? day : 1);
     }
 
-    this.year = this.#activeDate.getFullYear();
-    this.month = this.#activeDate.getMonth() + 1;
-
-    this.#initializeControls();
+    if (this.year !== this.#activeDate.getFullYear() || this.month !== this.#activeDate.getMonth() + 1) {
+      this.year = this.#activeDate.getFullYear();
+      this.month = this.#activeDate.getMonth() + 1;
+      await this.#initializeControls();
+    }
   }
 
   async #initializeControls() {
@@ -373,8 +348,6 @@ export class UseCalendar extends LitElement {
   focus() {
     this.gridBody.focus();
   }
-
-  #activeDate = new Date(this.year, this.month - 1, 1);
 
   get #activeDateString() {
     return this.#activeDate.toISOString().split('T')[0];
@@ -423,7 +396,7 @@ export class UseCalendar extends LitElement {
     this.gridBody.setAttribute('tabindex', '-1');
 
     if (event.target === this.gridBody) {
-      this.#focusOnDay(this.#activeDateString);
+      this.#focusOnDate(this.year, this.month, this.#activeDate.getDate());
       return;
     }
 
@@ -481,20 +454,24 @@ export class UseCalendar extends LitElement {
     }
 
     if (moveTo != null) {
-      this.#activeDate.setDate(moveTo);
-      this.#focusOnDay(this.#activeDateString);
+      this.#setActiveDay(moveTo);
       event.preventDefault();
       event.stopPropagation();
     }
   }
 
-  async #focusOnDay(date: string) {
-    const [year, month] = date.split('-').map(Number) as [number, number];
-    if (this.month !== month || this.year !== year) {
-      this.month = month;
-      this.year = year;
-      await this.#initializeControls();
-    }
+  async #setActiveDay(day: number) {
+    await this.#focusOnDate(this.#activeDate.getFullYear(), this.#activeDate.getMonth() + 1, day);
+  }
+
+  async #focusOnDate(year: number, month: number, day: number) {
+    await this.goTo(year, month, day);
+
+    const date = this.#formatDate(
+      this.#activeDate.getFullYear(),
+      this.#activeDate.getMonth() + 1,
+      this.#activeDate.getDate()
+    );
 
     if (this.focusmode === 'control') {
       const target = this.#focusableElements.get(date)?.at(0);
@@ -600,4 +577,36 @@ export class UseCalendar extends LitElement {
       </div>
     `;
   }
+
+  static styles = css`
+    :host {
+      display: block;
+      text-align: center;
+    }
+
+    [part='grid-header'],
+    [part='grid-body'] [part='row'] {
+      display: grid;
+      grid-template-rows: auto repeat(6, 1fr);
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    [part='header'] {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    [part='header'] slot:not(:empty) {
+      display: block;
+    }
+
+    [part*='day-selected'] {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    [part*='day-empty'] {
+      opacity: 0.5;
+    }
+  `;
 }
