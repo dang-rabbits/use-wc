@@ -151,6 +151,20 @@ export const SetValueProgrammatically: StoryObj<UseCalendar> = {
   },
 };
 
+export const MinMaxDate: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar
+      min="2025-04-10"
+      max="2025-04-20"
+      year="2025"
+      month="4"
+      value="2025-04-15"
+      controls
+      selectmode="single"
+    ></use-calendar>`;
+  },
+};
+
 class CustomCalendar extends UseCalendar {
   renderDay: UseCalendarRenderDay = ({ day, date }, html) => {
     return html`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;

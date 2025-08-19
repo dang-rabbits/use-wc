@@ -10,7 +10,8 @@ import { keyed } from 'lit/directives/keyed.js';
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
 // TODO `controls` and `controlslist` attributes
-// FIXME next month days are offset in some cases, check July 2025
+// TODO min/max date attributes - determines which dates are selectable
+// TODO start/end date attributes - determines which dates are visible
 
 type LitHtml = typeof html;
 
@@ -79,6 +80,12 @@ export class UseCalendar extends LitElement {
   @property({ type: Array, attribute: false })
   private selected: string[] = [];
 
+  @property({ type: String, attribute: true })
+  min?: string;
+
+  @property({ type: String, attribute: true })
+  max?: string;
+
   #activeDate = new Date(this.year, this.month - 1, 1);
 
   constructor() {
@@ -136,7 +143,15 @@ export class UseCalendar extends LitElement {
     }
   }
 
+  #dateDisabled(date: string) {
+    return (this.min && date < this.min) || (this.max && date > this.max);
+  }
+
   #internalSetValue(value: string[] | string) {
+    if (typeof value === 'string' && this.#dateDisabled(value)) {
+      return;
+    }
+
     this.value = value;
 
     this.dispatchEvent(
@@ -279,6 +294,7 @@ export class UseCalendar extends LitElement {
 
   #renderDayCell(year: number, month: number, day: number, rowIndex: number, columnIndex: number, empty = false) {
     const date = this.#formatDate(year, month, day);
+    const disabled = this.#dateDisabled(date);
 
     return html`
       <div
@@ -289,9 +305,11 @@ export class UseCalendar extends LitElement {
           empty ? 'day-empty' : '',
           this.selected.includes(date) ? 'day-selected' : '',
           this.#todayDate === date ? 'day-today' : '',
+          disabled ? 'day-disabled' : '',
         ]
           .join(' ')
           .trim()}
+        aria-disabled=${disabled ? 'true' : 'false'}
         aria-selected=${this.selected.includes(date) ? 'true' : 'false'}
         role="gridcell"
         data-usewc-day=${day}
@@ -603,6 +621,10 @@ export class UseCalendar extends LitElement {
 
     [part*='day-selected'] {
       background-color: rgba(0, 0, 0, 0.25);
+    }
+
+    [part*='day-disabled'] {
+      opacity: 0.75;
     }
 
     [part*='day-empty'] {
