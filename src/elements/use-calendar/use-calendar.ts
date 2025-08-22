@@ -10,8 +10,6 @@ import { keyed } from 'lit/directives/keyed.js';
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
 // TODO `controls` and `controlslist` attributes
-// TODO min/max date attributes - determines which dates are selectable
-// TODO start/end date attributes - determines which dates are visible
 
 type LitHtml = typeof html;
 
@@ -86,6 +84,16 @@ export class UseCalendar extends LitElement {
   @property({ type: String, attribute: true })
   max?: string;
 
+  /** First date in the visible range */
+  @property({ type: String, attribute: true })
+  start?: string;
+  #startDate = null as Date | null;
+
+  /** Last date in the visible range */
+  @property({ type: String, attribute: true })
+  end?: string;
+  #endDate = null as Date | null;
+
   #activeDate = new Date(this.year, this.month - 1, 1);
 
   constructor() {
@@ -98,7 +106,25 @@ export class UseCalendar extends LitElement {
     this.value = this.getAttribute('value') || '';
     this.year = Number(this.getAttribute('year')) || new Date().getFullYear();
     this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
-    this.#activeDate = new Date(this.year, this.month - 1, 1);
+
+    let startDay = 1;
+    if (this.start) {
+      this.#startDate = this.#parseDate(this.getAttribute('start')!);
+      if (this.#startDate && this.#startDate.getMonth() + 1 === this.month) {
+        startDay = this.#startDate.getDate();
+      }
+    }
+
+    if (this.end) {
+      this.#endDate = this.#parseDate(this.getAttribute('end')!);
+    }
+
+    this.#activeDate = new Date(this.year, this.month - 1, startDay);
+  }
+
+  #parseDate(date: string) {
+    const [year, month, day] = date.split('-').map(Number);
+    return year && month && day ? new Date(year, month - 1, day) : null;
   }
 
   firstUpdated() {
@@ -342,13 +368,25 @@ export class UseCalendar extends LitElement {
    * @param day - day number (1-31)
    */
   public async goTo(yearOrDate: number | string | Date, month?: number, day?: number) {
+    let date = null as Date | null;
     if (typeof yearOrDate === 'string') {
-      const [year, month, day] = yearOrDate.split('-').map(Number);
-      this.#activeDate = new Date(year, month - 1, day);
+      date = this.#parseDate(yearOrDate) || new Date();
     } else if (yearOrDate instanceof Date) {
-      this.#activeDate = yearOrDate;
+      date = yearOrDate;
     } else {
-      this.#activeDate = new Date(yearOrDate, (month || 1) - 1, day != null ? day : 1);
+      date = new Date(yearOrDate, (month || 1) - 1, day != null ? day : 1);
+    }
+
+    if (date && this.#startDate && date < this.#startDate) {
+      date = this.#startDate;
+    }
+
+    if (date && this.#endDate && date > this.#endDate) {
+      date = this.#endDate;
+    }
+
+    if (date) {
+      this.#activeDate = date;
     }
 
     if (this.year !== this.#activeDate.getFullYear() || this.month !== this.#activeDate.getMonth() + 1) {
@@ -506,32 +544,53 @@ export class UseCalendar extends LitElement {
     }
   }
 
+  #isThisMonth(date: Date | null) {
+    if (date == null) return false;
+    return date.getFullYear() === this.year && date.getMonth() + 1 === this.month;
+  }
+
+  #isSameMonth(date1: Date | null, date2: Date | null) {
+    if (date1 == null || date2 == null) return false;
+    return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth();
+  }
+
   render() {
     const rows: Array<Array<TemplateResult | string>> = [];
     const daysInMonth = this.#daysInMonth;
     const previousMonthData = this.#previousMonthData;
     const nextMonthData = this.#nextMonthData;
-    const firstDay = this.#firstDayOfWeek;
+    const startDate = this.#startDate;
+    const endDate = this.#endDate;
+    const startDay = startDate && this.#isThisMonth(startDate) ? startDate.getDate() : 1;
+    const endDay = endDate && this.#isThisMonth(endDate) ? endDate.getDate() : daysInMonth;
+    const firstDay = startDate && this.#isThisMonth(startDate) ? startDate.getDay() : this.#firstDayOfWeek;
 
     let rowIndex = 1;
     let columnIndex = 1;
 
     for (let i = 1; i <= firstDay; i++) {
       rows[rowIndex] = rows[rowIndex] || [];
+      const emptyDate = new Date(
+        previousMonthData.year,
+        previousMonthData.month - 1,
+        previousMonthData.days - previousMonthData.firstDay + i - 1
+      );
       rows[rowIndex].push(
-        this.#renderDayCell(
-          previousMonthData.year,
-          previousMonthData.month,
-          previousMonthData.days - previousMonthData.firstDay + i - 1,
-          rowIndex + 1,
-          columnIndex,
-          true
-        )
+        !startDate || emptyDate >= startDate
+          ? this.#renderDayCell(
+              previousMonthData.year,
+              previousMonthData.month,
+              previousMonthData.days - previousMonthData.firstDay + i - 1,
+              rowIndex + 1,
+              columnIndex,
+              true
+            )
+          : html`<div part="day day-empty"></div>`
       );
       columnIndex++;
     }
 
-    for (let d = 1; d <= daysInMonth; d++) {
+    for (let d = startDay; d <= endDay; d++) {
       const day = this.#renderDayCell(this.year, this.month, d, rowIndex + 1, columnIndex);
       rows[rowIndex] = rows[rowIndex] || [];
       rows[rowIndex].push(day);
@@ -546,11 +605,16 @@ export class UseCalendar extends LitElement {
     if (this.#showNextMonth && fillers < 7) {
       for (let i = 1; i <= fillers; i++) {
         rows[rowIndex] = rows[rowIndex] || [];
+        const emptyDate = new Date(nextMonthData.year, nextMonthData.month - 1, i);
         rows[rowIndex].push(
-          this.#renderDayCell(nextMonthData.year, nextMonthData.month, i, rowIndex + 1, columnIndex, true)
+          !endDate || emptyDate <= endDate
+            ? this.#renderDayCell(nextMonthData.year, nextMonthData.month, i, rowIndex + 1, columnIndex, true)
+            : html`<div part="day day-empty"></div>`
         );
       }
     }
+
+    const neededRows = rows.filter((row) => row.length > 0);
 
     const weekdayNames = this.#weekdayNames();
     return html`
@@ -560,11 +624,33 @@ export class UseCalendar extends LitElement {
           ${this.#title.map((part) => html`<span part="title-${part.type}">${part.value}</span>`)}
         </slot>
         <slot part="controls" name="controls">
+          <!-- TODO disable controls if outside the start/end range -->
           ${this.controls
             ? html`
-                <button type="button" part="control control-previous" @click=${this.previousMonth}>◄</button>
-                <button type="button" part="control control-today" @click=${this.today}>●</button>
-                <button type="button" part="control control-next" @click=${this.nextMonth}>►</button>
+                <button
+                  type="button"
+                  part="control control-previous"
+                  @click=${this.previousMonth}
+                  ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
+                >
+                  ◄
+                </button>
+                <button
+                  type="button"
+                  part="control control-today"
+                  @click=${this.today}
+                  ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
+                >
+                  ●
+                </button>
+                <button
+                  type="button"
+                  part="control control-next"
+                  @click=${this.nextMonth}
+                  ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
+                >
+                  ►
+                </button>
               `
             : ''}
         </slot>
@@ -589,7 +675,7 @@ export class UseCalendar extends LitElement {
         >
           ${keyed(
             `${this.year}-${this.month}`,
-            map(rows, (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)
+            map(neededRows, (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`)
           )}
         </div>
       </div>

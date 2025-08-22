@@ -151,7 +151,7 @@ export const SetValueProgrammatically: StoryObj<UseCalendar> = {
   },
 };
 
-export const MinMaxDate: StoryObj<UseCalendar> = {
+export const MinAndMaxDates: StoryObj<UseCalendar> = {
   render: () => {
     return html`<use-calendar
       min="2025-04-10"
@@ -162,6 +162,16 @@ export const MinMaxDate: StoryObj<UseCalendar> = {
       controls
       selectmode="single"
     ></use-calendar>`;
+  },
+};
+
+/**
+ * The `start` and `end` attributes can be used to limit the visible range of
+ * the calendar.
+ */
+export const StartAndEndDates: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar start="2025-03-15" end="2025-05-15" year="2025" month="4" controls></use-calendar>`;
   },
 };
 
