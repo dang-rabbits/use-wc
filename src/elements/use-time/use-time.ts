@@ -24,6 +24,8 @@ export class UseTime extends LitElement {
   #formId: string | undefined;
   #maxHours: number = 23;
   #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
+  #amChar: string = 'a';
+  #pmChar: string = 'p';
 
   constructor() {
     super();
@@ -193,6 +195,9 @@ export class UseTime extends LitElement {
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
       this.#maxHours = parts.some((part) => part.type === 'dayPeriod') ? 12 : 23;
       this.#ariaLabels = getDateTimeAriaLabels(this.locale);
+      const [amChar, pmChar] = this.#ariaLabels.dayPeriod.split('/').map((char) => char.toLowerCase().charAt(0));
+      this.#amChar = amChar;
+      this.#pmChar = pmChar;
 
       return parts;
     } catch {
@@ -202,6 +207,25 @@ export class UseTime extends LitElement {
 
   #segmentId(unit: string) {
     return `${this.id}-segment-${unit}`;
+  }
+
+  #isToggleKey(key: string) {
+    return ['ArrowUp', 'ArrowDown'].includes(key);
+  }
+
+  #amPmValue(chars: string) {
+    const value = [this.#amChar, this.#pmChar].indexOf(chars.toLowerCase().charAt(0));
+    return value === -1 ? null : value === 0 ? 'am' : 'pm';
+  }
+
+  // On some OSs, holding down a letter will open a list of accent characters
+  // and selecting one bypasses the keypress prevention so we force a valid
+  // value with this method.
+  #computeValidAmPmValue(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const data = (event as InputEvent).data;
+    const amPmValue = data ? this.#amPmValue(data) : null;
+    return amPmValue ?? this.#amPmValue(target.value) ?? 'am';
   }
 
   #handleSegmentInput(segment: TimeSegment) {
@@ -223,28 +247,37 @@ export class UseTime extends LitElement {
       } else if (segment === 'fractionalSecond') {
         this.#valueData.fractionalSecond = Math.max(0, Math.min(999, value)).toString();
         target.value = this.#valueData.fractionalSecond.padStart(3, '0');
+      } else if (segment === 'dayPeriod') {
+        event.preventDefault();
+        const validValue = this.#computeValidAmPmValue(event);
+        if (validValue) {
+          this.#toggleDayPariod(target, validValue);
+          return; // toggleDayPeriod calls updateInternalValue so stop before it is called twice
+        }
       }
 
       this.#updateInternalValue();
     };
   }
 
-  #handleSegmentKeydown() {
-    return (event: KeyboardEvent) => {
-      if (!['Enter', 'Tab'].includes(event.key)) {
-        event.preventDefault();
+  #toggleDayPariod(target: HTMLInputElement, value?: 'am' | 'pm') {
+    // @ts-expect-error - This method is only called when dayPeriod is defined
+    const newValue = value ?? this.#getOtherDayPeriod(this.#valueData.dayPeriod);
+    this.#valueData.dayPeriod = newValue;
+    target.value = this.#ariaLabels[newValue as keyof DateTimeAriaLabels] ?? '';
+    this.#updateInternalValue();
+  }
 
-        // FIXME does not work with virtual keyboards
-        if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
-          const target = event.target as HTMLInputElement;
-          // @ts-expect-error - This method is only called when dayPeriod is defined
-          const newValue = this.#getOtherDayPeriod(this.#valueData.dayPeriod);
-          this.#valueData.dayPeriod = newValue;
-          target.value = this.#ariaLabels[newValue as keyof DateTimeAriaLabels] ?? '';
-          this.#updateInternalValue();
-        }
+  #handleSegmentKeydown(event: KeyboardEvent) {
+    if (!['Enter', 'Tab'].includes(event.key)) {
+      if (!this.#amPmValue(event.key) && !event.ctrlKey && !event.metaKey) {
+        event.preventDefault();
       }
-    };
+
+      if (this.#isToggleKey(event.key)) {
+        this.#toggleDayPariod(event.target as HTMLInputElement);
+      }
+    }
   }
 
   #getOtherDayPeriod(dayPeriod: string) {
@@ -308,7 +341,7 @@ export class UseTime extends LitElement {
             id="${this.#segmentId(part.type)}"
             form=${this.#formId}
             @input=${this.#handleSegmentInput(part.type)}
-            @keydown=${part.type === 'dayPeriod' ? this.#handleSegmentKeydown() : undefined}
+            @keydown=${part.type === 'dayPeriod' ? this.#handleSegmentKeydown : undefined}
           />`;
     });
   }
