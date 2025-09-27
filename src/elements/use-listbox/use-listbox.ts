@@ -111,6 +111,14 @@ export class UseListbox extends LitElement {
     }
 
     this.#internals.setFormValue(this.value);
+
+    this.dispatchEvent(
+      new CustomEvent('use-change', {
+        detail: { value: this.value },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   #initializeValue() {

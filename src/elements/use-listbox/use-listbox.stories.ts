@@ -76,6 +76,23 @@ export const OptionsDivider: Story = {
   `,
 };
 
+export const ChangeEvent: StoryObj<UseListbox> = {
+  render: () => {
+    function handleChange(e: CustomEvent<{ value: FormData }>) {
+      const output = document.getElementById('change-event-output') as HTMLPreElement;
+      output.textContent = JSON.stringify((e.detail.value as unknown as FormData).getAll('change-event'));
+    }
+    return html`
+      <use-listbox name="change-event" @use-change=${handleChange} multiple>
+        <use-option value="1" id="option-1">One</use-option>
+        <use-option value="2" id="option-2">Two</use-option>
+        <use-option value="3" id="option-3">Three</use-option>
+      </use-listbox>
+      <pre id="change-event-output"></pre>
+    `;
+  },
+};
+
 export const FormSingleValue: Story = {
   render: () => {
     function handleFormSubmit(e: Event) {
