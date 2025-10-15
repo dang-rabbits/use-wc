@@ -175,6 +175,20 @@ export const StartAndEndDates: StoryObj<UseCalendar> = {
   },
 };
 
+export const StartAndEndDatesUsingMinAndMax: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar
+      min="2025-03-15"
+      max="2025-05-15"
+      start="min"
+      end="max"
+      year="2025"
+      month="4"
+      controls
+    ></use-calendar>`;
+  },
+};
+
 class CustomCalendar extends UseCalendar {
   renderDay: UseCalendarRenderDay = ({ day, date }, html) => {
     return html`<a href=${`#my-custom-link=${date}`} target="_self">${day}</a>`;

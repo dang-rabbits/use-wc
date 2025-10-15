@@ -84,12 +84,12 @@ export class UseCalendar extends LitElement {
   @property({ type: String, attribute: true })
   max?: string;
 
-  /** First date in the visible range */
+  /** First date in the visible range. Accepts ISO 8601 date strings or `'min'` to use the same value as `min` */
   @property({ type: String, attribute: true })
   start?: string;
   #startDate = null as Date | null;
 
-  /** Last date in the visible range */
+  /** Last date in the visible range. Accepts ISO 8601 date strings or `'max'` to use the same value as `max` */
   @property({ type: String, attribute: true })
   end?: string;
   #endDate = null as Date | null;
@@ -108,15 +108,17 @@ export class UseCalendar extends LitElement {
     this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
 
     let startDay = 1;
-    if (this.start) {
-      this.#startDate = this.#parseDate(this.getAttribute('start')!);
+    const startValue = this.getAttribute('start');
+    if (startValue) {
+      this.#startDate = this.#parseDate(startValue === 'min' ? this.getAttribute('min')! : startValue);
       if (this.#startDate && this.#startDate.getMonth() + 1 === this.month) {
         startDay = this.#startDate.getDate();
       }
     }
 
-    if (this.end) {
-      this.#endDate = this.#parseDate(this.getAttribute('end')!);
+    const endValue = this.getAttribute('end');
+    if (endValue) {
+      this.#endDate = this.#parseDate(endValue === 'max' ? this.getAttribute('max')! : endValue);
     }
 
     this.#activeDate = new Date(this.year, this.month - 1, startDay);
@@ -624,7 +626,6 @@ export class UseCalendar extends LitElement {
           ${this.#title.map((part) => html`<span part="title-${part.type}">${part.value}</span>`)}
         </slot>
         <slot part="controls" name="controls">
-          <!-- TODO disable controls if outside the start/end range -->
           ${this.controls
             ? html`
                 <button
