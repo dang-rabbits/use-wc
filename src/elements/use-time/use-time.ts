@@ -78,6 +78,7 @@ export class UseTime extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.#initializeHourFormat();
     this.#formatParts = this.#initialFormatParts();
     this.#initializeValue(this.getAttribute('value') ?? '');
   }
@@ -178,6 +179,13 @@ export class UseTime extends LitElement {
 
   #formatParts: Array<{ type: TimeSegment; value: string }> = [];
 
+  #initializeHourFormat() {
+    if (!this.hourFormat) {
+      const formatter = new Intl.DateTimeFormat(this.locale, { hour: 'numeric' });
+      this.hourFormat = formatter.resolvedOptions().hour12 ? '12' : '24';
+    }
+  }
+
   #initialFormatParts() {
     try {
       const options: Intl.DateTimeFormatOptions = {
@@ -235,8 +243,9 @@ export class UseTime extends LitElement {
 
       // Validate ranges
       if (segment === 'hour') {
+        const min = this.hourFormat === '12' ? 1 : 0;
         const max = this.hourFormat === '12' ? 12 : 23;
-        this.#valueData.hour = Math.max(0, Math.min(max, value)).toString();
+        this.#valueData.hour = Math.max(min, Math.min(max, value)).toString();
         target.value = this.#valueData.hour.padStart(2, '0');
       } else if (segment === 'minute') {
         this.#valueData.minute = Math.max(0, Math.min(59, value)).toString();
