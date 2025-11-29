@@ -1,6 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 
+async function handleCopyToClipboard() {
+  try {
+    const value = (document.getElementById('output') as HTMLInputElement)?.value;
+    await window.top?.navigator.clipboard.writeText(value);
+    console.log('Copied to clipboard', value);
+  } catch (error) {
+    console.error('Failed to copy to clipboard', error);
+  }
+}
+
 const meta: Meta = {
   title: 'Styling/Token Name Builder',
   tags: ['autodocs', '!dev', 'utility'],
@@ -24,11 +34,7 @@ const meta: Meta = {
       ]
         .filter(Boolean)
         .join('-');
-      output.textContent = tokenName;
-    }
-    function handleCopyToClipboard() {
-      const output = document.getElementById('output') as HTMLOutputElement;
-      navigator.clipboard.writeText(output.textContent ?? '');
+      output.value = tokenName;
     }
     return html`
       <form @change=${handleFormChange}>
@@ -154,7 +160,7 @@ const meta: Meta = {
           </tbody>
         </table>
       </form>
-      <pre><output id="output"></output></pre>
+      <input id="output" type="text" readonly style="font-family: monospace; width: 100%;" />
       <button type="button" @click=${handleCopyToClipboard}>Copy to clipboard</button>
     `;
   },
