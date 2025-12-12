@@ -1,0 +1,189 @@
+<h2>Inputs</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Text</h3>
+  <input type="text" placeholder="Enter your name" />
+  <input type="text" placeholder="Read only with placeholder" readonly />
+  <input type="text" value="Read only with value" readonly />
+  <input type="text" placeholder="Enter your name" value="Disabled with value" disabled />
+  <fieldset disabled>
+    <legend>Disabled Fieldset</legend>
+    <input type="text" placeholder="Enter your name" />
+    <input type="email" placeholder="Enter your email" />
+    <button type="button">Submit</button>
+  </fieldset>
+  <use-field>
+    <label for="text-field">Text Field</label>
+    <input type="text" id="text-field" placeholder="Enter your name" />
+    <p>This is a text field description</p>
+  </use-field>
+  <use-field>
+    <label for="text-field-2">Required</label>
+    <input type="text" id="text-field-2" placeholder="Enter your name" required />
+    <p>* Required | Shows error state when value is removed</p>
+  </use-field>
+
+  <h3>File</h3>
+  <input type="file" />
+  <input type="file" class="auxiliary" />
+  <input type="file" class="primary" />
+  <input type="file" class="danger" />
+  <input type="file" class="cancel" />
+  <input type="file" disabled />
+  <input type="file" data-as-tag="" />
+  <use-field>
+    <label for="file-field">File Field</label>
+    <input type="file" id="file-field" placeholder="Enter your file" />
+    <p>This is a file field description</p>
+  </use-field>
+
+  <h4>Unstyled</h4>
+  <p>You can escape from the theme styles by adding the <code>data-as-tag=""</code> attribute without a value.</p>
+  <input type="text" placeholder="Enter your name" data-as-tag="" />
+  <p>You can escape from the theme styles by wrapping the UI in a <code>use-theme-escape</code> element.</p>
+  <use-theme-escape>
+    <input type="text" class="primary auxiliary" />
+  </use-theme-escape>
+
+  <h3>Date & time</h3>
+  <input type="date" />
+  <input type="time" />
+  <input type="datetime-local" />
+  <input type="month" />
+  <input type="week" />
+
+  <h3>Email</h3>
+  <input type="email" placeholder="Enter your email" />
+  <input type="email" placeholder="Read only with placeholder" readonly />
+  <input type="email" value="Read only with value" readonly />
+  <input type="email" placeholder="Enter your email" value="Disabled with value" disabled />
+  <use-field>
+    <label for="email-field">Email Field</label>
+    <input type="email" id="email-field" placeholder="Enter your email" value="invalid@invalid@invalid.com" />
+    <p>This is a email field description</p>
+  </use-field>
+
+  <h3>As input</h3>
+  <use-field>
+    <label for="as-input-field">As input field</label>
+    <div data-as-tag="input">
+      <span>Prefix</span>
+      <input id="as-input-field" placeholder="embedded input" />
+      <span>Suffix</span>
+    </div>
+  </use-field>
+  <use-field>
+    <label for="as-input-field-2">As input field 2</label>
+    <div data-as-tag="input">
+      <span>Prefix</span>
+      <input id="as-input-field-2" placeholder="embedded input" disabled />
+      <span>Suffix</span>
+    </div>
+  </use-field>
+</div>
+
+<h3>Textarea</h3>
+<textarea placeholder="Enter your message"></textarea>
+<textarea placeholder="Read only with placeholder" readonly></textarea>
+<textarea placeholder="Enter your message" value="Disabled with value" disabled></textarea>
+<use-field>
+  <label for="textarea-field">Textarea Field</label>
+  <textarea id="textarea-field" placeholder="Enter your message"></textarea>
+  <p>This is a textarea field description</p>
+</use-field>
+
+<h3>Checkbox</h3>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <input type="checkbox" />
+  <input type="checkbox" disabled />
+  <input type="checkbox" checked />
+  <input type="checkbox" checked disabled />
+  <h4>Labeled</h4>
+  <use-selector>
+    <input type="checkbox" id="checkbox-labeled" />
+    <label for="checkbox-labeled">Checkbox Labeled</label>
+    <p>This is a checkbox label description</p>
+  </use-selector>
+  <div>
+    <input type="checkbox" id="checkbox-labeled-disabled" disabled />
+    <label for="checkbox-labeled-disabled">Checkbox Labeled Disabled</label>
+  </div>
+  <div>
+    <input type="checkbox" id="checkbox-labeled-checked" checked />
+    <label for="checkbox-labeled-checked">Checkbox Labeled Checked</label>
+  </div>
+  <div>
+    <input type="checkbox" id="checkbox-labeled-checked-disabled" checked disabled />
+    <label for="checkbox-labeled-checked-disabled">Checkbox Labeled Checked Disabled</label>
+  </div>
+  <div style="font-size: 2rem">
+    <input type="checkbox" />
+    <label>Checkbox</label>
+  </div>
+</div>
+<h3>Radio</h3>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <input type="radio" />
+  <input type="radio" disabled />
+  <input type="radio" checked />
+  <input type="radio" checked disabled />
+  <use-selector>
+    <input type="radio" id="radio-labeled" name="radio-labeled" value="1" />
+    <label for="radio-labeled">Radio Labeled</label>
+    <p>This is a radio label description</p>
+  </use-selector>
+  <use-selector>
+    <input type="radio" id="radio-labeled-2" name="radio-labeled" value="2" />
+    <label for="radio-labeled-2">Radio Labeled 2</label>
+    <p>This is a radio label description</p>
+  </use-selector>
+</div>
+<h3>Button</h3>
+<div>
+  <h4>Variants</h4>
+  <div>
+    <h5>Base</h5>
+    <button type="button">Button</button>
+    <button type="button" class="auxiliary">Auxiliary</button>
+    <button type="button" disabled>Disabled</button>
+    <h5>Primary</h5>
+    <button type="button" class="primary">Primary</button>
+    <button type="button" class="primary auxiliary">Primary auxiliary</button>
+    <button type="button" class="primary" disabled>Primary disabled</button>
+    <h5>Danger</h5>
+    <button type="button" class="danger">Danger</button>
+    <button type="button" class="danger auxiliary">Danger auxiliary</button>
+    <button type="button" class="danger" disabled>Danger disabled</button>
+    <h5>Cancel</h5>
+    <button type="button" class="cancel">Cancel</button>
+    <button type="button" class="cancel auxiliary">Cancel auxiliary</button>
+    <button type="button" class="cancel" disabled>Cancel disabled</button>
+    <h5>Unstyled</h5>
+    <button type="button" data-as-tag="">Native</button>
+  </div>
+  <h4>Sizes</h4>
+  <div style="display: flex; gap: 0.5rem; align-items: center">
+    <button type="button" class="extra-small">Extra small</button>
+    <button type="button" class="small">Small</button>
+    <button type="button">Base</button>
+    <button type="button" class="large">Large</button>
+    <button type="button" class="extra-large">Extra large</button>
+  </div>
+  <h4>As link</h4>
+  <div>
+    <button type="button" class="cancel" data-as-tag="a">Button as Link</button>
+    <button type="button" class="cancel" data-as-tag="a">Button as Link disabled</button>
+  </div>
+</div>
+<h3>Link</h3>
+<div>
+  <a href="#">Link</a>
+  <h4>As button</h4>
+  <div style="display: flex; gap: 0.5rem; align-items: center">
+    <a href="#" data-as-tag="button">Base button</a>
+    <a href="#" data-as-tag="button" class="primary">Primary button</a>
+    <a href="#" data-as-tag="button" class="danger">Danger button</a>
+    <a href="#" data-as-tag="button" class="cancel">Cancel button</a>
+  </div>
+  <h4>Unstyled</h4>
+  <a href="#" data-as-tag="">Native</a>
+</div>

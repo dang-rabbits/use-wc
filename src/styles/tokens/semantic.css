@@ -1,0 +1,176 @@
+:root {
+  /* Layout */
+  --usewc-layout-document-text-size: var(--usewc-font-size-16);
+
+  /* Typography */
+  --usewc-font-document-family: var(--usewc-font-family-sans-serif);
+  --usewc-font-code-family: var(--usewc-font-family-monospace);
+  --usewc-font-quote-family: var(--usewc-font-family-serif);
+  --usewc-font-input-family: inherit;
+
+  /* Controls */
+  /* - Focus ring */
+  --usewc-color-focus-ring: var(--usewc-color-blue-500);
+  --usewc-layout-focus-ring-size: var(--usewc-space-2);
+  --usewc-layout-focus-ring-offset-outside: var(--usewc-space-2);
+  --usewc-layout-focus-ring-offset-inside: var(--usewc-space-none);
+  --usewc-effect-focus-ring-style: solid;
+  --usewc-transition-focus-ring: 0.05s ease-in-out;
+  --usewc-effect-control-opacity-disabled: 0.5;
+  /* - Link */
+  --usewc-color-link-text-static: var(--usewc-color-blue-500);
+  --usewc-color-link-text-hover: var(--usewc-color-blue-600);
+  --usewc-color-link-text-active: var(--usewc-color-blue-700);
+  --usewc-color-link-text-visited: var(--usewc-color-indigo-500);
+  --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-600);
+  --usewc-color-link-text-visited-active: var(--usewc-color-indigo-700);
+  --usewc-color-link-text-visited-visited: var(--usewc-color-indigo-500);
+  --usewc-effect-link-text-decoration: underline;
+
+  /* Form */
+  /* - Color */
+  --usewc-color-form-helper-text: var(--usewc-color-gray-500);
+  --usewc-color-form-helper-text-invalid: var(--usewc-color-red-500);
+  --usewc-color-form-label-text: var(--usewc-color-gray-700);
+  /* - Layout */
+  --usewc-layout-form-helper-text-font-size: var(--usewc-font-size-14);
+  --usewc-layout-form-helper-text-line-height: var(--usewc-line-height-24);
+  --usewc-layout-form-label-font-size: var(--usewc-font-size-16);
+  --usewc-layout-form-label-line-height: var(--usewc-line-height-24);
+  --usewc-layout-form-selector-margin-inline: 0;
+  --usewc-layout-form-selector-margin-block: calc((1lh - 1em) / 2);
+  --usewc-layout-form-selector-gap: var(--usewc-space-4);
+  --usewc-layout-form-field-gap: var(--usewc-space-4);
+
+  /* Input */
+  /* - Color */
+  --usewc-color-input-background-static: var(--usewc-color-gray-100);
+  --usewc-color-input-border-static: var(--usewc-color-gray-300);
+  --usewc-color-input-border-hover: var(--usewc-color-blue-500);
+  --usewc-color-input-border-focus: var(--usewc-color-blue-500);
+  --usewc-color-input-text-static: var(--usewc-color-gray-700);
+  --usewc-color-input-text-placeholder: var(--usewc-color-gray-400);
+  --usewc-color-input-border-invalid: var(--usewc-color-red-500);
+  /* - Layout */
+  --usewc-layout-input-border: var(--usewc-space-1-relative);
+  --usewc-layout-input-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-input-border));
+  --usewc-layout-input-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-input-border));
+  --usewc-layout-input-gap-inline: var(--usewc-layout-input-padding-inline);
+  --usewc-layout-input-line-height: var(--usewc-line-height-24);
+  /* - Effect */
+  --usewc-effect-input-border-style: solid;
+  --usewc-effect-input-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-effect-input-opacity-disabled: 0.5;
+  /* - Font */
+  --usewc-font-input-size: var(--usewc-font-size-16);
+
+  /* Selector */
+  /* - Layout */
+  --usewc-layout-selector-width: 1em;
+  --usewc-layout-selector-height: 1em;
+  --usewc-layout-selector-checkbox-icon-border-size: 0.125em;
+  /* - Color */
+  --usewc-color-selector-background-static: transparent;
+  --usewc-color-selector-background-focus: var(--usewc-color-gray-100);
+  --usewc-color-selector-background-hover: var(--usewc-color-selector-background-static);
+  --usewc-color-selector-background-checked: var(--usewc-color-blue-500);
+  --usewc-color-selector-border-static: var(--usewc-color-gray-300);
+  --usewc-color-selector-border-focus: var(--usewc-color-blue-500);
+  --usewc-color-selector-border-hover: var(--usewc-color-blue-500);
+  --usewc-color-selector-border-checked: var(--usewc-color-blue-500);
+  --usewc-color-selector-icon-fill: var(--usewc-color-white);
+
+  /* Button */
+  /* - Color */
+  /* -- Base color */
+  --usewc-color-button-base-background-static: var(--usewc-color-gray-100);
+  --usewc-color-button-base-background-static-auxiliary: transparent;
+  --usewc-color-button-base-background-hover: var(--usewc-color-gray-200);
+  --usewc-color-button-base-background-active: var(--usewc-color-gray-300);
+  --usewc-color-button-base-border-static: var(--usewc-color-gray-300);
+  --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-300);
+  --usewc-color-button-base-border-hover: var(--usewc-color-gray-400);
+  --usewc-color-button-base-border-active: var(--usewc-color-gray-500);
+  --usewc-color-button-base-text-static: var(--usewc-color-gray-700);
+  --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-gray-700);
+  --usewc-color-button-base-text-hover: var(--usewc-color-gray-700);
+  --usewc-color-button-base-text-active: var(--usewc-color-gray-700);
+  /* -- Primary color */
+  --usewc-color-button-primary-background-static: var(--usewc-color-blue-500);
+  --usewc-color-button-primary-background-static-auxiliary: transparent;
+  --usewc-color-button-primary-background-hover: var(--usewc-color-blue-600);
+  --usewc-color-button-primary-background-active: var(--usewc-color-blue-700);
+  --usewc-color-button-primary-border-static: var(--usewc-color-transparent);
+  --usewc-color-button-primary-border-static-auxiliary: var(--usewc-color-blue-500);
+  --usewc-color-button-primary-border-hover: var(--usewc-color-blue-600);
+  --usewc-color-button-primary-border-active: var(--usewc-color-blue-700);
+  --usewc-color-button-primary-text-static: var(--usewc-color-white);
+  --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-blue-500);
+  --usewc-color-button-primary-text-hover: var(--usewc-color-white);
+  --usewc-color-button-primary-text-active: var(--usewc-color-white);
+  /* -- Danger color */
+  --usewc-color-button-danger-background-static: var(--usewc-color-red-500);
+  --usewc-color-button-danger-background-static-auxiliary: transparent;
+  --usewc-color-button-danger-background-hover: var(--usewc-color-red-600);
+  --usewc-color-button-danger-background-active: var(--usewc-color-red-700);
+  --usewc-color-button-danger-border-static: var(--usewc-color-red-500);
+  --usewc-color-button-danger-border-hover: var(--usewc-color-red-600);
+  --usewc-color-button-danger-border-active: var(--usewc-color-red-700);
+  --usewc-color-button-danger-text-static: var(--usewc-color-white);
+  --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-red-500);
+  --usewc-color-button-danger-text-hover: var(--usewc-color-white);
+  /* -- Cancel color */
+  --usewc-color-button-cancel-background-static: transaprent;
+  --usewc-color-button-cancel-background-static-auxiliary: transparent;
+  --usewc-color-button-cancel-background-hover: var(--usewc-color-gray-100);
+  --usewc-color-button-cancel-background-active: var(--usewc-color-gray-200);
+  --usewc-color-button-cancel-border-static: transparent;
+  --usewc-color-button-cancel-border-static-auxiliary: var(--usewc-color-gray-100);
+  --usewc-color-button-cancel-border-hover: transparent;
+  --usewc-color-button-cancel-border-active: transparent;
+  --usewc-color-button-cancel-text-static: var(--usewc-color-gray-700);
+  --usewc-color-button-cancel-text-static-auxiliary: var(--usewc-color-gray-700);
+  --usewc-color-button-cancel-text-hover: var(--usewc-color-gray-700);
+  --usewc-color-button-cancel-text-active: var(--usewc-color-gray-700);
+  /* - Layout */
+  --usewc-layout-button-border: var(--usewc-space-1);
+  --usewc-layout-button-line-height: var(--usewc-line-height-24);
+  /* - Effect */
+  --usewc-effect-button-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-effect-button-border-style: solid;
+  /* - Sizes */
+  /* -- Base size */
+  --usewc-layout-button-base-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
+  --usewc-layout-button-base-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
+  --usewc-layout-button-base-font-size: var(--usewc-font-size-16);
+  /* -- Extra small size */
+  --usewc-layout-button-extra-small-padding-block: var(--usewc-space-none);
+  --usewc-layout-button-extra-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-small-font-size: var(--usewc-font-size-12);
+  --usewc-layout-button-extra-small-line-height: var(--usewc-line-height-18);
+  /* -- Small size */
+  --usewc-layout-button-small-padding-block: calc(var(--usewc-space-2) - var(--usewc-layout-button-border));
+  --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-small-font-size: var(--usewc-font-size-14);
+  --usewc-layout-button-small-line-height: var(--usewc-line-height-20);
+  /* -- Large size */
+  --usewc-layout-button-large-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
+  --usewc-layout-button-large-padding-inline: calc(var(--usewc-space-16) - var(--usewc-layout-button-border));
+  --usewc-layout-button-large-font-size: var(--usewc-font-size-18);
+  --usewc-layout-button-large-line-height: var(--usewc-line-height-28);
+  /* -- Extra large size */
+  --usewc-layout-button-extra-large-padding-block: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-large-padding-inline: calc(var(--usewc-space-24) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-large-font-size: var(--usewc-font-size-24);
+  --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-28);
+
+  /* Inline code */
+  --usewc-layout-code-padding-inline: var(--usewc-space-4);
+  --usewc-layout-code-padding-block: var(--usewc-space-none);
+  --usewc-layout-code-line-height: var(--usewc-line-height-20);
+  --usewc-effect-code-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-color-code-text: var(--usewc-color-red-700);
+  --usewc-color-code-background: rgba(255, 0, 0, 0.1);
+  --usewc-color-code-border: var(--usewc-color-red-700);
+  --usewc-font-code-size: var(--usewc-font-size-14);
+}

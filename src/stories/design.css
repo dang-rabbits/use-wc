@@ -1,0 +1,411 @@
+@import '../styles/tokens/primitive.css';
+@import '../styles/tokens/semantic.css';
+
+@layer theme {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  .mode-default {
+    font-family: var(--usewc-font-document-family);
+    font-size: var(--usewc-layout-document-text-size);
+  }
+
+  :is(button, a):not([data-as-tag='']):focus-visible,
+  :is(input, textarea, select):not([data-as-tag='']):focus,
+  input[type='file']:not([data-as-tag='']):focus-visible,
+  [data-as-tag='input']:has(input:focus) {
+    outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
+    outline-offset: var(--usewc-layout-focus-ring-offset-outside);
+    transition: var(--usewc-transition-focus-ring);
+  }
+
+  :is(
+    input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-as-tag])),
+    textarea,
+    [data-as-tag='input']
+  ) {
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
+      var(--usewc-color-input-border-static);
+    line-height: var(--usewc-layout-input-line-height);
+    padding-block: var(--usewc-layout-input-padding-block);
+    padding-inline: var(--usewc-layout-input-padding-inline);
+    background: var(--usewc-color-input-background-static);
+    font-family: var(--usewc-font-input-family);
+    font-size: var(--usewc-font-input-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-input-text-static);
+    border-radius: var(--usewc-effect-input-border-radius);
+
+    &:not(:is(:disabled, [aria-disabled='true'])):hover,
+    &:has(:not(:is(:disabled, [aria-disabled='true'])):hover) {
+      border-color: var(--usewc-color-input-border-hover);
+    }
+
+    &:is(:focus, :focus-within) {
+      border-color: var(--usewc-color-input-border-focus);
+      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
+    }
+
+    &:disabled,
+    &[aria-disabled='true'],
+    &:has(:disabled, [aria-disabled='true']) {
+      opacity: var(--usewc-effect-control-opacity-disabled);
+      pointer-events: none;
+    }
+
+    &::placeholder {
+      color: var(--usewc-color-input-text-placeholder);
+    }
+
+    &:is(:user-invalid, [aria-invalid='true'], :has(:is(:user-invalid, [aria-invalid='true']))) {
+      border-color: var(--usewc-color-input-border-invalid);
+    }
+  }
+
+  [data-as-tag='input'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: text-top;
+    gap: var(--usewc-layout-input-gap-inline);
+
+    > :not(input) {
+      flex: 0 0 auto;
+    }
+
+    input:not(:is([type='checkbox'], [type='radio'], [type='range'])) {
+      flex: 1 1 auto;
+      padding: 0;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  input:is([type='checkbox'], [type='radio']) {
+    all: unset;
+    appearance: none;
+    box-sizing: border-box;
+    width: var(--usewc-layout-selector-width);
+    height: var(--usewc-layout-selector-height);
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
+      var(--usewc-color-input-border-static);
+    border-radius: var(--usewc-effect-input-border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: text-top;
+
+    &:hover:not(:disabled):not(:checked) {
+      border-color: var(--usewc-color-selector-border-hover);
+      background: var(--usewc-color-selector-background-hover);
+    }
+
+    &:checked {
+      border-color: var(--usewc-color-selector-border-checked);
+      background: var(--usewc-color-selector-background-checked);
+    }
+
+    &:disabled {
+      opacity: var(--usewc-effect-control-opacity-disabled);
+      pointer-events: none;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+    }
+
+    &[type='checkbox']:checked {
+      &::after {
+        display: block;
+        position: absolute;
+        inset-block-start: 10%;
+        inset-inline-start: 33%;
+        border-inline-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
+          var(--usewc-color-selector-icon-fill);
+        border-block-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
+          var(--usewc-color-selector-icon-fill);
+        width: 40%;
+        height: 60%;
+        transform: rotate(45deg);
+      }
+    }
+
+    &[type='radio'] {
+      border-radius: 50%;
+
+      &:checked::after {
+        transform: scale(0.6);
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--usewc-color-selector-icon-fill);
+      }
+    }
+  }
+
+  :is(a:not([data-as-tag]), [data-as-tag='a']) {
+    &:where(:not(a)) {
+      all: unset;
+    }
+
+    color: var(--usewc-color-link-text-static);
+    text-decoration: var(--usewc-effect-link-text-decoration);
+    cursor: pointer;
+
+    &:is(:hover, :focus-visible) {
+      color: var(--usewc-color-link-text-hover);
+    }
+
+    &:active {
+      color: var(--usewc-color-link-text-active);
+    }
+  }
+
+  :is(button:not([data-as-tag]), [data-as-tag='button']),
+  input[type='file']:not([data-as-tag]) {
+    &:where(:not(button)),
+    &::file-selector-button {
+      all: unset;
+      display: inline-flex;
+    }
+
+    /* Base color */
+    --usewc-theme-color-button-text-static: var(--usewc-color-button-base-text-static);
+    --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-base-text-static-auxiliary);
+    --usewc-theme-color-button-background-static: var(--usewc-color-button-base-background-static);
+    --usewc-theme-color-button-background-static-auxiliary: var(--usewc-color-button-base-background-static-auxiliary);
+    --usewc-theme-color-button-border-static: var(--usewc-color-button-base-border-static);
+    --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-base-border-static-auxiliary);
+    --usewc-theme-color-button-text-hover: var(--usewc-color-button-base-text-hover);
+    --usewc-theme-color-button-background-hover: var(--usewc-color-button-base-background-hover);
+    --usewc-theme-color-button-border-hover: var(--usewc-color-button-base-border-hover);
+    --usewc-theme-color-button-text-active: var(--usewc-color-button-base-text-active);
+    --usewc-theme-color-button-background-active: var(--usewc-color-button-base-background-active);
+    --usewc-theme-color-button-border-active: var(--usewc-color-button-base-border-active);
+
+    &:not([type='file']),
+    &::file-selector-button {
+      border-radius: var(--usewc-effect-input-border-radius);
+      line-height: var(--usewc-layout-button-line-height);
+      padding-block: var(--usewc-layout-button-base-padding-block);
+      padding-inline: var(--usewc-layout-button-base-padding-inline);
+      font-family: var(--usewc-font-input-family);
+      font-size: var(--usewc-layout-button-base-font-size);
+      font-weight: var(--usewc-font-weight-normal);
+      white-space: nowrap;
+      cursor: default;
+      color: var(--usewc-theme-color-button-text-static);
+      background: var(--usewc-theme-color-button-background-static);
+      border: var(--usewc-layout-button-border) var(--usewc-effect-input-border-style)
+        var(--usewc-theme-color-button-border-static);
+    }
+
+    &::file-selector-button {
+      margin-inline-end: var(--usewc-layout-input-gap-inline);
+    }
+
+    &:is(:hover, :focus-visible):not([type='file']),
+    &:is(:hover, :focus-visible)::file-selector-button {
+      background: var(--usewc-theme-color-button-background-hover);
+      border-color: var(--usewc-theme-color-button-border-hover);
+      color: var(--usewc-theme-color-button-text-hover);
+    }
+
+    &:active:not([type='file']),
+    &:active::file-selector-button {
+      background: var(--usewc-theme-color-button-background-active);
+      border-color: var(--usewc-theme-color-button-border-active);
+      color: var(--usewc-theme-color-button-text-active);
+    }
+
+    &:disabled,
+    &[aria-disabled='true'] {
+      opacity: var(--usewc-effect-control-opacity-disabled);
+      pointer-events: none;
+    }
+
+    &.primary {
+      --usewc-theme-color-button-text-static: var(--usewc-color-button-primary-text-static);
+      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-primary-text-static-auxiliary);
+      --usewc-theme-color-button-background-static: var(--usewc-color-button-primary-background-static);
+      --usewc-theme-color-button-background-static-auxiliary: var(
+        --usewc-color-button-primary-background-static-auxiliary
+      );
+      --usewc-theme-color-button-border-static: var(--usewc-color-button-primary-border-static);
+      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-primary-border-static-auxiliary);
+      --usewc-theme-color-button-text-hover: var(--usewc-color-button-primary-text-hover);
+      --usewc-theme-color-button-background-hover: var(--usewc-color-button-primary-background-hover);
+      --usewc-theme-color-button-border-hover: var(--usewc-color-button-primary-border-hover);
+      --usewc-theme-color-button-text-active: var(--usewc-color-button-primary-text-active);
+      --usewc-theme-color-button-background-active: var(--usewc-color-button-primary-background-active);
+      --usewc-theme-color-button-border-active: var(--usewc-color-button-primary-border-active);
+    }
+
+    &.danger {
+      --usewc-theme-color-button-text-static: var(--usewc-color-button-danger-text-static);
+      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-danger-text-static-auxiliary);
+      --usewc-theme-color-button-background-static: var(--usewc-color-button-danger-background-static);
+      --usewc-theme-color-button-background-static-auxiliary: var(
+        --usewc-color-button-danger-background-static-auxiliary
+      );
+      --usewc-theme-color-button-border-static: var(--usewc-color-button-danger-border-static);
+      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-danger-border-static-auxiliary);
+      --usewc-theme-color-button-text-hover: var(--usewc-color-button-danger-text-hover);
+      --usewc-theme-color-button-background-hover: var(--usewc-color-button-danger-background-hover);
+      --usewc-theme-color-button-border-hover: var(--usewc-color-button-danger-border-hover);
+      --usewc-theme-color-button-text-active: var(--usewc-color-button-danger-text-active);
+      --usewc-theme-color-button-background-active: var(--usewc-color-button-danger-background-active);
+      --usewc-theme-color-button-border-active: var(--usewc-color-button-danger-border-active);
+    }
+
+    &.cancel {
+      --usewc-theme-color-button-text-static: var(--usewc-color-button-cancel-text-static);
+      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-cancel-text-static-auxiliary);
+      --usewc-theme-color-button-background-static: var(--usewc-color-button-cancel-background-static);
+      --usewc-theme-color-button-background-static-auxiliary: var(
+        --usewc-color-button-cancel-background-static-auxiliary
+      );
+      --usewc-theme-color-button-border-static: var(--usewc-color-button-cancel-border-static);
+      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-cancel-border-static-auxiliary);
+      --usewc-theme-color-button-text-hover: var(--usewc-color-button-cancel-text-hover);
+      --usewc-theme-color-button-background-hover: var(--usewc-color-button-cancel-background-hover);
+      --usewc-theme-color-button-border-hover: var(--usewc-color-button-cancel-border-hover);
+      --usewc-theme-color-button-text-active: var(--usewc-color-button-cancel-text-active);
+      --usewc-theme-color-button-background-active: var(--usewc-color-button-cancel-background-active);
+      --usewc-theme-color-button-border-active: var(--usewc-color-button-cancel-border-active);
+    }
+
+    &.auxiliary:not(:is(:hover, :focus-visible, :active)) {
+      background: transparent;
+      color: var(--usewc-theme-color-button-text-static-auxiliary);
+      border-color: var(--usewc-theme-color-button-border-static-auxiliary);
+    }
+
+    &.extra-small {
+      padding-block: var(--usewc-layout-button-extra-small-padding-block);
+      padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
+      font-size: var(--usewc-layout-button-extra-small-font-size);
+      line-height: var(--usewc-layout-button-extra-small-line-height);
+    }
+
+    &.small {
+      padding-block: var(--usewc-layout-button-small-padding-block);
+      padding-inline: var(--usewc-layout-button-small-padding-inline);
+      font-size: var(--usewc-layout-button-small-font-size);
+      line-height: var(--usewc-layout-button-small-line-height);
+    }
+
+    &.large {
+      padding-block: var(--usewc-layout-button-large-padding-block);
+      padding-inline: var(--usewc-layout-button-large-padding-inline);
+      font-size: var(--usewc-layout-button-large-font-size);
+      line-height: var(--usewc-layout-button-large-line-height);
+    }
+
+    &.extra-large {
+      padding-block: var(--usewc-layout-button-extra-large-padding-block);
+      padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
+      font-size: var(--usewc-layout-button-extra-large-font-size);
+      line-height: var(--usewc-layout-button-extra-large-line-height);
+    }
+  }
+
+  input[type='file']:not([data-as-tag]) {
+    border-radius: var(--usewc-effect-input-border-radius);
+  }
+
+  code,
+  [data-as-tag='code'] {
+    display: inline-block;
+    font-family: var(--usewc-font-code-family);
+    font-size: var(--usewc-font-code-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-code-text);
+    background: var(--usewc-color-code-background);
+    padding-inline: var(--usewc-layout-code-padding-inline);
+    padding-block: var(--usewc-layout-code-padding-block);
+    border-radius: var(--usewc-effect-code-border-radius);
+    line-height: var(--usewc-layout-code-line-height);
+    border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid) var(--usewc-color-code-border);
+  }
+
+  use-selector input:is([type='checkbox'], [type='radio']),
+  input:is([type='checkbox'], [type='radio']):has(+ label) {
+    margin-inline: var(--usewc-layout-form-selector-margin-inline);
+    margin-block: var(--usewc-layout-form-selector-margin-block);
+  }
+
+  use-selector {
+    display: grid;
+    grid-template-areas: 'input label' '. description';
+    gap: 0 var(--usewc-layout-form-selector-gap);
+    line-height: 1.5em;
+    align-items: start;
+    justify-content: start;
+
+    input:is([type='checkbox'], [type='radio']) {
+      grid-area: input;
+    }
+
+    label {
+      grid-area: label;
+      color: var(--usewc-color-form-label-text);
+      font-size: var(--usewc-layout-form-label-font-size);
+    }
+
+    > *:not(label) {
+      margin: 0;
+      grid-area: description;
+      color: var(--usewc-color-form-helper-text);
+      font-size: var(--usewc-layout-form-helper-text-font-size);
+    }
+  }
+
+  use-field {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+
+    label {
+      color: var(--usewc-color-form-label-text);
+      font-size: var(--usewc-layout-form-label-font-size);
+      line-height: var(--usewc-layout-form-label-line-height);
+    }
+
+    > *:not(label, input) {
+      margin: 0;
+      color: var(--usewc-color-form-helper-text);
+      font-size: var(--usewc-layout-form-helper-text-font-size);
+      line-height: var(--usewc-layout-form-helper-text-line-height);
+    }
+
+    &:has(input:is(:user-invalid, [aria-invalid='true'])) {
+      > *:not(label, input) {
+        color: var(--usewc-color-form-helper-text-invalid);
+      }
+    }
+  }
+}
+
+@layer escape {
+  use-theme-escape {
+    display: contents;
+
+    * {
+      all: revert;
+    }
+  }
+}

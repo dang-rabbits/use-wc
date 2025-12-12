@@ -2,17 +2,12 @@ import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import { html } from 'lit';
 
 async function handleCopyToClipboard() {
-  try {
-    const value = (document.getElementById('output') as HTMLInputElement)?.value;
-    await window.top?.navigator.clipboard.writeText(value);
-    console.log('Copied to clipboard', value);
-  } catch (error) {
-    console.error('Failed to copy to clipboard', error);
-  }
+  const value = (document.getElementById('output') as HTMLInputElement)?.value;
+  await window.top?.navigator.clipboard.writeText(value);
 }
 
 const meta: Meta = {
-  title: 'Styling/Token Name Builder',
+  title: 'Token Name Builder',
   tags: ['autodocs', '!dev', 'utility'],
   args: {},
   render: () => {
@@ -102,8 +97,9 @@ const meta: Meta = {
                 <select size="15" name="variant" style="width: 100%">
                   <option value="" selected>-</option>
                   <optgroup label="Intent">
+                    <option>base</option>
                     <option>primary</option>
-                    <option>secondary</option>
+                    <option>auxiliary</option>
                     <option>danger</option>
                     <option>attention</option>
                     <option>info</option>

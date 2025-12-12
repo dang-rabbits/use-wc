@@ -1,0 +1,145 @@
+:root {
+  /** Space */
+  --usewc-space-none: 0;
+  --usewc-space-1: 0.0625rem;
+  --usewc-space-2: 0.125rem;
+  --usewc-space-4: 0.25rem;
+  --usewc-space-8: 0.5rem;
+  --usewc-space-12: 0.75rem;
+  --usewc-space-16: 1rem;
+  --usewc-space-24: 1.5rem;
+  --usewc-space-32: 2rem;
+  --usewc-space-48: 3rem;
+  --usewc-space-64: 4rem;
+  --usewc-space-128: 8rem;
+  --usewc-space-256: 16rem;
+  --usewc-space-1-relative: 0.0625em;
+  --usewc-space-2-relative: 0.125em;
+  --usewc-space-4-relative: 0.25em;
+  --usewc-space-8-relative: 0.5em;
+  --usewc-space-12-relative: 0.75em;
+  --usewc-space-16-relative: 1em;
+  --usewc-space-24-relative: 1.5em;
+  --usewc-space-32-relative: 2em;
+  --usewc-space-48-relative: 3em;
+  --usewc-space-64-relative: 4em;
+  --usewc-space-128-relative: 8em;
+  --usewc-space-256-relative: 16em;
+
+  /** Font size */
+  --usewc-font-size-10: 0.625rem;
+  --usewc-font-size-12: 0.75rem;
+  --usewc-font-size-14: 0.875rem;
+  --usewc-font-size-16: 1rem;
+  --usewc-font-size-18: 1.125rem;
+  --usewc-font-size-24: 1.5rem;
+
+  /** Font weight */
+  --usewc-font-weight-light: 300;
+  --usewc-font-weight-normal: 400;
+  --usewc-font-weight-medium: 500;
+  --usewc-font-weight-semibold: 600;
+  --usewc-font-weight-bold: 700;
+  --usewc-font-weight-black: 900;
+
+  /** Font family */
+  --usewc-font-family-sans-serif: system-ui, sans-serif;
+  --usewc-font-family-serif: Georgia, serif;
+  --usewc-font-family-monospace: monospace;
+
+  /** Line height */
+  --usewc-line-height-18: 1.125rem;
+  --usewc-line-height-20: 1.25rem;
+  --usewc-line-height-24: 1.5rem;
+  --usewc-line-height-28: 1.75rem;
+  --usewc-line-height-32: 2rem;
+
+  /** Color */
+  --usewc-color-transparent: transparent;
+  --usewc-color-current: currentColor;
+  --usewc-color-inherit: inherit;
+  --usewc-color-unset: unset;
+  --usewc-color-white: #fff;
+  --usewc-color-black: #000;
+  --usewc-color-gray-100: #f5f5f5;
+  --usewc-color-gray-200: #e5e5e5;
+  --usewc-color-gray-300: #d4d4d4;
+  --usewc-color-gray-400: #a3a3a3;
+  --usewc-color-gray-500: #737373;
+  --usewc-color-gray-600: #525252;
+  --usewc-color-gray-700: #404040;
+  --usewc-color-gray-800: #2e2e2e;
+  --usewc-color-gray-900: #1c1c1c;
+  --usewc-color-blue-100: #bfdbfe;
+  --usewc-color-blue-200: #93c5fd;
+  --usewc-color-blue-300: #60a5fa;
+  --usewc-color-blue-400: #5393ff;
+  --usewc-color-blue-500: #3b82f6;
+  --usewc-color-blue-600: #2563eb;
+  --usewc-color-blue-700: #1d4ed8;
+  --usewc-color-blue-800: #1e40af;
+  --usewc-color-blue-900: #1e3a8a;
+  --usewc-color-red-100: #fee2e2;
+  --usewc-color-red-200: #fecaca;
+  --usewc-color-red-300: #fca5a5;
+  --usewc-color-red-400: #f87171;
+  --usewc-color-red-500: #ef4444;
+  --usewc-color-red-600: #dc2626;
+  --usewc-color-red-700: #b91c1c;
+  --usewc-color-red-800: #991b1b;
+  --usewc-color-red-900: #7f1d1d;
+  --usewc-color-indigo-100: #f0f5ff;
+  --usewc-color-indigo-200: #e0e9ff;
+  --usewc-color-indigo-300: #c7d2fe;
+  --usewc-color-indigo-400: #a5b4fc;
+  --usewc-color-indigo-500: #818cf8;
+  --usewc-color-indigo-600: #6366f1;
+  --usewc-color-indigo-700: #4f46e5;
+  --usewc-color-indigo-800: #4338ca;
+  --usewc-color-indigo-900: #3730a3;
+
+  /** Effect */
+  --usewc-effect-border-solid: solid;
+  --usewc-effect-border-dashed: dashed;
+  --usewc-effect-border-dotted: dotted;
+  --usewc-effect-border-double: double;
+  --usewc-effect-border-groove: groove;
+  --usewc-effect-border-ridge: ridge;
+  --usewc-effect-border-radius-none: 0;
+  --usewc-effect-border-radius-2: 0.125rem;
+  --usewc-effect-border-radius-4: 0.25rem;
+  --usewc-effect-border-radius-8: 0.5rem;
+  --usewc-effect-border-radius-full: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --usewc-color-gray-900: #f5f5f5;
+    --usewc-color-gray-800: #e5e5e5;
+    --usewc-color-gray-700: #d4d4d4;
+    --usewc-color-gray-600: #a3a3a3;
+    --usewc-color-gray-500: #737373;
+    --usewc-color-gray-400: #525252;
+    --usewc-color-gray-300: #404040;
+    --usewc-color-gray-200: #2e2e2e;
+    --usewc-color-gray-100: #1c1c1c;
+    --usewc-color-blue-900: #bfdbfe;
+    --usewc-color-blue-800: #93c5fd;
+    --usewc-color-blue-700: #60a5fa;
+    --usewc-color-blue-600: #3b82f6;
+    --usewc-color-blue-500: #5393ff;
+    --usewc-color-blue-400: #2563eb;
+    --usewc-color-blue-300: #1d4ed8;
+    --usewc-color-blue-200: #1e40af;
+    --usewc-color-blue-100: #1e3a8a;
+    --usewc-color-red-900: #fee2e2;
+    --usewc-color-red-800: #fecaca;
+    --usewc-color-red-700: #fca5a5;
+    --usewc-color-red-600: #f87171;
+    --usewc-color-red-500: #ef4444;
+    --usewc-color-red-400: #dc2626;
+    --usewc-color-red-300: #b91c1c;
+    --usewc-color-red-200: #991b1b;
+    --usewc-color-red-100: #7f1d1d;
+  }
+}
