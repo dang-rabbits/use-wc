@@ -29,7 +29,7 @@
   <input type="file" class="danger" />
   <input type="file" class="cancel" />
   <input type="file" disabled />
-  <input type="file" data-as-tag="" />
+  <input type="file" data-appear-as="native" />
   <use-field>
     <label for="file-field">File Field</label>
     <input type="file" id="file-field" placeholder="Enter your file" />
@@ -37,8 +37,8 @@
   </use-field>
 
   <h4>Unstyled</h4>
-  <p>You can escape from the theme styles by adding the <code>data-as-tag=""</code> attribute without a value.</p>
-  <input type="text" placeholder="Enter your name" data-as-tag="" />
+  <p>You can escape from the theme styles by adding the <code>data-appear-as="native"</code> attribute.</p>
+  <input type="text" placeholder="Enter your name" data-appear-as="native" />
   <p>You can escape from the theme styles by wrapping the UI in a <code>use-theme-escape</code> element.</p>
   <use-theme-escape>
     <input type="text" class="primary auxiliary" />
@@ -65,7 +65,7 @@
   <h3>As input</h3>
   <use-field>
     <label for="as-input-field">As input field</label>
-    <div data-as-tag="input">
+    <div data-appear-as="input">
       <span>Prefix</span>
       <input id="as-input-field" placeholder="embedded input" />
       <span>Suffix</span>
@@ -73,10 +73,18 @@
   </use-field>
   <use-field>
     <label for="as-input-field-2">As input field 2</label>
-    <div data-as-tag="input">
+    <div data-appear-as="input">
       <span>Prefix</span>
       <input id="as-input-field-2" placeholder="embedded input" disabled />
       <span>Suffix</span>
+    </div>
+  </use-field>
+  <use-field>
+    <label for="as-input-field-3">As input field 3</label>
+    <div data-appear-as="input">
+      <button type="button" class="small">Button</button>
+      <input id="as-input-field-3" placeholder="embedded input" />
+      <button type="button" class="small">Button</button>
     </div>
   </use-field>
 </div>
@@ -158,7 +166,7 @@
     <button type="button" class="cancel auxiliary">Cancel auxiliary</button>
     <button type="button" class="cancel" disabled>Cancel disabled</button>
     <h5>Unstyled</h5>
-    <button type="button" data-as-tag="">Native</button>
+    <button type="button" data-appear-as="native">Native</button>
   </div>
   <h4>Sizes</h4>
   <div style="display: flex; gap: 0.5rem; align-items: center">
@@ -170,8 +178,8 @@
   </div>
   <h4>As link</h4>
   <div>
-    <button type="button" class="cancel" data-as-tag="a">Button as Link</button>
-    <button type="button" class="cancel" data-as-tag="a">Button as Link disabled</button>
+    <button type="button" class="cancel" data-appear-as="a">Button as Link</button>
+    <button type="button" class="cancel" data-appear-as="a">Button as Link disabled</button>
   </div>
 </div>
 <h3>Link</h3>
@@ -179,11 +187,11 @@
   <a href="#">Link</a>
   <h4>As button</h4>
   <div style="display: flex; gap: 0.5rem; align-items: center">
-    <a href="#" data-as-tag="button">Base button</a>
-    <a href="#" data-as-tag="button" class="primary">Primary button</a>
-    <a href="#" data-as-tag="button" class="danger">Danger button</a>
-    <a href="#" data-as-tag="button" class="cancel">Cancel button</a>
+    <a href="#" data-appear-as="button">Base button</a>
+    <a href="#" data-appear-as="button" class="primary">Primary button</a>
+    <a href="#" data-appear-as="button" class="danger">Danger button</a>
+    <a href="#" data-appear-as="button" class="cancel">Cancel button</a>
   </div>
   <h4>Unstyled</h4>
-  <a href="#" data-as-tag="">Native</a>
+  <a href="#" data-appear-as="native">Native</a>
 </div>

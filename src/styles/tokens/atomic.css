@@ -55,39 +55,40 @@
   --usewc-line-height-32: 2rem;
 
   /** Color */
+  /* Thanks https://oklch.fyi/create */
   --usewc-color-transparent: transparent;
   --usewc-color-current: currentColor;
   --usewc-color-inherit: inherit;
   --usewc-color-unset: unset;
   --usewc-color-white: #fff;
   --usewc-color-black: #000;
-  --usewc-color-gray-100: #f5f5f5;
-  --usewc-color-gray-200: #e5e5e5;
-  --usewc-color-gray-300: #d4d4d4;
-  --usewc-color-gray-400: #a3a3a3;
-  --usewc-color-gray-500: #737373;
-  --usewc-color-gray-600: #525252;
-  --usewc-color-gray-700: #404040;
-  --usewc-color-gray-800: #2e2e2e;
-  --usewc-color-gray-900: #1c1c1c;
-  --usewc-color-blue-100: #bfdbfe;
-  --usewc-color-blue-200: #93c5fd;
-  --usewc-color-blue-300: #60a5fa;
-  --usewc-color-blue-400: #5393ff;
-  --usewc-color-blue-500: #3b82f6;
-  --usewc-color-blue-600: #2563eb;
-  --usewc-color-blue-700: #1d4ed8;
-  --usewc-color-blue-800: #1e40af;
-  --usewc-color-blue-900: #1e3a8a;
-  --usewc-color-red-100: #fee2e2;
-  --usewc-color-red-200: #fecaca;
-  --usewc-color-red-300: #fca5a5;
-  --usewc-color-red-400: #f87171;
-  --usewc-color-red-500: #ef4444;
-  --usewc-color-red-600: #dc2626;
-  --usewc-color-red-700: #b91c1c;
-  --usewc-color-red-800: #991b1b;
-  --usewc-color-red-900: #7f1d1d;
+  --usewc-color-gray-900: oklch(0.152 0.002 260.7);
+  --usewc-color-gray-800: oklch(0.252 0.004 260.7);
+  --usewc-color-gray-700: oklch(0.352 0.005 260.7);
+  --usewc-color-gray-600: oklch(0.451 0.007 260.7);
+  --usewc-color-gray-500: oklch(0.551 0.009 260.7);
+  --usewc-color-gray-400: oklch(0.651 0.007 260.7);
+  --usewc-color-gray-300: oklch(0.751 0.005 260.7);
+  --usewc-color-gray-200: oklch(0.85 0.003 260.7);
+  --usewc-color-gray-100: oklch(0.95 0.001 260.7);
+  --usewc-color-blue-900: oklch(0.08 0.054 263.9);
+  --usewc-color-blue-800: oklch(0.18 0.122 263.9);
+  --usewc-color-blue-700: oklch(0.28 0.19 263.9);
+  --usewc-color-blue-600: oklch(0.38 0.258 263.9);
+  --usewc-color-blue-500: oklch(0.48 0.314 263.9);
+  --usewc-color-blue-400: oklch(0.58 0.246 263.9);
+  --usewc-color-blue-300: oklch(0.68 0.182 263.9);
+  --usewc-color-blue-200: oklch(0.78 0.121 263.9);
+  --usewc-color-blue-100: oklch(0.88 0.064 263.9);
+  --usewc-color-red-900: oklch(0.23 0.094 27.5);
+  --usewc-color-red-800: oklch(0.32 0.131 27.5);
+  --usewc-color-red-700: oklch(0.41 0.167 27.5);
+  --usewc-color-red-600: oklch(0.5 0.204 27.5);
+  --usewc-color-red-500: oklch(0.59 0.241 27.5);
+  --usewc-color-red-400: oklch(0.68 0.208 27.5);
+  --usewc-color-red-300: oklch(0.77 0.136 27.5);
+  --usewc-color-red-200: oklch(0.86 0.076 27.5);
+  --usewc-color-red-100: oklch(0.95 0.025 27.5);
   --usewc-color-indigo-100: #f0f5ff;
   --usewc-color-indigo-200: #e0e9ff;
   --usewc-color-indigo-300: #c7d2fe;
@@ -110,36 +111,4 @@
   --usewc-effect-border-radius-4: 0.25rem;
   --usewc-effect-border-radius-8: 0.5rem;
   --usewc-effect-border-radius-full: 100%;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --usewc-color-gray-900: #f5f5f5;
-    --usewc-color-gray-800: #e5e5e5;
-    --usewc-color-gray-700: #d4d4d4;
-    --usewc-color-gray-600: #a3a3a3;
-    --usewc-color-gray-500: #737373;
-    --usewc-color-gray-400: #525252;
-    --usewc-color-gray-300: #404040;
-    --usewc-color-gray-200: #2e2e2e;
-    --usewc-color-gray-100: #1c1c1c;
-    --usewc-color-blue-900: #bfdbfe;
-    --usewc-color-blue-800: #93c5fd;
-    --usewc-color-blue-700: #60a5fa;
-    --usewc-color-blue-600: #3b82f6;
-    --usewc-color-blue-500: #5393ff;
-    --usewc-color-blue-400: #2563eb;
-    --usewc-color-blue-300: #1d4ed8;
-    --usewc-color-blue-200: #1e40af;
-    --usewc-color-blue-100: #1e3a8a;
-    --usewc-color-red-900: #fee2e2;
-    --usewc-color-red-800: #fecaca;
-    --usewc-color-red-700: #fca5a5;
-    --usewc-color-red-600: #f87171;
-    --usewc-color-red-500: #ef4444;
-    --usewc-color-red-400: #dc2626;
-    --usewc-color-red-300: #b91c1c;
-    --usewc-color-red-200: #991b1b;
-    --usewc-color-red-100: #7f1d1d;
-  }
 }

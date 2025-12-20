@@ -1,4 +1,4 @@
-@import '../styles/tokens/primitive.css';
+@import '../styles/tokens/atomic.css';
 @import '../styles/tokens/semantic.css';
 
 @layer theme {
@@ -8,24 +8,26 @@
     box-sizing: border-box;
   }
 
-  .mode-default {
+  body {
+    color: var(--usewc-color-document-text);
+    background-color: var(--usewc-color-document-background);
     font-family: var(--usewc-font-document-family);
     font-size: var(--usewc-layout-document-text-size);
   }
 
-  :is(button, a):not([data-as-tag='']):focus-visible,
-  :is(input, textarea, select):not([data-as-tag='']):focus,
-  input[type='file']:not([data-as-tag='']):focus-visible,
-  [data-as-tag='input']:has(input:focus) {
+  :is(button, a):not([data-appear-as='native']):focus-visible,
+  :is(input, textarea, select):not([data-appear-as='native']):focus,
+  input[type='file']:not([data-appear-as='native']):focus-visible,
+  [data-appear-as='input']:has(input:focus) {
     outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
     outline-offset: var(--usewc-layout-focus-ring-offset-outside);
     transition: var(--usewc-transition-focus-ring);
   }
 
   :is(
-    input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-as-tag])),
+    input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-appear-as])),
     textarea,
-    [data-as-tag='input']
+    [data-appear-as='input']
   ) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
@@ -39,12 +41,12 @@
     color: var(--usewc-color-input-text-static);
     border-radius: var(--usewc-effect-input-border-radius);
 
-    &:not(:is(:disabled, [aria-disabled='true'])):hover,
-    &:has(:not(:is(:disabled, [aria-disabled='true'])):hover) {
+    &:not(:is(:disabled, [aria-disabled='true'], [data-appear-as='input'])):hover,
+    &:has(input:not(:is(:disabled, [aria-disabled='true'])):hover) {
       border-color: var(--usewc-color-input-border-hover);
     }
 
-    &:is(:focus, :focus-within) {
+    &:is(:focus, :has(input:focus)) {
       border-color: var(--usewc-color-input-border-focus);
       outline-offset: var(--usewc-layout-focus-ring-offset-inside);
     }
@@ -65,13 +67,21 @@
     }
   }
 
-  [data-as-tag='input'] {
+  [data-appear-as='input'] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     position: relative;
     vertical-align: text-top;
     gap: var(--usewc-layout-input-gap-inline);
+
+    &:has(button:first-child) {
+      padding-inline-start: var(--usewc-layout-input-padding-block);
+    }
+
+    &:has(button:last-child) {
+      padding-inline-end: var(--usewc-layout-input-padding-block);
+    }
 
     > :not(input) {
       flex: 0 0 auto;
@@ -155,7 +165,7 @@
     }
   }
 
-  :is(a:not([data-as-tag]), [data-as-tag='a']) {
+  :is(a:not([data-appear-as]), [data-appear-as='a']) {
     &:where(:not(a)) {
       all: unset;
     }
@@ -173,8 +183,8 @@
     }
   }
 
-  :is(button:not([data-as-tag]), [data-as-tag='button']),
-  input[type='file']:not([data-as-tag]) {
+  :is(button:not([data-appear-as]), [data-appear-as='button']),
+  input[type='file']:not([data-appear-as]) {
     &:where(:not(button)),
     &::file-selector-button {
       all: unset;
@@ -322,12 +332,12 @@
     }
   }
 
-  input[type='file']:not([data-as-tag]) {
+  input[type='file']:not([data-appear-as]) {
     border-radius: var(--usewc-effect-input-border-radius);
   }
 
   code,
-  [data-as-tag='code'] {
+  [data-appear-as='code'] {
     display: inline-block;
     font-family: var(--usewc-font-code-family);
     font-size: var(--usewc-font-code-size);

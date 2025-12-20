@@ -1,11 +1,11 @@
 import { Markdown, Meta, Unstyled } from '@storybook/addon-docs/blocks';
 import './design.css';
+import './kitchen-sink.css';
 import kichenSink from './kitchen-sink.html?raw';
 
 <Meta title="Theming/Kitchen Sink" />
 
-# Kitchen Sink
-
 <Unstyled>
+  # Kitchen Sink
   <div className="mode-default" dangerouslySetInnerHTML={{ __html: kichenSink }} />
 </Unstyled>
