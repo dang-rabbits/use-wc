@@ -55,6 +55,9 @@
   --usewc-color-input-text-static: var(--usewc-color-gray-700);
   --usewc-color-input-text-placeholder: var(--usewc-color-gray-400);
   --usewc-color-input-border-invalid: var(--usewc-color-red-500);
+  --usewc-effect-dropdown-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
+  --usewc-effect-dropdown-trigger-background-size: 1em;
+  --usewc-effect-dropdown-trigger-background-blend-mode: difference;
   /* - Layout */
   --usewc-layout-input-border: var(--usewc-space-1-relative);
   --usewc-layout-input-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-input-border));

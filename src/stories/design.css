@@ -26,6 +26,7 @@
 
   :is(
     input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-appear-as])),
+    select:not([data-appear-as='native']),
     textarea,
     [data-appear-as='input']
   ) {
@@ -65,6 +66,17 @@
     &:is(:user-invalid, [aria-invalid='true'], :has(:is(:user-invalid, [aria-invalid='true']))) {
       border-color: var(--usewc-color-input-border-invalid);
     }
+  }
+
+  select:not([data-appear-as='native']) {
+    appearance: none;
+    padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+    background-image: var(--usewc-effect-dropdown-trigger-background-image, none);
+    /* TODO use logical position */
+    background-position: right var(--usewc-layout-input-padding-inline) center;
+    background-repeat: no-repeat;
+    background-size: var(--usewc-effect-dropdown-trigger-background-size, 1em);
+    background-blend-mode: var(--usewc-effect-dropdown-trigger-background-blend-mode, none);
   }
 
   [data-appear-as='input'] {
