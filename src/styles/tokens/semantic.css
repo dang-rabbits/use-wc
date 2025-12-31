@@ -50,7 +50,7 @@
   /* - Color */
   --usewc-color-input-background-static: var(--usewc-color-white);
   --usewc-color-input-border-static: var(--usewc-color-gray-300);
-  --usewc-color-input-border-hover: var(--usewc-color-blue-500);
+  --usewc-color-input-border-hover: var(--usewc-color-gray-500);
   --usewc-color-input-border-focus: var(--usewc-color-blue-500);
   --usewc-color-input-text-static: var(--usewc-color-gray-700);
   --usewc-color-input-text-placeholder: var(--usewc-color-gray-400);
@@ -71,6 +71,20 @@
   /* - Font */
   --usewc-font-input-size: var(--usewc-font-size-16);
 
+  /* Range */
+  --usewc-layout-range-padding-block: var(--usewc-space-8);
+  --usewc-layout-range-thumb-width: var(--usewc-space-16);
+  --usewc-layout-range-thumb-height: var(--usewc-space-16);
+  --usewc-effect-range-thumb-border-radius: var(--usewc-effect-border-radius-full);
+  --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
+  --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-600);
+  --usewc-layout-range-track-height: var(--usewc-space-8);
+  --usewc-effect-range-track-border-radius: var(--usewc-effect-input-border-radius);
+  --usewc-color-range-track-background-static: var(--usewc-color-gray-100);
+  --usewc-color-range-track-border-static: var(--usewc-color-gray-200);
+  --usewc-color-range-track-border-hover: var(--usewc-color-gray-300);
+  --usewc-layout-range-track-border: var(--usewc-space-1-relative);
+
   /* Selector */
   /* - Layout */
   --usewc-layout-selector-width: 1em;
@@ -79,11 +93,11 @@
   /* - Color */
   --usewc-color-selector-background-static: transparent;
   --usewc-color-selector-background-focus: var(--usewc-color-gray-100);
-  --usewc-color-selector-background-hover: oklch(from var(--usewc-color-blue-100) l c h / 0.125);
+  --usewc-color-selector-background-hover: oklch(from var(--usewc-color-gray-100) l c h / 0.5);
   --usewc-color-selector-background-checked: var(--usewc-color-blue-400);
   --usewc-color-selector-border-static: var(--usewc-color-gray-300);
   --usewc-color-selector-border-focus: var(--usewc-color-blue-500);
-  --usewc-color-selector-border-hover: var(--usewc-color-blue-300);
+  --usewc-color-selector-border-hover: var(--usewc-color-gray-500);
   --usewc-color-selector-border-checked: var(--usewc-color-selector-background-checked);
   --usewc-color-selector-icon-fill: var(--usewc-color-white);
 
@@ -240,8 +254,13 @@
     --usewc-color-link-text-hover: var(--usewc-color-blue-400);
     --usewc-color-link-text-active: var(--usewc-color-blue-500);
     --usewc-color-code-text: var(--usewc-color-red-200);
-    --usewc-color-input-border-hover: var(--usewc-color-blue-200);
+    --usewc-color-input-border-hover: var(--usewc-color-gray-500);
     --usewc-color-input-border-focus: var(--usewc-color-blue-200);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
+    --usewc-color-range-thumb-background-static: var(--usewc-color-blue-400);
+    --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-300);
+    --usewc-color-range-track-background-static: var(--usewc-color-gray-800);
+    --usewc-color-range-track-border-static: var(--usewc-color-gray-700);
+    --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);
   }
 }

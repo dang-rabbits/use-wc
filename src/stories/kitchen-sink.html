@@ -112,7 +112,28 @@
 <h3>Range</h3>
 <input type="range" />
 <input type="range" disabled />
-<input type="range" checked disabled />
+<use-field>
+  <label for="range-field">Range Field</label>
+  <input type="range" id="range-field" />
+  <p>This is a range field description</p>
+</use-field>
+<use-field>
+  <label for="range-field-2">Range with ticks</label>
+  <input type="range" id="range-field-2" list="range-field-2-options" />
+  <datalist id="range-field-2-options">
+    <option value="0">Option 1</option>
+    <option value="50">Option 2</option>
+    <option value="100">Option 3</option>
+  </datalist>
+  <p>
+    Custom CSS for ticks aren't supported across all browsers so the styles fall back to the native styles with
+    <code>accent-color</code>.
+  </p>
+</use-field>
+<use-field>
+  <label for="range-native">Native</label>
+  <input type="range" id="range-native" data-appear-as="native" />
+</use-field>
 
 <h3>Checkbox</h3>
 <div style="display: flex; flex-direction: column; gap: 1rem">
