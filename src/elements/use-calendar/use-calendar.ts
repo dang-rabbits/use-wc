@@ -352,7 +352,13 @@ export class UseCalendar extends LitElement {
   }
 
   public previousMonth() {
-    this.goTo(this.#activeDate.getFullYear(), this.#activeDate.getMonth(), 1);
+    let previousMonth = this.#activeDate.getMonth();
+    let previousYear = this.#activeDate.getFullYear();
+    if (previousMonth === 0) {
+      previousYear--;
+      previousMonth = 12;
+    }
+    this.goTo(previousYear, previousMonth, 1);
     this.#initializeControls();
   }
 
