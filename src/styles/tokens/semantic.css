@@ -81,7 +81,8 @@
   --usewc-layout-range-track-height: var(--usewc-space-8);
   --usewc-effect-range-track-border-radius: var(--usewc-effect-input-border-radius);
   --usewc-color-range-track-background-static: var(--usewc-color-gray-100);
-  --usewc-color-range-track-border-static: var(--usewc-color-gray-200);
+  --usewc-color-range-track-background-progress: var(--usewc-color-blue-500);
+  --usewc-color-range-track-border-static: oklch(from var(--usewc-color-gray-500) l c h / 0.5);
   --usewc-color-range-track-border-hover: var(--usewc-color-gray-300);
   --usewc-layout-range-track-border: var(--usewc-space-1-relative);
 
