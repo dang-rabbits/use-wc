@@ -78,6 +78,7 @@
   --usewc-effect-range-thumb-border-radius: var(--usewc-effect-border-radius-full);
   --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
   --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-600);
+  --usewc-color-range-thumb-background-active: var(--usewc-color-blue-700);
   --usewc-layout-range-track-height: var(--usewc-space-8);
   --usewc-effect-range-track-border-radius: var(--usewc-effect-input-border-radius);
   --usewc-color-range-track-background-static: var(--usewc-color-gray-100);
@@ -260,6 +261,7 @@
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
     --usewc-color-range-thumb-background-static: var(--usewc-color-blue-400);
     --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-300);
+    --usewc-color-range-thumb-background-active: var(--usewc-color-blue-200);
     --usewc-color-range-track-background-static: var(--usewc-color-gray-800);
     --usewc-color-range-track-border-static: var(--usewc-color-gray-700);
     --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);
