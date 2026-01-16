@@ -45,7 +45,7 @@ export class UseDate extends LitElement {
       if (value == null || value === '') {
         this.#valueData = { year: '', month: '', day: '' };
       } else {
-        const date = new Date(value);
+        const date = new Date(value.concat('T00:00:00'));
         this.#valueData = {
           year: date.getFullYear().toString(),
           month: (date.getMonth() + 1).toString(),

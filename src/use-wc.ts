@@ -11,3 +11,4 @@ export * from './elements/use-focusgroup/use-focusgroup';
 export * from './elements/use-widget/use-widget';
 export * from './elements/use-menu/use-menu';
 export * from './elements/use-calendar/use-calendar';
+export * from './elements/use-datetime/use-datetime';

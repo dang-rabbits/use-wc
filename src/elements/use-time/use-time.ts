@@ -40,19 +40,35 @@ export class UseTime extends LitElement {
 
   #initializeValue(value: string) {
     try {
-      const [hour = '0', minute = '0', secondFull = '00.000'] = value.split(':');
-      const [second, fractionalSecond] = secondFull.split('.');
-      const dayPeriod = Number(hour) >= 12 ? 'pm' : 'am';
+      if (!value) {
+        this.#valueData = {
+          hour: undefined,
+          minute: undefined,
+          second: undefined,
+          fractionalSecond: undefined,
+          dayPeriod: undefined,
+        };
+      } else {
+        const [hour, minute, secondFull] = value.split(':');
+        const [second, fractionalSecond] = secondFull ? secondFull.split('.') : [undefined, undefined];
+        const dayPeriod = hour && Number(hour) >= 12 ? 'pm' : 'am';
 
-      this.#valueData = {
-        hour: this.#hoursTo24(hour, dayPeriod),
-        minute,
-        second,
-        fractionalSecond,
-        dayPeriod,
-      };
+        this.#valueData = {
+          hour: hour ? this.#hoursTo24(hour, dayPeriod) : undefined,
+          minute,
+          second,
+          fractionalSecond,
+          dayPeriod,
+        };
+      }
     } catch {
-      this.#valueData = { hour: '0', minute: '0', second: '0', fractionalSecond: '000', dayPeriod: 'AM' };
+      this.#valueData = {
+        hour: undefined,
+        minute: undefined,
+        second: undefined,
+        fractionalSecond: undefined,
+        dayPeriod: undefined,
+      };
     }
 
     this.#updateInternalValue();
@@ -78,6 +94,7 @@ export class UseTime extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
+    this.#initializeSegments();
     this.#initializeHourFormat();
     this.#formatParts = this.#initialFormatParts();
     this.#initializeValue(this.getAttribute('value') ?? '');
@@ -93,10 +110,11 @@ export class UseTime extends LitElement {
     this.requestUpdate('id', old);
   }
 
-  @property({ type: Boolean, attribute: true }) hours = true;
-  @property({ type: Boolean, attribute: true }) minutes = true;
+  @property({ type: Boolean, attribute: true }) hours = false;
+  @property({ type: Boolean, attribute: true }) minutes = false;
   @property({ type: Boolean, attribute: true }) seconds = false;
   @property({ type: Boolean, attribute: true }) fractionalSeconds = false;
+  @property({ type: Boolean, attribute: true }) dayPeriod = false;
   @property({ type: String, attribute: true }) hourFormat: '12' | '24' | undefined;
 
   @query('input[part="segment-input segment-input-hour"]') hourInput!: HTMLInputElement;
@@ -140,33 +158,37 @@ export class UseTime extends LitElement {
     this.#initializeValue(value);
     this.#updateInputValues();
   }
-  #valueData: Partial<Record<TimeSegment, string>> = {
-    hour: '0',
-    minute: '0',
-    second: '0',
-    fractionalSecond: '000',
-    dayPeriod: 'AM',
+  #valueData: Partial<Record<TimeSegment, string | undefined>> = {
+    hour: undefined,
+    minute: undefined,
+    second: undefined,
+    fractionalSecond: undefined,
+    dayPeriod: undefined,
   };
 
   #updateInputValues() {
     if (this.hourInput) {
-      this.hourInput.value = (this.#valueData.hour ?? '').padStart(2, '0');
+      this.hourInput.value = this.#valueData.hour ? this.#valueData.hour.padStart(2, '0') : '';
     }
 
     if (this.minuteInput) {
-      this.minuteInput.value = (this.#valueData.minute ?? '').padStart(2, '0');
+      this.minuteInput.value = this.#valueData.minute ? this.#valueData.minute.padStart(2, '0') : '';
     }
 
     if (this.secondInput) {
-      this.secondInput.value = (this.#valueData.second ?? '').padStart(2, '0');
+      this.secondInput.value = this.#valueData.second ? this.#valueData.second.padStart(2, '0') : '';
     }
 
     if (this.fractionalSecondInput) {
-      this.fractionalSecondInput.value = (this.#valueData.fractionalSecond ?? '').padStart(3, '0');
+      this.fractionalSecondInput.value = this.#valueData.fractionalSecond
+        ? this.#valueData.fractionalSecond.padStart(3, '0')
+        : '';
     }
 
     if (this.dayPeriodInput) {
-      this.dayPeriodInput.value = this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels] ?? '';
+      this.dayPeriodInput.value = this.#valueData.dayPeriod
+        ? (this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels] ?? '')
+        : '';
     }
   }
 
@@ -188,8 +210,10 @@ export class UseTime extends LitElement {
 
   #initialFormatParts() {
     try {
+      const hasTimeSegments = this.hours || this.minutes || this.seconds || this.fractionalSeconds;
+      const forceHourForDayPeriod = this.dayPeriod && !hasTimeSegments;
       const options: Intl.DateTimeFormatOptions = {
-        hour: this.hours ? 'numeric' : undefined,
+        hour: this.hours || forceHourForDayPeriod ? 'numeric' : undefined,
         minute: this.minutes ? 'numeric' : undefined,
         second: this.seconds ? 'numeric' : undefined,
         // @ts-expect-error - fractionalSecondDigits is not typed
@@ -201,15 +225,34 @@ export class UseTime extends LitElement {
       const formatter = new Intl.DateTimeFormat(this.locale, options);
       const date = new Date(2024, 0, 1, 12, 30, 45); // Sample time for formatting
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
-      this.#maxHours = parts.some((part) => part.type === 'dayPeriod') ? 12 : 23;
+      const usesDayPeriod = !!formatter.resolvedOptions().hour12 && this.dayPeriod;
+      this.#maxHours = usesDayPeriod ? 12 : 23;
       this.#ariaLabels = getDateTimeAriaLabels(this.locale);
       const [amChar, pmChar] = this.#ariaLabels.dayPeriod.split('/').map((char) => char.toLowerCase().charAt(0));
       this.#amChar = amChar;
       this.#pmChar = pmChar;
 
+      if (!this.dayPeriod) {
+        return parts.filter((part) => part.type !== 'dayPeriod');
+      }
+
+      if (forceHourForDayPeriod) {
+        return parts.filter((part) => part.type === 'dayPeriod');
+      }
+
       return parts;
     } catch {
       return [];
+    }
+  }
+
+  #initializeSegments() {
+    const hasTimeSegments = this.hours || this.minutes || this.seconds || this.fractionalSeconds;
+    const hasSegments = hasTimeSegments || this.dayPeriod;
+    if (!hasSegments) {
+      this.hours = true;
+      this.minutes = true;
+      this.dayPeriod = true;
     }
   }
 
@@ -239,12 +282,20 @@ export class UseTime extends LitElement {
   #handleSegmentInput(segment: TimeSegment) {
     return (event: Event) => {
       const target = event.target as HTMLInputElement;
+
+      if (target.value === '') {
+        this.#valueData[segment] = undefined;
+        this.#updateInternalValue();
+        return;
+      }
+
       const value = isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
 
       // Validate ranges
       if (segment === 'hour') {
-        const min = this.hourFormat === '12' ? 1 : 0;
-        const max = this.hourFormat === '12' ? 12 : 23;
+        const use12Hour = this.hourFormat === '12' && this.dayPeriod;
+        const min = use12Hour ? 1 : 0;
+        const max = use12Hour ? 12 : 23;
         this.#valueData.hour = Math.max(min, Math.min(max, value)).toString();
         target.value = this.#valueData.hour.padStart(2, '0');
       } else if (segment === 'minute') {
@@ -270,8 +321,8 @@ export class UseTime extends LitElement {
   }
 
   #toggleDayPariod(target: HTMLInputElement, value?: 'am' | 'pm') {
-    // @ts-expect-error - This method is only called when dayPeriod is defined
-    const newValue = value ?? this.#getOtherDayPeriod(this.#valueData.dayPeriod);
+    const currentPeriod = this.#valueData.dayPeriod ?? 'am';
+    const newValue = value ?? this.#getOtherDayPeriod(currentPeriod);
     this.#valueData.dayPeriod = newValue;
     target.value = this.#ariaLabels[newValue as keyof DateTimeAriaLabels] ?? '';
     this.#updateInternalValue();
@@ -285,6 +336,12 @@ export class UseTime extends LitElement {
 
       if (this.#isToggleKey(event.key)) {
         this.#toggleDayPariod(event.target as HTMLInputElement);
+        // this.dispatchEvent(
+        //   new Event('input', {
+        //     bubbles: true,
+        //     composed: true,
+        //   })
+        // );
       }
     }
   }
@@ -294,11 +351,17 @@ export class UseTime extends LitElement {
   }
 
   #updateInternalValue() {
-    const { hour = '0', minute = '0', second = '0', fractionalSecond = '000', dayPeriod } = this.#valueData;
+    const { hour, minute, second, fractionalSecond, dayPeriod } = this.#valueData;
     const output: string[] = [];
 
     if (this.hours) {
-      if (this.#maxHours === 12) {
+      if (!hour) {
+        this.#internalValue = '';
+        this.#internals.setFormValue(null);
+        return;
+      }
+
+      if (this.#maxHours === 12 && this.dayPeriod) {
         if (dayPeriod === 'am') {
           output.push(hour === '12' ? '00' : hour.padStart(2, '0'));
         } else {
@@ -310,8 +373,23 @@ export class UseTime extends LitElement {
       }
     }
 
-    if (this.minutes) output.push(minute.padStart(2, '0'));
-    if (this.seconds) output.push(second.padStart(2, '0'));
+    if (this.minutes) {
+      if (!minute) {
+        this.#internalValue = '';
+        this.#internals.setFormValue(null);
+        return;
+      }
+      output.push(minute.padStart(2, '0'));
+    }
+
+    if (this.seconds) {
+      if (!second) {
+        this.#internalValue = '';
+        this.#internals.setFormValue(null);
+        return;
+      }
+      output.push(second.padStart(2, '0'));
+    }
 
     this.#internalValue = output
       .join(':')
@@ -339,7 +417,9 @@ export class UseTime extends LitElement {
         : html`<input
             type=${part.type === 'dayPeriod' ? 'text' : 'number'}
             value=${part.type === 'dayPeriod'
-              ? this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels]
+              ? this.#valueData.dayPeriod
+                ? this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels]
+                : ''
               : this.#valueData[part.type]}
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
