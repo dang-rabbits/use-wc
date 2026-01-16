@@ -265,5 +265,6 @@
     --usewc-color-range-track-background-static: var(--usewc-color-gray-800);
     --usewc-color-range-track-border-static: var(--usewc-color-gray-700);
     --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);
+    --usewc-color-selector-background-hover: oklch(from var(--usewc-color-gray-700) l c h / 0.5);
   }
 }
