@@ -202,7 +202,7 @@
   :root {
     --usewc-color-document-text: var(--usewc-color-gray-200);
     --usewc-color-document-text-muted: var(--usewc-color-gray-300);
-    --usewc-color-document-background: var(--usewc-color-gray-900);
+    --usewc-color-document-background: var(--usewc-color-gray-800);
     --usewc-color-canvas-background: var(--usewc-color-white);
     --usewc-color-focus-ring: var(--usewc-color-blue-200);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
@@ -216,9 +216,9 @@
     --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-gray-300);
     --usewc-color-button-base-text-hover: var(--usewc-color-gray-100);
     --usewc-color-button-base-text-active: var(--usewc-color-gray-100);
-    --usewc-color-button-base-background-static: var(--usewc-color-gray-800);
-    --usewc-color-button-base-background-hover: var(--usewc-color-gray-700);
-    --usewc-color-button-base-background-active: var(--usewc-color-gray-600);
+    --usewc-color-button-base-background-static: var(--usewc-color-gray-700);
+    --usewc-color-button-base-background-hover: var(--usewc-color-gray-600);
+    --usewc-color-button-base-background-active: var(--usewc-color-gray-500);
     --usewc-color-button-base-background-static-auxiliary: transparent;
     --usewc-color-button-base-border-static: var(--usewc-color-gray-600);
     --usewc-color-button-base-border-hover: var(--usewc-color-gray-500);
@@ -226,8 +226,8 @@
     --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-600);
     --usewc-color-button-cancel-text-static: var(--usewc-color-gray-200);
     --usewc-color-button-cancel-text-hover: var(--usewc-color-gray-200);
-    --usewc-color-button-cancel-background-hover: var(--usewc-color-gray-800);
-    --usewc-color-button-cancel-border-hover: var(--usewc-color-gray-800);
+    --usewc-color-button-cancel-background-hover: var(--usewc-color-gray-700);
+    --usewc-color-button-cancel-border-hover: var(--usewc-color-gray-700);
     --usewc-color-button-cancel-text-static-auxiliary: var(--usewc-color-gray-300);
     --usewc-color-button-cancel-border-static-auxiliary: var(--usewc-color-gray-600);
     --usewc-color-button-primary-background-static: var(--usewc-color-blue-400);

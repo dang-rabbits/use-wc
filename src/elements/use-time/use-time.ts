@@ -336,12 +336,12 @@ export class UseTime extends LitElement {
 
       if (this.#isToggleKey(event.key)) {
         this.#toggleDayPariod(event.target as HTMLInputElement);
-        // this.dispatchEvent(
-        //   new Event('input', {
-        //     bubbles: true,
-        //     composed: true,
-        //   })
-        // );
+        this.dispatchEvent(
+          new Event('input', {
+            bubbles: true,
+            composed: true,
+          })
+        );
       }
     }
   }
