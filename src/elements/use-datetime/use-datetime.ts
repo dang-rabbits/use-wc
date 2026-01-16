@@ -151,6 +151,7 @@ export class UseDatetime extends LitElement {
         .readOnly=${this.readOnly}
         .locale=${this.locale}
         @input=${this.#handleInput}
+        exportparts="segment-input"
       ></use-date>
       <use-time
         value=${this.#timeValue}
@@ -164,6 +165,7 @@ export class UseDatetime extends LitElement {
         .dayPeriod=${this.dayPeriod}
         .hourFormat=${this.hourFormat}
         @input=${this.#handleInput}
+        exportparts="segment-input"
       ></use-time>
     `;
   }

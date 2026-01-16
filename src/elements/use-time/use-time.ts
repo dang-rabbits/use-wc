@@ -240,7 +240,7 @@ export class UseTime extends LitElement {
         return parts.filter((part) => part.type === 'dayPeriod');
       }
 
-      return parts;
+      return parts.filter((part) => part.value.trim() !== '');
     } catch {
       return [];
     }

@@ -133,7 +133,7 @@ export class UseDuration extends LitElement {
   locale: string = navigator.language || 'en-US';
 
   @property({ type: String, attribute: true })
-  format: 'long' | 'short' | 'narrow' | 'digital' = 'long';
+  format: 'long' | 'short' | 'narrow' | 'digital' = 'short';
 
   #formatParts: Array<{ type: string; value: string; unit?: string }> = [];
 

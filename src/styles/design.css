@@ -18,7 +18,7 @@
   }
 
   :is(button, a):not([data-appear-as='native']):focus-visible,
-  :is(input, textarea, select):not([data-appear-as='native']):focus,
+  :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']):focus,
   input[type='file']:not([data-appear-as='native']):focus-visible,
   [data-appear-as='input']:has(input:focus) {
     outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
@@ -30,7 +30,11 @@
     input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-appear-as])),
     select:not([data-appear-as='native']),
     textarea,
-    [data-appear-as='input']
+    [data-appear-as='input'],
+    use-date:not([data-appear-as='native']),
+    use-time:not([data-appear-as='native']),
+    use-datetime:not([data-appear-as='native']),
+    use-duration:not([data-appear-as='native'])
   ) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
@@ -49,7 +53,7 @@
       border-color: var(--usewc-color-input-border-hover);
     }
 
-    &:is(:focus, :has(input:focus)) {
+    &:is(:focus, :has(input:focus), :focus-within) {
       border-color: var(--usewc-color-input-border-focus);
       outline-offset: var(--usewc-layout-focus-ring-offset-inside);
     }
@@ -448,67 +452,45 @@
 }
 
 @layer web-components {
-  use-range {
-    display: flex;
+  /* Segment based controls */
+  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']) {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    width: fit-content;
+    gap: calc(var(--usewc-layout-input-gap-inline) / 2);
 
-    * {
-      all: revert;
+    &:is(use-duration) {
+      gap: var(--usewc-layout-input-gap-inline);
     }
 
-    input {
+    &::part(segment-input) {
+      all: unset;
+      box-sizing: content-box;
       appearance: none;
-      margin: 0;
-
-      &::-webkit-slider-runnable-track {
-        appearance: none;
-        box-sizing: border-box;
-        border: none;
-        border-radius: var(--usewc-effect-range-track-border-radius);
-        height: var(--usewc-layout-range-track-height);
-        background-color: var(--usewc-color-range-track-background-static);
-        margin: 0;
-        padding: 0;
-      }
-
-      &::-webkit-slider-thumb {
-        appearance: none;
-        margin-top: calc(
-          (var(--usewc-layout-range-thumb-height) - var(--usewc-layout-range-track-height)) / -2 -
-            var(--usewc-layout-range-track-border)
-        );
-        background-color: var(--usewc-color-range-thumb-background-static);
-        border-radius: var(--usewc-effect-range-thumb-border-radius);
-      }
+      field-sizing: content;
+      background: var(--usewc-color-input-segment-background-static);
+      outline: none;
+      border-radius: var(--usewc-effect-input-border-radius);
+      min-width: 2ch;
+      text-align: end;
+      padding-inline: calc(var(--usewc-layout-input-gap-inline) / 2);
+      font-variant-numeric: tabular-nums;
     }
 
-    input:first-child {
-      padding-inline-end: 0;
-
-      &::-webkit-slider-runnable-track {
-        border-end-end-radius: 0;
-        border-start-end-radius: 0;
-        background-image: linear-gradient(
-          to right,
-          var(--usewc-color-range-track-background-static) var(--usewc-effect-range-thumb-position),
-          var(--usewc-color-range-track-background-progress) var(--usewc-effect-range-thumb-position)
-        );
-      }
+    &::part(segment-input-dayPeriod) {
+      text-align: center;
+      min-width: 2em;
+      padding-inline: 0;
     }
 
-    input:last-child {
-      padding-inline-start: 0;
+    &::part(segment-input):hover {
+      background: var(--usewc-color-input-segment-background-hover);
+    }
 
-      &::-webkit-slider-runnable-track {
-        border-end-start-radius: 0;
-        border-start-start-radius: 0;
-        background-image: linear-gradient(
-          to right,
-          var(--usewc-color-range-track-background-progress) var(--usewc-effect-range-thumb-position),
-          var(--usewc-color-range-track-background-static) var(--usewc-effect-range-thumb-position)
-        );
-      }
+    &::part(segment-input):focus,
+    &::selection {
+      background: var(--usewc-color-input-segment-background-focus);
+      color: var(--usewc-color-input-segment-text-focus);
     }
   }
 }

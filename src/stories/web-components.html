@@ -1,0 +1,85 @@
+<h2>Inputs</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Date</h3>
+  <use-date value="2024-06-01"></use-date>
+
+  <h3>Time</h3>
+  <use-time value="12:30:45"></use-time>
+
+  <h3>Date & time</h3>
+  <use-datetime value="2024-06-01T12:00:00"></use-datetime>
+
+  <h3>Duration</h3>
+  <use-duration value="PT1H30M" hours minutes></use-duration>
+</div>
+
+<h2>Selection</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Select</h3>
+  <use-select placeholder="Select a fruit">
+    <use-option value="apple" id="select-apple">Apple</use-option>
+    <use-option value="banana" id="select-banana">Banana</use-option>
+    <use-option value="cherry" id="select-cherry">Cherry</use-option>
+  </use-select>
+
+  <h3>Listbox</h3>
+  <use-listbox>
+    <use-option value="1" id="listbox-1" selected>One</use-option>
+    <use-option value="2" id="listbox-2">Two</use-option>
+    <use-option value="3" id="listbox-3">Three</use-option>
+  </use-listbox>
+
+  <h3>Tree</h3>
+  <use-tree>
+    <use-treeitem value="1" id="tree-1" selected>One</use-treeitem>
+    <use-treeitem value="2" id="tree-2">
+      Two
+      <use-treeitem value="2a" id="tree-2a">Two A</use-treeitem>
+      <use-treeitem value="2b" id="tree-2b">Two B</use-treeitem>
+    </use-treeitem>
+    <use-treeitem value="3" id="tree-3">Three</use-treeitem>
+  </use-tree>
+</div>
+
+<h2>Menus</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Dropdown</h3>
+  <use-dropdown label="Dropdown">
+    <button role="menuitem">Menu item 1</button>
+    <button role="menuitem">Menu item 2</button>
+    <button role="menuitem">Menu item 3</button>
+  </use-dropdown>
+
+  <h3>Menu</h3>
+  <use-menu label="Menu">
+    <button role="menuitem">Menu item 1</button>
+    <button role="menuitem">Menu item 2</button>
+    <button role="menuitem">Menu item 3</button>
+  </use-menu>
+</div>
+
+<h2>Calendar</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Calendar</h3>
+  <use-calendar controls year="2025" month="4">
+    <use-calendarday date="2025-04-16">16</use-calendarday>
+  </use-calendar>
+</div>
+
+<h2>Utilities</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Focus group</h3>
+  <use-focusgroup features="inline">
+    <button type="button">One</button>
+    <button type="button">Two</button>
+    <button type="button">Three</button>
+  </use-focusgroup>
+
+  <h3>Widget</h3>
+  <use-widget aria-label="Widget example">
+    <use-listbox>
+      <use-option value="widget-1" id="widget-1">Option 1</use-option>
+      <use-option value="widget-2" id="widget-2">Option 2</use-option>
+    </use-listbox>
+  </use-widget>
+</div>
