@@ -168,7 +168,11 @@ export class UseTime extends LitElement {
 
   #updateInputValues() {
     if (this.hourInput) {
-      this.hourInput.value = this.#valueData.hour ? this.#valueData.hour.padStart(2, '0') : '';
+      if (this.hourFormat === '12') {
+        this.hourInput.value = this.#valueData.hour ? this.#valueData.hour : '';
+      } else {
+        this.hourInput.value = this.#valueData.hour ? this.#valueData.hour.padStart(2, '0') : '';
+      }
     }
 
     if (this.minuteInput) {
@@ -297,7 +301,7 @@ export class UseTime extends LitElement {
         const min = use12Hour ? 1 : 0;
         const max = use12Hour ? 12 : 23;
         this.#valueData.hour = Math.max(min, Math.min(max, value)).toString();
-        target.value = this.#valueData.hour.padStart(2, '0');
+        target.value = this.hourFormat === '12' ? this.#valueData.hour : this.#valueData.hour.padStart(2, '0');
       } else if (segment === 'minute') {
         this.#valueData.minute = Math.max(0, Math.min(59, value)).toString();
         target.value = this.#valueData.minute.padStart(2, '0');

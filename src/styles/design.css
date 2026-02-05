@@ -17,7 +17,7 @@
     font-size: var(--usewc-layout-document-text-size);
   }
 
-  :is(button, a):not([data-appear-as='native']):focus-visible,
+  :is(button, a, details summary):not([data-appear-as='native']):focus-visible,
   :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']):focus,
   input[type='file']:not([data-appear-as='native']):focus-visible,
   [data-appear-as='input']:has(input:focus) {
@@ -238,6 +238,10 @@
 
     &:not([type='file']),
     &::file-selector-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--usewc-layout-button-base-gap);
       border-radius: var(--usewc-effect-input-border-radius);
       line-height: var(--usewc-layout-button-line-height);
       padding-block: var(--usewc-layout-button-base-padding-block);
@@ -439,6 +443,22 @@
       }
     }
   }
+
+  details:not([data-appear-as='native']) {
+    summary {
+      all: unset;
+
+      &::before {
+        content: '▶';
+        display: inline-block;
+        width: 1em;
+      }
+    }
+
+    &:is([open], :open) summary::before {
+      content: '▼';
+    }
+  }
 }
 
 @layer escape {
@@ -453,15 +473,14 @@
 
 @layer web-components {
   /* Segment based controls */
-  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']) {
+  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']),
+  use-datetime::part(date),
+  use-datetime::part(time) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
-    gap: calc(var(--usewc-layout-input-gap-inline) / 2);
-
-    &:is(use-duration) {
-      gap: var(--usewc-layout-input-gap-inline);
-    }
+    gap: var(--usewc-layout-input-segment-padding-inline);
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
     &::part(segment-input) {
       all: unset;
@@ -472,8 +491,9 @@
       outline: none;
       border-radius: var(--usewc-effect-input-border-radius);
       min-width: 2ch;
+      width: fit-content;
       text-align: end;
-      padding-inline: calc(var(--usewc-layout-input-gap-inline) / 2);
+      padding-inline: var(--usewc-layout-input-segment-padding-inline);
       font-variant-numeric: tabular-nums;
     }
 
@@ -491,6 +511,19 @@
     &::selection {
       background: var(--usewc-color-input-segment-background-focus);
       color: var(--usewc-color-input-segment-text-focus);
+    }
+  }
+
+  :is(use-datetime, use-duration):not([data-appear-as='native']) {
+    gap: var(--usewc-layout-input-gap-inline);
+  }
+
+  use-duration:not([data-appear-as='native']) {
+    padding-inline-end: var(--usewc-layout-input-padding-inline);
+
+    &::part(segment) {
+      display: inline-flex;
+      gap: var(--usewc-layout-input-segment-padding-inline);
     }
   }
 }

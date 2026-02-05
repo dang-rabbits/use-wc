@@ -57,7 +57,7 @@
   --usewc-color-input-border-invalid: var(--usewc-color-red-500);
   --usewc-color-input-segment-background-static: transparent;
   --usewc-color-input-segment-background-hover: transparent;
-  --usewc-color-input-segment-background-focus: var(--usewc-color-blue-200);
+  --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
   --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
   --usewc-effect-dropdown-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
   --usewc-effect-dropdown-trigger-background-size: 1em;
@@ -67,6 +67,7 @@
   --usewc-layout-input-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-input-border));
   --usewc-layout-input-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-input-border));
   --usewc-layout-input-gap-inline: var(--usewc-layout-input-padding-inline);
+  --usewc-layout-input-segment-padding-inline: var(--usewc-space-2-relative);
   --usewc-layout-input-line-height: var(--usewc-line-height-24);
   /* - Effect */
   --usewc-effect-input-border-style: solid;
@@ -169,25 +170,30 @@
   /* -- Base size */
   --usewc-layout-button-base-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
   --usewc-layout-button-base-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
+  --usewc-layout-button-base-gap: var(--usewc-space-4);
   --usewc-layout-button-base-font-size: var(--usewc-font-size-16);
   /* -- Extra small size */
   --usewc-layout-button-extra-small-padding-block: var(--usewc-space-none);
   --usewc-layout-button-extra-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-small-gap: var(--usewc-space-2);
   --usewc-layout-button-extra-small-font-size: var(--usewc-font-size-12);
   --usewc-layout-button-extra-small-line-height: var(--usewc-line-height-18);
   /* -- Small size */
   --usewc-layout-button-small-padding-block: calc(var(--usewc-space-2) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-small-gap: var(--usewc-space-2);
   --usewc-layout-button-small-font-size: var(--usewc-font-size-14);
   --usewc-layout-button-small-line-height: var(--usewc-line-height-20);
   /* -- Large size */
   --usewc-layout-button-large-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
   --usewc-layout-button-large-padding-inline: calc(var(--usewc-space-16) - var(--usewc-layout-button-border));
+  --usewc-layout-button-large-gap: var(--usewc-space-4);
   --usewc-layout-button-large-font-size: var(--usewc-font-size-18);
   --usewc-layout-button-large-line-height: var(--usewc-line-height-28);
   /* -- Extra large size */
   --usewc-layout-button-extra-large-padding-block: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-large-padding-inline: calc(var(--usewc-space-24) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-large-gap: var(--usewc-space-8);
   --usewc-layout-button-extra-large-font-size: var(--usewc-font-size-24);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-28);
 
@@ -263,7 +269,7 @@
     --usewc-color-input-border-hover: var(--usewc-color-gray-500);
     --usewc-color-input-border-focus: var(--usewc-color-blue-200);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
-    --usewc-color-input-segment-background-focus: var(--usewc-color-blue-200);
+    --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
     --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
     --usewc-color-range-thumb-background-static: var(--usewc-color-blue-400);
     --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-300);

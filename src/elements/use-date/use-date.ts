@@ -179,6 +179,7 @@ export class UseDate extends LitElement {
               part="segment-input segment-input-${part.type}"
               id="${this.#segmentId(part.type)}"
               form=${this.#formId}
+              size=${part.type === 'year' ? 4 : 2}
               @input=${this.#handleSegmentInput(part.type as DateSegment)}
             />
           `;
@@ -197,10 +198,12 @@ export class UseDate extends LitElement {
       gap: 0.5ch;
 
       input {
+        -moz-appearance: textfield;
         font-variant-numeric: tabular-nums;
         field-sizing: content;
         text-align: end;
         min-width: 2ch;
+        width: fit-content;
       }
     }
 
