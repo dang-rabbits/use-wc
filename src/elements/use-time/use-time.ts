@@ -220,7 +220,6 @@ export class UseTime extends LitElement {
         hour: this.hours || forceHourForDayPeriod ? 'numeric' : undefined,
         minute: this.minutes ? 'numeric' : undefined,
         second: this.seconds ? 'numeric' : undefined,
-        // @ts-expect-error - fractionalSecondDigits is not typed
         fractionalSecondDigits: this.fractionalSeconds ? 3 : undefined,
         hour12: this.hourFormat ? this.hourFormat === '12' : undefined,
         timeZone: 'UTC',
