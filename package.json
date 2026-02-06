@@ -24,7 +24,9 @@
     ".": {
       "import": "./dist/use-wc.js",
       "require": "./dist/use-wc.umd.cjs"
-    }
+    },
+    "./design-system.css": "./dist/design-system.css",
+    "./default-tokens.css": "./dist/default-tokens.css"
   },
   "scripts": {
     "dev": "vite",

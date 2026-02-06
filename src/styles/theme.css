@@ -1,6 +1,3 @@
-@import '../styles/tokens/atomic.css';
-@import '../styles/tokens/semantic.css';
-
 @layer theme, escape;
 
 @layer theme {
