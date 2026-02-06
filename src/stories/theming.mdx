@@ -13,3 +13,17 @@ import { Meta } from '@storybook/addon-docs/blocks';
 Classes should be used as variance modifiers for semantic components. Instead of using custom attributes like `data-variant="primary"` and `data-size="small"` or long form class names like `btn-primary` and `btn-sm`, use classes like `primary` or `small` and apply the styles with the semantic element names, like `button.primary` or `button.small`.
 
 Every component will have **base** styles that are applied when there are no classes, and the modifying classes will be applied as overrides to the base.
+
+## Importing styles
+
+The design system is available as two separate CSS imports: The design system styles and default tokens. To get up and running quickly use both imports. If you have your own set of tokens, that utilize the use-wc naming conventions, then you can import just the `design-system.css` file.
+
+```
+// js
+import 'use-wc/default-tokens.css';
+import 'use-wc/design-system.css';
+
+// css
+@import 'use-wc/default-tokens.css';
+@import 'use-wc/design-systems.css';
+```
