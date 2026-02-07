@@ -29,7 +29,6 @@
     "./default-tokens.css": "./dist/default-tokens.css"
   },
   "scripts": {
-    "dev": "vite",
     "build": "tsc && npm run analyze && vite build",
     "preview": "vite preview",
     "analyze": "custom-elements-manifest analyze",
@@ -62,7 +61,7 @@
     "storybook-addon-tag-badges": "^1.4.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.29.1",
-    "vite": "^6",
+    "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-externalize-deps": "^0.10.0"
   },
