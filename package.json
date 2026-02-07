@@ -34,7 +34,7 @@
     "preview": "vite preview",
     "analyze": "custom-elements-manifest analyze",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "npm run analyze && storybook build",
+    "build-storybook": "npm run build && npm run analyze && storybook build",
     "lint": "eslint ./src"
   },
   "dependencies": {
