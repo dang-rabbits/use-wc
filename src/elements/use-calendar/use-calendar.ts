@@ -138,8 +138,8 @@ export class UseCalendar extends LitElement {
     return this.name || 'value';
   }
 
-  get value(): FormData {
-    return this.#value;
+  get value(): string {
+    return (this.#value.get(this.#dataKey) as string) || '';
   }
 
   set value(value: string[] | string) {
@@ -185,7 +185,7 @@ export class UseCalendar extends LitElement {
     this.dispatchEvent(
       new CustomEvent('use-change', {
         detail: {
-          value: value,
+          value: this.value,
           valueAsDate: new Date(value[0]),
         },
         bubbles: true,
@@ -352,6 +352,7 @@ export class UseCalendar extends LitElement {
   }
 
   public previousMonth() {
+    if (this.navigation === 'off') return;
     let previousMonth = this.#activeDate.getMonth();
     let previousYear = this.#activeDate.getFullYear();
     if (previousMonth === 0) {
@@ -363,10 +364,12 @@ export class UseCalendar extends LitElement {
   }
 
   public today() {
+    if (this.navigation === 'off') return;
     this.goTo(new Date());
   }
 
   public nextMonth() {
+    if (this.navigation === 'off') return;
     this.goTo(this.#activeDate.getFullYear(), this.#activeDate.getMonth() + 2, 1);
   }
 

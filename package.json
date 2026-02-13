@@ -34,11 +34,12 @@
     "analyze": "custom-elements-manifest analyze",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "npm run build && npm run analyze && storybook build",
+    "test": "vitest",
     "lint": "eslint ./src"
   },
   "dependencies": {
     "duration-fns": "^3.0.2",
-    "lit": "^3.3.1",
+    "lit": "^3.3.2",
     "tabbable": "^6.2.0"
   },
   "devDependencies": {
@@ -48,6 +49,8 @@
     "@storybook/addon-docs": "^10.2.7",
     "@storybook/addon-links": "^10.2.7",
     "@storybook/web-components-vite": "^10.2.7",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18",
     "baseline-status": "^1.0.10",
     "custom-element-vs-code-integration": "^1.5.0",
     "eslint": "^9.24.0",
@@ -55,6 +58,7 @@
     "eslint-plugin-prettier": "^5.2.6",
     "eslint-plugin-storybook": "^10.2.7",
     "globals": "^16.0.0",
+    "playwright": "^1.58.2",
     "prettier": "^3.5.3",
     "semantic-release": "^25.0.3",
     "storybook": "^10.2.7",
@@ -63,7 +67,9 @@
     "typescript-eslint": "^8.29.1",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-externalize-deps": "^0.10.0"
+    "vite-plugin-externalize-deps": "^0.10.0",
+    "vitest": "^4.0.18",
+    "vitest-browser-lit": "^1.0.1"
   },
   "overrides": {
     "storybook": "$storybook"

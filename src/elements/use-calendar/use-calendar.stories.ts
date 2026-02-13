@@ -16,10 +16,11 @@ export const Default: StoryObj<UseCalendar> = {};
 
 export const Controls: StoryObj<UseCalendar> = {
   render: () => {
-    return html` <use-calendar id="navigate-calendar" controls></use-calendar> `;
+    return html`<use-calendar id="navigate-calendar" controls></use-calendar>`;
   },
 };
 
+/** Turning off navigation should only be done when selectmode is not enabled */
 export const DisableNavigation: StoryObj<UseCalendar> = {
   render: () => {
     return html` <use-calendar id="navigate-calendar" navigation="off"></use-calendar> `;

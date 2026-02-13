@@ -72,8 +72,7 @@ export const Chinese: Story = {
 };
 
 export const Arabic: Story = {
-  render: () =>
-    html`<use-time dir="rtl" value="14:30:45" locale="ar-SA" format="narrow"></use-time>`,
+  render: () => html`<use-time dir="rtl" value="14:30:45" locale="ar-SA" format="narrow"></use-time>`,
 };
 
 export const Disabled: Story = {
