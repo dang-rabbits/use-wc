@@ -8,6 +8,7 @@ const meta: Meta<UseCalendar> = {
   tags: ['autodocs', '!dev', 'utility'],
   args: {},
   render: () => html`<use-calendar></use-calendar>`,
+  subcomponents: { 'use-calendarday': 'use-calendarday' },
 };
 
 export default meta;

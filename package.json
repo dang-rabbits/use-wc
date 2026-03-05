@@ -14,7 +14,8 @@
     "dist",
     "custom-elements.json",
     "vscode.html-custom-data.json",
-    "vscode.css-custom-data.json"
+    "vscode.css-custom-data.json",
+    "AI.md"
   ],
   "customElements": "custom-elements.json",
   "main": "./dist/use-wc.umd.cjs",

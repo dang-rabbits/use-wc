@@ -1,6 +1,12 @@
 import { LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+/**
+ * A helper component for customizing specific days within `use-calendar`.
+ * Content placed inside this element will replace the default day number display.
+ *
+ * @slot default - slot for custom day content (replaces the day number)
+ */
 @customElement('use-calendarday')
 export class UseCalendarday extends LitElement {
   protected createRenderRoot() {

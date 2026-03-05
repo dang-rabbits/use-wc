@@ -1,15 +1,16 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import '../use-calendarday/use-calendarday';
 import { getDayNames } from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
 import { tabbable } from 'tabbable';
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
 import { keyed } from 'lit/directives/keyed.js';
 
+import '../use-calendarday/use-calendarday';
+
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
-// TODO `controls` and `controlslist` attributes
+// TODO `controlslist` attribute for previous today and next
 
 type LitHtml = typeof html;
 
@@ -18,7 +19,31 @@ export type UseCalendarRenderDay = (data: { day: number; date: string }, html: L
 /**
  * Displays a calendar grid of the current month.
  *
- * @slot - Calendar content
+ * @slot header-start - Content before the title in the header
+ * @slot title - Title showing the month and year
+ * @slot controls - Navigation controls (previous, today, next buttons)
+ * @slot header-end - Content after the controls in the header
+ * @slot date-{YYYY-MM-DD} - Per-date content that replaces the default day number
+ * @csspart header - The header container
+ * @csspart title - The title text
+ * @csspart title-month - The month part of the title
+ * @csspart title-literal - Literal text in the title
+ * @csspart title-year - The year part of the title
+ * @csspart controls - The controls slot container
+ * @csspart control - Individual control button
+ * @csspart control-previous - Previous month button
+ * @csspart control-today - Today button
+ * @csspart control-next - Next month button
+ * @csspart grid - The main calendar grid
+ * @csspart grid-header - The header row with day names
+ * @csspart grid-header-cell - Individual day name header cell
+ * @csspart grid-body - The container for calendar weeks
+ * @csspart row - A row of days
+ * @csspart day - A day cell
+ * @csspart day-empty - An empty day cell (from previous/next month)
+ * @csspart day-selected - A selected day cell
+ * @csspart day-today - The current date cell
+ * @csspart day-disabled - A disabled date cell
  */
 @customElement('use-calendar')
 export class UseCalendar extends LitElement {

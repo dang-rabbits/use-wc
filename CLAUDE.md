@@ -1,5 +1,7 @@
 - TypeScript is used for development
-- Vanilla JavaScript is preferred but Lit.dev web components can be used to reuse common patterns like decorators
+- vanilla JavaScript is preferred but Lit.dev web components can be used to reuse common patterns like decorators
 - unit tests live in a component's folder with a .test.ts extension and use Playwright for itneractions
-- run `npm run lint -- --fix` at the end of each session
+- component CSS exists in the component file directly in the `css` prop
+- design system CSS live in the `src/styles` directory
+- run `npm run lint -- --fix` and `npm run analyze` at the end of each session
 - do not add inline comments
