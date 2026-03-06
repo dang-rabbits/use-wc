@@ -54,17 +54,21 @@ export default function getDateTimeAriaLabels(locale: string, { plural = true }:
   return INTL_ARIA_LABELS.get(cacheKey)!;
 }
 
+export function getLocaleFirstDay(locale = 'en'): number {
+  const localeInfo = new Intl.Locale(locale);
+  // @ts-expect-error - getWeekInfo is not typed
+  return localeInfo.getWeekInfo().firstDay % 7; // 0=Sun, 1=Mon … 6=Sat
+}
+
 const DAY_NAMES = new Map<string, string[]>();
 export function getDayNames(locale = 'en', format: 'long' | 'short' | 'narrow' = 'long') {
   const cacheKey = `${locale}-${format}`;
 
   if (!DAY_NAMES.has(cacheKey)) {
     const formatter = new Intl.DateTimeFormat(locale, { weekday: format });
-    const days = [1, 2, 3, 4, 5, 6, 7].map((day) => formatter.format(new Date(2024, 0, day)));
-    const localeInfo = new Intl.Locale(locale);
-    // @ts-expect-error - getWeekInfo is not typed
-    const firstDayOfWeek = localeInfo.getWeekInfo().firstDay;
-    DAY_NAMES.set(cacheKey, days.slice(firstDayOfWeek - 1).concat(days.slice(0, firstDayOfWeek - 1)));
+    const days = [7, 8, 9, 10, 11, 12, 13].map((day) => formatter.format(new Date(2024, 0, day)));
+    const firstDayOfWeek = getLocaleFirstDay(locale);
+    DAY_NAMES.set(cacheKey, days.slice(firstDayOfWeek).concat(days.slice(0, firstDayOfWeek)));
   }
 
   return DAY_NAMES.get(cacheKey)!;

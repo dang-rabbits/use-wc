@@ -291,6 +291,87 @@ export const ChangeEvent: StoryObj<UseCalendar> = {
   },
 };
 
+/**
+ * US English locale starts the week on Sunday.
+ */
+export const LocaleStartOfWeekSunday: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="en-US" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * UK English and most European locales start the week on Monday.
+ */
+export const LocaleStartOfWeekMonday: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="en-GB" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * French locale starts the week on Monday with French day/month names.
+ */
+export const LocaleFrench: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="fr-FR" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * Persian (Iran) locale starts the week on Saturday with Farsi day names.
+ */
+export const LocaleStartOfWeekSaturday: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="fa-IR" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * Arabic (Saudi Arabia) locale with right-to-left day names.
+ */
+export const LocaleArabic: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="ar-SA" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * Japanese locale starts the week on Sunday with Japanese day/month names.
+ */
+export const LocaleJapanese: StoryObj<UseCalendar> = {
+  render: () => {
+    return html`<use-calendar locale="ja-JP" year="2026" month="3" controls></use-calendar>`;
+  },
+};
+
+/**
+ * Side-by-side comparison of the same month across multiple locales,
+ * showing how the first day of the week shifts the grid layout.
+ */
+export const LocaleComparison: StoryObj<UseCalendar> = {
+  render: () => {
+    const locales = [
+      { code: 'en-US', label: 'US (Sunday)' },
+      { code: 'en-GB', label: 'UK (Monday)' },
+      { code: 'fa-IR', label: 'Persian (Saturday)' },
+    ];
+
+    return html`
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;max-width:900px">
+        ${locales.map(
+          ({ code, label }) => html`
+            <div>
+              <strong>${label}</strong>
+              <use-calendar locale=${code} year="2026" month="3" controls></use-calendar>
+            </div>
+          `
+        )}
+      </div>
+    `;
+  },
+};
+
 export const CustomStyles: StoryObj<UseCalendar> = {
   render: () => {
     return html`

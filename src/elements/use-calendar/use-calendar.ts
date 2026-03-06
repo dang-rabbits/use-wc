@@ -1,6 +1,6 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { getDayNames } from '../../utils/date-time-aria-labels';
+import { getDayNames, getLocaleFirstDay } from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
 import { tabbable } from 'tabbable';
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
@@ -243,8 +243,9 @@ export class UseCalendar extends LitElement {
     };
   }
 
-  get #firstDayOfWeek() {
-    return new Date(this.year, this.month - 1, 1).getDay();
+  get #startDayOffset() {
+    const firstOfMonth = new Date(this.year, this.month - 1, 1);
+    return (firstOfMonth.getDay() - getLocaleFirstDay(this.locale) + 7) % 7;
   }
 
   #weekdayNames() {
@@ -599,7 +600,9 @@ export class UseCalendar extends LitElement {
     const endDate = this.#endDate;
     const startDay = startDate && this.#isThisMonth(startDate) ? startDate.getDate() : 1;
     const endDay = endDate && this.#isThisMonth(endDate) ? endDate.getDate() : daysInMonth;
-    const firstDay = startDate && this.#isThisMonth(startDate) ? startDate.getDay() : this.#firstDayOfWeek;
+    const localeFirstDay = getLocaleFirstDay(this.locale);
+    const firstDay =
+      startDate && this.#isThisMonth(startDate) ? (startDate.getDay() - localeFirstDay + 7) % 7 : this.#startDayOffset;
 
     let rowIndex = 1;
     let columnIndex = 1;
@@ -609,14 +612,14 @@ export class UseCalendar extends LitElement {
       const emptyDate = new Date(
         previousMonthData.year,
         previousMonthData.month - 1,
-        previousMonthData.days - previousMonthData.firstDay + i - 1
+        previousMonthData.days - firstDay + i
       );
       rows[rowIndex].push(
         !startDate || emptyDate >= startDate
           ? this.#renderDayCell(
               previousMonthData.year,
               previousMonthData.month,
-              previousMonthData.days - previousMonthData.firstDay + i - 1,
+              previousMonthData.days - firstDay + i,
               rowIndex + 1,
               columnIndex,
               true
