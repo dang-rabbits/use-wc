@@ -372,6 +372,100 @@ export const LocaleComparison: StoryObj<UseCalendar> = {
   },
 };
 
+/**
+ * Week selection mode — clicking any day selects the entire week row.
+ * The value is an ISO 8601 week string (`YYYY-Www`), matching `<input type="week">`.
+ */
+export const WeekSelection: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleChange = (event: CustomEvent<{ value: string; dates: string[] }>) => {
+      const output = document.getElementById('week-selection-output') as HTMLPreElement;
+      output.textContent = JSON.stringify({ value: event.detail.value, dates: event.detail.dates }, null, 2);
+    };
+
+    return html`
+      <use-calendar selectmode="week" controls year="2026" month="3" @use-change=${handleChange}></use-calendar>
+      <pre id="week-selection-output"></pre>
+    `;
+  },
+};
+
+/**
+ * Week selection with form submission — the form value is a single `YYYY-Www` string.
+ */
+export const WeekSelectionForm: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleSubmit = (event: SubmitEvent) => {
+      event.preventDefault();
+      const formData = new FormData(event.target as HTMLFormElement);
+      // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
+      const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
+      const output = document.getElementById('week-selection-form-output') as HTMLPreElement;
+      output.textContent = queryString;
+    };
+
+    return html`
+      <form @submit=${handleSubmit}>
+        <use-calendar selectmode="week" controls year="2026" month="3" name="week"></use-calendar>
+        <button type="submit">Submit</button>
+      </form>
+      <pre id="week-selection-form-output"></pre>
+    `;
+  },
+};
+
+/**
+ * Week selection with a Monday-first locale (`en-GB`). The visual rows and the
+ * ISO 8601 week (Mon–Sun) align perfectly, so the hover and selection
+ * highlights always span a single row.
+ */
+export const WeekSelectionLocale: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleChange = (event: CustomEvent<{ value: string; dates: string[] }>) => {
+      const output = document.getElementById('week-selection-locale-output') as HTMLPreElement;
+      output.textContent = JSON.stringify({ value: event.detail.value, dates: event.detail.dates }, null, 2);
+    };
+
+    return html`
+      <use-calendar
+        selectmode="week"
+        controls
+        locale="en-GB"
+        year="2026"
+        month="3"
+        @use-change=${handleChange}
+      ></use-calendar>
+      <pre id="week-selection-locale-output"></pre>
+    `;
+  },
+};
+
+/**
+ * Week selection with `min`/`max` constraints. Weeks where all dates are
+ * disabled cannot be selected. Partial weeks highlight only the enabled days.
+ */
+export const WeekSelectionMinMax: StoryObj<UseCalendar> = {
+  render: () => {
+    const handleChange = (event: CustomEvent<{ value: string; dates: string[] }>) => {
+      const output = document.getElementById('week-selection-minmax-output') as HTMLPreElement;
+      output.textContent = JSON.stringify({ value: event.detail.value, dates: event.detail.dates }, null, 2);
+    };
+
+    return html`
+      <use-calendar
+        selectmode="week"
+        controls
+        year="2026"
+        month="3"
+        min="2026-03-05"
+        max="2026-03-25"
+        @use-change=${handleChange}
+      ></use-calendar>
+      <pre id="week-selection-minmax-output"></pre>
+    `;
+  },
+};
+
 export const CustomStyles: StoryObj<UseCalendar> = {
   render: () => {
     return html`

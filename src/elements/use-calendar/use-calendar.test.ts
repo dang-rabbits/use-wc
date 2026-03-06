@@ -4,6 +4,7 @@ import { html } from 'lit';
 import { page } from 'vitest/browser';
 
 import './use-calendar';
+import { UseCalendar } from './use-calendar';
 
 describe('use-calendar', () => {
   describe('controls', () => {
@@ -167,4 +168,141 @@ describe('use-calendar', () => {
   //     expect(calendar.value).toBe('2025-04-12');
   //   });
   // });
+
+  describe('selectmode="week"', () => {
+    function getCalendar() {
+      return document.querySelector('use-calendar') as UseCalendar;
+    }
+
+    function getCell(calendar: UseCalendar, dateStr: string) {
+      return calendar.shadowRoot!.querySelector(`[data-usewc-date="${dateStr}"]`) as HTMLElement;
+    }
+
+    function getGridBody(calendar: UseCalendar) {
+      return calendar.shadowRoot!.querySelector('[part="grid-body"]') as HTMLElement;
+    }
+
+    function keydown(target: HTMLElement, key: string) {
+      target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true }));
+    }
+
+    it('clicking a day selects the full ISO Mon–Sun week', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getCell(calendar, '2026-03-05').click();
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('2026-W10');
+    });
+
+    it('clicking a sunday selects the ISO week ending on that sunday', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getCell(calendar, '2026-03-01').click();
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('2026-W09');
+    });
+
+    it('dispatches use-change with ISO week value and dates array', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      let detail: { value: string; dates: string[] } | null = null;
+      calendar.addEventListener('use-change', (e) => (detail = (e as CustomEvent).detail), { once: true });
+
+      getCell(calendar, '2026-03-05').click();
+      await calendar.updateComplete;
+
+      expect(detail!.value).toBe('2026-W10');
+      expect(detail!.dates).toEqual(['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06', '2026-03-07', '2026-03-08']);
+    });
+
+    it('setting value programmatically selects the ISO week', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3" value="2026-W10"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      const w10 = ['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06', '2026-03-07', '2026-03-08'];
+      for (const date of w10) {
+        expect(getCell(calendar, date)?.getAttribute('part')).toContain('day-selected');
+      }
+    });
+
+    it('disabled dates are excluded from the selection but the ISO week value is still set', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3" min="2026-03-04" max="2026-03-06"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      let detail: { value: string; dates: string[] } | null = null;
+      calendar.addEventListener('use-change', (e) => (detail = (e as CustomEvent).detail), { once: true });
+
+      getCell(calendar, '2026-03-05').click();
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('2026-W10');
+      expect(detail!.dates).toEqual(['2026-03-04', '2026-03-05', '2026-03-06']);
+    });
+
+    it('a fully disabled week cannot be selected', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3" min="2026-03-09"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getCell(calendar, '2026-03-05').click();
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('');
+    });
+
+    it('selected day cells have the day-selected part', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getCell(calendar, '2026-03-05').click();
+      await calendar.updateComplete;
+
+      const w10 = ['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06', '2026-03-07', '2026-03-08'];
+      for (const date of w10) {
+        expect(getCell(calendar, date)?.getAttribute('part')).toContain('day-selected');
+      }
+    });
+
+    it('keyboard Enter on the focused date selects its ISO week', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      calendar.focus();
+      await calendar.updateComplete;
+
+      keydown(getGridBody(calendar), 'Enter');
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('2026-W09');
+    });
+
+    it('arrow key navigation then Enter selects the new week', async () => {
+      render(html`<use-calendar selectmode="week" year="2026" month="3"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      calendar.focus();
+      await calendar.updateComplete;
+
+      keydown(getGridBody(calendar), 'ArrowDown');
+      await new Promise((r) => setTimeout(r, 50));
+
+      keydown(getGridBody(calendar), 'Enter');
+      await calendar.updateComplete;
+
+      expect(calendar.value).toBe('2026-W10');
+    });
+  });
 });

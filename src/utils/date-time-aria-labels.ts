@@ -86,3 +86,34 @@ export function getMonthNames(locale = 'en', format: 'long' | 'short' | 'narrow'
   }
   return MONTH_NAMES.get(cacheKey)!;
 }
+
+export function getISOWeekNumber(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
+}
+
+export function getISOWeekYear(date: Date): number {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  return d.getUTCFullYear();
+}
+
+export function formatISOWeek(date: Date): string {
+  const year = getISOWeekYear(date);
+  const week = getISOWeekNumber(date);
+  return `${year}-W${String(week).padStart(2, '0')}`;
+}
+
+export function parseISOWeek(week: string): Date {
+  const [yearStr, weekStr] = week.split('-W');
+  const year = Number(yearStr);
+  const weekNum = Number(weekStr);
+  const jan4 = new Date(year, 0, 4);
+  const jan4DayOfWeek = jan4.getDay() || 7;
+  const week1Monday = new Date(year, 0, 4 - (jan4DayOfWeek - 1));
+  const monday = new Date(week1Monday);
+  monday.setDate(week1Monday.getDate() + (weekNum - 1) * 7);
+  return monday;
+}
