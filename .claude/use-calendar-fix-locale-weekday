@@ -1,0 +1,120 @@
+# Plan: Locale-Aware First Day of Week in use-calendar
+
+## Context
+
+The `use-calendar` component has a mismatch: day-name headers are correctly rotated for the
+locale's first day of week (via `getDayNames()` using `Intl.Locale.getWeekInfo().firstDay`), but
+the grid layout still uses `Date.getDay()` which treats Sunday as day 0 regardless of locale.
+For European/ISO locales (Monday-first), dates render in the wrong columns.
+
+The task is to make the grid layout locale-aware and rename the `#firstDayOfWeek` getter whose
+name no longer reflects its semantics after the change.
+
+---
+
+## Critical Files
+
+- `src/elements/use-calendar/use-calendar.ts` — main component (lines 201–223, 574–599)
+- `src/utils/date-time-aria-labels.ts` — locale utilities (`getDayNames`, lines 58–71)
+
+---
+
+## Key Math
+
+`Intl.Locale.getWeekInfo().firstDay` uses ISO 8601 numbering: **1=Monday … 7=Sunday**.
+`Date.getDay()` uses: **0=Sunday, 1=Monday … 6=Saturday**.
+
+Convert ISO firstDay → JS day index:
+```
+localeFirstDayJS = weekInfo.firstDay % 7   // 1%7=1 (Mon), 7%7=0 (Sun)
+```
+
+Column offset for a given date (how many empty cells before it):
+```
+offset = (date.getDay() - localeFirstDayJS + 7) % 7
+```
+
+Previous-month day for empty cell `i` (simplified, replaces old two-variable formula):
+```
+previousMonthData.days - offset + i
+```
+
+---
+
+## Changes
+
+### 1. `src/utils/date-time-aria-labels.ts`
+
+Extract a shared helper to avoid duplicating `getWeekInfo()` logic:
+
+```typescript
+// Add above getDayNames()
+export function getLocaleFirstDay(locale = 'en'): number {
+  const localeInfo = new Intl.Locale(locale);
+  // @ts-expect-error - getWeekInfo is not typed
+  return localeInfo.getWeekInfo().firstDay % 7; // 0=Sun, 1=Mon … 6=Sat
+}
+```
+
+Refactor `getDayNames()` to use it (removes duplicated `getWeekInfo` call):
+```typescript
+const firstDayOfWeek = getLocaleFirstDay(locale); // was: localeInfo.getWeekInfo().firstDay
+DAY_NAMES.set(cacheKey, days.slice(firstDayOfWeek).concat(days.slice(0, firstDayOfWeek)));
+// Note: slice index changes because getLocaleFirstDay returns 0-based JS index
+//       (old: slice(firstDayOfWeek - 1); new: slice(firstDayOfWeek))
+```
+
+### 2. `src/elements/use-calendar/use-calendar.ts`
+
+**Import `getLocaleFirstDay`:**
+```typescript
+import { getDayNames, getLocaleFirstDay } from '../../utils/date-time-aria-labels.js';
+```
+
+**Rename `#firstDayOfWeek` → `#startDayOffset`** and make locale-aware:
+```typescript
+// BEFORE (line 221-223):
+get #firstDayOfWeek() {
+  return new Date(this.year, this.month - 1, 1).getDay();
+}
+
+// AFTER:
+get #startDayOffset() {
+  const firstOfMonth = new Date(this.year, this.month - 1, 1);
+  return (firstOfMonth.getDay() - getLocaleFirstDay(this.locale) + 7) % 7;
+}
+```
+
+**Update `render()` (line 574)** — fix startDate branch to also be locale-aware:
+```typescript
+// BEFORE:
+const firstDay = startDate && this.#isThisMonth(startDate) ? startDate.getDay() : this.#firstDayOfWeek;
+
+// AFTER:
+const localeFirstDay = getLocaleFirstDay(this.locale);
+const firstDay = startDate && this.#isThisMonth(startDate)
+  ? (startDate.getDay() - localeFirstDay + 7) % 7
+  : this.#startDayOffset;
+```
+
+**Update prev-month day formula (line 584)** — simplify to use `firstDay` directly:
+```typescript
+// BEFORE:
+previousMonthData.days - previousMonthData.firstDay + i - 1
+
+// AFTER:
+previousMonthData.days - firstDay + i
+```
+(The `firstDay` in the new code is the column offset, making the old two-variable formula
+unnecessary. Math verified: for March 2023 with Monday-first locale, both approaches yield
+identical prev-month dates.)
+
+---
+
+## Verification
+
+1. Open Storybook / serve locally with `en-US` locale — calendar should still show Sunday first, dates in correct columns.
+2. Change locale to `fr-FR` or `de-DE` — calendar should show Monday first, dates shift to correct columns matching the header.
+3. Test a month whose 1st is a Sunday (e.g., January 2023) with `fr-FR` — should show 6 empty cells before day 1 (Mon–Sat of prev week).
+4. Test with a `startDate` that is not the 1st — verify column alignment still correct.
+5. Run existing test suite: `npm test` (or equivalent).
