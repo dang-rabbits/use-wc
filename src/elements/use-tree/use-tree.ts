@@ -226,6 +226,14 @@ export class UseTree extends LitElement {
     }
   }
 
+  updated() {
+    if (this.multiple) {
+      this.setAttribute('aria-multiselectable', 'true');
+    } else {
+      this.removeAttribute('aria-multiselectable');
+    }
+  }
+
   get #dataKey() {
     return this.name ?? FORM_DATA_KEY;
   }
@@ -255,6 +263,16 @@ export class UseTree extends LitElement {
     });
 
     this.#internals.setFormValue(this.#value);
+
+    this.dispatchEvent(
+      new CustomEvent('use-change', {
+        detail: {
+          value: this.multiple ? values : (this.#value.get(this.#dataKey) ?? null),
+        },
+        bubbles: true,
+        composed: true,
+      })
+    );
   }
 
   get value(): FormData {

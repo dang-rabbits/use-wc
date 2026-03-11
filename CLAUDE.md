@@ -4,5 +4,7 @@
 - component CSS exists in the component file directly in the `css` prop
 - design system CSS live in the `src/styles` directory
 - run `npm run lint -- --fix` and `npm run analyze` at the end of each session
+- before committing, these commands should pass successfully: `npm run build-storybook`, `npm run test`, and `npm run lint`
 - do not add inline comments
 - use conventional commits for commit messages with lowercase types and scopes
+- PRs should go to the `pre` branch instead of `main` branch

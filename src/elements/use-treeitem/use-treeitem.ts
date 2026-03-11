@@ -39,7 +39,7 @@ export class UseTreeitem extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has('disabled') && !this.#isParentDisabled();
+    return this.#internals.states.has('disabled') || this.#isParentDisabled();
   }
 
   @property({ type: Boolean })
@@ -115,9 +115,18 @@ export class UseTreeitem extends LitElement {
     this.role = 'treeitem';
   }
 
+  updated() {
+    const hasChildren = !!this.querySelector('use-treeitem');
+    if (hasChildren) {
+      this.setAttribute('aria-expanded', this.expanded ? 'true' : 'false');
+    } else {
+      this.removeAttribute('aria-expanded');
+    }
+  }
+
   render() {
     return html`
-      <div part="content" .aria-expanded=${this.expanded ? 'true' : 'false'}>
+      <div part="content">
         <div part="toggle-indicator" aria-hidden="true" @click=${this.toggle}>
           <slot name="expanded-indicator" part="expanded-indicator">
             <span part="expanded-indicator-default">-</span>
