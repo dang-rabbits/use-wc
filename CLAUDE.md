@@ -5,3 +5,4 @@
 - design system CSS live in the `src/styles` directory
 - run `npm run lint -- --fix` and `npm run analyze` at the end of each session
 - do not add inline comments
+- use conventional commits for commit messages with lowercase types and scopes
