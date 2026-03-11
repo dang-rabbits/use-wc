@@ -39,136 +39,6 @@ describe('use-calendar', () => {
     });
   });
 
-  // describe('DisableNavigation', () => {
-  //   it('should not allow selection when navigation is disabled', async () => {
-  //     calendar.id = 'navigate-calendar';
-  //     calendar.setAttribute('navigation', 'off');
-
-  //     calendar.focus();
-  //     await new Promise((resolve) => setTimeout(resolve, 50));
-
-  //     const shadowRoot = calendar.shadowRoot!;
-  //     const gridBody = shadowRoot.querySelector('[part="grid-body"]');
-  //     expect(gridBody).toBeDefined();
-
-  //     expect(calendar.getAttribute('navigation')).toBe('off');
-
-  //     const dayCells = shadowRoot.querySelectorAll('[part="day"]');
-  //     let firstSelectableCell: Element | null = null;
-
-  //     for (const cell of dayCells) {
-  //       if (cell.textContent?.trim() && /^\d+$/.test(cell.textContent.trim())) {
-  //         firstSelectableCell = cell;
-  //         break;
-  //       }
-  //     }
-
-  //     expect(firstSelectableCell).toBeDefined();
-  //     (firstSelectableCell as HTMLElement).click();
-  //     await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //     expect(calendar.value).toHaveLength(0);
-  //   });
-  // });
-
-  // describe('SingleValue', () => {
-  //   it('should allow selecting a single date and submit in form', async () => {
-  //     calendar.setAttribute('year', '2020');
-  //     calendar.setAttribute('month', '4');
-  //     calendar.setAttribute('controls', '');
-  //     calendar.setAttribute('selectmode', 'single');
-  //     calendar.setAttribute('value', '2025-04-25');
-  //     calendar.setAttribute('name', 'perfect-date');
-
-  //     await new Promise((resolve) => setTimeout(resolve, 50));
-  //     const shadowRoot = calendar.shadowRoot!;
-
-  //     const dayCells = shadowRoot.querySelectorAll('[part="day"]');
-  //     let day15Cell: Element | null = null;
-
-  //     for (const cell of dayCells) {
-  //       if (cell.textContent?.trim() === '15') {
-  //         day15Cell = cell;
-  //         break;
-  //       }
-  //     }
-
-  //     expect(day15Cell).toBeDefined();
-  //     (day15Cell as HTMLElement).click();
-  //     await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //     expect(calendar.value).toBe('2020-04-15');
-  //   });
-  // });
-
-  // describe('SetValueProgrammatically', () => {
-  //   it('should allow setting value programmatically', async () => {
-  //     calendar.id = 'set-perfect-date';
-  //     calendar.setAttribute('year', '2025');
-  //     calendar.setAttribute('month', '4');
-  //     calendar.setAttribute('selectmode', 'single');
-  //     calendar.setAttribute('name', 'perfect-date');
-  //     calendar.setAttribute('value', '2025-04-25');
-  //     calendar.setAttribute('controls', '');
-
-  //     await new Promise((resolve) => setTimeout(resolve, 50));
-
-  //     expect(calendar.value).toBe('2025-04-25');
-
-  //     calendar.value = '2025-04-16';
-  //     await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //     expect(calendar.value).toBe('2025-04-16');
-
-  //     calendar.value = '2025-04-10';
-  //     await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //     expect(calendar.value).toBe('2025-04-10');
-  //   });
-  // });
-
-  // describe('MinAndMaxDates', () => {
-  //   it('should respect min and max date constraints', async () => {
-  //     calendar.setAttribute('min', '2025-04-10');
-  //     calendar.setAttribute('max', '2025-04-20');
-  //     calendar.setAttribute('year', '2025');
-  //     calendar.setAttribute('month', '4');
-  //     calendar.setAttribute('value', '2025-04-15');
-  //     calendar.setAttribute('controls', '');
-  //     calendar.setAttribute('selectmode', 'single');
-
-  //     await new Promise((resolve) => setTimeout(resolve, 50));
-  //     const shadowRoot = calendar.shadowRoot!;
-
-  //     const dayCells = shadowRoot.querySelectorAll('[part="day"]');
-  //     const daysInRange: string[] = [];
-
-  //     for (const cell of dayCells) {
-  //       const text = cell.textContent?.trim();
-  //       if (text && /^\d+$/.test(text)) {
-  //         daysInRange.push(text);
-  //       }
-  //     }
-
-  //     expect(daysInRange.length).toBeGreaterThan(0);
-  //     expect(calendar.value).toBe('2025-04-15');
-
-  //     let day12Cell: Element | null = null;
-  //     for (const cell of dayCells) {
-  //       if (cell.textContent?.trim() === '12') {
-  //         day12Cell = cell;
-  //         break;
-  //       }
-  //     }
-
-  //     expect(day12Cell).toBeDefined();
-  //     (day12Cell as HTMLElement).click();
-  //     await new Promise((resolve) => setTimeout(resolve, 100));
-
-  //     expect(calendar.value).toBe('2025-04-12');
-  //   });
-  // });
-
   describe('selectmode="week"', () => {
     function getCalendar() {
       return document.querySelector('use-calendar') as UseCalendar;
@@ -303,6 +173,249 @@ describe('use-calendar', () => {
       await calendar.updateComplete;
 
       expect(calendar.value).toBe('2026-W10');
+    });
+  });
+
+  describe('month/year picker', () => {
+    function getCalendar() {
+      return document.querySelector('use-calendar') as UseCalendar;
+    }
+
+    function getShadow(calendar: UseCalendar) {
+      return calendar.shadowRoot!;
+    }
+
+    function getTitleButton(calendar: UseCalendar) {
+      return getShadow(calendar).querySelector<HTMLButtonElement>('[part="title-button"]')!;
+    }
+
+    it('title button is present with aria-expanded="false" initially', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      const btn = getTitleButton(calendar);
+      expect(btn).toBeTruthy();
+      expect(btn.getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('clicking the title button shows the picker and hides the day grid', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).querySelector('[part="grid"]')).toBeTruthy();
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeNull();
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
+      expect(getShadow(calendar).querySelector('[part="grid"]')).toBeNull();
+      expect(getTitleButton(calendar).getAttribute('aria-expanded')).toBe('true');
+    });
+
+    it('clicking the title button again closes the picker and restores the day grid', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeNull();
+      expect(getShadow(calendar).querySelector('[part="grid"]')).toBeTruthy();
+      expect(getTitleButton(calendar).getAttribute('aria-expanded')).toBe('false');
+    });
+
+    it('picker shows 12 month buttons', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = getShadow(calendar).querySelectorAll('[part~="picker-month"]');
+      expect(monthBtns.length).toBe(12);
+    });
+
+    it('current month button has aria-selected="true" and picker-month-current part', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+      expect(monthBtns[5].getAttribute('aria-selected')).toBe('true'); // June = index 5
+      expect(monthBtns[5].part.contains('picker-month-current')).toBe(true);
+
+      monthBtns.filter((_, i) => i !== 5).forEach((btn) => {
+        expect(btn.getAttribute('aria-selected')).toBe('false');
+      });
+    });
+
+    it('prev year button decrements the displayed year', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const yearDisplay = getShadow(calendar).querySelector('[part="picker-year-display"]')!;
+      expect(yearDisplay.textContent?.trim()).toBe('2025');
+
+      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-prev"]')!.click();
+      await calendar.updateComplete;
+
+      expect(yearDisplay.textContent?.trim()).toBe('2024');
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
+    });
+
+    it('next year button increments the displayed year', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-next"]')!.click();
+      await calendar.updateComplete;
+
+      const yearDisplay = getShadow(calendar).querySelector('[part="picker-year-display"]')!;
+      expect(yearDisplay.textContent?.trim()).toBe('2026');
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
+    });
+
+    it('clicking a month navigates to that month and closes the picker', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      // Click January (index 0)
+      const monthBtns = getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]');
+      monthBtns[0].click();
+      await calendar.updateComplete;
+
+      expect(calendar.month).toBe(1);
+      expect(calendar.year).toBe(2025);
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeNull();
+      expect(getShadow(calendar).querySelector('[part="grid"]')).toBeTruthy();
+    });
+
+    it('clicking a month after changing year navigates to that month and year', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-next"]')!.click();
+      await calendar.updateComplete;
+
+      // Click March (index 2)
+      const monthBtns = getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]');
+      monthBtns[2].click();
+      await calendar.updateComplete;
+
+      expect(calendar.month).toBe(3);
+      expect(calendar.year).toBe(2026);
+    });
+
+    it('Escape key closes the picker', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
+
+      calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, composed: true }));
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeNull();
+      expect(getShadow(calendar).querySelector('[part="grid"]')).toBeTruthy();
+    });
+
+    it('ArrowRight moves focus to the next month button', async () => {
+      render(html`<use-calendar year="2025" month="1"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+      monthBtns[0].focus();
+
+      calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, composed: true }));
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).activeElement).toBe(monthBtns[1]);
+    });
+
+    it('ArrowDown moves focus down one row (3 months)', async () => {
+      render(html`<use-calendar year="2025" month="1"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+      monthBtns[0].focus();
+
+      calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true }));
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).activeElement).toBe(monthBtns[3]); // April
+    });
+
+    it('Home moves focus to January', async () => {
+      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+      monthBtns[5].focus(); // June
+
+      calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, composed: true }));
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).activeElement).toBe(monthBtns[0]);
+    });
+
+    it('End moves focus to December', async () => {
+      render(html`<use-calendar year="2025" month="1"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+      monthBtns[0].focus(); // January
+
+      calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true, composed: true }));
+      await calendar.updateComplete;
+
+      expect(getShadow(calendar).activeElement).toBe(monthBtns[11]);
     });
   });
 });
