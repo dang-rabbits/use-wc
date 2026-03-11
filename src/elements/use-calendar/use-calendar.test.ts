@@ -189,6 +189,15 @@ describe('use-calendar', () => {
       return getShadow(calendar).querySelector<HTMLButtonElement>('[part="title-button"]')!;
     }
 
+    function getYearSectionBtns(calendar: UseCalendar, year: number) {
+      const section = getShadow(calendar).querySelector(`[data-picker-year="${year}"]`)!;
+      return Array.from(section.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+    }
+
+    function allPickerBtns(calendar: UseCalendar) {
+      return Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+    }
+
     it('title button is present with aria-expanded="false" initially', async () => {
       render(html`<use-calendar year="2025" month="6"></use-calendar>`);
       const calendar = getCalendar();
@@ -231,7 +240,7 @@ describe('use-calendar', () => {
       expect(getTitleButton(calendar).getAttribute('aria-expanded')).toBe('false');
     });
 
-    it('picker shows 12 month buttons', async () => {
+    it('picker renders a year section for each year in range', async () => {
       render(html`<use-calendar year="2025" month="6"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -239,8 +248,11 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = getShadow(calendar).querySelectorAll('[part~="picker-month"]');
-      expect(monthBtns.length).toBe(12);
+      const sections = getShadow(calendar).querySelectorAll('[part="picker-year-section"]');
+      expect(sections.length).toBeGreaterThan(1);
+
+      const yearBtns = getYearSectionBtns(calendar, 2025);
+      expect(yearBtns.length).toBe(12);
     });
 
     it('current month button has aria-selected="true" and picker-month-current part', async () => {
@@ -251,16 +263,17 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
-      expect(monthBtns[5].getAttribute('aria-selected')).toBe('true'); // June = index 5
-      expect(monthBtns[5].part.contains('picker-month-current')).toBe(true);
+      const currentBtn = getShadow(calendar).querySelector<HTMLButtonElement>('[part~="picker-month-current"]')!;
+      expect(currentBtn.getAttribute('aria-selected')).toBe('true');
+      expect(currentBtn.part.contains('picker-month-current')).toBe(true);
 
-      monthBtns.filter((_, i) => i !== 5).forEach((btn) => {
+      const allBtns = allPickerBtns(calendar);
+      allBtns.filter((b) => b !== currentBtn).forEach((btn) => {
         expect(btn.getAttribute('aria-selected')).toBe('false');
       });
     });
 
-    it('prev year button decrements the displayed year', async () => {
+    it('clicking a month in the current year navigates to it and closes the picker', async () => {
       render(html`<use-calendar year="2025" month="6"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -268,43 +281,8 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const yearDisplay = getShadow(calendar).querySelector('[part="picker-year-display"]')!;
-      expect(yearDisplay.textContent?.trim()).toBe('2025');
-
-      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-prev"]')!.click();
-      await calendar.updateComplete;
-
-      expect(yearDisplay.textContent?.trim()).toBe('2024');
-      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
-    });
-
-    it('next year button increments the displayed year', async () => {
-      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
-      const calendar = getCalendar();
-      await calendar.updateComplete;
-
-      getTitleButton(calendar).click();
-      await calendar.updateComplete;
-
-      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-next"]')!.click();
-      await calendar.updateComplete;
-
-      const yearDisplay = getShadow(calendar).querySelector('[part="picker-year-display"]')!;
-      expect(yearDisplay.textContent?.trim()).toBe('2026');
-      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeTruthy();
-    });
-
-    it('clicking a month navigates to that month and closes the picker', async () => {
-      render(html`<use-calendar year="2025" month="6"></use-calendar>`);
-      const calendar = getCalendar();
-      await calendar.updateComplete;
-
-      getTitleButton(calendar).click();
-      await calendar.updateComplete;
-
-      // Click January (index 0)
-      const monthBtns = getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]');
-      monthBtns[0].click();
+      const yearBtns = getYearSectionBtns(calendar, 2025);
+      yearBtns[0].click(); // January 2025
       await calendar.updateComplete;
 
       expect(calendar.month).toBe(1);
@@ -313,7 +291,7 @@ describe('use-calendar', () => {
       expect(getShadow(calendar).querySelector('[part="grid"]')).toBeTruthy();
     });
 
-    it('clicking a month after changing year navigates to that month and year', async () => {
+    it('clicking a month in a different year section navigates to that year and month', async () => {
       render(html`<use-calendar year="2025" month="6"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -321,16 +299,13 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      getShadow(calendar).querySelector<HTMLButtonElement>('[part="picker-year-next"]')!.click();
-      await calendar.updateComplete;
-
-      // Click March (index 2)
-      const monthBtns = getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]');
-      monthBtns[2].click();
+      const btns2026 = getYearSectionBtns(calendar, 2026);
+      btns2026[2].click(); // March 2026
       await calendar.updateComplete;
 
       expect(calendar.month).toBe(3);
       expect(calendar.year).toBe(2026);
+      expect(getShadow(calendar).querySelector('[part="picker"]')).toBeNull();
     });
 
     it('Escape key closes the picker', async () => {
@@ -358,16 +333,17 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
-      monthBtns[0].focus();
+      const btns = allPickerBtns(calendar);
+      const janIdx = btns.indexOf(getYearSectionBtns(calendar, 2025)[0]);
+      btns[janIdx].focus();
 
       calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, composed: true }));
       await calendar.updateComplete;
 
-      expect(getShadow(calendar).activeElement).toBe(monthBtns[1]);
+      expect(getShadow(calendar).activeElement).toBe(btns[janIdx + 1]);
     });
 
-    it('ArrowDown moves focus down one row (3 months)', async () => {
+    it('ArrowDown moves focus down one row (4 months)', async () => {
       render(html`<use-calendar year="2025" month="1"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -375,16 +351,17 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
-      monthBtns[0].focus();
+      const btns = allPickerBtns(calendar);
+      const janIdx = btns.indexOf(getYearSectionBtns(calendar, 2025)[0]);
+      btns[janIdx].focus();
 
       calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, composed: true }));
       await calendar.updateComplete;
 
-      expect(getShadow(calendar).activeElement).toBe(monthBtns[3]); // April
+      expect(getShadow(calendar).activeElement).toBe(btns[janIdx + 4]); // May
     });
 
-    it('Home moves focus to January', async () => {
+    it('Home moves focus to January of the focused year section', async () => {
       render(html`<use-calendar year="2025" month="6"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -392,16 +369,18 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
-      monthBtns[5].focus(); // June
+      const btns = allPickerBtns(calendar);
+      const yearBtns = getYearSectionBtns(calendar, 2025);
+      const junIdx = btns.indexOf(yearBtns[5]); // June
+      btns[junIdx].focus();
 
       calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'Home', bubbles: true, composed: true }));
       await calendar.updateComplete;
 
-      expect(getShadow(calendar).activeElement).toBe(monthBtns[0]);
+      expect(getShadow(calendar).activeElement).toBe(yearBtns[0]); // January
     });
 
-    it('End moves focus to December', async () => {
+    it('End moves focus to December of the focused year section', async () => {
       render(html`<use-calendar year="2025" month="1"></use-calendar>`);
       const calendar = getCalendar();
       await calendar.updateComplete;
@@ -409,13 +388,15 @@ describe('use-calendar', () => {
       getTitleButton(calendar).click();
       await calendar.updateComplete;
 
-      const monthBtns = Array.from(getShadow(calendar).querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
-      monthBtns[0].focus(); // January
+      const btns = allPickerBtns(calendar);
+      const yearBtns = getYearSectionBtns(calendar, 2025);
+      const janIdx = btns.indexOf(yearBtns[0]);
+      btns[janIdx].focus();
 
       calendar.dispatchEvent(new KeyboardEvent('keydown', { key: 'End', bubbles: true, composed: true }));
       await calendar.updateComplete;
 
-      expect(getShadow(calendar).activeElement).toBe(monthBtns[11]);
+      expect(getShadow(calendar).activeElement).toBe(yearBtns[11]); // December
     });
   });
 });

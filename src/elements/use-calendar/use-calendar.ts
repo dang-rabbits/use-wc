@@ -45,12 +45,10 @@ export type UseCalendarRenderDay = (data: { day: number; date: string }, html: L
  * @csspart day-today - The current date cell
  * @csspart day-disabled - A disabled date cell
  * @csspart title-button - The clickable button wrapping the month/year title
- * @csspart picker - The month/year picker panel (replaces grid when open)
- * @csspart picker-year-nav - The year navigation bar inside the picker
- * @csspart picker-year-prev - Previous year button
- * @csspart picker-year-display - Current year label (aria-live)
- * @csspart picker-year-next - Next year button
- * @csspart picker-months - The 4x3 month grid inside the picker
+ * @csspart picker - The scrollable month/year picker panel (replaces grid when open)
+ * @csspart picker-year-section - Container for one year's label and month grid
+ * @csspart picker-year-label - The year heading inside a year section
+ * @csspart picker-months - The 4-column month grid inside a year section
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
@@ -731,21 +729,22 @@ export class UseCalendar extends LitElement {
   // ── Month/year picker ──────────────────────────────────────────────────────
 
   #togglePicker = () => {
-    this.#pickerMode = this.#pickerMode === 'picker' ? 'days' : 'picker';
+    const opening = this.#pickerMode !== 'picker';
+    this.#pickerMode = opening ? 'picker' : 'days';
     this.requestUpdate();
+    if (opening) {
+      this.updateComplete.then(() => {
+        const currentBtn = this.shadowRoot?.querySelector<HTMLButtonElement>('[part~="picker-month-current"]');
+        currentBtn?.scrollIntoView({ block: 'center' });
+        currentBtn?.focus();
+      });
+    }
   };
 
-  #prevPickerYear = () => {
-    this.year = this.year - 1;
-  };
-
-  #nextPickerYear = () => {
-    this.year = this.year + 1;
-  };
-
-  #selectMonth = (month: number) => {
+  #selectMonth = (month: number, year: number) => {
     this.month = month;
-    this.#activeDate = new Date(this.year, month - 1, 1);
+    this.year = year;
+    this.#activeDate = new Date(year, month - 1, 1);
     this.#pickerMode = 'days';
     this.requestUpdate();
     this.updateComplete.then(() => {
@@ -770,13 +769,14 @@ export class UseCalendar extends LitElement {
     const idx = btns.indexOf(this.shadowRoot!.activeElement as HTMLButtonElement);
     if (idx === -1) return;
 
+    const yearSize = 12;
     let next = -1;
-    if (event.key === 'ArrowRight') next = Math.min(idx + 1, 11);
+    if (event.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1);
     else if (event.key === 'ArrowLeft') next = Math.max(idx - 1, 0);
-    else if (event.key === 'ArrowDown') next = Math.min(idx + 3, 11);
-    else if (event.key === 'ArrowUp') next = Math.max(idx - 3, 0);
-    else if (event.key === 'Home') next = 0;
-    else if (event.key === 'End') next = 11;
+    else if (event.key === 'ArrowDown') next = Math.min(idx + 4, btns.length - 1);
+    else if (event.key === 'ArrowUp') next = Math.max(idx - 4, 0);
+    else if (event.key === 'Home') next = Math.floor(idx / yearSize) * yearSize;
+    else if (event.key === 'End') next = Math.min(Math.floor(idx / yearSize) * yearSize + yearSize - 1, btns.length - 1);
 
     if (next > -1) {
       event.preventDefault();
@@ -784,6 +784,7 @@ export class UseCalendar extends LitElement {
         b.tabIndex = i === next ? 0 : -1;
       });
       btns[next].focus();
+      btns[next].scrollIntoView({ block: 'nearest' });
     }
   };
 
@@ -796,41 +797,42 @@ export class UseCalendar extends LitElement {
 
   #renderPicker() {
     const months = getMonthNames(this.locale, 'short');
-    const rows = [months.slice(0, 3), months.slice(3, 6), months.slice(6, 9), months.slice(9, 12)];
+    const rows = [months.slice(0, 4), months.slice(4, 8), months.slice(8, 12)];
+    const startYear = this.year - 10;
+    const endYear = this.year + 20;
+    const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
     return html`
       <div part="picker" id="calendar-picker">
-        <div part="picker-year-nav">
-          <button part="picker-year-prev" type="button" aria-label="Previous year" @click=${this.#prevPickerYear}
-            >&#8249;</button
-          >
-          <span part="picker-year-display" aria-live="polite">${this.year}</span>
-          <button part="picker-year-next" type="button" aria-label="Next year" @click=${this.#nextPickerYear}
-            >&#8250;</button
-          >
-        </div>
-        <div part="picker-months" role="grid" aria-label="Select month">
-          ${rows.map(
-            (row, ri) => html`
-              <div role="row">
-                ${row.map((name, ci) => {
-                  const monthNum = ri * 3 + ci + 1;
-                  const isCurrent = monthNum === this.month;
-                  return html`
-                    <button
-                      part="picker-month ${isCurrent ? 'picker-month-current' : ''}"
-                      role="gridcell"
-                      type="button"
-                      aria-selected=${isCurrent ? 'true' : 'false'}
-                      tabindex=${isCurrent ? '0' : '-1'}
-                      @click=${() => this.#selectMonth(monthNum)}
-                      >${name}</button
-                    >
-                  `;
-                })}
+        ${years.map(
+          (year) => html`
+            <div part="picker-year-section" data-picker-year=${year}>
+              <div part="picker-year-label">${year}</div>
+              <div part="picker-months" role="grid" aria-label=${String(year)}>
+                ${rows.map(
+                  (row, ri) => html`
+                    <div role="row">
+                      ${row.map((name, ci) => {
+                        const monthNum = ri * 4 + ci + 1;
+                        const isCurrent = year === this.year && monthNum === this.month;
+                        return html`
+                          <button
+                            part="picker-month ${isCurrent ? 'picker-month-current' : ''}"
+                            role="gridcell"
+                            type="button"
+                            aria-selected=${isCurrent ? 'true' : 'false'}
+                            tabindex=${isCurrent ? '0' : '-1'}
+                            @click=${() => this.#selectMonth(monthNum, year)}
+                            >${name}</button
+                          >
+                        `;
+                      })}
+                    </div>
+                  `
+                )}
               </div>
-            `
-          )}
-        </div>
+            </div>
+          `
+        )}
       </div>
     `;
   }
@@ -1029,15 +1031,22 @@ export class UseCalendar extends LitElement {
       font: inherit;
     }
 
-    [part='picker-year-nav'] {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    [part='picker'] {
+      overflow-y: auto;
+      max-height: 16rem;
+    }
+
+    [part='picker-year-label'] {
+      font-weight: bold;
+      text-align: start;
+      padding-block: 0.5em 0.25em;
+      border-bottom: 1px solid currentColor;
+      margin-block-end: 0.25em;
     }
 
     [part='picker-months'] {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
     }
 
     [part~='picker-month-current'] {
