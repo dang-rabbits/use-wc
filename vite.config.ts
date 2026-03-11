@@ -7,7 +7,7 @@ import { externalizeDeps } from 'vite-plugin-externalize-deps';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { playwright } from '@vitest/browser-playwright';
-const dirname = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
+const rootDir = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 function resolveImports(filePath: string): string {
@@ -24,7 +24,7 @@ function cssEntries(entries: Record<string, string>) {
     closeBundle() {
       for (const [name, entryPath] of Object.entries(entries)) {
         const css = resolveImports(entryPath);
-        writeFileSync(resolve(__dirname, 'dist', `${name}.css`), css);
+        writeFileSync(resolve(rootDir, 'dist', `${name}.css`), css);
       }
     },
   };
@@ -35,7 +35,7 @@ export default defineConfig(({ command }) => ({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/use-wc.ts'),
+      entry: resolve(rootDir, 'src/use-wc.ts'),
       name: 'use-wc',
       fileName: 'use-wc',
     },
@@ -44,8 +44,8 @@ export default defineConfig(({ command }) => ({
     dts(),
     externalizeDeps(),
     cssEntries({
-      'design-system': resolve(__dirname, 'src/styles/theme.css'),
-      'default-tokens': resolve(__dirname, 'src/styles/tokens.css'),
+      'design-system': resolve(rootDir, 'src/styles/theme.css'),
+      'default-tokens': resolve(rootDir, 'src/styles/tokens.css'),
     }),
   ],
   test: {
