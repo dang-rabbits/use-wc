@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
+import { userEvent, expect, waitFor } from '@storybook/test';
 import { html } from 'lit';
 import { UseCalendar, UseCalendarRenderDay } from './use-calendar';
 
@@ -565,5 +566,213 @@ export const CustomStyles: StoryObj<UseCalendar> = {
       </style>
       <use-calendar selectmode="single" controls class="custom-styles"></use-calendar>
     `;
+  },
+};
+
+// ── Month/year picker interaction tests ──────────────────────────────────────
+
+/** Get the shadow root of the first use-calendar in the canvas. */
+function shadow(canvasElement: HTMLElement): ShadowRoot {
+  const cal = canvasElement.querySelector('use-calendar') as HTMLElement;
+  return cal.shadowRoot!;
+}
+
+/**
+ * Clicking the title button should open the picker and hide the day grid.
+ */
+export const ClickTitleOpensPicker: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+
+    expect(root.querySelector('[part="grid"]')).toBeTruthy();
+    expect(root.querySelector('[part="picker"]')).toBeNull();
+
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+    expect(titleBtn.getAttribute('aria-expanded')).toBe('false');
+
+    await userEvent.click(titleBtn);
+
+    await waitFor(() => {
+      expect(root.querySelector('[part="picker"]')).toBeTruthy();
+      expect(root.querySelector('[part="grid"]')).toBeNull();
+    });
+
+    expect(titleBtn.getAttribute('aria-expanded')).toBe('true');
+  },
+};
+
+/**
+ * Clicking the title button again should close the picker and restore the day grid.
+ */
+export const ClickTitleTogglesPicker: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => {
+      expect(root.querySelector('[part="picker"]')).toBeNull();
+      expect(root.querySelector('[part="grid"]')).toBeTruthy();
+    });
+    expect(titleBtn.getAttribute('aria-expanded')).toBe('false');
+  },
+};
+
+/**
+ * Clicking the prev/next year buttons should update the year display without closing the picker.
+ */
+export const YearNavigation: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    const yearDisplay = root.querySelector('[part="picker-year-display"]')!;
+    expect(yearDisplay.textContent?.trim()).toBe('2025');
+
+    await userEvent.click(root.querySelector<HTMLButtonElement>('[part="picker-year-prev"]')!);
+    await waitFor(() => expect(yearDisplay.textContent?.trim()).toBe('2024'));
+
+    expect(root.querySelector('[part="picker"]')).toBeTruthy();
+
+    const nextBtn = root.querySelector<HTMLButtonElement>('[part="picker-year-next"]')!;
+    await userEvent.click(nextBtn);
+    await userEvent.click(nextBtn);
+    await waitFor(() => expect(yearDisplay.textContent?.trim()).toBe('2026'));
+  },
+};
+
+/**
+ * Clicking a month in the picker should navigate to that month/year and close the picker.
+ */
+export const SelectMonthClosesPickerAndNavigates: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    const monthBtns = root.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]');
+    expect(monthBtns.length).toBe(12);
+
+    await userEvent.click(monthBtns[0]); // January
+
+    await waitFor(() => {
+      expect(root.querySelector('[part="picker"]')).toBeNull();
+      expect(root.querySelector('[part="grid"]')).toBeTruthy();
+    });
+
+    const cal = canvasElement.querySelector('use-calendar') as UseCalendar;
+    expect(cal.month).toBe(1);
+    expect(cal.year).toBe(2025);
+  },
+};
+
+/**
+ * Pressing Escape while the picker is open should close the picker.
+ */
+export const EscapeClosesPicker: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(root.querySelector('[part="picker"]')).toBeNull();
+      expect(root.querySelector('[part="grid"]')).toBeTruthy();
+    });
+  },
+};
+
+/**
+ * Arrow keys navigate the 4×3 month grid; Home/End jump to first/last.
+ */
+export const ArrowKeyNavInPicker: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="1"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    const monthBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+    expect(monthBtns[0].tabIndex).toBe(0); // January is current month
+
+    monthBtns[0].focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(root.activeElement).toBe(monthBtns[1]); // February
+
+    await userEvent.keyboard('{ArrowDown}');
+    expect(root.activeElement).toBe(monthBtns[4]); // May
+
+    await userEvent.keyboard('{End}');
+    expect(root.activeElement).toBe(monthBtns[11]); // December
+
+    await userEvent.keyboard('{Home}');
+    expect(root.activeElement).toBe(monthBtns[0]); // January
+  },
+};
+
+/**
+ * The current month button should have aria-selected="true" and part includes picker-month-current.
+ */
+export const CurrentMonthHighlighted: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2025" month="6"></use-calendar>`,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    const monthBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+
+    expect(monthBtns[5].getAttribute('aria-selected')).toBe('true'); // June (index 5)
+    expect(monthBtns[5].part.contains('picker-month-current')).toBe(true);
+
+    monthBtns
+      .filter((_, i) => i !== 5)
+      .forEach((btn) => {
+        expect(btn.getAttribute('aria-selected')).toBe('false');
+      });
+  },
+};
+
+/**
+ * Focus moving outside the calendar should close the picker.
+ */
+export const FocusOutClosesPicker: StoryObj<UseCalendar> = {
+  render: () => html`
+    <use-calendar year="2025" month="6"></use-calendar>
+    <button id="outside">Outside</button>
+  `,
+  play: async ({ canvasElement }) => {
+    const root = shadow(canvasElement);
+    const titleBtn = root.querySelector<HTMLButtonElement>('[part="title-button"]')!;
+
+    await userEvent.click(titleBtn);
+    await waitFor(() => expect(root.querySelector('[part="picker"]')).toBeTruthy());
+
+    await userEvent.click(canvasElement.querySelector<HTMLButtonElement>('#outside')!);
+
+    await waitFor(() => {
+      expect(root.querySelector('[part="picker"]')).toBeNull();
+    });
   },
 };
