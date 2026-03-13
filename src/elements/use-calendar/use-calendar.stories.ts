@@ -567,3 +567,12 @@ export const CustomStyles: StoryObj<UseCalendar> = {
     `;
   },
 };
+
+/**
+ * Clicking the month/year title opens an inline scrollable picker.
+ * Each year has its own section with a 4-column month grid. Selecting a month
+ * from any year navigates directly to that month and year.
+ */
+export const MonthYearPicker: StoryObj<UseCalendar> = {
+  render: () => html`<use-calendar year="2026" month="3" controls></use-calendar>`,
+};
