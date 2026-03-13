@@ -576,4 +576,3 @@ export const CustomStyles: StoryObj<UseCalendar> = {
 export const MonthYearPicker: StoryObj<UseCalendar> = {
   render: () => html`<use-calendar year="2026" month="3" controls></use-calendar>`,
 };
-

@@ -1,6 +1,12 @@
 import { LitElement, html, css, TemplateResult } from 'lit';
 import { customElement, property, query } from 'lit/decorators.js';
-import { getDayNames, getLocaleFirstDay, getMonthNames, formatISOWeek, parseISOWeek } from '../../utils/date-time-aria-labels';
+import {
+  getDayNames,
+  getLocaleFirstDay,
+  getMonthNames,
+  formatISOWeek,
+  parseISOWeek,
+} from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
 import { tabbable } from 'tabbable';
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
@@ -129,6 +135,13 @@ export class UseCalendar extends LitElement {
   #activeDate = new Date(this.year, this.month - 1, 1);
 
   #pickerMode: 'days' | 'picker' = 'days';
+  #pickerHeight: number | null = null;
+  #todayLabel = new Intl.DateTimeFormat(navigator.language, {
+    month: 'long',
+    year: 'numeric',
+    day: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date());
 
   constructor() {
     super();
@@ -286,6 +299,20 @@ export class UseCalendar extends LitElement {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
     };
+  }
+
+  get #previousMonthLabel() {
+    const { year, month } = this.#previousMonthData;
+    return new Intl.DateTimeFormat(this.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+      new Date(year, month - 1, 1)
+    );
+  }
+
+  get #nextMonthLabel() {
+    const { year, month } = this.#nextMonthData;
+    return new Intl.DateTimeFormat(this.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
+      new Date(year, month - 1, 1)
+    );
   }
 
   get #nextMonthData() {
@@ -730,12 +757,22 @@ export class UseCalendar extends LitElement {
 
   #togglePicker = () => {
     const opening = this.#pickerMode !== 'picker';
+    if (opening) {
+      const grid = this.shadowRoot?.querySelector<HTMLElement>('[part="grid"]');
+      this.#pickerHeight = grid?.offsetHeight ?? null;
+    }
     this.#pickerMode = opening ? 'picker' : 'days';
     this.requestUpdate();
     if (opening) {
       this.updateComplete.then(() => {
+        const picker = this.shadowRoot?.querySelector<HTMLElement>('[part="picker"]');
         const currentBtn = this.shadowRoot?.querySelector<HTMLButtonElement>('[part~="picker-month-current"]');
-        currentBtn?.scrollIntoView({ block: 'center' });
+        if (picker && currentBtn) {
+          const pickerRect = picker.getBoundingClientRect();
+          const btnRect = currentBtn.getBoundingClientRect();
+          picker.scrollTop =
+            picker.scrollTop + (btnRect.top - pickerRect.top) - picker.clientHeight / 2 + btnRect.height / 2;
+        }
         currentBtn?.focus();
       });
     }
@@ -776,7 +813,8 @@ export class UseCalendar extends LitElement {
     else if (event.key === 'ArrowDown') next = Math.min(idx + 4, btns.length - 1);
     else if (event.key === 'ArrowUp') next = Math.max(idx - 4, 0);
     else if (event.key === 'Home') next = Math.floor(idx / yearSize) * yearSize;
-    else if (event.key === 'End') next = Math.min(Math.floor(idx / yearSize) * yearSize + yearSize - 1, btns.length - 1);
+    else if (event.key === 'End')
+      next = Math.min(Math.floor(idx / yearSize) * yearSize + yearSize - 1, btns.length - 1);
 
     if (next > -1) {
       event.preventDefault();
@@ -798,11 +836,15 @@ export class UseCalendar extends LitElement {
   #renderPicker() {
     const months = getMonthNames(this.locale, 'short');
     const rows = [months.slice(0, 4), months.slice(4, 8), months.slice(8, 12)];
-    const startYear = this.year - 10;
-    const endYear = this.year + 20;
+    const startYear = 1970;
+    const endYear = new Date().getFullYear() + 100;
     const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
     return html`
-      <div part="picker" id="calendar-picker">
+      <div
+        part="picker"
+        id="calendar-picker"
+        style=${this.#pickerHeight != null ? `max-height:${this.#pickerHeight}px` : ''}
+      >
         ${years.map(
           (year) => html`
             <div part="picker-year-section" data-picker-year=${year}>
@@ -822,8 +864,9 @@ export class UseCalendar extends LitElement {
                             aria-selected=${isCurrent ? 'true' : 'false'}
                             tabindex=${isCurrent ? '0' : '-1'}
                             @click=${() => this.#selectMonth(monthNum, year)}
-                            >${name}</button
                           >
+                            ${name}
+                          </button>
                         `;
                       })}
                     </div>
@@ -919,6 +962,7 @@ export class UseCalendar extends LitElement {
                 <button
                   type="button"
                   part="control control-previous"
+                  aria-label=${this.#previousMonthLabel}
                   @click=${this.previousMonth}
                   ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
                 >
@@ -927,6 +971,7 @@ export class UseCalendar extends LitElement {
                 <button
                   type="button"
                   part="control control-today"
+                  aria-label=${this.#todayLabel}
                   @click=${this.today}
                   ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
                 >
@@ -935,6 +980,7 @@ export class UseCalendar extends LitElement {
                 <button
                   type="button"
                   part="control control-next"
+                  aria-label=${this.#nextMonthLabel}
                   @click=${this.nextMonth}
                   ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
                 >
@@ -1033,20 +1079,30 @@ export class UseCalendar extends LitElement {
 
     [part='picker'] {
       overflow-y: auto;
-      max-height: 16rem;
     }
 
     [part='picker-year-label'] {
       font-weight: bold;
       text-align: start;
       padding-block: 0.5em 0.25em;
-      border-bottom: 1px solid currentColor;
       margin-block-end: 0.25em;
     }
 
     [part='picker-months'] {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    [part='picker-months'] [role='row'] {
+      display: contents;
+    }
+
+    [part~='picker-month'] {
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      font: inherit;
     }
 
     [part~='picker-month-current'] {

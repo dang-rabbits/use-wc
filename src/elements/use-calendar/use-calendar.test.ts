@@ -90,7 +90,15 @@ describe('use-calendar', () => {
       await calendar.updateComplete;
 
       expect(detail!.value).toBe('2026-W10');
-      expect(detail!.dates).toEqual(['2026-03-02', '2026-03-03', '2026-03-04', '2026-03-05', '2026-03-06', '2026-03-07', '2026-03-08']);
+      expect(detail!.dates).toEqual([
+        '2026-03-02',
+        '2026-03-03',
+        '2026-03-04',
+        '2026-03-05',
+        '2026-03-06',
+        '2026-03-07',
+        '2026-03-08',
+      ]);
     });
 
     it('setting value programmatically selects the ISO week', async () => {
@@ -105,7 +113,9 @@ describe('use-calendar', () => {
     });
 
     it('disabled dates are excluded from the selection but the ISO week value is still set', async () => {
-      render(html`<use-calendar selectmode="week" year="2026" month="3" min="2026-03-04" max="2026-03-06"></use-calendar>`);
+      render(
+        html`<use-calendar selectmode="week" year="2026" month="3" min="2026-03-04" max="2026-03-06"></use-calendar>`
+      );
       const calendar = getCalendar();
       await calendar.updateComplete;
 
@@ -268,9 +278,11 @@ describe('use-calendar', () => {
       expect(currentBtn.part.contains('picker-month-current')).toBe(true);
 
       const allBtns = allPickerBtns(calendar);
-      allBtns.filter((b) => b !== currentBtn).forEach((btn) => {
-        expect(btn.getAttribute('aria-selected')).toBe('false');
-      });
+      allBtns
+        .filter((b) => b !== currentBtn)
+        .forEach((btn) => {
+          expect(btn.getAttribute('aria-selected')).toBe('false');
+        });
     });
 
     it('clicking a month in the current year navigates to it and closes the picker', async () => {
