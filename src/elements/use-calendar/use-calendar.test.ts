@@ -410,5 +410,61 @@ describe('use-calendar', () => {
 
       expect(getShadow(calendar).activeElement).toBe(yearBtns[11]); // December
     });
+
+    it('with min set, picker starts from the min year', async () => {
+      render(html`<use-calendar year="2025" month="6" min="2024-03-01"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const sections = getShadow(calendar).querySelectorAll('[part="picker-year-section"]');
+      const years = Array.from(sections).map((s) => Number(s.getAttribute('data-picker-year')));
+      expect(years[0]).toBe(2024);
+      expect(years).not.toContain(2023);
+    });
+
+    it('with max set, picker ends at the max year', async () => {
+      render(html`<use-calendar year="2025" month="6" max="2026-09-30"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const sections = getShadow(calendar).querySelectorAll('[part="picker-year-section"]');
+      const years = Array.from(sections).map((s) => Number(s.getAttribute('data-picker-year')));
+      expect(years[years.length - 1]).toBe(2026);
+      expect(years).not.toContain(2027);
+    });
+
+    it('months before min in the min year are not rendered in the picker', async () => {
+      render(html`<use-calendar year="2025" month="6" min="2025-04-01"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const btns = getYearSectionBtns(calendar, 2025);
+      const monthNums = btns.map((b) => Number(b.getAttribute('data-picker-month')));
+      expect(monthNums).not.toContain(1);
+      expect(monthNums).not.toContain(2);
+      expect(monthNums).not.toContain(3);
+      expect(monthNums).toContain(4);
+    });
+
+    it('months after max in the max year are not rendered in the picker', async () => {
+      render(html`<use-calendar year="2026" month="6" max="2026-09-30"></use-calendar>`);
+      const calendar = getCalendar();
+      await calendar.updateComplete;
+      getTitleButton(calendar).click();
+      await calendar.updateComplete;
+
+      const btns = getYearSectionBtns(calendar, 2026);
+      const monthNums = btns.map((b) => Number(b.getAttribute('data-picker-month')));
+      expect(monthNums).toContain(9);
+      expect(monthNums).not.toContain(10);
+      expect(monthNums).not.toContain(11);
+      expect(monthNums).not.toContain(12);
+    });
   });
 });
