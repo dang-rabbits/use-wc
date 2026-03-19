@@ -22,9 +22,14 @@ export class UseGridRow extends LitElement {
   }
 
   updated() {
-    this.setAttribute("aria-selected", this.selected ? "true" : "false");
+    const selectmode = this.closest("use-grid")?.getAttribute("selectmode") ?? "none";
+    if (selectmode !== "none") {
+      this.setAttribute("aria-selected", this.selected ? "true" : "false");
+    } else {
+      this.removeAttribute("aria-selected");
+    }
+
     this.setAttribute("aria-disabled", this.disabled ? "true" : "false");
-    this.setAttribute("aria-readonly", this.readonly ? "true" : "false");
   }
 
   render() {
