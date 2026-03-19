@@ -262,10 +262,12 @@ export class UseMonth extends LitElement {
         else next = Math.max(idx - 1, 0);
         break;
       case 'ArrowDown':
-        next = Math.min(idx + 4, 11);
+        if (idx + 4 > 11 && this.#navigationWrap) { yearDelta = 1; next = idx + 4 - 12; }
+        else next = Math.min(idx + 4, 11);
         break;
       case 'ArrowUp':
-        next = Math.max(idx - 4, 0);
+        if (idx - 4 < 0 && this.#navigationWrap) { yearDelta = -1; next = idx - 4 + 12; }
+        else next = Math.max(idx - 4, 0);
         break;
       case 'Home':
         next = 0;
