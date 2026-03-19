@@ -1,5 +1,6 @@
 export * from './elements/use-option/use-option';
 export * from './elements/use-date/use-date';
+export * from './elements/use-month/use-month';
 export * from './elements/use-dropdown/use-dropdown';
 export * from './elements/use-duration/use-duration';
 export * from './elements/use-listbox/use-listbox';
