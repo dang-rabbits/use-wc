@@ -247,6 +247,12 @@ export class UseCalendar extends LitElement {
     return (this.min && date < this.min) || (this.max && date > this.max);
   }
 
+  #monthAllowed(month: number, year: number) {
+    const firstDay = this.#formatDate(year, month, 1);
+    const lastDay = this.#formatDate(year, month, new Date(year, month, 0).getDate());
+    return (!this.min || lastDay >= this.min) && (!this.max || firstDay <= this.max);
+  }
+
   #internalSetValue(value: string | { isoWeek: string; dates: string[] }) {
     if (typeof value === 'string') {
       if (this.#dateDisabled(value)) return;
@@ -835,9 +841,10 @@ export class UseCalendar extends LitElement {
 
   #renderPicker() {
     const months = getMonthNames(this.locale, 'short');
-    const rows = [months.slice(0, 4), months.slice(4, 8), months.slice(8, 12)];
-    const startYear = 1970;
-    const endYear = new Date().getFullYear() + 100;
+    const startYear = this.min ? (this.#parseDate(this.min)?.getFullYear() ?? 1970) : 1970;
+    const endYear = this.max
+      ? (this.#parseDate(this.max)?.getFullYear() ?? new Date().getFullYear() + 100)
+      : new Date().getFullYear() + 100;
     const years = Array.from({ length: endYear - startYear + 1 }, (_, i) => startYear + i);
     return html`
       <div
@@ -845,37 +852,34 @@ export class UseCalendar extends LitElement {
         id="calendar-picker"
         style=${this.#pickerHeight != null ? `max-height:${this.#pickerHeight}px` : ''}
       >
-        ${years.map(
-          (year) => html`
+        ${years.map((year) => {
+          const allowedMonths = months
+            .map((name, i) => ({ name, monthNum: i + 1 }))
+            .filter(({ monthNum }) => this.#monthAllowed(monthNum, year));
+          return html`
             <div part="picker-year-section" data-picker-year=${year}>
               <div part="picker-year-label">${year}</div>
               <div part="picker-months" role="grid" aria-label=${String(year)}>
-                ${rows.map(
-                  (row, ri) => html`
-                    <div role="row">
-                      ${row.map((name, ci) => {
-                        const monthNum = ri * 4 + ci + 1;
-                        const isCurrent = year === this.year && monthNum === this.month;
-                        return html`
-                          <button
-                            part="picker-month ${isCurrent ? 'picker-month-current' : ''}"
-                            role="gridcell"
-                            type="button"
-                            aria-selected=${isCurrent ? 'true' : 'false'}
-                            tabindex=${isCurrent ? '0' : '-1'}
-                            @click=${() => this.#selectMonth(monthNum, year)}
-                          >
-                            ${name}
-                          </button>
-                        `;
-                      })}
-                    </div>
-                  `
-                )}
+                ${allowedMonths.map(({ name, monthNum }) => {
+                  const isCurrent = year === this.year && monthNum === this.month;
+                  return html`
+                    <button
+                      part="picker-month ${isCurrent ? 'picker-month-current' : ''}"
+                      role="gridcell"
+                      type="button"
+                      aria-selected=${isCurrent ? 'true' : 'false'}
+                      tabindex=${isCurrent ? '0' : '-1'}
+                      data-picker-month=${monthNum}
+                      @click=${() => this.#selectMonth(monthNum, year)}
+                    >
+                      ${name}
+                    </button>
+                  `;
+                })}
               </div>
             </div>
-          `
-        )}
+          `;
+        })}
       </div>
     `;
   }
@@ -1091,10 +1095,6 @@ export class UseCalendar extends LitElement {
     [part='picker-months'] {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-    }
-
-    [part='picker-months'] [role='row'] {
-      display: contents;
     }
 
     [part~='picker-month'] {
