@@ -44,9 +44,7 @@ describe('use-month', () => {
       render(html`<use-month></use-month>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
-      expect(picker.shadowRoot!.querySelector('[part="title"]')!.textContent!.trim()).toBe(
-        String(year)
-      );
+      expect(picker.shadowRoot!.querySelector('[part="title"]')!.textContent!.trim()).toBe(String(year));
     });
 
     it('applies month-current part to the real-world current month', async () => {
@@ -196,9 +194,7 @@ describe('use-month', () => {
       const picker = getMonthPicker();
       await picker.updateComplete;
 
-      const prevBtn = picker.shadowRoot!.querySelector<HTMLButtonElement>(
-        '[part~="control-previous"]'
-      )!;
+      const prevBtn = picker.shadowRoot!.querySelector<HTMLButtonElement>('[part~="control-previous"]')!;
       expect(prevBtn.disabled).toBe(true);
     });
 
@@ -207,9 +203,7 @@ describe('use-month', () => {
       const picker = getMonthPicker();
       await picker.updateComplete;
 
-      const nextBtn = picker.shadowRoot!.querySelector<HTMLButtonElement>(
-        '[part~="control-next"]'
-      )!;
+      const nextBtn = picker.shadowRoot!.querySelector<HTMLButtonElement>('[part~="control-next"]')!;
       expect(nextBtn.disabled).toBe(true);
     });
   });

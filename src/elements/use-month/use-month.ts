@@ -13,7 +13,7 @@ import { getMonthNames } from '../../utils/date-time-aria-labels';
  * @csspart title - Year number label inside the header
  * @csspart control - Shared part on all nav buttons
  * @csspart control-previous - Previous-year nav button
- * @csspart control-thismonth - "This month" nav button (hidden when already viewing the current year)
+ * @csspart control-thismonth - "This month" nav button
  * @csspart control-next - Next-year nav button
  * @csspart grid - 4-column 12-month grid container
  * @csspart month - Individual month cell button
@@ -73,14 +73,10 @@ export class UseMonth extends LitElement {
       opacity: 0.5;
       cursor: default;
     }
-
   `;
 
   #internals: ElementInternals;
   #value: string = '';
-  // Tracks which month index (0–11) has tabindex="0" for keyboard navigation.
-  // Updated by arrow-key nav, year navigation, and value changes.
-  #focusedMonthIndex: number = 0;
 
   /** Year currently shown in the grid. Defaults to the current year, or the year of the initial value attribute. */
   @property({ type: Number, reflect: true })
@@ -94,8 +90,6 @@ export class UseMonth extends LitElement {
     if (initialValue) {
       this.#value = initialValue;
       this.#internals.setFormValue(initialValue);
-      this.#syncFocusFromValue(initialValue);
-      // Navigate the view to the year of the initial value
       const parsed = parseInt(initialValue.split('-')[0], 10);
       if (!isNaN(parsed)) this.year = parsed;
     }
@@ -153,11 +147,10 @@ export class UseMonth extends LitElement {
   get value(): string {
     return this.#value;
   }
-  set value(v: string) {
+  set value(value: string) {
     const old = this.#value;
-    this.#value = v;
-    this.#internals.setFormValue(v || null);
-    this.#syncFocusFromValue(v);
+    this.#value = value;
+    this.#internals.setFormValue(value || null);
     this.requestUpdate('value', old);
   }
 
@@ -166,7 +159,6 @@ export class UseMonth extends LitElement {
     const minYear = this.#minYear;
     if (minYear !== null && this.year <= minYear) return;
     this.year = this.year - 1;
-    // Keep focused month index; clamp to December if coming from above
     this.requestUpdate();
   }
 
@@ -184,8 +176,6 @@ export class UseMonth extends LitElement {
     this.requestUpdate();
   }
 
-  // ── Private helpers ─────────────────────────────────────────────────────────
-
   get #minYear(): number | null {
     return this.min ? parseInt(this.min.split('-')[0], 10) : null;
   }
@@ -195,25 +185,11 @@ export class UseMonth extends LitElement {
   }
 
   #monthDisabled(year: number, month: number): boolean {
-    // ISO 8601 YYYY-MM strings sort lexicographically, so simple string comparison works.
     const ym = `${year}-${String(month).padStart(2, '0')}`;
     return (!!this.min && ym < this.min) || (!!this.max && ym > this.max);
   }
 
-  #syncFocusFromValue(v: string) {
-    if (!v) return;
-    const [yearStr, monthStr] = v.split('-');
-    if (parseInt(yearStr, 10) === this.year) {
-      const monthNum = parseInt(monthStr, 10);
-      if (monthNum >= 1 && monthNum <= 12) {
-        this.#focusedMonthIndex = monthNum - 1;
-      }
-    }
-  }
-
-  /** Returns the month index (0–11) that should have tabindex="0". */
   #getRovingIndex(): number {
-    // If a value is selected in the current view year, that month is the roving focus.
     if (this.#value) {
       const [yearStr, monthStr] = this.#value.split('-');
       if (parseInt(yearStr, 10) === this.year) {
@@ -221,7 +197,13 @@ export class UseMonth extends LitElement {
         if (monthNum >= 1 && monthNum <= 12) return monthNum - 1;
       }
     }
-    return this.#focusedMonthIndex;
+    const focused = this.shadowRoot?.querySelector<HTMLElement>('[part~="month"][tabindex="0"]');
+    if (focused) {
+      const all = Array.from(this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="month"]'));
+      const idx = all.indexOf(focused as HTMLButtonElement);
+      if (idx !== -1) return idx;
+    }
+    return 0;
   }
 
   #selectMonth(monthNum: number) {
@@ -229,7 +211,6 @@ export class UseMonth extends LitElement {
     const ym = `${this.year}-${String(monthNum).padStart(2, '0')}`;
     this.#value = ym;
     this.#internals.setFormValue(ym);
-    this.#focusedMonthIndex = monthNum - 1;
     this.requestUpdate();
     this.dispatchEvent(
       new CustomEvent('use-change', {
@@ -243,10 +224,8 @@ export class UseMonth extends LitElement {
   #handleKeyDown = (event: KeyboardEvent) => {
     if (!this.navigationEnabled) return;
 
-    const btns = Array.from(
-      this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="month"]')
-    );
-    const idx = btns.indexOf(this.shadowRoot!.activeElement as HTMLButtonElement);
+    const buttons = Array.from(this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="month"]'));
+    const idx = buttons.indexOf(this.shadowRoot!.activeElement as HTMLButtonElement);
     if (idx === -1) return;
 
     let next = -1;
@@ -254,20 +233,28 @@ export class UseMonth extends LitElement {
 
     switch (event.key) {
       case 'ArrowRight':
-        if (idx === 11 && this.#navigationWrap) { yearDelta = 1; next = 0; }
-        else next = Math.min(idx + 1, 11);
+        if (idx === 11 && this.#navigationWrap) {
+          yearDelta = 1;
+          next = 0;
+        } else next = Math.min(idx + 1, 11);
         break;
       case 'ArrowLeft':
-        if (idx === 0 && this.#navigationWrap) { yearDelta = -1; next = 11; }
-        else next = Math.max(idx - 1, 0);
+        if (idx === 0 && this.#navigationWrap) {
+          yearDelta = -1;
+          next = 11;
+        } else next = Math.max(idx - 1, 0);
         break;
       case 'ArrowDown':
-        if (idx + 4 > 11 && this.#navigationWrap) { yearDelta = 1; next = idx + 4 - 12; }
-        else next = Math.min(idx + 4, 11);
+        if (idx + 4 > 11 && this.#navigationWrap) {
+          yearDelta = 1;
+          next = idx + 4 - 12;
+        } else next = Math.min(idx + 4, 11);
         break;
       case 'ArrowUp':
-        if (idx - 4 < 0 && this.#navigationWrap) { yearDelta = -1; next = idx - 4 + 12; }
-        else next = Math.max(idx - 4, 0);
+        if (idx - 4 < 0 && this.#navigationWrap) {
+          yearDelta = -1;
+          next = idx - 4 + 12;
+        } else next = Math.max(idx - 4, 0);
         break;
       case 'Home':
         next = 0;
@@ -304,19 +291,19 @@ export class UseMonth extends LitElement {
       if (!allowed) return;
 
       this.year = newYear;
-      this.#focusedMonthIndex = next;
       this.requestUpdate();
       this.updateComplete.then(() => {
-        const newBtns = Array.from(
-          this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="month"]')
-        );
-        newBtns.forEach((b, i) => { b.tabIndex = i === next ? 0 : -1; });
-        newBtns[next]?.focus();
+        const newButtons = Array.from(this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="month"]'));
+        newButtons.forEach((b, i) => {
+          b.tabIndex = i === next ? 0 : -1;
+        });
+        newButtons[next]?.focus();
       });
     } else if (next > -1) {
-      this.#focusedMonthIndex = next;
-      btns.forEach((b, i) => { b.tabIndex = i === next ? 0 : -1; });
-      btns[next].focus();
+      buttons.forEach((b, i) => {
+        b.tabIndex = i === next ? 0 : -1;
+      });
+      buttons[next].focus();
     }
   };
 
@@ -341,7 +328,7 @@ export class UseMonth extends LitElement {
           <button
             type="button"
             part="control control-previous"
-            aria-label="Previous year"
+            aria-label=${String(this.year - 1)}
             ?disabled=${prevDisabled}
             @click=${this.previousYear}
           >
@@ -350,7 +337,7 @@ export class UseMonth extends LitElement {
           <button
             type="button"
             part="control control-thismonth"
-            aria-label="This month"
+            aria-label=${String(todayYear)}
             @click=${this.thisMonth}
           >
             ●
@@ -358,7 +345,7 @@ export class UseMonth extends LitElement {
           <button
             type="button"
             part="control control-next"
-            aria-label="Next year"
+            aria-label=${String(this.year + 1)}
             ?disabled=${nextDisabled}
             @click=${this.nextYear}
           >
@@ -375,8 +362,7 @@ export class UseMonth extends LitElement {
         ${months.map((name: string, i: number) => {
           const monthNum = i + 1;
           const disabled = this.#monthDisabled(this.year, monthNum);
-          const selected =
-            this.#value === `${this.year}-${String(monthNum).padStart(2, '0')}`;
+          const selected = this.#value === `${this.year}-${String(monthNum).padStart(2, '0')}`;
           const isCurrent = this.year === todayYear && monthNum === todayMonth;
           const parts = [
             'month',
@@ -395,7 +381,9 @@ export class UseMonth extends LitElement {
             aria-disabled=${disabled ? 'true' : 'false'}
             tabindex=${i === rovingIndex ? '0' : '-1'}
             @click=${() => this.#selectMonth(monthNum)}
-          >${name}</button>`;
+          >
+            ${name}
+          </button>`;
         })}
       </div>
     `;
