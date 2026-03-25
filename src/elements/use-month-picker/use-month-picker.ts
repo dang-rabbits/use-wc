@@ -6,7 +6,7 @@ import { getMonthNames } from '../../utils/date-time-aria-labels';
  * A standalone form-associated year-month picker.
  * Emits ISO 8601 `YYYY-MM` values.
  *
- * @element use-month
+ * @element use-month-picker
  * @fires use-change - Fired when the user selects a month. Detail: `{ value: string }`
  *
  * @csspart header - Year display + navigation controls bar
@@ -21,8 +21,8 @@ import { getMonthNames } from '../../utils/date-time-aria-labels';
  * @csspart month-current - Applied when this month is the real-world current month
  * @csspart month-disabled - Applied when this month falls outside min/max
  */
-@customElement('use-month')
-export class UseMonth extends LitElement {
+@customElement('use-month-picker')
+export class UseMonthPicker extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -392,6 +392,6 @@ export class UseMonth extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-month': UseMonth;
+    'use-month-picker': UseMonthPicker;
   }
 }

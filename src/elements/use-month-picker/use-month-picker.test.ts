@@ -2,18 +2,18 @@ import { expect, describe, it } from 'vitest';
 import { render } from 'vitest-browser-lit';
 import { html } from 'lit';
 
-import './use-month';
-import { UseMonth } from './use-month';
+import './use-month-picker';
+import { UseMonthPicker } from './use-month-picker';
 
 function getMonthPicker() {
-  return document.querySelector('use-month') as UseMonth;
+  return document.querySelector('use-month-picker') as UseMonthPicker;
 }
 
-function getGrid(picker: UseMonth) {
+function getGrid(picker: UseMonthPicker) {
   return picker.shadowRoot!.querySelector('[part="grid"]') as HTMLElement;
 }
 
-function getMonthButtons(picker: UseMonth): HTMLButtonElement[] {
+function getMonthButtons(picker: UseMonthPicker): HTMLButtonElement[] {
   return Array.from(picker.shadowRoot!.querySelectorAll('[part~="month"]'));
 }
 
@@ -21,27 +21,26 @@ function keydown(target: HTMLElement, key: string) {
   target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, composed: true }));
 }
 
-describe('use-month', () => {
+describe('use-month-picker', () => {
   describe('rendering', () => {
     it('renders 12 month buttons', async () => {
-      render(html`<use-month></use-month>`);
+      render(html`<use-month-picker></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(getMonthButtons(picker)).toHaveLength(12);
     });
 
     it('renders month names from locale', async () => {
-      render(html`<use-month locale="en-US"></use-month>`);
+      render(html`<use-month-picker locale="en-US"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
-      // Short month names in en-US
       expect(picker.shadowRoot!.textContent).toContain('Jan');
       expect(picker.shadowRoot!.textContent).toContain('Dec');
     });
 
     it('displays the current year in the header', async () => {
       const year = new Date().getFullYear();
-      render(html`<use-month></use-month>`);
+      render(html`<use-month-picker></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.shadowRoot!.querySelector('[part="title"]')!.textContent!.trim()).toBe(String(year));
@@ -49,7 +48,7 @@ describe('use-month', () => {
 
     it('applies month-current part to the real-world current month', async () => {
       const today = new Date();
-      render(html`<use-month year=${today.getFullYear()}></use-month>`);
+      render(html`<use-month-picker year=${today.getFullYear()}></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       const current = picker.shadowRoot!.querySelector('[part~="month-current"]');
@@ -57,42 +56,40 @@ describe('use-month', () => {
     });
 
     it('renders month names in the given locale', async () => {
-      render(html`<use-month locale="fr-FR"></use-month>`);
+      render(html`<use-month-picker locale="fr-FR"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
-      // French short month names
       expect(picker.shadowRoot!.textContent).toContain('janv');
     });
   });
 
   describe('value', () => {
     it('pre-selects the month matching the value attribute', async () => {
-      render(html`<use-month value="2026-03" year="2026"></use-month>`);
+      render(html`<use-month-picker value="2026-03" year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       const selected = picker.shadowRoot!.querySelector('[part~="month-selected"]');
       expect(selected).not.toBeNull();
-      // March is the 3rd button (index 2)
       const btns = getMonthButtons(picker);
       expect(btns[2].part.contains('month-selected')).toBe(true);
     });
 
     it('exposes the selected value via the value getter', async () => {
-      render(html`<use-month value="2026-06" year="2026"></use-month>`);
+      render(html`<use-month-picker value="2026-06" year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.value).toBe('2026-06');
     });
 
     it('returns empty string when nothing is selected', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.value).toBe('');
     });
 
     it('updates selection when value property is set programmatically', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -100,13 +97,13 @@ describe('use-month', () => {
       await picker.updateComplete;
 
       const btns = getMonthButtons(picker);
-      expect(btns[8].part.contains('month-selected')).toBe(true); // September = index 8
+      expect(btns[8].part.contains('month-selected')).toBe(true);
     });
   });
 
   describe('month selection', () => {
     it('clicking a month fires use-change with the YYYY-MM value', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -116,7 +113,7 @@ describe('use-month', () => {
       });
 
       const btns = getMonthButtons(picker);
-      btns[5].click(); // June = index 5
+      btns[5].click();
       await picker.updateComplete;
 
       expect(detail).not.toBeNull();
@@ -124,29 +121,29 @@ describe('use-month', () => {
     });
 
     it('clicking a month updates the value', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
-      getMonthButtons(picker)[0].click(); // January
+      getMonthButtons(picker)[0].click();
       await picker.updateComplete;
 
       expect(picker.value).toBe('2026-01');
     });
 
     it('clicking a disabled month does not change the value', async () => {
-      render(html`<use-month year="2026" min="2026-06" max="2026-09"></use-month>`);
+      render(html`<use-month-picker year="2026" min="2026-06" max="2026-09"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
-      getMonthButtons(picker)[0].click(); // January — disabled
+      getMonthButtons(picker)[0].click();
       await picker.updateComplete;
 
       expect(picker.value).toBe('');
     });
 
     it('use-change event bubbles and is composed', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -163,26 +160,23 @@ describe('use-month', () => {
 
   describe('min/max', () => {
     it('months before min have month-disabled part', async () => {
-      render(html`<use-month year="2026" min="2026-06"></use-month>`);
+      render(html`<use-month-picker year="2026" min="2026-06"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
       const btns = getMonthButtons(picker);
-      // Jan–May (indices 0–4) should be disabled
       for (let i = 0; i < 5; i++) {
         expect(btns[i].part.contains('month-disabled')).toBe(true);
       }
-      // June onward should not be disabled
       expect(btns[5].part.contains('month-disabled')).toBe(false);
     });
 
     it('months after max have month-disabled part', async () => {
-      render(html`<use-month year="2026" max="2026-09"></use-month>`);
+      render(html`<use-month-picker year="2026" max="2026-09"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
       const btns = getMonthButtons(picker);
-      // Oct–Dec (indices 9–11) should be disabled
       for (let i = 9; i < 12; i++) {
         expect(btns[i].part.contains('month-disabled')).toBe(true);
       }
@@ -190,7 +184,7 @@ describe('use-month', () => {
     });
 
     it('previous-year button is disabled when already at min year', async () => {
-      render(html`<use-month year="2025" min="2025-01"></use-month>`);
+      render(html`<use-month-picker year="2025" min="2025-01"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -199,7 +193,7 @@ describe('use-month', () => {
     });
 
     it('next-year button is disabled when already at max year', async () => {
-      render(html`<use-month year="2027" max="2027-12"></use-month>`);
+      render(html`<use-month-picker year="2027" max="2027-12"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -210,7 +204,7 @@ describe('use-month', () => {
 
   describe('year navigation', () => {
     it('next-year button increments the year', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -222,7 +216,7 @@ describe('use-month', () => {
     });
 
     it('previous-year button decrements the year', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -233,7 +227,7 @@ describe('use-month', () => {
     });
 
     it('previousYear() method works programmatically', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -244,7 +238,7 @@ describe('use-month', () => {
     });
 
     it('nextYear() method works programmatically', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -255,7 +249,7 @@ describe('use-month', () => {
     });
 
     it('previousYear() does not go below min year', async () => {
-      render(html`<use-month year="2025" min="2025-01"></use-month>`);
+      render(html`<use-month-picker year="2025" min="2025-01"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -266,7 +260,7 @@ describe('use-month', () => {
     });
 
     it('nextYear() does not exceed max year', async () => {
-      render(html`<use-month year="2027" max="2027-12"></use-month>`);
+      render(html`<use-month-picker year="2027" max="2027-12"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -279,7 +273,7 @@ describe('use-month', () => {
 
   describe('keyboard navigation', () => {
     it('ArrowRight moves focus to the next month', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -291,7 +285,7 @@ describe('use-month', () => {
     });
 
     it('ArrowLeft moves focus to the previous month', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -303,7 +297,7 @@ describe('use-month', () => {
     });
 
     it('ArrowDown moves focus down one row (+ 4 months)', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -315,7 +309,7 @@ describe('use-month', () => {
     });
 
     it('ArrowUp moves focus up one row (- 4 months)', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -327,7 +321,7 @@ describe('use-month', () => {
     });
 
     it('Home moves focus to January', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -339,7 +333,7 @@ describe('use-month', () => {
     });
 
     it('End moves focus to December', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -351,12 +345,12 @@ describe('use-month', () => {
     });
 
     it('Enter selects the focused month', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
       const btns = getMonthButtons(picker);
-      btns[7].focus(); // August = index 7
+      btns[7].focus();
       keydown(getGrid(picker), 'Enter');
       await picker.updateComplete;
 
@@ -364,12 +358,12 @@ describe('use-month', () => {
     });
 
     it('Space selects the focused month', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
       const btns = getMonthButtons(picker);
-      btns[2].focus(); // March = index 2
+      btns[2].focus();
       keydown(getGrid(picker), ' ');
       await picker.updateComplete;
 
@@ -377,7 +371,7 @@ describe('use-month', () => {
     });
 
     it('PageDown navigates to the next year', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -390,7 +384,7 @@ describe('use-month', () => {
     });
 
     it('PageUp navigates to the previous year', async () => {
-      render(html`<use-month year="2026"></use-month>`);
+      render(html`<use-month-picker year="2026"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -405,7 +399,7 @@ describe('use-month', () => {
 
   describe('disabled', () => {
     it('clicking a month does not change value when disabled', async () => {
-      render(html`<use-month year="2026" disabled></use-month>`);
+      render(html`<use-month-picker year="2026" disabled></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
@@ -416,14 +410,14 @@ describe('use-month', () => {
     });
 
     it('disabled reflects to :state(disabled)', async () => {
-      render(html`<use-month disabled></use-month>`);
+      render(html`<use-month-picker disabled></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.matches(':state(disabled)')).toBe(true);
     });
 
     it('disabled property getter returns true when disabled', async () => {
-      render(html`<use-month disabled></use-month>`);
+      render(html`<use-month-picker disabled></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.disabled).toBe(true);
@@ -434,7 +428,7 @@ describe('use-month', () => {
     it('submits the selected value under the element name', async () => {
       render(html`
         <form id="test-form">
-          <use-month name="report-month" value="2026-04" year="2026"></use-month>
+          <use-month-picker name="report-month" value="2026-04" year="2026"></use-month-picker>
         </form>
       `);
       const picker = getMonthPicker();
@@ -446,19 +440,19 @@ describe('use-month', () => {
     });
 
     it('formAssociated is true', () => {
-      expect(UseMonth.formAssociated).toBe(true);
+      expect(UseMonthPicker.formAssociated).toBe(true);
     });
 
     it('updates the form value when selection changes', async () => {
       render(html`
         <form id="test-form2">
-          <use-month name="period" year="2026"></use-month>
+          <use-month-picker name="period" year="2026"></use-month-picker>
         </form>
       `);
       const picker = getMonthPicker();
       await picker.updateComplete;
 
-      getMonthButtons(picker)[11].click(); // December
+      getMonthButtons(picker)[11].click();
       await picker.updateComplete;
 
       const form = document.getElementById('test-form2') as HTMLFormElement;

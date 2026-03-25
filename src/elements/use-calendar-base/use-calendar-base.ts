@@ -1,12 +1,6 @@
-import { LitElement, html, css, TemplateResult } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import {
-  getDayNames,
-  getLocaleFirstDay,
-  getMonthNames,
-  formatISOWeek,
-  parseISOWeek,
-} from '../../utils/date-time-aria-labels';
+import { LitElement, html, css, TemplateResult, CSSResultGroup } from 'lit';
+import { property, query } from 'lit/decorators.js';
+import { getDayNames, getLocaleFirstDay, getMonthNames } from '../../utils/date-time-aria-labels';
 import { map } from 'lit/directives/map.js';
 import { tabbable } from 'tabbable';
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
@@ -16,14 +10,15 @@ import '../use-calendarday/use-calendarday';
 
 const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
 
-// TODO `controlslist` attribute for previous today and next
-
 type LitHtml = typeof html;
 
 export type UseCalendarRenderDay = (data: { day: number; date: string }, html: LitHtml) => TemplateResult | string;
 
 /**
- * Displays a calendar grid of the current month.
+ * Base class for calendar grid pickers. Provides the grid layout, keyboard
+ * navigation, month/year picker panel, and focus management. Subclasses
+ * register as a custom element and implement value handling by overriding
+ * `handleDayClick` and `handleConfirmKey`.
  *
  * @slot header-start - Content before the title in the header
  * @slot title - Title showing the month and year
@@ -58,12 +53,11 @@ export type UseCalendarRenderDay = (data: { day: number; date: string }, html: L
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
-@customElement('use-calendar')
-export class UseCalendar extends LitElement {
+export class UseCalendarBase extends LitElement {
   static formAssociated = true;
 
   #internals: ElementInternals;
-  #value = new FormData();
+  #stringValue = '';
   #firstRender = false;
 
   @query('[part="grid-body"]')
@@ -100,12 +94,6 @@ export class UseCalendar extends LitElement {
   get #showNextMonth() {
     return !` ${this.hiddenmonths} `.includes(' next ');
   }
-
-  // TODO add 'range' option
-  // TODO add 'multiple' option - difficult because we don't want to force / parse comma separated values
-  // alternative: provide an example with checkboxes in the cells
-  @property({ type: String, attribute: true, reflect: true })
-  selectmode?: 'single' | 'multiple' | 'week';
 
   @property({ type: String, attribute: true })
   focusmode: 'cell' | 'control' = 'cell';
@@ -150,7 +138,6 @@ export class UseCalendar extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.value = this.getAttribute('value') || '';
     this.year = Number(this.getAttribute('year')) || new Date().getFullYear();
     this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
 
@@ -190,58 +177,70 @@ export class UseCalendar extends LitElement {
     this.#initializeTabbables();
   }
 
-  get #dataKey() {
-    return this.name || 'value';
+  protected get firstRender(): boolean {
+    return this.#firstRender;
   }
 
-  get value(): string {
-    return (this.#value.get(this.#dataKey) as string) || '';
+  protected get formStringValue(): string {
+    return this.#stringValue;
   }
 
-  set value(value: string[] | string) {
-    this.#value.delete(this.#dataKey);
-    const parsedValue = Array.isArray(value) ? value : value.trim().split(' ');
-
-    if (this.selectmode === 'multiple') {
-      if (Array.isArray(value)) {
-        value.forEach((v) => {
-          this.#value.append(this.#dataKey, v);
-        });
-      } else {
-        this.#value.append(this.#dataKey, value);
-      }
-    } else if (this.selectmode === 'single') {
-      if (Array.isArray(value) && value.length > 0) {
-        this.#value.set(this.#dataKey, value[0]);
-      } else if (typeof value === 'string' && value.length > 0) {
-        this.#value.set(this.#dataKey, value);
-      }
-    } else if (this.selectmode === 'week') {
-      if (typeof value === 'string' && value.match(/^\d{4}-W\d{2}$/)) {
-        this.#value.set(this.#dataKey, value);
-        const monday = parseISOWeek(value);
-        const weekDates = Array.from({ length: 7 }, (_, i) => {
-          const d = new Date(monday);
-          d.setDate(monday.getDate() + i);
-          return this.#formatDate(d.getFullYear(), d.getMonth() + 1, d.getDate());
-        });
-        this.#internals.setFormValue(this.#value);
-        this.selected = weekDates;
-        if (this.navigationEnabled && this.#firstRender) {
-          this.goTo(weekDates[0]);
-        }
-        return;
-      }
-    }
-
-    this.#internals.setFormValue(this.#value);
-
-    this.selected = parsedValue;
-
-    if (this.navigationEnabled && this.selectmode === 'single' && parsedValue[0] && this.#firstRender) {
-      this.goTo(parsedValue[0]);
-    }
+  protected setFormStringValue(value: string): void {
+    this.#stringValue = value;
+    this.#internals.setFormValue(value || null);
   }
+
+  protected setSelectedDates(dates: string[]): void {
+    this.selected = dates;
+  }
+
+  protected get activeDate(): Date {
+    return this.#activeDate;
+  }
+
+  protected get activeDateString(): string {
+    return this.#activeDateString;
+  }
+
+  protected dateDisabled(date: string): boolean | '' | undefined {
+    return this.#dateDisabled(date);
+  }
+
+  protected formatDate(year: number, month: number, day: number): string {
+    return this.#formatDate(year, month, day);
+  }
+
+  protected parseDate(date: string): Date | null {
+    return this.#parseDate(date);
+  }
+
+  protected getTargetCell(target: HTMLElement): HTMLElement | null {
+    const dateStr =
+      target?.closest('[data-usewc-date]')?.getAttribute('data-usewc-date') ||
+      target?.closest('[slot^="date-"]')?.getAttribute('slot')?.replace('date-', '');
+    if (!dateStr) return null;
+    return this.shadowRoot?.querySelector(`[data-usewc-date="${dateStr}"]`) as HTMLElement | null;
+  }
+
+  protected handleDayClick(_dateStr: string): void {
+    throw new Error('UseCalendarBase: handleDayClick must be overridden');
+  }
+
+  protected handleConfirmKey(_activeDateStr: string): void {
+    throw new Error('UseCalendarBase: handleConfirmKey must be overridden');
+  }
+
+  protected get hoverWeekDates(): string[] {
+    return [];
+  }
+
+  protected gridBodyListeners(): { mouseover?: EventListener; mouseleave?: EventListener } {
+    return {};
+  }
+
+  protected onActiveDateChanged(_dateStr: string): void {}
+
+  protected onGridFocusOut(): void {}
 
   #dateDisabled(date: string) {
     return (this.min && date < this.min) || (this.max && date > this.max);
@@ -251,46 +250,6 @@ export class UseCalendar extends LitElement {
     const firstDay = this.#formatDate(year, month, 1);
     const lastDay = this.#formatDate(year, month, new Date(year, month, 0).getDate());
     return (!this.min || lastDay >= this.min) && (!this.max || firstDay <= this.max);
-  }
-
-  #internalSetValue(value: string | { isoWeek: string; dates: string[] }) {
-    if (typeof value === 'string') {
-      if (this.#dateDisabled(value)) return;
-      this.value = value;
-      this.dispatchEvent(
-        new CustomEvent('use-change', {
-          detail: {
-            value: this.value,
-            valueAsDate: new Date(value[0]),
-          },
-          bubbles: true,
-          composed: true,
-        })
-      );
-      return;
-    }
-
-    const { isoWeek, dates } = value;
-    const enabledDates = dates.filter((d) => !this.#dateDisabled(d));
-    if (enabledDates.length === 0) return;
-    this.#value.delete(this.#dataKey);
-    this.#value.set(this.#dataKey, isoWeek);
-    this.#internals.setFormValue(this.#value);
-    this.selected = enabledDates;
-    this.dispatchEvent(
-      new CustomEvent('use-change', {
-        detail: {
-          value: isoWeek,
-          dates: enabledDates,
-          valueAsDate: enabledDates.map((d) => {
-            const [y, m, dy] = d.split('-').map(Number);
-            return new Date(y, m - 1, dy);
-          }),
-        },
-        bubbles: true,
-        composed: true,
-      })
-    );
   }
 
   get #daysInMonth() {
@@ -397,6 +356,7 @@ export class UseCalendar extends LitElement {
 
     focusableElements.forEach((el) => {
       const tabindex = el.getAttribute(INITIAL_TABINDEX_ATTR);
+
       if (tabindex === INITIAL_TABINDEX_VALUE) {
         el.removeAttribute('tabindex');
       } else if (tabindex) {
@@ -448,7 +408,7 @@ export class UseCalendar extends LitElement {
           this.selected.includes(date) ? 'day-selected' : '',
           this.#todayDate === date ? 'day-today' : '',
           disabled ? 'day-disabled' : '',
-          this.#hoverWeekDates.includes(date) ? 'day-week-hover' : '',
+          this.hoverWeekDates.includes(date) ? 'day-week-hover' : '',
         ]
           .join(' ')
           .trim()}
@@ -535,37 +495,6 @@ export class UseCalendar extends LitElement {
     return this.#activeDate.toISOString().split('T')[0];
   }
 
-  #hoverWeekDates: string[] = [];
-
-  #handleWeekMouseOver(event: MouseEvent) {
-    const day = this.#getTargetCell(event.target as HTMLElement);
-    const dateStr = day?.getAttribute('data-usewc-date');
-    if (!dateStr) {
-      if (this.#hoverWeekDates.length > 0) {
-        this.#hoverWeekDates = [];
-        this.requestUpdate();
-      }
-      return;
-    }
-    const [y, m, d] = dateStr.split('-').map(Number);
-    const date = new Date(y, m - 1, d);
-    const dayOfWeek = date.getDay() || 7;
-    const monday = new Date(date);
-    monday.setDate(date.getDate() - (dayOfWeek - 1));
-    const weekDates = Array.from({ length: 7 }, (_, i) => {
-      const wd = new Date(monday);
-      wd.setDate(monday.getDate() + i);
-      return this.#formatDate(wd.getFullYear(), wd.getMonth() + 1, wd.getDate());
-    });
-    this.#hoverWeekDates = weekDates;
-    this.requestUpdate();
-  }
-
-  #handleWeekMouseLeave() {
-    this.#hoverWeekDates = [];
-    this.requestUpdate();
-  }
-
   #mouseDownTarget = null as HTMLElement | null;
   #handleMouseDown(event: MouseEvent) {
     this.#mouseDownTarget = this.#getTargetCell(event.target as HTMLElement);
@@ -584,19 +513,6 @@ export class UseCalendar extends LitElement {
     return this.shadowRoot?.querySelector(`[data-usewc-date="${targetDate}"]`) as HTMLElement;
   }
 
-  #getWeekDates(dateStr: string): string[] {
-    const [y, m, d] = dateStr.split('-').map(Number);
-    const date = new Date(y, m - 1, d);
-    const dayOfWeek = date.getDay() || 7;
-    const monday = new Date(date);
-    monday.setDate(date.getDate() - (dayOfWeek - 1));
-    return Array.from({ length: 7 }, (_, i) => {
-      const wd = new Date(monday);
-      wd.setDate(monday.getDate() + i);
-      return this.#formatDate(wd.getFullYear(), wd.getMonth() + 1, wd.getDate());
-    });
-  }
-
   #handleClick(event: HTMLElementEventMap['click']) {
     this.#mouseDownTarget = null;
     if (!this.navigationEnabled) return;
@@ -604,15 +520,7 @@ export class UseCalendar extends LitElement {
     const target = event.target as HTMLElement;
     const day = this.#getTargetCell(target);
     if (day) {
-      if (this.selectmode === 'single') {
-        this.#internalSetValue(day.getAttribute('data-usewc-date') || '');
-      }
-
-      if (this.selectmode === 'week') {
-        const dateStr = day.getAttribute('data-usewc-date') || '';
-        const [y, m, d] = dateStr.split('-').map(Number);
-        this.#internalSetValue({ isoWeek: formatISOWeek(new Date(y, m - 1, d)), dates: this.#getWeekDates(dateStr) });
-      }
+      this.handleDayClick(day.getAttribute('data-usewc-date') || '');
 
       if (this.navigationEnabled) {
         this.#activeDate.setDate(Number(day.getAttribute('data-usewc-day')) || 1);
@@ -629,19 +537,13 @@ export class UseCalendar extends LitElement {
 
     if (event.target === this.gridBody) {
       this.#focusOnDate(this.year, this.month, this.#activeDate.getDate());
-      if (this.selectmode === 'week') {
-        this.#hoverWeekDates = this.#getWeekDates(this.#activeDateString);
-        this.requestUpdate();
-      }
+      this.onActiveDateChanged(this.#activeDateString);
       return;
     }
 
     if (this.contains(target)) {
       cell?.setAttribute('tabindex', '0');
-      if (this.selectmode === 'week') {
-        this.#hoverWeekDates = this.#getWeekDates(this.#activeDateString);
-        this.requestUpdate();
-      }
+      this.onActiveDateChanged(this.#activeDateString);
     }
   }
 
@@ -656,32 +558,16 @@ export class UseCalendar extends LitElement {
 
     this.gridBody.setAttribute('tabindex', '0');
 
-    if (this.selectmode === 'week') {
-      this.#hoverWeekDates = [];
-      this.requestUpdate();
-    }
+    this.onGridFocusOut();
   }
 
   #handleKeyDown(event: HTMLElementEventMap['keydown']) {
     const currentDay = this.#activeDate.getDate();
 
-    if ([' ', 'Enter'].includes(event.key) && this.selectmode === 'single') {
+    if ([' ', 'Enter'].includes(event.key)) {
       event.preventDefault();
       event.stopPropagation();
-
-      this.#internalSetValue(this.#activeDateString);
-      return;
-    }
-
-    if ([' ', 'Enter'].includes(event.key) && this.selectmode === 'week') {
-      event.preventDefault();
-      event.stopPropagation();
-
-      const [y, m, d] = this.#activeDateString.split('-').map(Number);
-      this.#internalSetValue({
-        isoWeek: formatISOWeek(new Date(y, m - 1, d)),
-        dates: this.#getWeekDates(this.#activeDateString),
-      });
+      this.handleConfirmKey(this.#activeDateString);
       return;
     }
 
@@ -719,10 +605,7 @@ export class UseCalendar extends LitElement {
 
   async #setActiveDay(day: number) {
     await this.#focusOnDate(this.#activeDate.getFullYear(), this.#activeDate.getMonth() + 1, day);
-    if (this.selectmode === 'week') {
-      this.#hoverWeekDates = this.#getWeekDates(this.#activeDateString);
-      this.requestUpdate();
-    }
+    this.onActiveDateChanged(this.#activeDateString);
   }
 
   async #focusOnDate(year: number, month: number, day: number) {
@@ -758,8 +641,6 @@ export class UseCalendar extends LitElement {
     if (date1 == null || date2 == null) return false;
     return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth();
   }
-
-  // ── Month/year picker ──────────────────────────────────────────────────────
 
   #togglePicker = () => {
     const opening = this.#pickerMode !== 'picker';
@@ -946,6 +827,7 @@ export class UseCalendar extends LitElement {
     const neededRows = rows.filter((row) => row?.length > 0);
 
     const weekdayNames = this.#weekdayNames();
+    const bodyListeners = this.gridBodyListeners();
     return html`
       <div part="header">
         <slot name="header-start"></slot>
@@ -1014,8 +896,8 @@ export class UseCalendar extends LitElement {
                 @mousedown=${this.navigationEnabled ? this.#handleMouseDown : undefined}
                 @click=${this.navigationEnabled ? this.#handleClick : undefined}
                 @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
-                @mouseover=${this.selectmode === 'week' ? this.#handleWeekMouseOver : undefined}
-                @mouseleave=${this.selectmode === 'week' ? this.#handleWeekMouseLeave : undefined}
+                @mouseover=${bodyListeners.mouseover}
+                @mouseleave=${bodyListeners.mouseleave}
               >
                 ${keyed(
                   `${this.year}-${this.month}`,
@@ -1030,7 +912,7 @@ export class UseCalendar extends LitElement {
     `;
   }
 
-  static styles = css`
+  static styles: CSSResultGroup = css`
     :host {
       display: block;
       text-align: center;
@@ -1063,14 +945,6 @@ export class UseCalendar extends LitElement {
 
     [part*='day-empty'] {
       opacity: 0.5;
-    }
-
-    :host([selectmode='week']) [part~='day']:not([part*='day-empty']) {
-      cursor: pointer;
-    }
-
-    :host([selectmode='week']) [part*='day-week-hover']:not([part*='day-empty']) {
-      background-color: rgba(0, 0, 0, 0.1);
     }
 
     [part='title-button'] {
