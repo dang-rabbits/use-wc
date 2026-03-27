@@ -12,3 +12,4 @@ export * from './elements/use-widget/use-widget';
 export * from './elements/use-menu/use-menu';
 export * from './elements/use-calendar/use-calendar';
 export * from './elements/use-datetime/use-datetime';
+export * from './elements/use-scrollarea/use-scrollarea';
