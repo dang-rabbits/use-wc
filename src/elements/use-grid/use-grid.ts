@@ -281,7 +281,11 @@ export class UseGrid extends LitElement {
       selectRow.getAttribute("value") != null
     ) {
       const rowValue = selectRow.getAttribute("value") ?? selectRow.textContent ?? "";
-      let newValue = (this.#value as string[]) ?? [];
+      let newValue: string[] = Array.isArray(this.#value)
+        ? [...this.#value]
+        : this.#value
+          ? [this.#value as string]
+          : [];
       if (selectRow.hasAttribute("selected")) {
         newValue = newValue.filter((v) => v !== rowValue);
       } else if (this.selectmode === "multiple") {
