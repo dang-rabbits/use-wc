@@ -1,0 +1,31 @@
+name: use-wc
+icon: null
+processes:
+  'npm: build':
+    command: npm run build
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  'npm: test':
+    command: npm run test
+    working_dir: null
+    auto_start: true
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  'npm: analyze':
+    command: npm run analyze
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  Storybook:
+    command: npm run storybook
+    working_dir: null
+    auto_start: true
+    auto_restart: false
+    restart_when_changed: []
+    env: {}

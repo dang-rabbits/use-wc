@@ -5,6 +5,9 @@
       "name": "storybook",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "storybook"],
+      "env": {
+        "BROWSER": "none"
+      },
       "port": 6006,
       "autoPort": true
     }
