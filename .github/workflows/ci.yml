@@ -30,5 +30,7 @@ jobs:
         uses: voidzero-dev/setup-vp@v1
         with:
           cache: true
+      - name: Install Playwright browsers
+        run: vp dlx playwright install --with-deps chromium
       - name: Test
         run: vp test
