@@ -16,7 +16,7 @@ const FORM_DATA_KEY = "__value";
 /**
  * ## Multiple
  *
- * The `use-listbox` provides an attribute for selecting multiple options.
+ * The `use-listbox-input` provides an attribute for selecting multiple options.
  *
  * ## Long term plan
  *
@@ -27,8 +27,8 @@ const FORM_DATA_KEY = "__value";
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
-@customElement("use-select")
-export class UseSelect extends LitElement {
+@customElement("use-select-input")
+export class UseSelectInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -348,6 +348,6 @@ export class UseSelect extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "use-select": UseSelect;
+    "use-select-input": UseSelectInput;
   }
 }

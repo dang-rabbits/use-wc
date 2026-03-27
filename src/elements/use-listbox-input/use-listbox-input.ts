@@ -17,8 +17,8 @@ const FORM_DATA_KEY = "__value";
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
-@customElement("use-listbox")
-export class UseListbox extends LitElement {
+@customElement("use-listbox-input")
+export class UseListboxInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -269,6 +269,6 @@ export class UseListbox extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "use-listbox": UseListbox;
+    "use-listbox-input": UseListboxInput;
   }
 }

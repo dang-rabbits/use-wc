@@ -1,49 +1,54 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import "./use-datetime";
-import { UseDatetime } from "./use-datetime";
+import "./use-datetime-input";
+import { UseDatetimeInput } from "./use-datetime-input";
 
-const meta: Meta<UseDatetime> = {
-  component: "use-datetime",
-  title: "Web Components/use-datetime",
+const meta: Meta<UseDatetimeInput> = {
+  component: "use-datetime-input",
+  title: "Web Components/use-datetime-input",
   tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
-    return html`<use-datetime value="2024-06-01T12:00:00"></use-datetime>`;
+    return html`<use-datetime-input value="2024-06-01T12:00:00"></use-datetime-input>`;
   },
 };
 
 export default meta;
 
-type Story = StoryObj<UseDatetime>;
+type Story = StoryObj<UseDatetimeInput>;
 
 export const Default: Story = {
-  render: () => html`<use-datetime value=""></use-datetime>`,
+  render: () => html`<use-datetime-input value=""></use-datetime-input>`,
 };
 
 export const WithValue: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30Z"></use-datetime>`,
+  render: () => html`<use-datetime-input value="2024-06-01T14:30Z"></use-datetime-input>`,
 };
 
 export const WithSeconds: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30:45" seconds></use-datetime>`,
+  render: () => html`<use-datetime-input value="2024-06-01T14:30:45" seconds></use-datetime-input>`,
 };
 
 export const WithFractionalSeconds: Story = {
   render: () =>
-    html`<use-datetime value="2024-06-01T14:30:45.123" seconds fractionalSeconds></use-datetime>`,
+    html`<use-datetime-input
+      value="2024-06-01T14:30:45.123"
+      seconds
+      fractionalSeconds
+    ></use-datetime-input>`,
 };
 
 export const French: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30" locale="fr-FR"></use-datetime>`,
+  render: () =>
+    html`<use-datetime-input value="2024-06-01T14:30" locale="fr-FR"></use-datetime-input>`,
 };
 
 export const Disabled: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30" disabled></use-datetime>`,
+  render: () => html`<use-datetime-input value="2024-06-01T14:30" disabled></use-datetime-input>`,
 };
 
 export const ReadOnly: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30" readonly></use-datetime>`,
+  render: () => html`<use-datetime-input value="2024-06-01T14:30" readonly></use-datetime-input>`,
 };
 
 export const FormSubmission: Story = {
@@ -58,7 +63,7 @@ export const FormSubmission: Story = {
     };
     return html`
       <form @submit=${handleSubmit} id="form-submission">
-        <use-datetime value="2024-06-01T14:30" name="datetime"></use-datetime>
+        <use-datetime-input value="2024-06-01T14:30" name="datetime"></use-datetime-input>
         <button type="submit">Submit</button>
       </form>
       <pre id="output"></pre>

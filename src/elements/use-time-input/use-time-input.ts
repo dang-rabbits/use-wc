@@ -13,8 +13,8 @@ type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPerio
  *
  * Allows users to pick time values with proper localization and formatting.
  */
-@customElement("use-time")
-export class UseTime extends LitElement {
+@customElement("use-time-input")
+export class UseTimeInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -486,6 +486,6 @@ export class UseTime extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "use-time": UseTime;
+    "use-time-input": UseTimeInput;
   }
 }

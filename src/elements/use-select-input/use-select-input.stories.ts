@@ -1,29 +1,33 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
-import { UseSelect } from "./use-select";
+import { UseSelectInput } from "./use-select-input";
 import { html } from "lit";
 
-const meta: Meta<UseSelect> = {
-  component: "use-select",
+const meta: Meta<UseSelectInput> = {
+  component: "use-select-input",
   subcomponents: { "use-option": "use-option" },
-  title: "Web Components/use-select",
+  title: "Web Components/use-select-input",
   tags: ["autodocs", "!dev", "input"],
   args: {
     placeholder: "Select a number",
     disabled: false,
     name: "example",
   },
-  render: (args: UseSelect) => {
+  render: (args: UseSelectInput) => {
     return html`
-      <use-select .name=${args.name} placeholder=${args.placeholder} ?disabled=${args.disabled}>
+      <use-select-input
+        .name=${args.name}
+        placeholder=${args.placeholder}
+        ?disabled=${args.disabled}
+      >
         <use-option value="1" id="option-1" selected>One</use-option>
         <use-option value="2" id="option-2">Two</use-option>
-      </use-select>
+      </use-select-input>
     `;
   },
 };
 
 export default meta;
-type Story = StoryObj<UseSelect>;
+type Story = StoryObj<UseSelectInput>;
 
 export const Default: Story = {};
 
@@ -41,23 +45,23 @@ export const Placeholder: Story = {
 
 export const DisabledOptions: Story = {
   render: () => html`
-    <use-select>
+    <use-select-input>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2" disabled>Two</use-option>
       <use-option value="3" id="option-3">Three</use-option>
-    </use-select>
+    </use-select-input>
   `,
 };
 
 export const OptionsDividers: Story = {
   render: () => html`
-    <use-select>
+    <use-select-input>
       <use-option value="1" id="option-1" selected>One</use-option>
       <hr />
       <use-option value="2" id="option-2">Two</use-option>
       <hr />
       <use-option value="3" id="option-3">Three</use-option>
-    </use-select>
+    </use-select-input>
   `,
 };
 
@@ -78,11 +82,11 @@ export const Form: Story = {
       <form @submit=${handleFormSubmit}>
         <div>
           <label for="favorite-fruit">Favorite fruit:</label><br />
-          <use-select id="favorite-fruit" name="favorite-fruit" placeholder="Select one...">
+          <use-select-input id="favorite-fruit" name="favorite-fruit" placeholder="Select one...">
             <use-option value="apple" id="apple">Apple</use-option>
             <use-option value="banana" id="banana">Banana</use-option>
             <use-option value="cherry" id="cherry">Cherry</use-option>
-          </use-select>
+          </use-select-input>
         </div>
         <button>Submit</button>
       </form>
@@ -95,7 +99,7 @@ export const Form: Story = {
 
 export const CustomArrowViaSlot: Story = {
   render: () => html`
-    <use-select>
+    <use-select-input>
       <svg
         slot="trigger-arrow"
         fill="currentColor"
@@ -112,18 +116,18 @@ export const CustomArrowViaSlot: Story = {
       </svg>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
-    </use-select>
+    </use-select-input>
   `,
 };
 
 export const CustomStyles: Story = {
   render: () => html`
     <style>
-      .custom-use-select {
+      .custom-use-select-input {
         font-family: sans-serif;
       }
 
-      .custom-use-select::part(trigger) {
+      .custom-use-select-input::part(trigger) {
         all: unset;
         display: inline-flex;
         align-items: center;
@@ -133,26 +137,26 @@ export const CustomStyles: Story = {
         gap: 2rem;
       }
 
-      .custom-use-select::part(trigger):hover {
+      .custom-use-select-input::part(trigger):hover {
         background-color: rgba(0, 255, 0, 0.05);
       }
 
-      .custom-use-select::part(trigger):focus-visible {
+      .custom-use-select-input::part(trigger):focus-visible {
         outline: 2px dotted light-dark(#000, #fff);
         outline-offset: 2px;
       }
 
-      .custom-use-select::part(trigger-label) {
+      .custom-use-select-input::part(trigger-label) {
         color: green;
       }
 
-      .custom-use-select::part(trigger-arrow) {
+      .custom-use-select-input::part(trigger-arrow) {
         color: light-dark(darkgreen, lightgreen);
       }
     </style>
-    <use-select class="custom-use-select">
+    <use-select-input class="custom-use-select-input">
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
-    </use-select>
+    </use-select-input>
   `,
 };

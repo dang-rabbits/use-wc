@@ -25,8 +25,8 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
  *
  * <baseline-status featureId="intl-duration-format"></baseline-status>
  */
-@customElement("use-duration")
-export class UseDuration extends LitElement {
+@customElement("use-duration-input")
+export class UseDurationInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -298,6 +298,6 @@ export class UseDuration extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "use-duration": UseDuration;
+    "use-duration-input": UseDurationInput;
   }
 }

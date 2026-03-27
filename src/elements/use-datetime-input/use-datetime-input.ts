@@ -1,18 +1,18 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import createId from "../../utils/create-id";
-import "../use-date/use-date";
-import "../use-time/use-time";
-import { UseDate } from "../use-date/use-date";
-import { UseTime } from "../use-time/use-time";
+import "../use-date-input/use-date-input";
+import "../use-time-input/use-time-input";
+import { UseDateInput } from "../use-date-input/use-date-input";
+import { UseTimeInput } from "../use-time-input/use-time-input";
 
 /**
  * Displays a date and time picker by combining `use-date` and `use-time`.
  *
  * The value format is ISO 8601-like: `YYYY-MM-DDTHH:MM:SS.mmm`.
  */
-@customElement("use-datetime")
-export class UseDatetime extends LitElement {
+@customElement("use-datetime-input")
+export class UseDatetimeInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -23,8 +23,8 @@ export class UseDatetime extends LitElement {
   #internals: ElementInternals;
   #id: string;
 
-  @query("use-date", true) dateElement!: UseDate;
-  @query("use-time", true) timeElement!: UseTime;
+  @query("use-date-input", true) dateElement!: UseDateInput;
+  @query("use-time-input", true) timeElement!: UseTimeInput;
 
   constructor() {
     super();
@@ -145,7 +145,7 @@ export class UseDatetime extends LitElement {
 
   render() {
     return html`
-      <use-date
+      <use-date-input
         part="date"
         value=${this.#dateValue}
         .disabled=${this.disabled}
@@ -153,8 +153,8 @@ export class UseDatetime extends LitElement {
         .locale=${this.locale}
         @input=${this.#handleInput}
         exportparts="segment-input, segment-literal"
-      ></use-date>
-      <use-time
+      ></use-date-input>
+      <use-time-input
         part="time"
         value=${this.#timeValue}
         .disabled=${this.disabled}
@@ -168,7 +168,7 @@ export class UseDatetime extends LitElement {
         .hourFormat=${this.hourFormat}
         @input=${this.#handleInput}
         exportparts="segment-input, segment-literal, segment-input-dayPeriod"
-      ></use-time>
+      ></use-time-input>
     `;
   }
 

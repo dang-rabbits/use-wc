@@ -13,8 +13,8 @@ type DateSegment = "year" | "month" | "day";
  *
  * Uses browser locale for formatting and ARIA labels.
  */
-@customElement("use-date")
-export class UseDate extends LitElement {
+@customElement("use-date-input")
+export class UseDateInput extends LitElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -225,6 +225,6 @@ export class UseDate extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "use-date": UseDate;
+    "use-date-input": UseDateInput;
   }
 }
