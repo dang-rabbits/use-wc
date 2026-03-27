@@ -1,4 +1,4 @@
-import { expect, describe, it } from 'vitest';
+import { expect, describe, it } from 'vite-plus/test';
 import { render } from 'vitest-browser-lit';
 import { html } from 'lit';
 

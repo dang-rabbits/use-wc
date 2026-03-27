@@ -1,31 +1,45 @@
 name: use-wc
 icon: null
 processes:
-  'npm: build':
-    command: npm run build
+  "Analyze web components":
+    command: vp run analyze
     working_dir: null
     auto_start: false
     auto_restart: false
     restart_when_changed: []
     env: {}
-  'npm: test':
-    command: npm run test
+  "Test":
+    command: vp test --watch
     working_dir: null
     auto_start: true
     auto_restart: false
     restart_when_changed: []
     env: {}
-  'npm: analyze':
-    command: npm run analyze
+  "Check":
+    command: vp check
+    working_dir: null
+    auto_start: false
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  "Fix":
+    command: vp check --fix
     working_dir: null
     auto_start: false
     auto_restart: false
     restart_when_changed: []
     env: {}
   Storybook:
-    command: npm run storybook
+    command: vp run storybook
     working_dir: null
     auto_start: true
+    auto_restart: false
+    restart_when_changed: []
+    env: {}
+  "Pack":
+    command: vp build
+    working_dir: null
+    auto_start: false
     auto_restart: false
     restart_when_changed: []
     env: {}
