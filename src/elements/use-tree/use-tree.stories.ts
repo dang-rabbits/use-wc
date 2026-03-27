@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { UseTree } from './use-tree';
-import { html } from 'lit';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { UseTree } from "./use-tree";
+import { html } from "lit";
 
 const meta: Meta<UseTree> = {
-  component: 'use-tree',
-  subcomponents: { 'use-treeitem': 'use-treeitem' },
-  title: 'Web Components/use-tree',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-tree",
+  subcomponents: { "use-treeitem": "use-treeitem" },
+  title: "Web Components/use-tree",
+  tags: ["autodocs", "!dev", "input"],
   args: {
     disabled: false,
     multiple: false,
-    name: 'example',
+    name: "example",
   },
   render: (args: UseTree) => {
     return html`
@@ -73,7 +73,7 @@ export const FormSingleValue: Story = {
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
       const jsonData = JSON.stringify(Object.fromEntries(formData), null, 2);
-      const formOutput = document.querySelector('#form-data');
+      const formOutput = document.querySelector("#form-data");
       if (formOutput) {
         formOutput.textContent = jsonData;
       }
@@ -114,7 +114,7 @@ export const FormMultipleValues: Story = {
       const formData = new FormData(form);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const formOutput = document.querySelector('#form-data-multiple');
+      const formOutput = document.querySelector("#form-data-multiple");
       if (formOutput) {
         formOutput.textContent = queryString;
       }
@@ -217,15 +217,15 @@ export const CustomStyles: Story = {
       }
 
       .custom-use-tree use-treeitem::part(collapsed-indicator)::before {
-        content: '\\25BA';
+        content: "\\25BA";
       }
 
       .custom-use-tree use-treeitem::part(expanded-indicator)::before {
-        content: '\\25BC';
+        content: "\\25BC";
       }
 
       .custom-use-tree use-treeitem::part(selected-indicator)::before {
-        content: '🐲';
+        content: "🐲";
       }
 
       .custom-use-tree use-treeitem:focus-visible {
@@ -280,29 +280,31 @@ export const ProgrammaticallyChangeSelection: Story = {
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
       const jsonData = JSON.stringify(Object.fromEntries(formData), null, 2);
-      const formOutput = document.querySelector('#form-data-programmatic');
+      const formOutput = document.querySelector("#form-data-programmatic");
       if (formOutput) {
         formOutput.textContent = jsonData;
       }
     }
 
     function handleSelect() {
-      const tree = document.getElementById('programmatic-tree') as UseTree;
+      const tree = document.getElementById("programmatic-tree") as UseTree;
       if (tree) {
-        tree.value = '2';
+        tree.value = "2";
       }
     }
 
     function handleDeselect() {
-      const tree = document.getElementById('programmatic-tree') as UseTree;
+      const tree = document.getElementById("programmatic-tree") as UseTree;
       if (tree) {
-        tree.value = '';
+        tree.value = "";
       }
     }
 
     return html`
       <button type="button" id="select-option-2" @click=${handleSelect}>Select Option 2</button>
-      <button type="button" id="deselect-option-2" @click=${handleDeselect}>Deselect Option 2</button>
+      <button type="button" id="deselect-option-2" @click=${handleDeselect}>
+        Deselect Option 2
+      </button>
       <form @submit=${handleFormSubmit}>
         <use-tree id="programmatic-tree" name="programmatic">
           <use-treeitem value="1" id="option-1">One</use-treeitem>
@@ -326,29 +328,33 @@ export const ProgrammaticallyChangeSelectionMultiple: Story = {
       const formData = new FormData(form);
       // @ts-expect-error - ttps://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const formOutput = document.querySelector('#form-data-programmatic-multiple');
+      const formOutput = document.querySelector("#form-data-programmatic-multiple");
       if (formOutput) {
         formOutput.textContent = queryString;
       }
     }
 
     function handleSelect() {
-      const tree = document.getElementById('programmatic-tree-multiple') as UseTree;
+      const tree = document.getElementById("programmatic-tree-multiple") as UseTree;
       if (tree) {
-        tree.value = ['1', '2'];
+        tree.value = ["1", "2"];
       }
     }
 
     function handleDeselect() {
-      const tree = document.getElementById('programmatic-tree-multiple') as UseTree;
+      const tree = document.getElementById("programmatic-tree-multiple") as UseTree;
       if (tree) {
         tree.value = [];
       }
     }
 
     return html`
-      <button type="button" id="select-option-2" @click=${handleSelect}>Select Options 1 and 2</button>
-      <button type="button" id="deselect-option-2" @click=${handleDeselect}>Deselect Options</button>
+      <button type="button" id="select-option-2" @click=${handleSelect}>
+        Select Options 1 and 2
+      </button>
+      <button type="button" id="deselect-option-2" @click=${handleDeselect}>
+        Deselect Options
+      </button>
       <form @submit=${handleFormSubmit}>
         <use-tree id="programmatic-tree-multiple" name="programmatic[]" multiple>
           <use-treeitem value="1" id="option-1">One</use-treeitem>

@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { UseSelect } from './use-select';
-import { html } from 'lit';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { UseSelect } from "./use-select";
+import { html } from "lit";
 
 const meta: Meta<UseSelect> = {
-  component: 'use-select',
-  subcomponents: { 'use-option': 'use-option' },
-  title: 'Web Components/use-select',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-select",
+  subcomponents: { "use-option": "use-option" },
+  title: "Web Components/use-select",
+  tags: ["autodocs", "!dev", "input"],
   args: {
-    placeholder: 'Select a number',
+    placeholder: "Select a number",
     disabled: false,
-    name: 'example',
+    name: "example",
   },
   render: (args: UseSelect) => {
     return html`
@@ -35,7 +35,7 @@ export const Disabled: Story = {
 
 export const Placeholder: Story = {
   args: {
-    placeholder: 'Select a number',
+    placeholder: "Select a number",
   },
 };
 
@@ -68,7 +68,7 @@ export const Form: Story = {
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
       const jsonData = JSON.stringify(Object.fromEntries(formData), null, 2);
-      const formOutput = document.querySelector('#form-data');
+      const formOutput = document.querySelector("#form-data");
       if (formOutput) {
         formOutput.textContent = jsonData;
       }

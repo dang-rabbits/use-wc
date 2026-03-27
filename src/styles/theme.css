@@ -14,24 +14,24 @@
     font-size: var(--usewc-layout-document-text-size);
   }
 
-  :is(button, a, details summary):not([data-appear-as='native']):focus-visible,
-  :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']):focus,
-  input[type='file']:not([data-appear-as='native']):focus-visible,
-  [data-appear-as='input']:has(input:focus) {
+  :is(button, a, details summary):not([data-appear-as="native"]):focus-visible,
+  :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as="native"]):focus,
+  input[type="file"]:not([data-appear-as="native"]):focus-visible,
+  [data-appear-as="input"]:has(input:focus) {
     outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
     outline-offset: var(--usewc-layout-focus-ring-offset-outside);
     transition: var(--usewc-transition-focus-ring);
   }
 
   :is(
-    input:not(:is([type='checkbox'], [type='radio'], [type='range'], [type='file'], [data-appear-as])),
-    select:not([data-appear-as='native']),
+    input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [data-appear-as])),
+    select:not([data-appear-as="native"]),
     textarea,
-    [data-appear-as='input'],
-    use-date:not([data-appear-as='native']),
-    use-time:not([data-appear-as='native']),
-    use-datetime:not([data-appear-as='native']),
-    use-duration:not([data-appear-as='native'])
+    [data-appear-as="input"],
+    use-date:not([data-appear-as="native"]),
+    use-time:not([data-appear-as="native"]),
+    use-datetime:not([data-appear-as="native"]),
+    use-duration:not([data-appear-as="native"])
   ) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
@@ -45,8 +45,8 @@
     color: var(--usewc-color-input-text-static);
     border-radius: var(--usewc-effect-input-border-radius);
 
-    &:not(:is(:disabled, [aria-disabled='true'], [data-appear-as='input'])):hover,
-    &:has(input:not(:is(:disabled, [aria-disabled='true'])):hover) {
+    &:not(:is(:disabled, [aria-disabled="true"], [data-appear-as="input"])):hover,
+    &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover) {
       border-color: var(--usewc-color-input-border-hover);
     }
 
@@ -56,8 +56,8 @@
     }
 
     &:disabled,
-    &[aria-disabled='true'],
-    &:has(:disabled, [aria-disabled='true']) {
+    &[aria-disabled="true"],
+    &:has(:disabled, [aria-disabled="true"]) {
       opacity: var(--usewc-effect-control-opacity-disabled);
       pointer-events: none;
     }
@@ -66,12 +66,12 @@
       color: var(--usewc-color-input-text-placeholder);
     }
 
-    &:is(:user-invalid, [aria-invalid='true'], :has(:is(:user-invalid, [aria-invalid='true']))) {
+    &:is(:user-invalid, [aria-invalid="true"], :has(:is(:user-invalid, [aria-invalid="true"]))) {
       border-color: var(--usewc-color-input-border-invalid);
     }
   }
 
-  select:not([data-appear-as='native']) {
+  select:not([data-appear-as="native"]) {
     appearance: none;
     padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
     background-image: var(--usewc-effect-dropdown-trigger-background-image, none);
@@ -82,7 +82,7 @@
     background-blend-mode: var(--usewc-effect-dropdown-trigger-background-blend-mode, none);
   }
 
-  [data-appear-as='input'] {
+  [data-appear-as="input"] {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -102,7 +102,7 @@
       flex: 0 0 auto;
     }
 
-    input:not(:is([type='checkbox'], [type='radio'], [type='range'])) {
+    input:not(:is([type="checkbox"], [type="radio"], [type="range"])) {
       flex: 1 1 auto;
       padding: 0;
       border: none;
@@ -115,7 +115,7 @@
     }
   }
 
-  input:is([type='checkbox'], [type='radio']) {
+  input:is([type="checkbox"], [type="radio"]) {
     all: unset;
     appearance: none;
     box-sizing: border-box;
@@ -146,12 +146,12 @@
     }
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       inset: 0;
     }
 
-    &[type='checkbox']:checked {
+    &[type="checkbox"]:checked {
       &::after {
         display: block;
         position: absolute;
@@ -167,7 +167,7 @@
       }
     }
 
-    &[type='radio'] {
+    &[type="radio"] {
       border-radius: 50%;
 
       &:checked::after {
@@ -189,11 +189,11 @@
    * - https://codepen.io/ShadowShahriar/pen/zYPPYrQ
    * - https://open-ui.org/components/enhanced-range-input.explainer/
    */
-  input[type='range']:not([data-appear-as='native']) {
+  input[type="range"]:not([data-appear-as="native"]) {
     accent-color: var(--usewc-color-range-thumb-background-static);
   }
 
-  :is(a:not([data-appear-as]), [data-appear-as='a']) {
+  :is(a:not([data-appear-as]), [data-appear-as="a"]) {
     &:where(:not(a)) {
       all: unset;
     }
@@ -211,8 +211,8 @@
     }
   }
 
-  :is(button:not([data-appear-as]), [data-appear-as='button']),
-  input[type='file']:not([data-appear-as]) {
+  :is(button:not([data-appear-as]), [data-appear-as="button"]),
+  input[type="file"]:not([data-appear-as]) {
     &:where(:not(button)),
     &::file-selector-button {
       all: unset;
@@ -233,7 +233,7 @@
     --usewc-theme-color-button-background-active: var(--usewc-color-button-base-background-active);
     --usewc-theme-color-button-border-active: var(--usewc-color-button-base-border-active);
 
-    &:not([type='file']),
+    &:not([type="file"]),
     &::file-selector-button {
       display: inline-flex;
       align-items: center;
@@ -258,14 +258,14 @@
       margin-inline-end: var(--usewc-layout-input-gap-inline);
     }
 
-    &:is(:hover, :focus-visible):not([type='file']),
+    &:is(:hover, :focus-visible):not([type="file"]),
     &:is(:hover, :focus-visible)::file-selector-button {
       background: var(--usewc-theme-color-button-background-hover);
       border-color: var(--usewc-theme-color-button-border-hover);
       color: var(--usewc-theme-color-button-text-hover);
     }
 
-    &:active:not([type='file']),
+    &:active:not([type="file"]),
     &:active::file-selector-button {
       background: var(--usewc-theme-color-button-background-active);
       border-color: var(--usewc-theme-color-button-border-active);
@@ -273,7 +273,7 @@
     }
 
     &:disabled,
-    &[aria-disabled='true'] {
+    &[aria-disabled="true"] {
       opacity: var(--usewc-effect-control-opacity-disabled);
       pointer-events: none;
     }
@@ -364,12 +364,12 @@
     }
   }
 
-  input[type='file']:not([data-appear-as]) {
+  input[type="file"]:not([data-appear-as]) {
     border-radius: var(--usewc-effect-input-border-radius);
   }
 
   code,
-  [data-appear-as='code'] {
+  [data-appear-as="code"] {
     display: inline-block;
     font-family: var(--usewc-font-code-family);
     font-size: var(--usewc-font-code-size);
@@ -383,21 +383,21 @@
     border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid) var(--usewc-color-code-border);
   }
 
-  use-selector input:is([type='checkbox'], [type='radio']),
-  input:is([type='checkbox'], [type='radio']):has(+ label) {
+  use-selector input:is([type="checkbox"], [type="radio"]),
+  input:is([type="checkbox"], [type="radio"]):has(+ label) {
     margin-inline: var(--usewc-layout-form-selector-margin-inline);
     margin-block: var(--usewc-layout-form-selector-margin-block);
   }
 
   use-selector {
     display: grid;
-    grid-template-areas: 'input label' '. description';
+    grid-template-areas: "input label" ". description";
     gap: 0 var(--usewc-layout-form-selector-gap);
     line-height: 1.5em;
     align-items: start;
     justify-content: start;
 
-    input:is([type='checkbox'], [type='radio']) {
+    input:is([type="checkbox"], [type="radio"]) {
       grid-area: input;
     }
 
@@ -434,26 +434,26 @@
       line-height: var(--usewc-layout-form-helper-text-line-height);
     }
 
-    &:has(input:is(:user-invalid, [aria-invalid='true'])) {
+    &:has(input:is(:user-invalid, [aria-invalid="true"])) {
       > *:not(label, input) {
         color: var(--usewc-color-form-helper-text-invalid);
       }
     }
   }
 
-  details:not([data-appear-as='native']) {
+  details:not([data-appear-as="native"]) {
     summary {
       all: unset;
 
       &::before {
-        content: '▶';
+        content: "▶";
         display: inline-block;
         width: 1em;
       }
     }
 
     &:is([open], :open) summary::before {
-      content: '▼';
+      content: "▼";
     }
   }
 }
@@ -470,7 +470,7 @@
 
 @layer web-components {
   /* Segment based controls */
-  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as='native']),
+  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as="native"]),
   use-datetime::part(date),
   use-datetime::part(time) {
     display: inline-flex;
@@ -511,11 +511,11 @@
     }
   }
 
-  :is(use-datetime, use-duration):not([data-appear-as='native']) {
+  :is(use-datetime, use-duration):not([data-appear-as="native"]) {
     gap: var(--usewc-layout-input-gap-inline);
   }
 
-  use-duration:not([data-appear-as='native']) {
+  use-duration:not([data-appear-as="native"]) {
     padding-inline-end: var(--usewc-layout-input-padding-inline);
 
     &::part(segment) {

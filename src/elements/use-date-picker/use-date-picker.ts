@@ -1,18 +1,18 @@
-import { customElement } from 'lit/decorators.js';
-import { UseCalendarBase } from '../use-calendar-base/use-calendar-base';
+import { customElement } from "lit/decorators.js";
+import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
 
 /**
  * A day-granularity date picker. Value format: YYYY-MM-DD.
  *
  * @fires use-change - Fired on selection with detail `{ value: string }`
  */
-@customElement('use-date-picker')
+@customElement("use-date-picker")
 export class UseDatePicker extends UseCalendarBase {
   static styles = UseCalendarBase.styles;
 
   connectedCallback() {
     super.connectedCallback();
-    const attr = this.getAttribute('value') || '';
+    const attr = this.getAttribute("value") || "";
     if (attr) this.value = attr;
   }
 
@@ -33,11 +33,11 @@ export class UseDatePicker extends UseCalendarBase {
     if (this.dateDisabled(dateStr)) return;
     this.value = dateStr;
     this.dispatchEvent(
-      new CustomEvent('use-change', {
+      new CustomEvent("use-change", {
         detail: { value: dateStr },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -48,6 +48,6 @@ export class UseDatePicker extends UseCalendarBase {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-date-picker': UseDatePicker;
+    "use-date-picker": UseDatePicker;
   }
 }

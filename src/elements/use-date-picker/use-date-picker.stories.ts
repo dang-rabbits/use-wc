@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseDatePicker } from './use-date-picker';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseDatePicker } from "./use-date-picker";
 
 const meta: Meta<UseDatePicker> = {
-  component: 'use-date-picker',
-  title: 'Web Components/use-date-picker',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-date-picker",
+  title: "Web Components/use-date-picker",
+  tags: ["autodocs", "!dev", "utility"],
   args: {},
   render: () => html`<use-date-picker></use-date-picker>`,
-  subcomponents: { 'use-calendarday': 'use-calendarday' },
+  subcomponents: { "use-calendarday": "use-calendarday" },
 };
 
 export default meta;
@@ -36,7 +36,9 @@ export const DisableWrapNavigation: StoryObj<UseDatePicker> = {
 
 export const HiddenMonths: StoryObj<UseDatePicker> = {
   render: () => {
-    return html` <use-date-picker id="navigate-calendar" hiddenmonths="previous next"></use-date-picker> `;
+    return html`
+      <use-date-picker id="navigate-calendar" hiddenmonths="previous next"></use-date-picker>
+    `;
   },
 };
 
@@ -79,7 +81,13 @@ export const WithValue: StoryObj<UseDatePicker> = {
   render: () => {
     return html`
       <form>
-        <use-date-picker year="2020" month="4" controls value="2025-04-25" name="perfect-date"></use-date-picker>
+        <use-date-picker
+          year="2020"
+          month="4"
+          controls
+          value="2025-04-25"
+          name="perfect-date"
+        ></use-date-picker>
         <button type="submit">Submit</button>
       </form>
     `;
@@ -105,6 +113,12 @@ export const MinAndMaxDates: StoryObj<UseDatePicker> = {
  */
 export const StartAndEndDates: StoryObj<UseDatePicker> = {
   render: () => {
-    return html`<use-date-picker start="2025-03-15" end="2025-05-15" year="2025" month="4" controls></use-date-picker>`;
+    return html`<use-date-picker
+      start="2025-03-15"
+      end="2025-05-15"
+      year="2025"
+      month="4"
+      controls
+    ></use-date-picker>`;
   },
 };

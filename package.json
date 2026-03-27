@@ -1,15 +1,14 @@
 {
   "name": "use-wc",
+  "version": "0.0.0-semantic-release",
+  "private": false,
   "homepage": "https://usewc.com",
   "bugs": "https://github.com/dang-rabbits/use-wc/issues",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/dang-rabbits/use-wc"
   },
-  "license": "MIT",
-  "private": false,
-  "version": "0.0.0-semantic-release",
-  "type": "module",
   "files": [
     "dist",
     "custom-elements.json",
@@ -17,26 +16,21 @@
     "vscode.css-custom-data.json",
     "AI.md"
   ],
-  "customElements": "custom-elements.json",
-  "main": "./dist/use-wc.umd.cjs",
-  "module": "./dist/use-wc.js",
+  "type": "module",
   "types": "./dist/use-wc.d.ts",
   "exports": {
-    ".": {
-      "import": "./dist/use-wc.js",
-      "require": "./dist/use-wc.umd.cjs"
-    },
-    "./design-system.css": "./dist/design-system.css",
-    "./default-tokens.css": "./dist/default-tokens.css"
+    ".": "./dist/use-wc.mjs",
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "build": "tsc && npm run analyze && vite build",
-    "preview": "vite preview",
+    "build": "tsc && npm run analyze && vp pack",
+    "preview": "vp preview",
     "analyze": "custom-elements-manifest analyze",
     "storybook": "storybook dev -p ${PORT:-6006}",
     "build-storybook": "npm run build && npm run analyze && storybook build",
-    "test": "vitest",
-    "lint": "eslint ./src"
+    "test": "vp test",
+    "check": "vp check ./src",
+    "prepare": "vp config"
   },
   "dependencies": {
     "duration-fns": "^3.0.2",
@@ -50,29 +44,34 @@
     "@storybook/addon-docs": "^10.2.7",
     "@storybook/addon-links": "^10.2.7",
     "@storybook/web-components-vite": "^10.2.7",
-    "@vitest/browser-playwright": "^4.0.18",
+    "@tsdown/css": "0.21.4",
+    "@types/node": "^25.5.0",
+    "@typescript/native-preview": "7.0.0-dev.20260316.1",
     "@vitest/coverage-v8": "^4.0.18",
     "baseline-status": "^1.0.10",
     "custom-element-vs-code-integration": "^1.5.0",
-    "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.6",
     "eslint-plugin-storybook": "^10.2.7",
     "globals": "^16.0.0",
     "playwright": "^1.58.2",
-    "prettier": "^3.5.3",
     "semantic-release": "^25.0.3",
     "storybook": "^10.2.7",
     "storybook-addon-tag-badges": "^1.4.0",
-    "typescript": "^5.5.3",
+    "tsdown": "0.21.4",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.29.1",
-    "vite": "^7.3.1",
-    "vite-plugin-dts": "^4.5.4",
-    "vite-plugin-externalize-deps": "^0.10.0",
-    "vitest": "^4.0.18",
+    "vite-plus": "^0.1.11",
     "vitest-browser-lit": "^1.0.1"
   },
   "overrides": {
-    "storybook": "$storybook"
+    "storybook": "$storybook",
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "packageManager": "npm@11.12.1",
+  "customElements": "custom-elements.json",
+  "inlinedDependencies": {
+    "lit-html": "3.3.2"
   }
 }

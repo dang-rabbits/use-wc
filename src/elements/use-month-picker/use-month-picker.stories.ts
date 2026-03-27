@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseMonthPicker } from './use-month-picker';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseMonthPicker } from "./use-month-picker";
 
 const meta: Meta<UseMonthPicker> = {
-  component: 'use-month-picker',
-  title: 'Web Components/use-month-picker',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-month-picker",
+  title: "Web Components/use-month-picker",
+  tags: ["autodocs", "!dev", "utility"],
   args: {},
   render: () => html`<use-month-picker></use-month-picker>`,
 };
@@ -45,7 +45,7 @@ export const FormAssociated: StoryObj<UseMonthPicker> = {
       @submit=${(e: SubmitEvent) => {
         e.preventDefault();
         const data = new FormData(e.target as HTMLFormElement);
-        alert(`billing-month = ${data.get('billing-month')}`);
+        alert(`billing-month = ${data.get("billing-month")}`);
       }}
     >
       <use-month-picker name="billing-month" value="2026-03"></use-month-picker>
@@ -80,12 +80,12 @@ export const NavigationOff: StoryObj<UseMonthPicker> = {
  */
 export const CustomRenderer: StoryObj<UseMonthPicker> = {
   render: () => {
-    const highlights: Record<number, string> = { 3: '🌸', 6: '☀️', 9: '🍂', 12: '❄️' };
+    const highlights: Record<number, string> = { 3: "🌸", 6: "☀️", 9: "🍂", 12: "❄️" };
     return html`
       <use-month-picker
         value="2026-03"
         .renderMonth=${({ month, name }: { month: number; name: string }, h: typeof html) =>
-          h`${name}${highlights[month] ? h`<span>&nbsp;${highlights[month]}</span>` : ''}`}
+          h`${name}${highlights[month] ? h`<span>&nbsp;${highlights[month]}</span>` : ""}`}
       ></use-month-picker>
     `;
   },

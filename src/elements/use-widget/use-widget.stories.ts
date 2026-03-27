@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseWidget } from './use-widget';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseWidget } from "./use-widget";
 
 const meta: Meta<UseWidget> = {
-  component: 'use-widget',
-  title: 'Web Components/use-widget',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-widget",
+  title: "Web Components/use-widget",
+  tags: ["autodocs", "!dev", "utility"],
   args: {},
   render: () => {
     return html`
@@ -81,10 +81,10 @@ export const Details: Story = {
 export const InjectWhileActive: Story = {
   render: () => {
     function handleInject() {
-      const focusgroup = document.querySelector('#injectable') as UseWidget;
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.innerText = 'injected';
+      const focusgroup = document.querySelector("#injectable") as UseWidget;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerText = "injected";
       focusgroup.appendChild(button);
       focusgroup.appendChild(button.cloneNode(true));
       focusgroup.appendChild(button.cloneNode(true));

@@ -1,26 +1,31 @@
 // Storybook stories for use-grid
-import { html } from 'lit';
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import './use-grid';
-import './use-gridhead';
-import './use-gridbody';
-import './use-gridrow';
-import './use-gridcell';
-import { UseGrid } from './use-grid';
+import { html } from "lit";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import "./use-grid";
+import "./use-gridhead";
+import "./use-gridbody";
+import "./use-gridrow";
+import "./use-gridcell";
+import { UseGrid } from "./use-grid";
 
 const meta: Meta<UseGrid> = {
-  title: 'Web Components/use-grid',
-  component: 'use-grid',
-  tags: ['autodocs', '!dev', 'input', 'utility'],
+  title: "Web Components/use-grid",
+  component: "use-grid",
+  tags: ["autodocs", "!dev", "input", "utility"],
 };
 export default meta;
 
 type Story = StoryObj<UseGrid>;
 
 export const Default: Story = {
-  tags: ['!autodocs', '!dev'],
+  tags: ["!autodocs", "!dev"],
   render: (args) => html`
-    <use-grid ?disabled=${args.disabled} .name=${args.name} .role=${args.role} .selectmode=${args.selectmode}>
+    <use-grid
+      ?disabled=${args.disabled}
+      .name=${args.name}
+      .role=${args.role}
+      .selectmode=${args.selectmode}
+    >
       <use-gridhead>
         <use-gridrow>
           <use-gridcell>Header 1</use-gridcell>
@@ -153,7 +158,7 @@ export const FormSingleValue: Story = {
         const formData = new FormData(form);
         // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
         const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-        const formOutput = document.querySelector('#form-data-single');
+        const formOutput = document.querySelector("#form-data-single");
         if (formOutput) {
           formOutput.textContent = queryString;
         }
@@ -197,7 +202,7 @@ export const FormMultipleValue: Story = {
         const formData = new FormData(form);
         // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
         const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-        const formOutput = document.querySelector('#form-data-multiple');
+        const formOutput = document.querySelector("#form-data-multiple");
         if (formOutput) {
           formOutput.textContent = queryString;
         }
@@ -283,7 +288,7 @@ export const ProgrammaticSelectionSetter: Story = {
       type="button"
       @click=${() => {
         const grid = document.querySelector('use-grid[name="programmatic-selection"]') as UseGrid;
-        grid.value = '123';
+        grid.value = "123";
       }}
     >
       Toggle First Row Selection
@@ -302,11 +307,11 @@ export const HeaderControls: Story = {
   },
   render: () => {
     function handleHeaderKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Enter') {
+      if (event.key === "Enter") {
         if (event.ctrlKey) {
-          alert('Header alt action triggered!');
+          alert("Header alt action triggered!");
         } else {
-          alert('Header default action triggered!');
+          alert("Header default action triggered!");
         }
       }
     }
@@ -521,15 +526,15 @@ export const ChipInput: Story = {
   render: () => {
     function handleAdd(event: Event) {
       event.preventDefault();
-      const input = document.querySelector('input') as HTMLInputElement;
+      const input = document.querySelector("input") as HTMLInputElement;
       const value = input.value;
-      input.value = '';
+      input.value = "";
 
       if (value) {
-        const grid = document.querySelector('.chip-input use-gridbody') as UseGrid;
-        const newRow = document.createElement('use-gridrow');
-        newRow.setAttribute('value', value);
-        newRow.setAttribute('selected', '');
+        const grid = document.querySelector(".chip-input use-gridbody") as UseGrid;
+        const newRow = document.createElement("use-gridrow");
+        newRow.setAttribute("value", value);
+        newRow.setAttribute("selected", "");
         newRow.innerHTML = `
           <use-gridcell value="${value}">${value}</use-gridcell>
           <use-gridcell mode="action"><button type="button">&times;</button></use-gridcell>
@@ -544,7 +549,7 @@ export const ChipInput: Story = {
       const formData = new FormData(form);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const formOutput = document.querySelector('#chip-input-form-output') as HTMLSpanElement;
+      const formOutput = document.querySelector("#chip-input-form-output") as HTMLSpanElement;
       if (formOutput) {
         formOutput.textContent = queryString;
       }
@@ -552,8 +557,8 @@ export const ChipInput: Story = {
 
     function handleRemove(event: Event) {
       const target = event.target as HTMLElement;
-      if (target.matches('button')) {
-        const row = target.closest('use-gridrow');
+      if (target.matches("button")) {
+        const row = target.closest("use-gridrow");
         if (row) {
           row.remove();
         }
@@ -616,7 +621,7 @@ export const ChipInput: Story = {
 export const MasterDetail: Story = {
   render: () => {
     function handleChange(event: CustomEvent<{ value: string }>) {
-      const output = document.querySelector('#selected-value') as HTMLSpanElement;
+      const output = document.querySelector("#selected-value") as HTMLSpanElement;
 
       if (output) {
         output.textContent = event.detail.value;
@@ -640,8 +645,8 @@ export const MasterDetail: Story = {
         .master-detail use-gridrow {
           display: grid;
           grid-template:
-            'name meta'
-            'desc desc';
+            "name meta"
+            "desc desc";
           grid-gap: 0.5rem;
           align-items: center;
           justify-items: stretch;

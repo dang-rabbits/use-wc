@@ -1,19 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseFocusgroup } from './use-focusgroup';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseFocusgroup } from "./use-focusgroup";
 
 const meta: Meta<UseFocusgroup> = {
-  component: 'use-focusgroup',
-  title: 'Web Components/use-focusgroup',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-focusgroup",
+  title: "Web Components/use-focusgroup",
+  tags: ["autodocs", "!dev", "utility"],
   args: {
-    features: '',
+    features: "",
   },
   argTypes: {
     features: {
       control: {
-        type: 'text',
-        options: 'inline',
+        type: "text",
+        options: "inline",
       },
     },
   },
@@ -35,13 +35,13 @@ export const Default: Story = {};
 
 export const Inline: Story = {
   args: {
-    features: 'inline',
+    features: "inline",
   },
 };
 
 export const Block: Story = {
   args: {
-    features: 'block',
+    features: "block",
   },
   render: () => {
     return html`
@@ -56,13 +56,13 @@ export const Block: Story = {
 
 export const Wrap: Story = {
   args: {
-    features: 'wrap',
+    features: "wrap",
   },
 };
 
 export const NoMemory: Story = {
   args: {
-    features: 'no-memory',
+    features: "no-memory",
   },
 };
 
@@ -91,7 +91,12 @@ export const Toolbar: Story = {
           gap: 1rem;
         }
       </style>
-      <use-focusgroup role="toolbar" features="inline" aria-orientation="horizontal" class="custom-toolbar">
+      <use-focusgroup
+        role="toolbar"
+        features="inline"
+        aria-orientation="horizontal"
+        class="custom-toolbar"
+      >
         <use-dropdown label="font">
           <button type="button" role="menuitem">Arial</button>
           <button type="button" role="menuitem">Times New Roman</button>
@@ -150,10 +155,10 @@ export const Disclosure: Story = {
 export const InjectButtons: Story = {
   render: () => {
     function handleInject() {
-      const focusgroup = document.querySelector('#injectable') as UseFocusgroup;
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.innerText = 'injected';
+      const focusgroup = document.querySelector("#injectable") as UseFocusgroup;
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerText = "injected";
       focusgroup.appendChild(button);
       focusgroup.appendChild(button.cloneNode(true));
       focusgroup.appendChild(button.cloneNode(true));

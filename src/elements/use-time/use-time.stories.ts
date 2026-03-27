@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseTime } from './use-time';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseTime } from "./use-time";
 
 const meta: Meta<UseTime> = {
-  component: 'use-time',
-  title: 'Web Components/use-time',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-time",
+  title: "Web Components/use-time",
+  tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
     return html`<use-time value="12:30:45"></use-time>`;
@@ -72,7 +72,8 @@ export const Chinese: Story = {
 };
 
 export const Arabic: Story = {
-  render: () => html`<use-time dir="rtl" value="14:30:45" locale="ar-SA" format="narrow"></use-time>`,
+  render: () =>
+    html`<use-time dir="rtl" value="14:30:45" locale="ar-SA" format="narrow"></use-time>`,
 };
 
 export const Disabled: Story = {
@@ -92,23 +93,35 @@ export const NarrowFormat: Story = {
 };
 
 export const DigitalFormat: Story = {
-  render: () => html`<use-time value="12:30:45" format="digital" hours minutes seconds dayPeriod></use-time>`,
+  render: () =>
+    html`<use-time value="12:30:45" format="digital" hours minutes seconds dayPeriod></use-time>`,
 };
 
 export const Hour12: Story = {
-  render: () => html`<use-time value="14:30:45" hourFormat="12" hours minutes seconds dayPeriod></use-time>`,
+  render: () =>
+    html`<use-time value="14:30:45" hourFormat="12" hours minutes seconds dayPeriod></use-time>`,
 };
 
 export const Hour24: Story = {
-  render: () => html`<use-time value="14:30:45" hourFormat="24" hours minutes seconds dayPeriod></use-time>`,
+  render: () =>
+    html`<use-time value="14:30:45" hourFormat="24" hours minutes seconds dayPeriod></use-time>`,
 };
 
 export const FractionalSeconds: Story = {
-  render: () => html`<use-time value="12:30:45.123" hours minutes seconds fractionalSeconds dayPeriod></use-time>`,
+  render: () =>
+    html`<use-time
+      value="12:30:45.123"
+      hours
+      minutes
+      seconds
+      fractionalSeconds
+      dayPeriod
+    ></use-time>`,
 };
 
 export const CustomID: Story = {
-  render: () => html`<use-time value="12:30:45" id="custom-id" hours minutes seconds dayPeriod></use-time>`,
+  render: () =>
+    html`<use-time value="12:30:45" id="custom-id" hours minutes seconds dayPeriod></use-time>`,
 };
 
 export const CustomStyles: Story = {
@@ -169,8 +182,8 @@ export const CustomStyles: Story = {
 export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const output = document.getElementById('value-output') as HTMLPreElement;
-      const time = document.getElementById('time-value') as UseTime;
+      const output = document.getElementById("value-output") as HTMLPreElement;
+      const time = document.getElementById("time-value") as UseTime;
       output.textContent = time.value;
     };
 
@@ -189,18 +202,26 @@ export const FormSubmission: Story = {
       const formData = new FormData(event.target as HTMLFormElement);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const output = document.getElementById('output') as HTMLPreElement;
+      const output = document.getElementById("output") as HTMLPreElement;
       output.textContent = queryString;
     };
 
     const handleSetValue = () => {
-      const time = document.getElementById('time-set-form') as UseTime;
-      time.value = '15:45:30';
+      const time = document.getElementById("time-set-form") as UseTime;
+      time.value = "15:45:30";
     };
 
     return html`
       <form @submit=${handleSubmit} id="form-submission">
-        <use-time value="10:30:45" id="time-set-form" name="time" hours minutes seconds dayperiod></use-time>
+        <use-time
+          value="10:30:45"
+          id="time-set-form"
+          name="time"
+          hours
+          minutes
+          seconds
+          dayperiod
+        ></use-time>
         <button type="submit">Submit</button>
       </form>
       <button type="button" @click=${handleSetValue}>Set value</button>
@@ -212,8 +233,8 @@ export const FormSubmission: Story = {
 export const ProgrammaticSetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const time = document.getElementById('time-set-value') as UseTime;
-      time.value = '15:45:30';
+      const time = document.getElementById("time-set-value") as UseTime;
+      time.value = "15:45:30";
     };
 
     return html`

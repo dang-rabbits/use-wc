@@ -1,1 +1,1 @@
-export { html as useHtml } from 'lit';
+export { html as useHtml } from "lit";

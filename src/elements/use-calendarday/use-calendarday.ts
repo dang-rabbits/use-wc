@@ -1,5 +1,5 @@
-import { LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
 /**
  * A helper component for customizing specific days within `use-calendar`.
@@ -7,7 +7,7 @@ import { customElement, property } from 'lit/decorators.js';
  *
  * @slot default - slot for custom day content (replaces the day number)
  */
-@customElement('use-calendarday')
+@customElement("use-calendarday")
 export class UseCalendarday extends LitElement {
   protected createRenderRoot() {
     return this;
@@ -28,6 +28,6 @@ export class UseCalendarday extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-calendarday': UseCalendarday;
+    "use-calendarday": UseCalendarday;
   }
 }

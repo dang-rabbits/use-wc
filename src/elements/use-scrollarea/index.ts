@@ -1,1 +1,1 @@
-export { UseScrollarea } from './use-scrollarea';
+export { UseScrollarea } from "./use-scrollarea";

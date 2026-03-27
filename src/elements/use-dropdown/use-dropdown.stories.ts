@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseDropdown } from './use-dropdown';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseDropdown } from "./use-dropdown";
 
 const meta: Meta<UseDropdown> = {
-  component: 'use-dropdown',
-  title: 'Web Components/use-dropdown',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-dropdown",
+  title: "Web Components/use-dropdown",
+  tags: ["autodocs", "!dev", "utility"],
   args: {
     disabled: false,
   },
@@ -147,7 +147,7 @@ export const CustomItemLayout: Story = {
   parameters: {
     docs: {
       description:
-        'This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.',
+        "This is inspired by Edge and Chrome browser main menu dropdown. The Zoom In and Zoom Out buttons are grouped together in a horizontal layout but still accessible with the standard up and down arrow keys.",
     },
   },
   render: () => html`
@@ -194,7 +194,7 @@ export const SplitMenuItemButton: Story = {
 export const CheckboxSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+      descrption: "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/",
     },
   },
   render: () => html`
@@ -209,7 +209,7 @@ export const CheckboxSelect: Story = {
 export const RadioSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+      descrption: "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/",
     },
   },
   render: () => html`
@@ -224,7 +224,7 @@ export const RadioSelect: Story = {
 export const InjectedItems: Story = {
   render: () => {
     function injectItems() {
-      const dropdown = document.getElementById('inject-dropdown');
+      const dropdown = document.getElementById("inject-dropdown");
       if (dropdown) {
         dropdown.innerHTML =
           dropdown.innerHTML +

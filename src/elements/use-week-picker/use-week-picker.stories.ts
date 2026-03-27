@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseWeekPicker } from './use-week-picker';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseWeekPicker } from "./use-week-picker";
 
 const meta: Meta<UseWeekPicker> = {
-  component: 'use-week-picker',
-  title: 'Web Components/use-week-picker',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-week-picker",
+  title: "Web Components/use-week-picker",
+  tags: ["autodocs", "!dev", "utility"],
   args: {},
   render: () => html`<use-week-picker controls year="2026" month="3"></use-week-picker>`,
 };
@@ -17,8 +17,12 @@ export const Default: StoryObj<UseWeekPicker> = {};
 export const Controls: StoryObj<UseWeekPicker> = {
   render: () => {
     const handleChange = (event: CustomEvent<{ value: string; dates: string[] }>) => {
-      const output = document.getElementById('week-picker-controls-output') as HTMLPreElement;
-      output.textContent = JSON.stringify({ value: event.detail.value, dates: event.detail.dates }, null, 2);
+      const output = document.getElementById("week-picker-controls-output") as HTMLPreElement;
+      output.textContent = JSON.stringify(
+        { value: event.detail.value, dates: event.detail.dates },
+        null,
+        2,
+      );
     };
 
     return html`
@@ -34,7 +38,12 @@ export const Controls: StoryObj<UseWeekPicker> = {
  */
 export const WithValue: StoryObj<UseWeekPicker> = {
   render: () => {
-    return html`<use-week-picker controls year="2026" month="3" value="2026-W11"></use-week-picker>`;
+    return html`<use-week-picker
+      controls
+      year="2026"
+      month="3"
+      value="2026-W11"
+    ></use-week-picker>`;
   },
 };
 
@@ -45,8 +54,12 @@ export const WithValue: StoryObj<UseWeekPicker> = {
 export const MinAndMaxDates: StoryObj<UseWeekPicker> = {
   render: () => {
     const handleChange = (event: CustomEvent<{ value: string; dates: string[] }>) => {
-      const output = document.getElementById('week-picker-minmax-output') as HTMLPreElement;
-      output.textContent = JSON.stringify({ value: event.detail.value, dates: event.detail.dates }, null, 2);
+      const output = document.getElementById("week-picker-minmax-output") as HTMLPreElement;
+      output.textContent = JSON.stringify(
+        { value: event.detail.value, dates: event.detail.dates },
+        null,
+        2,
+      );
     };
 
     return html`

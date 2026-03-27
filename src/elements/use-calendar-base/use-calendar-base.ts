@@ -1,18 +1,21 @@
-import { LitElement, html, css, TemplateResult, CSSResultGroup } from 'lit';
-import { property, query } from 'lit/decorators.js';
-import { getDayNames, getLocaleFirstDay, getMonthNames } from '../../utils/date-time-aria-labels';
-import { map } from 'lit/directives/map.js';
-import { tabbable } from 'tabbable';
-import getTabIndex, { INITIAL_TABINDEX_VALUE } from '../../utils/get-tabindex';
-import { keyed } from 'lit/directives/keyed.js';
+import { LitElement, html, css, TemplateResult, CSSResultGroup } from "lit";
+import { property, query } from "lit/decorators.js";
+import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-time-aria-labels";
+import { map } from "lit/directives/map.js";
+import { tabbable } from "tabbable";
+import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
+import { keyed } from "lit/directives/keyed.js";
 
-import '../use-calendarday/use-calendarday';
+import "../use-calendarday/use-calendarday";
 
-const INITIAL_TABINDEX_ATTR = 'data-usewc-calendar-tabindex';
+const INITIAL_TABINDEX_ATTR = "data-usewc-calendar-tabindex";
 
 type LitHtml = typeof html;
 
-export type UseCalendarRenderDay = (data: { day: number; date: string }, html: LitHtml) => TemplateResult | string;
+export type UseCalendarRenderDay = (
+  data: { day: number; date: string },
+  html: LitHtml,
+) => TemplateResult | string;
 
 /**
  * Base class for calendar grid pickers. Provides the grid layout, keyboard
@@ -57,7 +60,7 @@ export class UseCalendarBase extends LitElement {
   static formAssociated = true;
 
   #internals: ElementInternals;
-  #stringValue = '';
+  #stringValue = "";
   #firstRender = false;
 
   @query('[part="grid-body"]')
@@ -78,28 +81,28 @@ export class UseCalendarBase extends LitElement {
   controls: boolean = false;
 
   @property({ type: String, attribute: true, reflect: true })
-  navigation: 'nowrap' | 'off' | 'on' = 'on';
+  navigation: "nowrap" | "off" | "on" = "on";
   get navigationEnabled() {
-    return this.navigation !== 'off';
+    return this.navigation !== "off";
   }
   get #navigationWrap() {
-    return !` ${this.navigation} `.includes(' nowrap ');
+    return !` ${this.navigation} `.includes(" nowrap ");
   }
 
   @property({ type: String, attribute: true, reflect: true })
-  hiddenmonths: string = '';
+  hiddenmonths: string = "";
   get #showPreviousMonth() {
-    return !` ${this.hiddenmonths} `.includes(' previous ');
+    return !` ${this.hiddenmonths} `.includes(" previous ");
   }
   get #showNextMonth() {
-    return !` ${this.hiddenmonths} `.includes(' next ');
+    return !` ${this.hiddenmonths} `.includes(" next ");
   }
 
   @property({ type: String, attribute: true })
-  focusmode: 'cell' | 'control' = 'cell';
+  focusmode: "cell" | "control" = "cell";
 
   @property({ type: String, attribute: true })
-  name?: string = '';
+  name?: string = "";
 
   @property({ type: Array, attribute: false })
   private selected: string[] = [];
@@ -122,13 +125,13 @@ export class UseCalendarBase extends LitElement {
 
   #activeDate = new Date(this.year, this.month - 1, 1);
 
-  #pickerMode: 'days' | 'picker' = 'days';
+  #pickerMode: "days" | "picker" = "days";
   #pickerHeight: number | null = null;
   #todayLabel = new Intl.DateTimeFormat(navigator.language, {
-    month: 'long',
-    year: 'numeric',
-    day: 'numeric',
-    timeZone: 'UTC',
+    month: "long",
+    year: "numeric",
+    day: "numeric",
+    timeZone: "UTC",
   }).format(new Date());
 
   constructor() {
@@ -138,37 +141,39 @@ export class UseCalendarBase extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.year = Number(this.getAttribute('year')) || new Date().getFullYear();
-    this.month = Number(this.getAttribute('month')) || new Date().getMonth() + 1;
+    this.year = Number(this.getAttribute("year")) || new Date().getFullYear();
+    this.month = Number(this.getAttribute("month")) || new Date().getMonth() + 1;
 
     let startDay = 1;
-    const startValue = this.getAttribute('start');
+    const startValue = this.getAttribute("start");
     if (startValue) {
-      this.#startDate = this.#parseDate(startValue === 'min' ? this.getAttribute('min')! : startValue);
+      this.#startDate = this.#parseDate(
+        startValue === "min" ? this.getAttribute("min")! : startValue,
+      );
       if (this.#startDate && this.#startDate.getMonth() + 1 === this.month) {
         startDay = this.#startDate.getDate();
       }
     }
 
-    const endValue = this.getAttribute('end');
+    const endValue = this.getAttribute("end");
     if (endValue) {
-      this.#endDate = this.#parseDate(endValue === 'max' ? this.getAttribute('max')! : endValue);
+      this.#endDate = this.#parseDate(endValue === "max" ? this.getAttribute("max")! : endValue);
     }
 
     this.#activeDate = new Date(this.year, this.month - 1, startDay);
 
-    this.addEventListener('keydown', this.#handlePickerKeyDown);
-    this.addEventListener('focusout', this.#handlePickerFocusOut);
+    this.addEventListener("keydown", this.#handlePickerKeyDown);
+    this.addEventListener("focusout", this.#handlePickerFocusOut);
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('keydown', this.#handlePickerKeyDown);
-    this.removeEventListener('focusout', this.#handlePickerFocusOut);
+    this.removeEventListener("keydown", this.#handlePickerKeyDown);
+    this.removeEventListener("focusout", this.#handlePickerFocusOut);
   }
 
   #parseDate(date: string) {
-    const [year, month, day] = date.split('-').map(Number);
+    const [year, month, day] = date.split("-").map(Number);
     return year && month && day ? new Date(year, month - 1, day) : null;
   }
 
@@ -202,7 +207,7 @@ export class UseCalendarBase extends LitElement {
     return this.#activeDateString;
   }
 
-  protected dateDisabled(date: string): boolean | '' | undefined {
+  protected dateDisabled(date: string): boolean | "" | undefined {
     return this.#dateDisabled(date);
   }
 
@@ -216,18 +221,18 @@ export class UseCalendarBase extends LitElement {
 
   protected getTargetCell(target: HTMLElement): HTMLElement | null {
     const dateStr =
-      target?.closest('[data-usewc-date]')?.getAttribute('data-usewc-date') ||
-      target?.closest('[slot^="date-"]')?.getAttribute('slot')?.replace('date-', '');
+      target?.closest("[data-usewc-date]")?.getAttribute("data-usewc-date") ||
+      target?.closest('[slot^="date-"]')?.getAttribute("slot")?.replace("date-", "");
     if (!dateStr) return null;
     return this.shadowRoot?.querySelector(`[data-usewc-date="${dateStr}"]`) as HTMLElement | null;
   }
 
   protected handleDayClick(_dateStr: string): void {
-    throw new Error('UseCalendarBase: handleDayClick must be overridden');
+    throw new Error("UseCalendarBase: handleDayClick must be overridden");
   }
 
   protected handleConfirmKey(_activeDateStr: string): void {
-    throw new Error('UseCalendarBase: handleConfirmKey must be overridden');
+    throw new Error("UseCalendarBase: handleConfirmKey must be overridden");
   }
 
   protected get hoverWeekDates(): string[] {
@@ -268,16 +273,20 @@ export class UseCalendarBase extends LitElement {
 
   get #previousMonthLabel() {
     const { year, month } = this.#previousMonthData;
-    return new Intl.DateTimeFormat(this.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
-      new Date(year, month - 1, 1)
-    );
+    return new Intl.DateTimeFormat(this.locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(year, month - 1, 1));
   }
 
   get #nextMonthLabel() {
     const { year, month } = this.#nextMonthData;
-    return new Intl.DateTimeFormat(this.locale, { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(
-      new Date(year, month - 1, 1)
-    );
+    return new Intl.DateTimeFormat(this.locale, {
+      month: "long",
+      year: "numeric",
+      timeZone: "UTC",
+    }).format(new Date(year, month - 1, 1));
   }
 
   get #nextMonthData() {
@@ -296,16 +305,16 @@ export class UseCalendarBase extends LitElement {
   }
 
   #weekdayNames() {
-    return getDayNames(this.locale, 'short');
+    return getDayNames(this.locale, "short");
   }
 
   get #title() {
     try {
       const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
+        year: "numeric",
+        month: "long",
         day: undefined,
-        timeZone: 'UTC',
+        timeZone: "UTC",
       };
       const formatter = new Intl.DateTimeFormat(this.locale, options);
       const date = new Date(this.year, this.month - 1, 1);
@@ -321,7 +330,7 @@ export class UseCalendarBase extends LitElement {
   }
 
   #formatDate(year: number, month: number, day: number) {
-    return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    return `${year}-${month.toString().padStart(2, "0")}-${day.toString().padStart(2, "0")}`;
   }
 
   #focusableElements = new Map<string, HTMLElement[]>();
@@ -346,9 +355,9 @@ export class UseCalendarBase extends LitElement {
       });
   }
 
-  #handleCellFocusIn(event: HTMLElementEventMap['focusin']) {
+  #handleCellFocusIn(event: HTMLElementEventMap["focusin"]) {
     const target = event.currentTarget as HTMLElement;
-    const date = target.getAttribute('data-usewc-date');
+    const date = target.getAttribute("data-usewc-date");
     if (!date) return;
 
     const focusableElements = this.#focusableElements.get(date);
@@ -358,23 +367,23 @@ export class UseCalendarBase extends LitElement {
       const tabindex = el.getAttribute(INITIAL_TABINDEX_ATTR);
 
       if (tabindex === INITIAL_TABINDEX_VALUE) {
-        el.removeAttribute('tabindex');
+        el.removeAttribute("tabindex");
       } else if (tabindex) {
-        el.setAttribute('tabindex', tabindex);
+        el.setAttribute("tabindex", tabindex);
       }
       el.removeAttribute(INITIAL_TABINDEX_ATTR);
     });
   }
 
-  #handleCellFocusOut(event: HTMLElementEventMap['focusout']) {
+  #handleCellFocusOut(event: HTMLElementEventMap["focusout"]) {
     const currentTarget = event.currentTarget as HTMLElement;
-    const date = currentTarget.getAttribute('data-usewc-date');
+    const date = currentTarget.getAttribute("data-usewc-date");
     const relatedTarget = event.relatedTarget as HTMLElement;
-    const focusableElements = this.#focusableElements.get(date || '');
+    const focusableElements = this.#focusableElements.get(date || "");
 
     if (!date || !focusableElements || focusableElements.includes(relatedTarget)) {
       if (currentTarget.contains(relatedTarget)) {
-        currentTarget.setAttribute('tabindex', '-1');
+        currentTarget.setAttribute("tabindex", "-1");
       }
 
       return;
@@ -394,7 +403,14 @@ export class UseCalendarBase extends LitElement {
     return this.getDateForDay(new Date().getDate());
   }
 
-  #renderDayCell(year: number, month: number, day: number, rowIndex: number, columnIndex: number, empty = false) {
+  #renderDayCell(
+    year: number,
+    month: number,
+    day: number,
+    rowIndex: number,
+    columnIndex: number,
+    empty = false,
+  ) {
     const date = this.#formatDate(year, month, day);
     const disabled = this.#dateDisabled(date);
 
@@ -403,21 +419,21 @@ export class UseCalendarBase extends LitElement {
         @focusin=${this.#handleCellFocusIn}
         @focusout=${this.#handleCellFocusOut}
         part=${[
-          'day',
-          empty ? 'day-empty' : '',
-          this.selected.includes(date) ? 'day-selected' : '',
-          this.#todayDate === date ? 'day-today' : '',
-          disabled ? 'day-disabled' : '',
-          this.hoverWeekDates.includes(date) ? 'day-week-hover' : '',
+          "day",
+          empty ? "day-empty" : "",
+          this.selected.includes(date) ? "day-selected" : "",
+          this.#todayDate === date ? "day-today" : "",
+          disabled ? "day-disabled" : "",
+          this.hoverWeekDates.includes(date) ? "day-week-hover" : "",
         ]
-          .join(' ')
+          .join(" ")
           .trim()}
-        aria-disabled=${disabled ? 'true' : 'false'}
-        aria-selected=${this.selected.includes(date) ? 'true' : 'false'}
+        aria-disabled=${disabled ? "true" : "false"}
+        aria-selected=${this.selected.includes(date) ? "true" : "false"}
         role="gridcell"
         data-usewc-day=${day}
         data-usewc-date=${date}
-        tabindex=${this.navigationEnabled ? '-1' : undefined}
+        tabindex=${this.navigationEnabled ? "-1" : undefined}
         aria-rowindex="${rowIndex}"
         aria-colindex="${columnIndex}"
       >
@@ -427,7 +443,7 @@ export class UseCalendarBase extends LitElement {
   }
 
   public previousMonth() {
-    if (this.navigation === 'off') return;
+    if (this.navigation === "off") return;
     let previousMonth = this.#activeDate.getMonth();
     let previousYear = this.#activeDate.getFullYear();
     if (previousMonth === 0) {
@@ -439,12 +455,12 @@ export class UseCalendarBase extends LitElement {
   }
 
   public today() {
-    if (this.navigation === 'off') return;
+    if (this.navigation === "off") return;
     this.goTo(new Date());
   }
 
   public nextMonth() {
-    if (this.navigation === 'off') return;
+    if (this.navigation === "off") return;
     this.goTo(this.#activeDate.getFullYear(), this.#activeDate.getMonth() + 2, 1);
   }
 
@@ -455,7 +471,7 @@ export class UseCalendarBase extends LitElement {
    */
   public async goTo(yearOrDate: number | string | Date, month?: number, day?: number) {
     let date = null as Date | null;
-    if (typeof yearOrDate === 'string') {
+    if (typeof yearOrDate === "string") {
       date = this.#parseDate(yearOrDate) || new Date();
     } else if (yearOrDate instanceof Date) {
       date = yearOrDate;
@@ -475,7 +491,10 @@ export class UseCalendarBase extends LitElement {
       this.#activeDate = date;
     }
 
-    if (this.year !== this.#activeDate.getFullYear() || this.month !== this.#activeDate.getMonth() + 1) {
+    if (
+      this.year !== this.#activeDate.getFullYear() ||
+      this.month !== this.#activeDate.getMonth() + 1
+    ) {
       this.year = this.#activeDate.getFullYear();
       this.month = this.#activeDate.getMonth() + 1;
       await this.#initializeControls();
@@ -492,19 +511,19 @@ export class UseCalendarBase extends LitElement {
   }
 
   get #activeDateString() {
-    return this.#activeDate.toISOString().split('T')[0];
+    return this.#activeDate.toISOString().split("T")[0];
   }
 
   #mouseDownTarget = null as HTMLElement | null;
   #handleMouseDown(event: MouseEvent) {
     this.#mouseDownTarget = this.#getTargetCell(event.target as HTMLElement);
-    this.#activeDate.setDate(Number(this.#mouseDownTarget?.getAttribute('data-usewc-day')) || 1);
+    this.#activeDate.setDate(Number(this.#mouseDownTarget?.getAttribute("data-usewc-day")) || 1);
   }
 
   #getTargetCellDate(target?: HTMLElement) {
     return (
-      target?.closest('[data-usewc-date]')?.getAttribute('data-usewc-date') ||
-      target?.closest('[slot^="date-"]')?.getAttribute('slot')?.replace('date-', '')
+      target?.closest("[data-usewc-date]")?.getAttribute("data-usewc-date") ||
+      target?.closest('[slot^="date-"]')?.getAttribute("slot")?.replace("date-", "")
     );
   }
 
@@ -513,27 +532,29 @@ export class UseCalendarBase extends LitElement {
     return this.shadowRoot?.querySelector(`[data-usewc-date="${targetDate}"]`) as HTMLElement;
   }
 
-  #handleClick(event: HTMLElementEventMap['click']) {
+  #handleClick(event: HTMLElementEventMap["click"]) {
     this.#mouseDownTarget = null;
     if (!this.navigationEnabled) return;
 
     const target = event.target as HTMLElement;
     const day = this.#getTargetCell(target);
     if (day) {
-      this.handleDayClick(day.getAttribute('data-usewc-date') || '');
+      this.handleDayClick(day.getAttribute("data-usewc-date") || "");
 
       if (this.navigationEnabled) {
-        this.#activeDate.setDate(Number(day.getAttribute('data-usewc-day')) || 1);
-        this.gridBody.setAttribute('tabindex', '-1');
+        this.#activeDate.setDate(Number(day.getAttribute("data-usewc-day")) || 1);
+        this.gridBody.setAttribute("tabindex", "-1");
       }
     }
   }
 
-  #handleFocusIn(event: HTMLElementEventMap['focusin']) {
+  #handleFocusIn(event: HTMLElementEventMap["focusin"]) {
     const target = event.target as HTMLElement | null;
-    const cell = this.shadowRoot?.querySelector(`[data-usewc-date="${this.#activeDateString}"]`) as HTMLElement;
+    const cell = this.shadowRoot?.querySelector(
+      `[data-usewc-date="${this.#activeDateString}"]`,
+    ) as HTMLElement;
 
-    this.gridBody.setAttribute('tabindex', '-1');
+    this.gridBody.setAttribute("tabindex", "-1");
 
     if (event.target === this.gridBody) {
       this.#focusOnDate(this.year, this.month, this.#activeDate.getDate());
@@ -542,29 +563,29 @@ export class UseCalendarBase extends LitElement {
     }
 
     if (this.contains(target)) {
-      cell?.setAttribute('tabindex', '0');
+      cell?.setAttribute("tabindex", "0");
       this.onActiveDateChanged(this.#activeDateString);
     }
   }
 
-  #handleFocusOut(event: HTMLElementEventMap['focusout']) {
+  #handleFocusOut(event: HTMLElementEventMap["focusout"]) {
     if (this.contains(event.relatedTarget as Node)) {
       return;
     }
 
-    this.gridBody.querySelectorAll('[data-usewc-day]').forEach((el) => {
-      el.setAttribute('tabindex', '-1');
+    this.gridBody.querySelectorAll("[data-usewc-day]").forEach((el) => {
+      el.setAttribute("tabindex", "-1");
     });
 
-    this.gridBody.setAttribute('tabindex', '0');
+    this.gridBody.setAttribute("tabindex", "0");
 
     this.onGridFocusOut();
   }
 
-  #handleKeyDown(event: HTMLElementEventMap['keydown']) {
+  #handleKeyDown(event: HTMLElementEventMap["keydown"]) {
     const currentDay = this.#activeDate.getDate();
 
-    if ([' ', 'Enter'].includes(event.key)) {
+    if ([" ", "Enter"].includes(event.key)) {
       event.preventDefault();
       event.stopPropagation();
       this.handleConfirmKey(this.#activeDateString);
@@ -572,23 +593,23 @@ export class UseCalendarBase extends LitElement {
     }
 
     let moveTo;
-    if (event.key === 'ArrowRight') {
+    if (event.key === "ArrowRight") {
       moveTo = currentDay + 1;
       if (!this.#navigationWrap) {
         moveTo = Math.min(moveTo, this.#daysInMonth);
       }
-    } else if (event.key === 'ArrowLeft') {
+    } else if (event.key === "ArrowLeft") {
       moveTo = currentDay - 1;
       if (!this.#navigationWrap) {
         moveTo = Math.max(moveTo, 1);
       }
-    } else if (event.key === 'ArrowUp') {
+    } else if (event.key === "ArrowUp") {
       if (this.#showPreviousMonth && this.#navigationWrap) {
         moveTo = currentDay - 7;
       } else {
         moveTo = Math.max(currentDay - 7, 1);
       }
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.key === "ArrowDown") {
       if (this.#showNextMonth && this.#navigationWrap) {
         moveTo = currentDay + 7;
       } else {
@@ -614,10 +635,10 @@ export class UseCalendarBase extends LitElement {
     const date = this.#formatDate(
       this.#activeDate.getFullYear(),
       this.#activeDate.getMonth() + 1,
-      this.#activeDate.getDate()
+      this.#activeDate.getDate(),
     );
 
-    if (this.focusmode === 'control') {
+    if (this.focusmode === "control") {
       const target = this.#focusableElements.get(date)?.at(0);
       if (target) {
         target.focus();
@@ -643,22 +664,27 @@ export class UseCalendarBase extends LitElement {
   }
 
   #togglePicker = () => {
-    const opening = this.#pickerMode !== 'picker';
+    const opening = this.#pickerMode !== "picker";
     if (opening) {
       const grid = this.shadowRoot?.querySelector<HTMLElement>('[part="grid"]');
       this.#pickerHeight = grid?.offsetHeight ?? null;
     }
-    this.#pickerMode = opening ? 'picker' : 'days';
+    this.#pickerMode = opening ? "picker" : "days";
     this.requestUpdate();
     if (opening) {
       this.updateComplete.then(() => {
         const picker = this.shadowRoot?.querySelector<HTMLElement>('[part="picker"]');
-        const currentBtn = this.shadowRoot?.querySelector<HTMLButtonElement>('[part~="picker-month-current"]');
+        const currentBtn = this.shadowRoot?.querySelector<HTMLButtonElement>(
+          '[part~="picker-month-current"]',
+        );
         if (picker && currentBtn) {
           const pickerRect = picker.getBoundingClientRect();
           const btnRect = currentBtn.getBoundingClientRect();
           picker.scrollTop =
-            picker.scrollTop + (btnRect.top - pickerRect.top) - picker.clientHeight / 2 + btnRect.height / 2;
+            picker.scrollTop +
+            (btnRect.top - pickerRect.top) -
+            picker.clientHeight / 2 +
+            btnRect.height / 2;
         }
         currentBtn?.focus();
       });
@@ -669,7 +695,7 @@ export class UseCalendarBase extends LitElement {
     this.month = month;
     this.year = year;
     this.#activeDate = new Date(year, month - 1, 1);
-    this.#pickerMode = 'days';
+    this.#pickerMode = "days";
     this.requestUpdate();
     this.updateComplete.then(() => {
       this.shadowRoot?.querySelector<HTMLButtonElement>('[part="title-button"]')?.focus();
@@ -677,11 +703,11 @@ export class UseCalendarBase extends LitElement {
   };
 
   #handlePickerKeyDown = (event: KeyboardEvent) => {
-    if (this.#pickerMode !== 'picker') return;
+    if (this.#pickerMode !== "picker") return;
 
-    if (event.key === 'Escape') {
+    if (event.key === "Escape") {
       event.stopPropagation();
-      this.#pickerMode = 'days';
+      this.#pickerMode = "days";
       this.requestUpdate();
       this.updateComplete.then(() => {
         this.shadowRoot?.querySelector<HTMLButtonElement>('[part="title-button"]')?.focus();
@@ -689,18 +715,20 @@ export class UseCalendarBase extends LitElement {
       return;
     }
 
-    const btns = Array.from(this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'));
+    const btns = Array.from(
+      this.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'),
+    );
     const idx = btns.indexOf(this.shadowRoot!.activeElement as HTMLButtonElement);
     if (idx === -1) return;
 
     const yearSize = 12;
     let next = -1;
-    if (event.key === 'ArrowRight') next = Math.min(idx + 1, btns.length - 1);
-    else if (event.key === 'ArrowLeft') next = Math.max(idx - 1, 0);
-    else if (event.key === 'ArrowDown') next = Math.min(idx + 4, btns.length - 1);
-    else if (event.key === 'ArrowUp') next = Math.max(idx - 4, 0);
-    else if (event.key === 'Home') next = Math.floor(idx / yearSize) * yearSize;
-    else if (event.key === 'End')
+    if (event.key === "ArrowRight") next = Math.min(idx + 1, btns.length - 1);
+    else if (event.key === "ArrowLeft") next = Math.max(idx - 1, 0);
+    else if (event.key === "ArrowDown") next = Math.min(idx + 4, btns.length - 1);
+    else if (event.key === "ArrowUp") next = Math.max(idx - 4, 0);
+    else if (event.key === "Home") next = Math.floor(idx / yearSize) * yearSize;
+    else if (event.key === "End")
       next = Math.min(Math.floor(idx / yearSize) * yearSize + yearSize - 1, btns.length - 1);
 
     if (next > -1) {
@@ -709,19 +737,19 @@ export class UseCalendarBase extends LitElement {
         b.tabIndex = i === next ? 0 : -1;
       });
       btns[next].focus();
-      btns[next].scrollIntoView({ block: 'nearest' });
+      btns[next].scrollIntoView({ block: "nearest" });
     }
   };
 
   #handlePickerFocusOut = (event: FocusEvent) => {
-    if (this.#pickerMode === 'picker' && !this.shadowRoot!.contains(event.relatedTarget as Node)) {
-      this.#pickerMode = 'days';
+    if (this.#pickerMode === "picker" && !this.shadowRoot!.contains(event.relatedTarget as Node)) {
+      this.#pickerMode = "days";
       this.requestUpdate();
     }
   };
 
   #renderPicker() {
-    const months = getMonthNames(this.locale, 'short');
+    const months = getMonthNames(this.locale, "short");
     const startYear = this.min ? (this.#parseDate(this.min)?.getFullYear() ?? 1970) : 1970;
     const endYear = this.max
       ? (this.#parseDate(this.max)?.getFullYear() ?? new Date().getFullYear() + 100)
@@ -731,7 +759,7 @@ export class UseCalendarBase extends LitElement {
       <div
         part="picker"
         id="calendar-picker"
-        style=${this.#pickerHeight != null ? `max-height:${this.#pickerHeight}px` : ''}
+        style=${this.#pickerHeight != null ? `max-height:${this.#pickerHeight}px` : ""}
       >
         ${years.map((year) => {
           const allowedMonths = months
@@ -745,11 +773,11 @@ export class UseCalendarBase extends LitElement {
                   const isCurrent = year === this.year && monthNum === this.month;
                   return html`
                     <button
-                      part="picker-month ${isCurrent ? 'picker-month-current' : ''}"
+                      part="picker-month ${isCurrent ? "picker-month-current" : ""}"
                       role="gridcell"
                       type="button"
-                      aria-selected=${isCurrent ? 'true' : 'false'}
-                      tabindex=${isCurrent ? '0' : '-1'}
+                      aria-selected=${isCurrent ? "true" : "false"}
+                      tabindex=${isCurrent ? "0" : "-1"}
                       data-picker-month=${monthNum}
                       @click=${() => this.#selectMonth(monthNum, year)}
                     >
@@ -776,7 +804,9 @@ export class UseCalendarBase extends LitElement {
     const endDay = endDate && this.#isThisMonth(endDate) ? endDate.getDate() : daysInMonth;
     const localeFirstDay = getLocaleFirstDay(this.locale);
     const firstDay =
-      startDate && this.#isThisMonth(startDate) ? (startDate.getDay() - localeFirstDay + 7) % 7 : this.#startDayOffset;
+      startDate && this.#isThisMonth(startDate)
+        ? (startDate.getDay() - localeFirstDay + 7) % 7
+        : this.#startDayOffset;
 
     let rowIndex = 1;
     let columnIndex = 1;
@@ -793,9 +823,9 @@ export class UseCalendarBase extends LitElement {
               prevDay,
               rowIndex + 1,
               columnIndex,
-              true
+              true,
             )
-          : html`<div part="day day-empty"></div>`
+          : html`<div part="day day-empty"></div>`,
       );
       columnIndex++;
     }
@@ -818,8 +848,15 @@ export class UseCalendarBase extends LitElement {
         const emptyDate = new Date(nextMonthData.year, nextMonthData.month - 1, i);
         rows[rowIndex].push(
           !endDate || emptyDate <= endDate
-            ? this.#renderDayCell(nextMonthData.year, nextMonthData.month, i, rowIndex + 1, columnIndex, true)
-            : html`<div part="day day-empty"></div>`
+            ? this.#renderDayCell(
+                nextMonthData.year,
+                nextMonthData.month,
+                i,
+                rowIndex + 1,
+                columnIndex,
+                true,
+              )
+            : html`<div part="day day-empty"></div>`,
         );
       }
     }
@@ -835,7 +872,7 @@ export class UseCalendarBase extends LitElement {
           <button
             part="title-button"
             type="button"
-            aria-expanded=${this.#pickerMode === 'picker' ? 'true' : 'false'}
+            aria-expanded=${this.#pickerMode === "picker" ? "true" : "false"}
             aria-controls="calendar-picker"
             @click=${this.#togglePicker}
           >
@@ -873,24 +910,30 @@ export class UseCalendarBase extends LitElement {
                   ►
                 </button>
               `
-            : ''}
+            : ""}
         </slot>
         <slot name="header-end"></slot>
       </div>
-      ${this.#pickerMode === 'picker'
+      ${this.#pickerMode === "picker"
         ? this.#renderPicker()
         : html`
             <div part="grid" role="grid" aria-labelledby="calendar-title">
               <div part="grid-header" role="row" aria-rowindex="1">
                 ${weekdayNames.map(
                   (name, index) =>
-                    html`<div part="grid-header-cell" role="columnheader" aria-colindex="${index + 1}">${name}</div>`
+                    html`<div
+                      part="grid-header-cell"
+                      role="columnheader"
+                      aria-colindex="${index + 1}"
+                    >
+                      ${name}
+                    </div>`,
                 )}
               </div>
               <div
                 part="grid-body"
                 role="rowgroup"
-                tabindex=${this.navigationEnabled ? '0' : undefined}
+                tabindex=${this.navigationEnabled ? "0" : undefined}
                 @focusin=${this.navigationEnabled ? this.#handleFocusIn : undefined}
                 @focusout=${this.navigationEnabled ? this.#handleFocusOut : undefined}
                 @mousedown=${this.navigationEnabled ? this.#handleMouseDown : undefined}
@@ -903,8 +946,9 @@ export class UseCalendarBase extends LitElement {
                   `${this.year}-${this.month}`,
                   map(
                     neededRows,
-                    (row, index) => html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`
-                  )
+                    (row, index) =>
+                      html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`,
+                  ),
                 )}
               </div>
             </div>
@@ -918,36 +962,36 @@ export class UseCalendarBase extends LitElement {
       text-align: center;
     }
 
-    [part='grid-header'],
-    [part='grid-body'] [part~='row'] {
+    [part="grid-header"],
+    [part="grid-body"] [part~="row"] {
       display: grid;
       grid-template-rows: auto repeat(6, 1fr);
       grid-template-columns: repeat(7, 1fr);
     }
 
-    [part='header'] {
+    [part="header"] {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
 
-    [part='header'] slot:not(:empty) {
+    [part="header"] slot:not(:empty) {
       display: block;
     }
 
-    [part*='day-selected'] {
+    [part*="day-selected"] {
       background-color: rgba(0, 0, 0, 0.25);
     }
 
-    [part*='day-disabled'] {
+    [part*="day-disabled"] {
       opacity: 0.75;
     }
 
-    [part*='day-empty'] {
+    [part*="day-empty"] {
       opacity: 0.5;
     }
 
-    [part='title-button'] {
+    [part="title-button"] {
       background: none;
       border: none;
       padding: 0;
@@ -955,23 +999,23 @@ export class UseCalendarBase extends LitElement {
       font: inherit;
     }
 
-    [part='picker'] {
+    [part="picker"] {
       overflow-y: auto;
     }
 
-    [part='picker-year-label'] {
+    [part="picker-year-label"] {
       font-weight: bold;
       text-align: start;
       padding-block: 0.5em 0.25em;
       margin-block-end: 0.25em;
     }
 
-    [part='picker-months'] {
+    [part="picker-months"] {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
     }
 
-    [part~='picker-month'] {
+    [part~="picker-month"] {
       background: none;
       border: none;
       padding: 0;
@@ -979,7 +1023,7 @@ export class UseCalendarBase extends LitElement {
       font: inherit;
     }
 
-    [part~='picker-month-current'] {
+    [part~="picker-month-current"] {
       background-color: rgba(0, 0, 0, 0.25);
     }
   `;

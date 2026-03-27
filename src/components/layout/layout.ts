@@ -1,22 +1,22 @@
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { GapType } from '../../styles/gap';
+import { LitElement, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { GapType } from "../../styles/gap";
 
 /**
  * An example element.
  *
  * @slot - This element has a slot
  */
-@customElement('flex-layout')
+@customElement("flex-layout")
 export class FlexLayout extends LitElement {
   @property()
-  direction?: 'row' | 'column';
+  direction?: "row" | "column";
 
   @property()
-  align?: 'start' | 'center' | 'end';
+  align?: "start" | "center" | "end";
 
   @property()
-  justify?: 'start' | 'center' | 'end';
+  justify?: "start" | "center" | "end";
 
   @property({ type: Boolean })
   fill?: boolean;
@@ -38,6 +38,6 @@ export class FlexLayout extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'flex-layout': FlexLayout;
+    "flex-layout": FlexLayout;
   }
 }

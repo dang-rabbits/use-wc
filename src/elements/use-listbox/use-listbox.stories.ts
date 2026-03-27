@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { UseListbox } from './use-listbox';
-import { html } from 'lit';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { UseListbox } from "./use-listbox";
+import { html } from "lit";
 
 const meta: Meta<UseListbox> = {
-  component: 'use-listbox',
-  subcomponents: { 'use-option': 'use-option' },
-  title: 'Web Components/use-listbox',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-listbox",
+  subcomponents: { "use-option": "use-option" },
+  title: "Web Components/use-listbox",
+  tags: ["autodocs", "!dev", "input"],
   args: {
-    placeholder: 'Select a number',
+    placeholder: "Select a number",
     disabled: false,
     multiple: false,
-    name: 'example',
+    name: "example",
   },
   render: (args: UseListbox) => {
     return html`
@@ -41,7 +41,7 @@ export const Disabled: Story = {
 
 export const Placeholder: Story = {
   args: {
-    placeholder: 'Select a number',
+    placeholder: "Select a number",
   },
 };
 
@@ -79,8 +79,10 @@ export const OptionsDivider: Story = {
 export const ChangeEvent: StoryObj<UseListbox> = {
   render: () => {
     function handleChange(e: CustomEvent<{ value: FormData }>) {
-      const output = document.getElementById('change-event-output') as HTMLPreElement;
-      output.textContent = JSON.stringify((e.detail.value as unknown as FormData).getAll('change-event'));
+      const output = document.getElementById("change-event-output") as HTMLPreElement;
+      output.textContent = JSON.stringify(
+        (e.detail.value as unknown as FormData).getAll("change-event"),
+      );
     }
     return html`
       <use-listbox name="change-event" @use-change=${handleChange} multiple>
@@ -100,7 +102,7 @@ export const FormSingleValue: Story = {
       const form = e.target as HTMLFormElement;
       const formData = new FormData(form);
       const jsonData = JSON.stringify(Object.fromEntries(formData), null, 2);
-      const formOutput = document.querySelector('#form-data');
+      const formOutput = document.querySelector("#form-data");
       if (formOutput) {
         formOutput.textContent = jsonData;
       }
@@ -133,7 +135,7 @@ export const FormMultipleValues: Story = {
       const formData = new FormData(form);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const formOutput = document.querySelector('#form-data-multiple');
+      const formOutput = document.querySelector("#form-data-multiple");
       if (formOutput) {
         formOutput.textContent = queryString;
       }
@@ -216,7 +218,7 @@ export const CustomStyles: Story = {
       }
 
       .custom-use-listbox use-option::part(selected-indicator)::before {
-        content: '\\1F525';
+        content: "\\1F525";
         margin-inline-end: 8px;
       }
 
