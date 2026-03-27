@@ -103,7 +103,10 @@ export class UseSelect extends LitElement {
       if (selectOption.disabled) {
         this.trigger?.focus();
       } else {
-        (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
+        const popoverElement = this.trigger?.popoverTargetElement;
+        if (popoverElement instanceof HTMLElement) {
+          popoverElement.hidePopover();
+        }
       }
     }
   }
@@ -212,7 +215,10 @@ export class UseSelect extends LitElement {
 
     if (!isOpen && ["ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
-      (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
+      const popoverElement = this.trigger?.popoverTargetElement;
+      if (popoverElement instanceof HTMLElement) {
+        popoverElement.showPopover();
+      }
       return;
     }
 
@@ -242,9 +248,13 @@ export class UseSelect extends LitElement {
         event.preventDefault();
         moveTo = options.at(activeIndex + 1);
         break;
-      case "Tab":
-        (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
+      case "Tab": {
+        const popoverElement = this.trigger?.popoverTargetElement;
+        if (popoverElement instanceof HTMLElement) {
+          popoverElement.hidePopover();
+        }
         break;
+      }
     }
 
     if (moveTo) {

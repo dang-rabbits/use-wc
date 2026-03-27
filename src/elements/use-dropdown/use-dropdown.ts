@@ -183,7 +183,10 @@ export class UseDropdown extends LitElement {
 
     if (!isOpen && !this.#isNested && ["ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
-      (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
+      const popoverElement = this.trigger?.popoverTargetElement;
+      if (popoverElement instanceof HTMLElement) {
+        popoverElement.showPopover();
+      }
       return;
     }
 
@@ -193,7 +196,10 @@ export class UseDropdown extends LitElement {
       ["ArrowRight", "ArrowLeft", "Enter", " "].includes(event.key)
     ) {
       event.preventDefault();
-      (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
+      const popoverElement = this.trigger?.popoverTargetElement;
+      if (popoverElement instanceof HTMLElement) {
+        popoverElement.showPopover();
+      }
       return;
     }
 
@@ -235,9 +241,13 @@ export class UseDropdown extends LitElement {
         event.stopPropagation();
         moveTo = options[options.length - 1];
         break;
-      case "Tab":
-        (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
+      case "Tab": {
+        const popoverElement = this.trigger?.popoverTargetElement;
+        if (popoverElement instanceof HTMLElement) {
+          popoverElement.hidePopover();
+        }
         break;
+      }
       case "Escape":
         event.stopPropagation();
         this.trigger?.focus();

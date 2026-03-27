@@ -110,7 +110,6 @@ export class UseDate extends LitElement {
     return (event: Event) => {
       const target = event.target as HTMLInputElement;
       this.#valueData[segment] = target.value;
-      target.value = target.value;
       this.#updateInternalValue();
     };
   }
