@@ -1,6 +1,13 @@
-import { LitElement, css, html } from 'lit';
+import { LitElement, TemplateResult, css, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { getMonthNames } from '../../utils/date-time-aria-labels';
+
+type LitHtml = typeof html;
+
+export type UseMonthPickerRenderMonth = (
+  data: { month: number; name: string },
+  html: LitHtml
+) => TemplateResult | string;
 
 /**
  * A standalone form-associated year-month picker.
@@ -20,6 +27,7 @@ import { getMonthNames } from '../../utils/date-time-aria-labels';
  * @csspart month-selected - Applied when this month is the selected value
  * @csspart month-current - Applied when this month is the real-world current month
  * @csspart month-disabled - Applied when this month falls outside min/max
+ * @slot month-{YYYY-MM} - Per-month content that replaces the default month name (e.g. `month-2026-03`)
  */
 @customElement('use-month-picker')
 export class UseMonthPicker extends LitElement {
@@ -221,6 +229,8 @@ export class UseMonthPicker extends LitElement {
     );
   }
 
+  renderMonth: UseMonthPickerRenderMonth = ({ name }) => name;
+
   #handleKeyDown = (event: KeyboardEvent) => {
     if (!this.navigationEnabled) return;
 
@@ -373,6 +383,7 @@ export class UseMonthPicker extends LitElement {
             .filter(Boolean)
             .join(' ');
 
+          const ym = `${this.year}-${String(monthNum).padStart(2, '0')}`;
           return html`<button
             part=${parts}
             role="gridcell"
@@ -382,7 +393,7 @@ export class UseMonthPicker extends LitElement {
             tabindex=${i === rovingIndex ? '0' : '-1'}
             @click=${() => this.#selectMonth(monthNum)}
           >
-            ${name}
+            <slot name="month-${ym}">${this.renderMonth({ month: monthNum, name }, html)}</slot>
           </button>`;
         })}
       </div>

@@ -72,3 +72,35 @@ export const NavigationNowrap: StoryObj<UseMonthPicker> = {
 export const NavigationOff: StoryObj<UseMonthPicker> = {
   render: () => html`<use-month-picker navigation="off" value="2026-03"></use-month-picker>`,
 };
+
+/**
+ * The `renderMonth` property accepts a function `({ month, name }, html) => TemplateResult | string`
+ * that replaces the default month label inside every button.
+ * Use it to add badges, icons, or any inline markup per month.
+ */
+export const CustomRenderer: StoryObj<UseMonthPicker> = {
+  render: () => {
+    const highlights: Record<number, string> = { 3: '🌸', 6: '☀️', 9: '🍂', 12: '❄️' };
+    return html`
+      <use-month-picker
+        value="2026-03"
+        .renderMonth=${({ month, name }: { month: number; name: string }, h: typeof html) =>
+          h`${name}${highlights[month] ? h`<span>&nbsp;${highlights[month]}</span>` : ''}`}
+      ></use-month-picker>
+    `;
+  },
+};
+
+/**
+ * Named slots (`month-YYYY-MM`) let you inject per-month content from light DOM
+ * without touching JavaScript. The slot replaces whatever `renderMonth` returns.
+ */
+export const NamedSlots: StoryObj<UseMonthPicker> = {
+  render: () => html`
+    <use-month-picker year="2026">
+      <span slot="month-2026-01" title="New Year">Jan 🎉</span>
+      <span slot="month-2026-06" title="Summer">Jun ☀️</span>
+      <span slot="month-2026-12" title="Winter">Dec ❄️</span>
+    </use-month-picker>
+  `,
+};
