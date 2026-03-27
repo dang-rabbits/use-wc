@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import createId from "../../utils/create-id";
 
 /**
- * `use-option` is a custom element that represents an option in a `use-select` custom element.
+ * `use-option` is a custom element that represents an option in a `use-select-input` custom element.
  *
  * The children of this element are the content of the option and must not contain any interactive elements.
  *

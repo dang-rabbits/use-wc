@@ -1,107 +1,116 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import { UseDuration } from "./use-duration";
+import { UseDurationInputInput } from "./use-duration-input";
 
-const meta: Meta<UseDuration> = {
-  component: "use-duration",
-  title: "Web Components/use-duration",
+const meta: Meta<UseDurationInputInput> = {
+  component: "use-duration-input",
+  title: "Web Components/use-duration-input",
   tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
-    return html`<use-duration value="PT1H30M" days hours minutes seconds></use-duration>`;
+    return html`<use-duration-input
+      value="PT1H30M"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`;
   },
 };
 
 export default meta;
-type Story = StoryObj<UseDuration>;
+type Story = StoryObj<UseDurationInputInput>;
 
 export const Default: Story = {
-  render: () => html`<use-duration value="PT1H30M" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration-input value="PT1H30M" days hours minutes seconds></use-duration-input>`,
 };
 
 export const DaysHoursMinutesSeconds: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration-input value="P2DT3H4M5S" days hours minutes seconds></use-duration-input>`,
 };
 
 export const OnlyMinutes: Story = {
-  render: () => html`<use-duration value="PT45M" minutes></use-duration>`,
+  render: () => html`<use-duration-input value="PT45M" minutes></use-duration-input>`,
 };
 
 export const OnlySeconds: Story = {
-  render: () => html`<use-duration value="PT20S" seconds></use-duration>`,
+  render: () => html`<use-duration-input value="PT20S" seconds></use-duration-input>`,
 };
 
 export const ZeroDuration: Story = {
-  render: () => html`<use-duration value="PT0S" seconds></use-duration>`,
+  render: () => html`<use-duration-input value="PT0S" seconds></use-duration-input>`,
 };
 
 export const InvalidFormat: Story = {
-  render: () => html`<use-duration value="notaduration" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration-input value="notaduration" days hours minutes seconds></use-duration-input>`,
 };
 
 export const French: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="P2DT3H4M5S"
       locale="fr-FR"
       days
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const German: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="P2DT3H4M5S"
       locale="de-DE"
       days
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const Spanish: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="P2DT3H4M5S"
       locale="es-ES"
       days
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const Japanese: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="P2DT3H4M5S"
       locale="ja-JP"
       days
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const Chinese: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="P2DT3H4M5S"
       locale="zh-CN"
       days
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const Arabic: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       dir="rtl"
       value="P2DT3H4M5S"
       locale="ar-SA"
@@ -110,44 +119,79 @@ export const Arabic: Story = {
       hours
       minutes
       seconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const Disabled: Story = {
   render: () =>
-    html`<use-duration value="PT1H30M" disabled days hours minutes seconds></use-duration>`,
+    html`<use-duration-input
+      value="PT1H30M"
+      disabled
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`,
 };
 
 export const ReadOnly: Story = {
   render: () =>
-    html`<use-duration value="PT1H30M" readOnly days hours minutes seconds></use-duration>`,
+    html`<use-duration-input
+      value="PT1H30M"
+      readOnly
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`,
 };
 
 export const LongFormat: Story = {
   render: () =>
-    html`<use-duration value="PT1H30M" format="long" days hours minutes seconds></use-duration>`,
+    html`<use-duration-input
+      value="PT1H30M"
+      format="long"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`,
 };
 
 export const NarrowFormat: Story = {
   render: () =>
-    html`<use-duration value="PT1H30M" format="narrow" days hours minutes seconds></use-duration>`,
+    html`<use-duration-input
+      value="PT1H30M"
+      format="narrow"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`,
 };
 
 export const DigitalFormat: Story = {
   render: () =>
-    html`<use-duration
+    html`<use-duration-input
       value="PT1H30M"
       format="digital"
       hours
       minutes
       seconds
       milliseconds
-    ></use-duration>`,
+    ></use-duration-input>`,
 };
 
 export const CustomID: Story = {
   render: () =>
-    html`<use-duration value="PT1H30M" id="custom-id" days hours minutes seconds></use-duration>`,
+    html`<use-duration-input
+      value="PT1H30M"
+      id="custom-id"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration-input>`,
 };
 
 export const CustomStyles: Story = {
@@ -192,7 +236,7 @@ export const CustomStyles: Story = {
     </style>
 
     <label for="custom-duration">Custom duration</label><br />
-    <use-duration
+    <use-duration-input
       id="custom-duration"
       class="custom-duration"
       value="PT1H30M"
@@ -201,7 +245,7 @@ export const CustomStyles: Story = {
       minutes
       seconds
       milliseconds
-    ></use-duration>
+    ></use-duration-input>
   `,
 };
 
@@ -209,12 +253,19 @@ export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
       const output = document.getElementById("value-output") as HTMLPreElement;
-      const duration = document.getElementById("duration-value") as UseDuration;
+      const duration = document.getElementById("duration-value") as UseDurationInput;
       output.textContent = duration.value;
     };
 
     return html`
-      <use-duration id="duration-value" value="PT1H30M" days hours minutes seconds></use-duration>
+      <use-duration-input
+        id="duration-value"
+        value="PT1H30M"
+        days
+        hours
+        minutes
+        seconds
+      ></use-duration-input>
       <button type="button" @click=${handleClick}>Show value</button>
       <pre id="value-output"></pre>
     `;
@@ -234,7 +285,14 @@ export const FormSubmission: Story = {
 
     return html`
       <form @submit=${handleSubmit} id="form-submission">
-        <use-duration value="PT1H30M" name="duration" days hours minutes seconds></use-duration>
+        <use-duration-input
+          value="PT1H30M"
+          name="duration"
+          days
+          hours
+          minutes
+          seconds
+        ></use-duration-input>
         <button type="submit">Submit</button>
       </form>
       <pre id="output"></pre>
@@ -245,12 +303,17 @@ export const FormSubmission: Story = {
 export const ProgrammaticSetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const duration = document.getElementById("duration-set-value") as UseDuration;
+      const duration = document.getElementById("duration-set-value") as UseDurationInput;
       duration.value = "PT2H30M";
     };
 
     return html`
-      <use-duration id="duration-set-value" value="PT1H30M" hours minutes></use-duration>
+      <use-duration-input
+        id="duration-set-value"
+        value="PT1H30M"
+        hours
+        minutes
+      ></use-duration-input>
       <button type="button" @click=${handleClick}>Set value</button>
     `;
   },

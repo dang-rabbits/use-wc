@@ -1,43 +1,43 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import { UseDate } from "./use-date";
+import { UseDateInputInput } from "./use-date-input";
 
-const meta: Meta<UseDate> = {
-  component: "use-date",
-  title: "Web Components/use-date",
+const meta: Meta<UseDateInputInput> = {
+  component: "use-date-input",
+  title: "Web Components/use-date-input",
   tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
-    return html`<use-date value="2024-06-01"></use-date>`;
+    return html`<use-date-input value="2024-06-01"></use-date-input>`;
   },
 };
 
 export default meta;
 
-type Story = StoryObj<UseDate>;
+type Story = StoryObj<UseDateInputInput>;
 
 export const Default: Story = {
-  render: () => html`<use-date value=""></use-date>`,
+  render: () => html`<use-date-input value=""></use-date-input>`,
 };
 
 export const French: Story = {
-  render: () => html`<use-date value="2024-06-01" locale="fr-FR"></use-date>`,
+  render: () => html`<use-date-input value="2024-06-01" locale="fr-FR"></use-date-input>`,
 };
 
 export const German: Story = {
-  render: () => html`<use-date value="2024-06-01" locale="de-DE"></use-date>`,
+  render: () => html`<use-date-input value="2024-06-01" locale="de-DE"></use-date-input>`,
 };
 
 export const Arabic: Story = {
-  render: () => html`<use-date value="2024-06-01" locale="ar-SA"></use-date>`,
+  render: () => html`<use-date-input value="2024-06-01" locale="ar-SA"></use-date-input>`,
 };
 
 export const Japanese: Story = {
-  render: () => html`<use-date value="2024-06-01" locale="ja-JP"></use-date>`,
+  render: () => html`<use-date-input value="2024-06-01" locale="ja-JP"></use-date-input>`,
 };
 
 export const Chinese: Story = {
-  render: () => html`<use-date value="2024-06-01" locale="zh-CN"></use-date>`,
+  render: () => html`<use-date-input value="2024-06-01" locale="zh-CN"></use-date-input>`,
 };
 
 export const CustomStyles: Story = {
@@ -73,7 +73,7 @@ export const CustomStyles: Story = {
       }
     </style>
     <label for="custom-date">Custom date</label><br />
-    <use-date id="custom-date" class="custom-date" value="2024-06-01"></use-date>
+    <use-date-input id="custom-date" class="custom-date" value="2024-06-01"></use-date-input>
   `,
 };
 
@@ -81,11 +81,11 @@ export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
       const output = document.getElementById("value-output") as HTMLPreElement;
-      const date = document.getElementById("date-value") as UseDate;
+      const date = document.getElementById("date-value") as UseDateInput;
       output.textContent = date.value;
     };
     return html`
-      <use-date id="date-value" value="2024-06-01"></use-date>
+      <use-date-input id="date-value" value="2024-06-01"></use-date-input>
       <button type="button" @click=${handleClick}>Show value</button>
       <pre id="value-output"></pre>
     `;
@@ -104,7 +104,7 @@ export const FormSubmission: Story = {
     };
     return html`
       <form @submit=${handleSubmit} id="form-submission">
-        <use-date value="2024-06-01" name="date"></use-date>
+        <use-date-input value="2024-06-01" name="date"></use-date-input>
         <button type="submit">Submit</button>
       </form>
       <pre id="output"></pre>
@@ -115,12 +115,12 @@ export const FormSubmission: Story = {
 export const SetValueProgrammatically: Story = {
   render: () => {
     const handleClick = () => {
-      const date = document.getElementById("set-date-value") as UseDate;
+      const date = document.getElementById("set-date-value") as UseDateInput;
       date.value = "2024-06-01";
     };
 
     return html`
-      <use-date id="set-date-value" value=""></use-date>
+      <use-date-input id="set-date-value" value=""></use-date-input>
       <button type="button" @click=${handleClick}>Set value</button>
     `;
   },

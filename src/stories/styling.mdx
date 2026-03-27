@@ -63,7 +63,7 @@ body.light-theme {
 }
 
 /* imported use-wc.css */
-use-select::part(trigger) {
+use-select-input::part(trigger) {
   all: unset;
   display: inline-flex;
   align-items: center;
@@ -72,20 +72,20 @@ use-select::part(trigger) {
   gap: var(--usewc-space-input-gap);
 }
 
-use-select::part(trigger):hover {
+use-select-input::part(trigger):hover {
   background-color: var(--usewc-color-input-background-hover);
 }
 
-use-select::part(trigger):focus-visible {
+use-select-input::part(trigger):focus-visible {
   outline: var(--usewc-size-focus-ring) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
   outline-offset: var(--usewc-space-input-focus-ring);
 }
 
-use-select::part(trigger-label) {
+use-select-input::part(trigger-label) {
   color: var(--usewc-color-input-text-static);
 }
 
-use-select::part(trigger-arrow) {
+use-select-input::part(trigger-arrow) {
   color: var(--usewc-color-input-trigger-static);
 }
 ```
