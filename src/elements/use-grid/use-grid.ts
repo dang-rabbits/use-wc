@@ -1,10 +1,10 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { UseGridRow } from './use-gridrow';
-import { UseGridCell } from './use-gridcell';
+import { LitElement, css, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import { UseGridRow } from "./use-gridrow";
+import { UseGridCell } from "./use-gridcell";
 
-const FORM_DATA_KEY = '__value';
-const indicators = ['selected', 'deselected'] as const;
+const FORM_DATA_KEY = "__value";
+const indicators = ["selected", "deselected"] as const;
 type Indicator = (typeof indicators)[number];
 
 /**
@@ -19,7 +19,7 @@ type Indicator = (typeof indicators)[number];
  *
  * @slot - Grid content (use-gridhead/use-gridbody rows)
  */
-@customElement('use-grid')
+@customElement("use-grid")
 export class UseGrid extends LitElement {
   static formAssociated = true;
   #internals: ElementInternals;
@@ -28,14 +28,14 @@ export class UseGrid extends LitElement {
     return this.#internals;
   }
 
-  @property({ type: String, reflect: true, attribute: 'selectmode' })
-  selectmode: 'multiple' | 'single' | 'none' = 'none';
+  @property({ type: String, reflect: true, attribute: "selectmode" })
+  selectmode: "multiple" | "single" | "none" = "none";
 
   @property({ type: String, reflect: true })
-  name = '';
+  name = "";
 
   @property({ type: String, reflect: true })
-  role = 'grid';
+  role = "grid";
 
   @property({ type: Boolean, reflect: true })
   disabled = false;
@@ -74,7 +74,7 @@ export class UseGrid extends LitElement {
   set value(value: string[] | string) {
     const newValue = new FormData();
 
-    if (this.selectmode === 'multiple') {
+    if (this.selectmode === "multiple") {
       if (Array.isArray(value)) {
         value.forEach((v) => {
           newValue.append(this.#dataKey, v);
@@ -84,30 +84,30 @@ export class UseGrid extends LitElement {
       }
     } else if (Array.isArray(value) && value.length > 0) {
       newValue.set(this.#dataKey, value[0]);
-    } else if (typeof value === 'string' && value.length > 0) {
+    } else if (typeof value === "string" && value.length > 0) {
       newValue.set(this.#dataKey, value);
     }
 
     const values = newValue.getAll(this.#dataKey);
-    const rows = Array.from(this.querySelectorAll('use-gridrow')) as Array<UseGridRow>;
+    const rows = Array.from(this.querySelectorAll("use-gridrow")) as Array<UseGridRow>;
 
     rows.forEach((row) => {
-      row.selected = values.includes(row.getAttribute('value') ?? row.textContent ?? '');
+      row.selected = values.includes(row.getAttribute("value") ?? row.textContent ?? "");
     });
 
     this.#internals.setFormValue(newValue);
 
     // @ts-expect-error - we're not using File
-    this.#value = this.selectmode === 'multiple' ? values : values[0];
+    this.#value = this.selectmode === "multiple" ? values : values[0];
 
     this.dispatchEvent(
-      new CustomEvent('use-change', {
+      new CustomEvent("use-change", {
         detail: {
-          value: this.selectmode === 'multiple' ? values : newValue.get(this.#dataKey),
+          value: this.selectmode === "multiple" ? values : newValue.get(this.#dataKey),
         },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -118,12 +118,12 @@ export class UseGrid extends LitElement {
   // Keyboard navigation and selection logic
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('keydown', this.#onKeyDown);
-    this.addEventListener('click', this.#handleClick);
+    this.addEventListener("keydown", this.#onKeyDown);
+    this.addEventListener("click", this.#handleClick);
   }
   disconnectedCallback() {
-    this.removeEventListener('keydown', this.#onKeyDown);
-    this.removeEventListener('click', this.#handleClick);
+    this.removeEventListener("keydown", this.#onKeyDown);
+    this.removeEventListener("click", this.#handleClick);
     this.#unwatchMutations();
     super.disconnectedCallback();
   }
@@ -133,18 +133,20 @@ export class UseGrid extends LitElement {
   }
 
   #onKeyDown = (event: KeyboardEvent) => {
-    const active = document.activeElement?.closest('use-gridcell') as HTMLElement;
+    const active = document.activeElement?.closest("use-gridcell") as HTMLElement;
     // Only consider cells in enabled rows
-    const cells = Array.from(this.querySelectorAll<HTMLElement>('use-gridrow:not([disabled]) use-gridcell'));
+    const cells = Array.from(
+      this.querySelectorAll<HTMLElement>("use-gridrow:not([disabled]) use-gridcell"),
+    );
     if (!cells.length) return;
     const currentIndex = cells.indexOf(active);
     if (currentIndex === -1) return;
 
-    if (event.key === ' ' && event.shiftKey) {
-      if (this.selectmode === 'none' || this.readonly || this.disabled) return;
+    if (event.key === " " && event.shiftKey) {
+      if (this.selectmode === "none" || this.readonly || this.disabled) return;
 
-      const row = active.closest('use-gridrow');
-      if (row && !row.hasAttribute('disabled') && !row.closest('use-gridhead')) {
+      const row = active.closest("use-gridrow");
+      if (row && !row.hasAttribute("disabled") && !row.closest("use-gridhead")) {
         this.#toggleRowSelection(row);
         event.preventDefault();
         return;
@@ -155,35 +157,35 @@ export class UseGrid extends LitElement {
     const cols = this.#getColCount();
 
     switch (event.key) {
-      case 'ArrowRight':
+      case "ArrowRight":
         if ((currentIndex + 1) % cols !== 0 && currentIndex + 1 < cells.length) {
           nextIndex = currentIndex + 1;
         } else {
           return;
         }
         break;
-      case 'ArrowLeft':
+      case "ArrowLeft":
         if (currentIndex % cols !== 0) {
           nextIndex = currentIndex - 1;
         } else {
           return;
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         if (currentIndex + cols < cells.length) {
           nextIndex = currentIndex + cols;
         } else {
           return;
         }
         break;
-      case 'ArrowUp':
+      case "ArrowUp":
         if (currentIndex - cols >= 0) {
           nextIndex = currentIndex - cols;
         } else {
           return;
         }
         break;
-      case 'Home':
+      case "Home":
         if (event.ctrlKey || event.metaKey) {
           // Move to first row, same column
           nextIndex = currentIndex % cols;
@@ -191,7 +193,7 @@ export class UseGrid extends LitElement {
           nextIndex = currentIndex - (currentIndex % cols);
         }
         break;
-      case 'End': {
+      case "End": {
         if (event.ctrlKey || event.metaKey) {
           // Move to last row, same column
           nextIndex = (currentIndex % cols) + cols * Math.floor((cells.length - 1) / cols);
@@ -202,12 +204,12 @@ export class UseGrid extends LitElement {
         }
         break;
       }
-      case 'PageDown': {
+      case "PageDown": {
         nextIndex = (currentIndex % cols) + cols * Math.floor((cells.length - 1) / cols);
         if (nextIndex >= cells.length) nextIndex = cells.length - 1;
         break;
       }
-      case 'PageUp':
+      case "PageUp":
         nextIndex = currentIndex % cols;
         break;
       default:
@@ -223,20 +225,20 @@ export class UseGrid extends LitElement {
   };
 
   #toggleRowSelection(target: UseGridRow) {
-    if (this.selectmode === 'none') return;
-    const selectRow = target?.closest('use-gridrow');
+    if (this.selectmode === "none") return;
+    const selectRow = target?.closest("use-gridrow");
 
     if (
       selectRow &&
-      !selectRow.hasAttribute('disabled') &&
-      !selectRow.closest('use-gridhead') &&
-      selectRow.getAttribute('value') != null
+      !selectRow.hasAttribute("disabled") &&
+      !selectRow.closest("use-gridhead") &&
+      selectRow.getAttribute("value") != null
     ) {
-      const rowValue = selectRow.getAttribute('value') ?? selectRow.textContent ?? '';
+      const rowValue = selectRow.getAttribute("value") ?? selectRow.textContent ?? "";
       let newValue = (this.#value as string[]) ?? [];
-      if (selectRow.hasAttribute('selected')) {
+      if (selectRow.hasAttribute("selected")) {
         newValue = newValue.filter((v) => v !== rowValue);
-      } else if (this.selectmode === 'multiple') {
+      } else if (this.selectmode === "multiple") {
         newValue.push(rowValue);
       } else {
         newValue = [rowValue];
@@ -246,23 +248,25 @@ export class UseGrid extends LitElement {
     }
   }
 
-  #handleClick(event: HTMLElementEventMap['click']) {
+  #handleClick(event: HTMLElementEventMap["click"]) {
     if (this.disabled || this.readonly) {
       return;
     }
 
     const target = event.target as HTMLElement;
-    const selectRow = target?.closest<UseGridRow>('use-gridrow');
+    const selectRow = target?.closest<UseGridRow>("use-gridrow");
 
     if (selectRow?.disabled || selectRow?.readonly) {
       return;
     }
 
-    if (selectRow?.value && selectRow?.value != '' && selectRow?.value != null) {
+    if (selectRow?.value && selectRow?.value != "" && selectRow?.value != null) {
       event.preventDefault();
       const isToggleIndicator = event
         .composedPath()
-        .some((el) => (el instanceof HTMLElement ? el.getAttribute('part') === 'toggle-indicator' : false));
+        .some((el) =>
+          el instanceof HTMLElement ? el.getAttribute("part") === "toggle-indicator" : false,
+        );
 
       if (!isToggleIndicator) {
         this.#toggleRowSelection(selectRow);
@@ -272,9 +276,9 @@ export class UseGrid extends LitElement {
 
   #getColCount(): number {
     // Try to infer column count from first row
-    const firstRow = this.querySelector('use-gridrow');
+    const firstRow = this.querySelector("use-gridrow");
     if (firstRow) {
-      return firstRow.querySelectorAll('use-gridcell').length || 1;
+      return firstRow.querySelectorAll("use-gridcell").length || 1;
     }
     return 1;
   }
@@ -294,7 +298,7 @@ export class UseGrid extends LitElement {
   }
 
   #lazyQueryGridBodyRows() {
-    return Array.from(this.querySelectorAll('use-gridbody use-gridrow')) as Array<UseGridRow>;
+    return Array.from(this.querySelectorAll("use-gridbody use-gridrow")) as Array<UseGridRow>;
   }
 
   #indicatorSlotCache: Partial<Record<Indicator, HTMLElement>> = {};
@@ -333,7 +337,9 @@ export class UseGrid extends LitElement {
 
     this.value = selectedValues;
 
-    const firstCell = this.querySelector('use-gridrow:not([disabled]) use-gridcell') as UseGridCell | null;
+    const firstCell = this.querySelector(
+      "use-gridrow:not([disabled]) use-gridcell",
+    ) as UseGridCell | null;
     if (firstCell) {
       firstCell.tabIndex = 0;
     }
@@ -358,6 +364,6 @@ export class UseGrid extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-grid': UseGrid;
+    "use-grid": UseGrid;
   }
 }

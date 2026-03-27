@@ -1,9 +1,9 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import createId from '../../utils/create-id';
-import { getTabIndex } from 'tabbable';
+import { LitElement, css, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
+import createId from "../../utils/create-id";
+import { getTabIndex } from "tabbable";
 
-const INITIAL_TABINDEX_ATTR = 'data-usewc-dropdown-tabindex';
+const INITIAL_TABINDEX_ATTR = "data-usewc-dropdown-tabindex";
 
 const TABBABLE_SELECTOR = `
   :is(
@@ -50,7 +50,7 @@ const TABBABLE_SELECTOR = `
  *
  * @state open `use-dropdown:state(open)`: The open state of the dropdown.
  */
-@customElement('use-dropdown')
+@customElement("use-dropdown")
 export class UseDropdown extends LitElement {
   #tabbables: HTMLElement[] = [];
 
@@ -62,7 +62,7 @@ export class UseDropdown extends LitElement {
   #id: string;
   #internals: ElementInternals;
   #itemLabels: string[] = [];
-  #isNested = this.parentElement?.closest('use-dropdown') != null;
+  #isNested = this.parentElement?.closest("use-dropdown") != null;
   trigger: HTMLButtonElement | null = null;
 
   @property({ type: Boolean })
@@ -71,7 +71,7 @@ export class UseDropdown extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   @property()
@@ -83,8 +83,8 @@ export class UseDropdown extends LitElement {
     this.#internals = this.attachInternals();
     this.#initializeTabbables();
 
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -102,12 +102,12 @@ export class UseDropdown extends LitElement {
 
   #findTabbables() {
     return Array.from(this.querySelectorAll<HTMLElement>(TABBABLE_SELECTOR)).filter((element) => {
-      return element.parentElement?.closest('use-dropdown') === this;
+      return element.parentElement?.closest("use-dropdown") === this;
     });
   }
 
   #getTabIndex(element: HTMLElement) {
-    if (element.shadowRoot?.delegatesFocus || element.getAttribute('tabindex') === null) {
+    if (element.shadowRoot?.delegatesFocus || element.getAttribute("tabindex") === null) {
       return null;
     }
 
@@ -128,7 +128,7 @@ export class UseDropdown extends LitElement {
       if (tabindex != null) {
         element.setAttribute(INITIAL_TABINDEX_ATTR, tabindex);
       }
-      element.setAttribute('tabindex', '-1');
+      element.setAttribute("tabindex", "-1");
     });
   }
 
@@ -139,7 +139,7 @@ export class UseDropdown extends LitElement {
 
     const target = event.target as HTMLElement;
 
-    if (target.getAttribute('menu-item')?.includes('keep-open')) {
+    if (target.getAttribute("menu-item")?.includes("keep-open")) {
       return;
     }
 
@@ -147,7 +147,7 @@ export class UseDropdown extends LitElement {
   }
 
   #closePopover(returnFocus = true) {
-    (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
+    (this.trigger?.popoverTargetElement as HTMLElement)?.hidePopover();
 
     if (returnFocus) {
       this.trigger?.focus();
@@ -158,11 +158,11 @@ export class UseDropdown extends LitElement {
     await this.updateComplete;
 
     if (disabled) {
-      this.#internals.states.add('disabled');
-      this.trigger?.setAttribute('disabled', 'disabled');
+      this.#internals.states.add("disabled");
+      this.trigger?.setAttribute("disabled", "disabled");
     } else {
-      this.#internals.states.delete('disabled');
-      this.trigger?.removeAttribute('disabled');
+      this.#internals.states.delete("disabled");
+      this.trigger?.removeAttribute("disabled");
     }
 
     if (this.trigger) {
@@ -175,19 +175,23 @@ export class UseDropdown extends LitElement {
   }
 
   #getPopoverOpen() {
-    return this.trigger?.popoverTargetElement?.matches(':popover-open');
+    return this.trigger?.popoverTargetElement?.matches(":popover-open");
   }
 
   #handleKeyDown(event: KeyboardEvent) {
     const isOpen = this.#getPopoverOpen();
 
-    if (!isOpen && !this.#isNested && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+    if (!isOpen && !this.#isNested && ["ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
       (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
     }
 
-    if (!isOpen && this.#isNested && ['ArrowRight', 'ArrowLeft', 'Enter', ' '].includes(event.key)) {
+    if (
+      !isOpen &&
+      this.#isNested &&
+      ["ArrowRight", "ArrowLeft", "Enter", " "].includes(event.key)
+    ) {
       event.preventDefault();
       (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
@@ -197,7 +201,7 @@ export class UseDropdown extends LitElement {
       return;
     }
 
-    if (isOpen && this.#isNested && event.key === 'ArrowLeft') {
+    if (isOpen && this.#isNested && event.key === "ArrowLeft") {
       this.#closePopover();
       event.preventDefault();
       event.stopPropagation();
@@ -209,32 +213,32 @@ export class UseDropdown extends LitElement {
 
     let moveTo: HTMLElement | undefined;
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
         event.stopPropagation();
         if (activeIndex > 0) {
           moveTo = options.at(activeIndex - 1);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
         break;
-      case 'Home':
+      case "Home":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options[0];
         break;
-      case 'End':
+      case "End":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options[options.length - 1];
         break;
-      case 'Tab':
+      case "Tab":
         (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
         break;
-      case 'Escape':
+      case "Escape":
         event.stopPropagation();
         this.trigger?.focus();
         break;
@@ -242,7 +246,9 @@ export class UseDropdown extends LitElement {
 
     // TODO improve this to handle multiple items with the same first letter
     if (!moveTo && event.key.match(/^[\w\d]$/)) {
-      const index = this.#itemLabels.findIndex((label) => label.toLowerCase().startsWith(event.key.toLowerCase()));
+      const index = this.#itemLabels.findIndex((label) =>
+        label.toLowerCase().startsWith(event.key.toLowerCase()),
+      );
       if (index > -1) {
         moveTo = options[index];
       }
@@ -252,17 +258,17 @@ export class UseDropdown extends LitElement {
   }
 
   #handlePopoverToggle(event: ToggleEvent) {
-    const opening = event.newState === 'open';
+    const opening = event.newState === "open";
 
     if (this.trigger) {
-      this.trigger.ariaExpanded = opening ? 'true' : 'false';
+      this.trigger.ariaExpanded = opening ? "true" : "false";
     }
 
     if (opening) {
       this.#tabbables[0]?.focus();
-      this.#internals.states.add('open');
+      this.#internals.states.add("open");
     } else {
-      this.#internals.states.delete('open');
+      this.#internals.states.delete("open");
     }
   }
 
@@ -271,7 +277,7 @@ export class UseDropdown extends LitElement {
   }
 
   get #triggerIconText() {
-    return this.#isNested ? '▶' : '▼';
+    return this.#isNested ? "▶" : "▼";
   }
 
   render() {
@@ -319,7 +325,7 @@ export class UseDropdown extends LitElement {
       pointer-events: none;
     }
 
-    [part='menu']:popover-open {
+    [part="menu"]:popover-open {
       display: flex;
       flex-direction: column;
       justify-items: stretch;
@@ -329,7 +335,7 @@ export class UseDropdown extends LitElement {
       margin-inline: 0;
     }
 
-    ::slotted([role='group']) {
+    ::slotted([role="group"]) {
       display: contents;
     }
   `;
@@ -337,6 +343,6 @@ export class UseDropdown extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-dropdown': UseDropdown;
+    "use-dropdown": UseDropdown;
   }
 }

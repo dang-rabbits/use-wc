@@ -1,22 +1,25 @@
 // custom-elements-manifest.config.mjs
 
-import { customElementVsCodePlugin } from 'custom-element-vs-code-integration';
+import { customElementVsCodePlugin } from "custom-element-vs-code-integration";
 
 export default {
   litelement: true,
-  globs: ['src/elements/**/*.ts', '!src/elements/**/*.stories.ts'],
+  globs: ["src/elements/**/*.ts", "!src/elements/**/*.stories.ts"],
   plugins: [
     {
-      name: 'web-components-private-fields-filter',
+      name: "web-components-private-fields-filter",
       analyzePhase({ ts, node, moduleDoc }) {
         switch (node.kind) {
           case ts.SyntaxKind.ClassDeclaration: {
             const className = node.name.getText();
-            const classDoc = moduleDoc?.declarations?.find((declaration) => declaration.name === className);
+            const classDoc = moduleDoc?.declarations?.find(
+              (declaration) => declaration.name === className,
+            );
 
             if (classDoc?.members) {
               classDoc.members = classDoc.members.filter(
-                (member) => !member.privacy && !['formAssociated', 'shadowRootOptions'].includes(member.name)
+                (member) =>
+                  !member.privacy && !["formAssociated", "shadowRootOptions"].includes(member.name),
               );
             }
           }

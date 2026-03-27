@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import './use-datetime';
-import { UseDatetime } from './use-datetime';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import "./use-datetime";
+import { UseDatetime } from "./use-datetime";
 
 const meta: Meta<UseDatetime> = {
-  component: 'use-datetime',
-  title: 'Web Components/use-datetime',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-datetime",
+  title: "Web Components/use-datetime",
+  tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
     return html`<use-datetime value="2024-06-01T12:00:00"></use-datetime>`;
@@ -30,7 +30,8 @@ export const WithSeconds: Story = {
 };
 
 export const WithFractionalSeconds: Story = {
-  render: () => html`<use-datetime value="2024-06-01T14:30:45.123" seconds fractionalSeconds></use-datetime>`,
+  render: () =>
+    html`<use-datetime value="2024-06-01T14:30:45.123" seconds fractionalSeconds></use-datetime>`,
 };
 
 export const French: Story = {
@@ -52,7 +53,7 @@ export const FormSubmission: Story = {
       const formData = new FormData(event.target as HTMLFormElement);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const output = document.getElementById('output') as HTMLPreElement;
+      const output = document.getElementById("output") as HTMLPreElement;
       output.textContent = queryString;
     };
     return html`

@@ -1,34 +1,34 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
 
 async function handleCopyToClipboard() {
-  const value = (document.getElementById('output') as HTMLInputElement)?.value;
+  const value = (document.getElementById("output") as HTMLInputElement)?.value;
   await window.top?.navigator.clipboard.writeText(value);
 }
 
 const meta: Meta = {
-  title: 'Token Name Builder',
-  tags: ['autodocs', '!dev', 'utility'],
+  title: "Token Name Builder",
+  tags: ["autodocs", "!dev", "utility"],
   args: {},
   render: () => {
     function handleFormChange(event: Event) {
       event.preventDefault();
       const form = event.currentTarget as HTMLFormElement;
       const formData = new FormData(form);
-      const output = document.getElementById('output') as HTMLOutputElement;
+      const output = document.getElementById("output") as HTMLOutputElement;
       const tokenName = [
-        '--usewc',
-        formData.get('category'),
-        formData.get('component'),
-        formData.get('type'),
-        formData.get('part'),
-        formData.get('variant'),
-        formData.get('property'),
-        formData.get('modifier'),
-        formData.get('state'),
+        "--usewc",
+        formData.get("category"),
+        formData.get("component"),
+        formData.get("type"),
+        formData.get("part"),
+        formData.get("variant"),
+        formData.get("property"),
+        formData.get("modifier"),
+        formData.get("state"),
       ]
         .filter(Boolean)
-        .join('-');
+        .join("-");
       output.value = tokenName;
     }
     return html`

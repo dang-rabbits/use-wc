@@ -1,18 +1,21 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import createId from '../../utils/create-id';
-import * as duration from 'duration-fns';
-import getDateTimeAriaLabels, { DateTimeAriaLabels, DEFAULT_ARIA_LABELS } from '../../utils/date-time-aria-labels';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import createId from "../../utils/create-id";
+import * as duration from "duration-fns";
+import getDateTimeAriaLabels, {
+  DateTimeAriaLabels,
+  DEFAULT_ARIA_LABELS,
+} from "../../utils/date-time-aria-labels";
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
-  year: 'years',
-  month: 'months',
-  week: 'weeks',
-  day: 'days',
-  hour: 'hours',
-  minute: 'minutes',
-  second: 'seconds',
-  millisecond: 'milliseconds',
+  year: "years",
+  month: "months",
+  week: "weeks",
+  day: "days",
+  hour: "hours",
+  minute: "minutes",
+  second: "seconds",
+  millisecond: "milliseconds",
 } as const;
 
 /**
@@ -22,7 +25,7 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
  *
  * <baseline-status featureId="intl-duration-format"></baseline-status>
  */
-@customElement('use-duration')
+@customElement("use-duration")
 export class UseDuration extends LitElement {
   static formAssociated = true;
 
@@ -41,18 +44,19 @@ export class UseDuration extends LitElement {
   @query('input[part="segment-input segment-input-hour"]') hourInput!: HTMLInputElement;
   @query('input[part="segment-input segment-input-minute"]') minuteInput!: HTMLInputElement;
   @query('input[part="segment-input segment-input-second"]') secondInput!: HTMLInputElement;
-  @query('input[part="segment-input segment-input-millisecond"]') millisecondInput!: HTMLInputElement;
+  @query('input[part="segment-input segment-input-millisecond"]')
+  millisecondInput!: HTMLInputElement;
 
   constructor() {
     super();
     this.#internals = this.attachInternals();
-    this.#formId = this.closest('form')?.id;
-    this.#id = this.hasAttribute('id') ? this.getAttribute('id')! : createId();
+    this.#formId = this.closest("form")?.id;
+    this.#id = this.hasAttribute("id") ? this.getAttribute("id")! : createId();
 
-    this.#initializeValue(this.getAttribute('value') ?? 'PT0S');
+    this.#initializeValue(this.getAttribute("value") ?? "PT0S");
 
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -72,14 +76,14 @@ export class UseDuration extends LitElement {
     this.#ariaLabels = this.#initialAriaLabels();
   }
 
-  #id = '';
+  #id = "";
   get id() {
     return this.#id;
   }
   set id(val: string) {
     const old = this.#id;
     this.#id = val;
-    this.requestUpdate('id', old);
+    this.requestUpdate("id", old);
   }
 
   @property({ type: Boolean, attribute: true }) years = false;
@@ -95,26 +99,26 @@ export class UseDuration extends LitElement {
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add('disabled');
+      this.#internals.states.add("disabled");
     } else {
-      this.#internals.states.delete('disabled');
+      this.#internals.states.delete("disabled");
     }
   }
   get disabled(): boolean {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   /** @default false */
-  @property({ type: Boolean, attribute: 'readonly' })
+  @property({ type: Boolean, attribute: "readonly" })
   set readOnly(flag) {
     if (flag) {
-      this.#internals.states.add('readonly');
+      this.#internals.states.add("readonly");
     } else {
-      this.#internals.states.delete('readonly');
+      this.#internals.states.delete("readonly");
     }
   }
   get readOnly(): boolean {
-    return this.#internals.states.has('readonly');
+    return this.#internals.states.has("readonly");
   }
 
   /** @default PT0S */
@@ -130,10 +134,10 @@ export class UseDuration extends LitElement {
 
   /** @default User's browser language or 'en-US' */
   @property({ type: String, attribute: true })
-  locale: string = navigator.language || 'en-US';
+  locale: string = navigator.language || "en-US";
 
   @property({ type: String, attribute: true })
-  format: 'long' | 'short' | 'narrow' | 'digital' = 'short';
+  format: "long" | "short" | "narrow" | "digital" = "short";
 
   #formatParts: Array<{ type: string; value: string; unit?: string }> = [];
 
@@ -154,7 +158,8 @@ export class UseDuration extends LitElement {
           milliseconds: this.milliseconds ? 2 : 0,
         })
         .filter(
-          (part: { type: string; value: string; unit?: string }) => this.format === 'digital' || part.type !== 'literal'
+          (part: { type: string; value: string; unit?: string }) =>
+            this.format === "digital" || part.type !== "literal",
         );
     } catch {
       return [];
@@ -165,7 +170,7 @@ export class UseDuration extends LitElement {
     const grouped = new Map<string, Array<{ type: string; value: string; unit?: string }>>();
 
     this.#formatParts.forEach((part, index) => {
-      if (part.unit || (this.format === 'digital' && part.type === 'literal')) {
+      if (part.unit || (this.format === "digital" && part.type === "literal")) {
         if (!grouped.has(part.unit || `literal-${index}`)) {
           grouped.set(part.unit || `literal-${index}`, []);
         }
@@ -183,7 +188,9 @@ export class UseDuration extends LitElement {
   #handleSegmentInput(segment: keyof duration.Duration) {
     return (event: Event) => {
       const target = event.target as HTMLInputElement;
-      this.#valueData[ISO_DURATION_SEGMENTS[segment]] = isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
+      this.#valueData[ISO_DURATION_SEGMENTS[segment]] = isNaN(target.valueAsNumber)
+        ? 0
+        : target.valueAsNumber;
       this.value = duration.toString(this.#valueData);
     };
   }
@@ -231,14 +238,14 @@ export class UseDuration extends LitElement {
       return html`
         <div part="segment segment-${unit}">
           ${parts.map((part) => {
-            if (['integer', 'fraction'].includes(part.type)) {
+            if (["integer", "fraction"].includes(part.type)) {
               return html`
                 <input
                   type="number"
                   .value=${this.#valueData[ISO_DURATION_SEGMENTS[unit as keyof duration.Duration]]}
                   ?disabled=${this.disabled}
                   ?readonly=${this.readOnly}
-                  aria-label=${this.format === 'digital' && part.type === 'fraction'
+                  aria-label=${this.format === "digital" && part.type === "fraction"
                     ? this.#ariaLabels.millisecond
                     : this.#ariaLabels[unit as keyof DateTimeAriaLabels]}
                   min="0"
@@ -250,14 +257,18 @@ export class UseDuration extends LitElement {
               `;
             }
 
-            if (['unit', 'decimal'].includes(part.type)) {
+            if (["unit", "decimal"].includes(part.type)) {
               return html`
-                <label for="${this.#segmentId(unit)}" part="segment-unit segment-unit-${unit}">${part.value}</label>
+                <label for="${this.#segmentId(unit)}" part="segment-unit segment-unit-${unit}"
+                  >${part.value}</label
+                >
               `;
             }
 
-            if (this.format === 'digital' && part.type === 'literal') {
-              return html`<span part="segment-literal segment-literal-${unit}">${part.value}</span>`;
+            if (this.format === "digital" && part.type === "literal") {
+              return html`<span part="segment-literal segment-literal-${unit}"
+                >${part.value}</span
+              >`;
             }
           })}
         </div>
@@ -266,7 +277,7 @@ export class UseDuration extends LitElement {
   }
 
   static styles = css`
-    :host([format='digital']) {
+    :host([format="digital"]) {
       display: inline-flex;
       align-items: center;
       gap: 0.5ch;
@@ -287,6 +298,6 @@ export class UseDuration extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-duration': UseDuration;
+    "use-duration": UseDuration;
   }
 }

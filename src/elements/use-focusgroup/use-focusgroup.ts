@@ -1,7 +1,7 @@
-import { FocusableElement, getTabIndex, tabbable } from 'tabbable';
+import { FocusableElement, getTabIndex, tabbable } from "tabbable";
 
-const INITIAL_TABINDEX_ATTR = 'data-usewc-focusgroup-tabindex';
-const INITIAL_TABINDEX_VALUE = 'initial';
+const INITIAL_TABINDEX_ATTR = "data-usewc-focusgroup-tabindex";
+const INITIAL_TABINDEX_VALUE = "initial";
 
 function isUseFocusgroup(element: HTMLElement): element is UseFocusgroup {
   return element instanceof UseFocusgroup;
@@ -31,7 +31,7 @@ function isUseFocusgroup(element: HTMLElement): element is UseFocusgroup {
  * - [@gfellerph/focusgroup-polyfill](https://github.com/gfellerph/focusgroup-polyfill)
  */
 export class UseFocusgroup extends HTMLElement {
-  static observedAttributes = ['features'];
+  static observedAttributes = ["features"];
 
   /**
    * A list of space-separated features that can be used to customize the behavior of the focusgroup.
@@ -47,7 +47,7 @@ export class UseFocusgroup extends HTMLElement {
    *
    * @attr {string} features
    */
-  features: string = '';
+  features: string = "";
 
   /**
    * The most recently focused element in the focusgroup.
@@ -70,7 +70,7 @@ export class UseFocusgroup extends HTMLElement {
 
   connectedCallback() {
     this.#initializeFeatures();
-    this.#parent = this.parentElement?.closest('use-focusgroup');
+    this.#parent = this.parentElement?.closest("use-focusgroup");
     this.#nested = this.#parent != null;
 
     setTimeout(() => {
@@ -84,40 +84,42 @@ export class UseFocusgroup extends HTMLElement {
   }
 
   #initializeFeatures() {
-    this.features = this.getAttribute('features') ?? '';
+    this.features = this.getAttribute("features") ?? "";
     const features = ` ${this.features} `;
-    const inline = features.includes(' inline ');
-    const block = features.includes(' block ');
+    const inline = features.includes(" inline ");
+    const block = features.includes(" block ");
     const both = (!block && !inline) || (block && inline);
 
-    this.#arrowLeftKey = both || inline ? 'ArrowLeft' : 'ArrowLeft-DISABLED';
-    this.#arrowRightKey = both || inline ? 'ArrowRight' : 'ArrowRight-DISABLED';
-    this.#arrowDownKey = both || block ? 'ArrowDown' : 'ArrowDown-DISABLED';
-    this.#arrowUpKey = both || block ? 'ArrowUp' : 'ArrowUp-DISABLED';
-    this.#noMemory = features.includes(' no-memory ');
-    this.#wrap = features.includes(' wrap ');
+    this.#arrowLeftKey = both || inline ? "ArrowLeft" : "ArrowLeft-DISABLED";
+    this.#arrowRightKey = both || inline ? "ArrowRight" : "ArrowRight-DISABLED";
+    this.#arrowDownKey = both || block ? "ArrowDown" : "ArrowDown-DISABLED";
+    this.#arrowUpKey = both || block ? "ArrowUp" : "ArrowUp-DISABLED";
+    this.#noMemory = features.includes(" no-memory ");
+    this.#wrap = features.includes(" wrap ");
   }
 
   attributeChangedCallback(name: string) {
-    if (name === 'features') {
+    if (name === "features") {
       this.#initializeFeatures();
     }
   }
 
   #initializeListeners() {
-    this.addEventListener('keydown', (event) => {
+    this.addEventListener("keydown", (event) => {
       let moveTo = -1;
       const target = event.target as HTMLElement;
-      const parent = target.closest('use-focusgroup');
+      const parent = target.closest("use-focusgroup");
 
       switch (event.key) {
         case this.#arrowRightKey:
         case this.#arrowDownKey:
-          if (target.matches('select, input, textarea')) {
+          if (target.matches("select, input, textarea")) {
             break;
           }
 
-          const currentIndex = this.#tabbables.indexOf((this === parent ? event.target : parent) as HTMLElement);
+          const currentIndex = this.#tabbables.indexOf(
+            (this === parent ? event.target : parent) as HTMLElement,
+          );
 
           if (currentIndex < this.#tabbables.length - 1) {
             moveTo = currentIndex + 1;
@@ -129,11 +131,13 @@ export class UseFocusgroup extends HTMLElement {
 
         case this.#arrowLeftKey:
         case this.#arrowUpKey:
-          if (target.matches('select, input, textarea')) {
+          if (target.matches("select, input, textarea")) {
             break;
           }
 
-          const currentIndex2 = this.#tabbables.indexOf((this === parent ? event.target : parent) as HTMLElement);
+          const currentIndex2 = this.#tabbables.indexOf(
+            (this === parent ? event.target : parent) as HTMLElement,
+          );
 
           if (currentIndex2 > 0) {
             moveTo = currentIndex2 - 1;
@@ -152,7 +156,7 @@ export class UseFocusgroup extends HTMLElement {
       }
     });
 
-    this.addEventListener('focusout', (event) => {
+    this.addEventListener("focusout", (event) => {
       if (!this.contains(event.relatedTarget as HTMLElement)) {
         return;
       }
@@ -166,18 +170,18 @@ export class UseFocusgroup extends HTMLElement {
       }
     });
 
-    this.addEventListener('focusin', (event) => {
+    this.addEventListener("focusin", (event) => {
       event.stopPropagation();
       event.preventDefault();
       this.#makeTabbable(event.target as HTMLElement);
     });
 
     this.addEventListener(
-      'toggle',
+      "toggle",
       () => {
         this.#initializeTabbables(true);
       },
-      true
+      true,
     );
   }
 
@@ -220,9 +224,9 @@ export class UseFocusgroup extends HTMLElement {
       if (!isUseFocusgroup(element)) {
         const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
         if (tabindex === INITIAL_TABINDEX_VALUE) {
-          element.removeAttribute('tabindex');
+          element.removeAttribute("tabindex");
         } else if (tabindex) {
-          element.setAttribute('tabindex', tabindex);
+          element.setAttribute("tabindex", tabindex);
         }
       }
     }
@@ -234,7 +238,7 @@ export class UseFocusgroup extends HTMLElement {
     }
 
     if (!isUseFocusgroup(element) && element.getAttribute(INITIAL_TABINDEX_ATTR)) {
-      element.setAttribute('tabindex', '-1');
+      element.setAttribute("tabindex", "-1");
     }
   }
 
@@ -243,7 +247,7 @@ export class UseFocusgroup extends HTMLElement {
     const filteredTabbables: FocusableElement[] = [];
 
     for (const node of allTabbables) {
-      const parent = node.closest('use-focusgroup');
+      const parent = node.closest("use-focusgroup");
       if (parent && filteredTabbables.includes(parent)) {
         continue;
       }
@@ -258,11 +262,11 @@ export class UseFocusgroup extends HTMLElement {
   }
 
   #getTabIndex(element: HTMLElement) {
-    if (element.shadowRoot?.delegatesFocus && element.getAttribute('tabindex') === null) {
-      return '0';
+    if (element.shadowRoot?.delegatesFocus && element.getAttribute("tabindex") === null) {
+      return "0";
     }
 
-    if (element.getAttribute('tabindex') === null) {
+    if (element.getAttribute("tabindex") === null) {
       return INITIAL_TABINDEX_VALUE;
     }
 
@@ -302,9 +306,9 @@ export class UseFocusgroup extends HTMLElement {
     this.#tabbables.forEach((element) => {
       const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
       if (tabindex === INITIAL_TABINDEX_VALUE) {
-        element.removeAttribute('tabindex');
+        element.removeAttribute("tabindex");
       } else if (tabindex) {
-        element.setAttribute('tabindex', tabindex);
+        element.setAttribute("tabindex", tabindex);
       }
       element.removeAttribute(INITIAL_TABINDEX_ATTR);
     });
@@ -330,16 +334,16 @@ export class UseFocusgroup extends HTMLElement {
       }
 
       if ((this.#nested && !this.#promoted) || index > 0) {
-        element.setAttribute('tabindex', '-1');
+        element.setAttribute("tabindex", "-1");
       }
     });
   }
 }
 
-customElements.define('use-focusgroup', UseFocusgroup);
+customElements.define("use-focusgroup", UseFocusgroup);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-focusgroup': UseFocusgroup;
+    "use-focusgroup": UseFocusgroup;
   }
 }

@@ -1,12 +1,12 @@
-import { html } from 'lit';
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { UseScrollarea } from './use-scrollarea';
-import './use-scrollarea';
+import { html } from "lit";
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { UseScrollarea } from "./use-scrollarea";
+import "./use-scrollarea";
 
 const meta: Meta<UseScrollarea> = {
-  title: 'Web Components/use-scrollarea',
-  component: 'use-scrollarea',
-  tags: ['autodocs', '!dev', 'utility'],
+  title: "Web Components/use-scrollarea",
+  component: "use-scrollarea",
+  tags: ["autodocs", "!dev", "utility"],
 };
 export default meta;
 
@@ -24,7 +24,7 @@ const scrollShadowStyles = html`
 
     .scroll-demo::before,
     .scroll-demo::after {
-      content: '';
+      content: "";
       display: block;
       position: sticky;
       inset-inline: 0;
@@ -62,7 +62,10 @@ export const Vertical: Story = {
   render: () => html`
     ${scrollShadowStyles}
     <use-scrollarea class="scroll-demo">
-      ${Array.from({ length: 20 }, (_, i) => html`<p>Line ${i + 1} — scroll to see shadows appear and disappear</p>`)}
+      ${Array.from(
+        { length: 20 },
+        (_, i) => html`<p>Line ${i + 1} — scroll to see shadows appear and disappear</p>`,
+      )}
     </use-scrollarea>
   `,
 };
@@ -86,7 +89,7 @@ export const Horizontal: Story = {
 
       .scroll-h-wrapper::before,
       .scroll-h-wrapper::after {
-        content: '';
+        content: "";
         position: absolute;
         top: 0;
         bottom: 0;
@@ -219,19 +222,22 @@ export const Bidirectional: Story = {
         class="scroll-demo-2d"
         @scroll=${(e: Event) => {
           const area = e.currentTarget as UseScrollarea;
-          const status = area.closest('.scroll-2d-wrapper')?.nextElementSibling;
+          const status = area.closest(".scroll-2d-wrapper")?.nextElementSibling;
           if (status) {
-            const states = ['at-block-start', 'at-block-end', 'at-inline-start', 'at-inline-end']
+            const states = ["at-block-start", "at-block-end", "at-inline-start", "at-inline-end"]
               .filter((s) => area.matches(`:state(${s})`))
-              .join(', ');
-            status.textContent = `Active states: ${states || 'none'}`;
+              .join(", ");
+            status.textContent = `Active states: ${states || "none"}`;
           }
         }}
       >
         <div class="scroll-demo-2d-inner">
           ${Array.from(
             { length: 20 },
-            (_, i) => html`<p>Row ${i + 1} — wide content that overflows horizontally to trigger inline states</p>`
+            (_, i) =>
+              html`<p>
+                Row ${i + 1} — wide content that overflows horizontally to trigger inline states
+              </p>`,
           )}
         </div>
       </use-scrollarea>
@@ -252,10 +258,10 @@ export const DynamicContent: Story = {
         type="button"
         style="margin-top: 0.5rem; display: block;"
         @click=${() => {
-          const area = document.querySelector('#dynamic-scroll');
+          const area = document.querySelector("#dynamic-scroll");
           if (area) {
             count++;
-            const p = document.createElement('p');
+            const p = document.createElement("p");
             p.textContent = `Item ${count}`;
             area.appendChild(p);
           }

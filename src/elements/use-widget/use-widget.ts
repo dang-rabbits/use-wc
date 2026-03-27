@@ -1,8 +1,8 @@
-import { LitElement, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { getTabIndex, isTabbable } from 'tabbable';
+import { LitElement, html } from "lit";
+import { customElement } from "lit/decorators.js";
+import { getTabIndex, isTabbable } from "tabbable";
 
-const INITIAL_TABINDEX_ATTR = 'data-usewc-widget-tabindex';
+const INITIAL_TABINDEX_ATTR = "data-usewc-widget-tabindex";
 
 /**
  * Nested controls are removed from the tab flow until the user activates the widget with `Enter` or `F2`. Clicking on a control will also activate the widget. Widgets are deactivated with `Escape` or `F2` keys or when the user clicks outside of the widget.
@@ -21,7 +21,7 @@ const INITIAL_TABINDEX_ATTR = 'data-usewc-widget-tabindex';
  *
  * @slot
  */
-@customElement('use-widget')
+@customElement("use-widget")
 export class UseWidget extends LitElement {
   #active: boolean = false;
   #tabbables: HTMLElement[] = [];
@@ -49,22 +49,22 @@ export class UseWidget extends LitElement {
   }
 
   #getTabIndex(element: HTMLElement) {
-    if (element.shadowRoot?.delegatesFocus && element.getAttribute('tabindex') === null) {
-      return '0';
+    if (element.shadowRoot?.delegatesFocus && element.getAttribute("tabindex") === null) {
+      return "0";
     }
 
     return String(getTabIndex(element));
   }
 
   initializeWidget() {
-    if (!this.hasAttribute('tabindex')) {
-      this.setAttribute('tabindex', '0');
+    if (!this.hasAttribute("tabindex")) {
+      this.setAttribute("tabindex", "0");
     }
 
     this.#tabbables = this.#findTabbables();
     this.#tabbables.forEach((element) => {
       element.setAttribute(INITIAL_TABINDEX_ATTR, this.#getTabIndex(element));
-      element.setAttribute('tabindex', '-1');
+      element.setAttribute("tabindex", "-1");
     });
 
     this.#unwatchMutations();
@@ -74,11 +74,11 @@ export class UseWidget extends LitElement {
   enableWidget(autofocus: boolean = true) {
     if (!this.#active) {
       this.#active = true;
-      this.setAttribute('active', '');
+      this.setAttribute("active", "");
       this.#tabbables.forEach((element) => {
         const tabindex = element.getAttribute(INITIAL_TABINDEX_ATTR);
         if (tabindex) {
-          element.setAttribute('tabindex', tabindex);
+          element.setAttribute("tabindex", tabindex);
         }
       });
 
@@ -86,18 +86,18 @@ export class UseWidget extends LitElement {
         this.#tabbables.at(0)?.focus();
       }
 
-      this.setAttribute('tabindex', '-1');
+      this.setAttribute("tabindex", "-1");
     }
   }
 
   disableWidget(returnFocus: boolean = true) {
     if (this.#active) {
       this.#active = false;
-      this.removeAttribute('active');
+      this.removeAttribute("active");
 
       this.#tabbables.forEach((element) => {
         if (element.getAttribute(INITIAL_TABINDEX_ATTR)) {
-          element.setAttribute('tabindex', '-1');
+          element.setAttribute("tabindex", "-1");
         }
       });
 
@@ -105,18 +105,18 @@ export class UseWidget extends LitElement {
         this.focus();
       }
 
-      this.setAttribute('tabindex', '0');
+      this.setAttribute("tabindex", "0");
     }
   }
 
   firstUpdated() {
     this.initializeWidget();
 
-    this.addEventListener('keydown', (event) => {
+    this.addEventListener("keydown", (event) => {
       const target = event.target as HTMLElement;
 
       switch (event.key) {
-        case 'Enter':
+        case "Enter":
           event.stopPropagation();
           event.stopImmediatePropagation();
           event.preventDefault();
@@ -124,11 +124,11 @@ export class UseWidget extends LitElement {
           this.enableWidget();
           break;
 
-        case 'Escape':
+        case "Escape":
           this.disableWidget();
           break;
 
-        case 'F2':
+        case "F2":
           if (this.#active) {
             this.disableWidget();
           } else {
@@ -142,9 +142,9 @@ export class UseWidget extends LitElement {
       }
 
       switch (event.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
-          if (target.matches('select, input, textarea')) {
+        case "ArrowRight":
+        case "ArrowDown":
+          if (target.matches("select, input, textarea")) {
             break;
           }
 
@@ -161,9 +161,9 @@ export class UseWidget extends LitElement {
 
           break;
 
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          if (target.matches('select, input, textarea')) {
+        case "ArrowLeft":
+        case "ArrowUp":
+          if (target.matches("select, input, textarea")) {
             break;
           }
 
@@ -182,22 +182,22 @@ export class UseWidget extends LitElement {
       }
     });
 
-    this.addEventListener('click', () => {
+    this.addEventListener("click", () => {
       this.enableWidget(false);
     });
 
-    this.addEventListener('focusout', (event) => {
+    this.addEventListener("focusout", (event) => {
       if (!this.contains(event.relatedTarget as Node)) {
         this.disableWidget(false);
       }
     });
 
     this.addEventListener(
-      'toggle',
+      "toggle",
       () => {
         this.initializeWidget();
       },
-      true
+      true,
     );
   }
 
@@ -229,6 +229,6 @@ export class UseWidget extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-widget': UseWidget;
+    "use-widget": UseWidget;
   }
 }

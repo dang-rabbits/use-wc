@@ -1,5 +1,5 @@
-import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { LitElement, css, html } from "lit";
+import { customElement } from "lit/decorators.js";
 
 /**
  * A scroll container that exposes custom states for scroll edge detection.
@@ -14,7 +14,7 @@ import { customElement } from 'lit/decorators.js';
  *
  * @slot - Scrollable content
  */
-@customElement('use-scrollarea')
+@customElement("use-scrollarea")
 export class UseScrollarea extends LitElement {
   #internals: ElementInternals;
   #resizeObserver: ResizeObserver | null = null;
@@ -27,7 +27,7 @@ export class UseScrollarea extends LitElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('scroll', this.#onScroll, { passive: true });
+    this.addEventListener("scroll", this.#onScroll, { passive: true });
     this.#resizeObserver = new ResizeObserver(this.#updateScrollStates);
     this.#resizeObserver.observe(this);
     this.#mutationObserver = new MutationObserver(this.#updateScrollStates);
@@ -35,7 +35,7 @@ export class UseScrollarea extends LitElement {
   }
 
   disconnectedCallback() {
-    this.removeEventListener('scroll', this.#onScroll);
+    this.removeEventListener("scroll", this.#onScroll);
     this.#resizeObserver?.disconnect();
     this.#resizeObserver = null;
     this.#mutationObserver?.disconnect();
@@ -58,10 +58,10 @@ export class UseScrollarea extends LitElement {
     const atInlineStart = absScrollLeft <= 0;
     const atInlineEnd = Math.abs(absScrollLeft + this.clientWidth - this.scrollWidth) < 1;
 
-    this.#internals.states[atBlockStart ? 'add' : 'delete']('at-block-start');
-    this.#internals.states[atBlockEnd ? 'add' : 'delete']('at-block-end');
-    this.#internals.states[atInlineStart ? 'add' : 'delete']('at-inline-start');
-    this.#internals.states[atInlineEnd ? 'add' : 'delete']('at-inline-end');
+    this.#internals.states[atBlockStart ? "add" : "delete"]("at-block-start");
+    this.#internals.states[atBlockEnd ? "add" : "delete"]("at-block-end");
+    this.#internals.states[atInlineStart ? "add" : "delete"]("at-inline-start");
+    this.#internals.states[atInlineEnd ? "add" : "delete"]("at-inline-end");
   };
 
   render() {
@@ -77,6 +77,6 @@ export class UseScrollarea extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-scrollarea': UseScrollarea;
+    "use-scrollarea": UseScrollarea;
   }
 }

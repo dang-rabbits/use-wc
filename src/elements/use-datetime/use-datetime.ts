@@ -1,17 +1,17 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import createId from '../../utils/create-id';
-import '../use-date/use-date';
-import '../use-time/use-time';
-import { UseDate } from '../use-date/use-date';
-import { UseTime } from '../use-time/use-time';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import createId from "../../utils/create-id";
+import "../use-date/use-date";
+import "../use-time/use-time";
+import { UseDate } from "../use-date/use-date";
+import { UseTime } from "../use-time/use-time";
 
 /**
  * Displays a date and time picker by combining `use-date` and `use-time`.
  *
  * The value format is ISO 8601-like: `YYYY-MM-DDTHH:MM:SS.mmm`.
  */
-@customElement('use-datetime')
+@customElement("use-datetime")
 export class UseDatetime extends LitElement {
   static formAssociated = true;
 
@@ -23,15 +23,15 @@ export class UseDatetime extends LitElement {
   #internals: ElementInternals;
   #id: string;
 
-  @query('use-date', true) dateElement!: UseDate;
-  @query('use-time', true) timeElement!: UseTime;
+  @query("use-date", true) dateElement!: UseDate;
+  @query("use-time", true) timeElement!: UseTime;
 
   constructor() {
     super();
     this.#internals = this.attachInternals();
-    this.#id = this.hasAttribute('id') ? this.getAttribute('id')! : createId();
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    this.#id = this.hasAttribute("id") ? this.getAttribute("id")! : createId();
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -41,36 +41,36 @@ export class UseDatetime extends LitElement {
   set id(val: string) {
     const old = this.#id;
     this.#id = val;
-    this.requestUpdate('id', old);
+    this.requestUpdate("id", old);
   }
 
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add('disabled');
+      this.#internals.states.add("disabled");
     } else {
-      this.#internals.states.delete('disabled');
+      this.#internals.states.delete("disabled");
     }
   }
   get disabled(): boolean {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
-  @property({ type: Boolean, attribute: 'readonly' })
+  @property({ type: Boolean, attribute: "readonly" })
   set readOnly(flag) {
     if (flag) {
-      this.#internals.states.add('readonly');
+      this.#internals.states.add("readonly");
     } else {
-      this.#internals.states.delete('readonly');
+      this.#internals.states.delete("readonly");
     }
   }
   get readOnly(): boolean {
-    return this.#internals.states.has('readonly');
+    return this.#internals.states.has("readonly");
   }
 
   /** @default User's browser language or 'en-US' */
   @property({ type: String, attribute: true })
-  locale: string = navigator.language || 'en-US';
+  locale: string = navigator.language || "en-US";
 
   // use-time props
   @property({ type: Boolean, attribute: true }) hours = false;
@@ -78,11 +78,11 @@ export class UseDatetime extends LitElement {
   @property({ type: Boolean, attribute: true }) seconds = false;
   @property({ type: Boolean, attribute: true }) fractionalSeconds = false;
   @property({ type: Boolean, attribute: true }) dayPeriod = false;
-  @property({ type: String, attribute: true }) hourFormat: '12' | '24' | undefined;
+  @property({ type: String, attribute: true }) hourFormat: "12" | "24" | undefined;
 
-  #internalValue: string = '';
-  #dateValue: string = '';
-  #timeValue: string = '';
+  #internalValue: string = "";
+  #dateValue: string = "";
+  #timeValue: string = "";
 
   /** @default '' */
   @property({ type: String })
@@ -94,27 +94,27 @@ export class UseDatetime extends LitElement {
   }
 
   #initializeValue(val: string) {
-    const [datePart, timePart] = this.value.replace('Z', '').split('T');
-    this.#dateValue = datePart ?? '';
-    this.#timeValue = timePart ?? '';
+    const [datePart, timePart] = this.value.replace("Z", "").split("T");
+    this.#dateValue = datePart ?? "";
+    this.#timeValue = timePart ?? "";
     this.#internalValue = val;
     this.#internals.setFormValue(this.#internalValue);
   }
 
   connectedCallback() {
     super.connectedCallback();
-    this.#initializeValue(this.getAttribute('value') ?? '');
+    this.#initializeValue(this.getAttribute("value") ?? "");
   }
 
   #updateInternalValue() {
-    const date = this.dateElement?.value ?? '';
-    const time = this.timeElement?.value ?? '';
+    const date = this.dateElement?.value ?? "";
+    const time = this.timeElement?.value ?? "";
 
     // Only combine if we have a date. Time is optional depending on use-case,
     // but usually a datetime needs a date.
     // If date is empty, the whole thing is likely empty or invalid.
     if (!date) {
-      this.#internalValue = '';
+      this.#internalValue = "";
     } else {
       // If time is empty but we expect time, what to do?
       // use-time returns defaults (00:00:00) if empty string passed?

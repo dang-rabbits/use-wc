@@ -1,7 +1,7 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, html, css } from "lit";
+import { customElement, property } from "lit/decorators.js";
 
-@customElement('use-gridrow')
+@customElement("use-gridrow")
 export class UseGridRow extends LitElement {
   @property({ type: Boolean, reflect: true })
   selected = false;
@@ -13,18 +13,18 @@ export class UseGridRow extends LitElement {
   readonly = false;
 
   @property({ type: String, reflect: true })
-  value = '';
+  value = "";
 
   firstUpdated() {
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'row');
+    if (!this.hasAttribute("role")) {
+      this.setAttribute("role", "row");
     }
   }
 
   updated() {
-    this.setAttribute('aria-selected', this.selected ? 'true' : 'false');
-    this.setAttribute('aria-disabled', this.disabled ? 'true' : 'false');
-    this.setAttribute('aria-readonly', this.readonly ? 'true' : 'false');
+    this.setAttribute("aria-selected", this.selected ? "true" : "false");
+    this.setAttribute("aria-disabled", this.disabled ? "true" : "false");
+    this.setAttribute("aria-readonly", this.readonly ? "true" : "false");
   }
 
   render() {
@@ -42,26 +42,27 @@ export class UseGridRow extends LitElement {
     :host([disabled]) {
       opacity: 0.5;
     }
-    :host-context(:is(use-grid[selectmode='none'])) :is([part='deselected-indicator'], [part='selected-indicator']) {
+    :host-context(:is(use-grid[selectmode="none"]))
+      :is([part="deselected-indicator"], [part="selected-indicator"]) {
       display: none;
     }
-    :is([part='selected-indicator'], [part='deselected-indicator']) {
+    :is([part="selected-indicator"], [part="deselected-indicator"]) {
       width: 1lh;
       height: 1lh;
     }
-    [part='deselected-indicator'] {
+    [part="deselected-indicator"] {
       visibility: visible;
       display: initial;
     }
-    [part='selected-indicator'] {
+    [part="selected-indicator"] {
       visibility: hidden;
       display: none;
     }
-    :host([selected]) [part='selected-indicator'] {
+    :host([selected]) [part="selected-indicator"] {
       visibility: visible;
       display: initial;
     }
-    :host([selected]) [part='deselected-indicator'] {
+    :host([selected]) [part="deselected-indicator"] {
       visibility: hidden;
       display: none;
     }
@@ -73,6 +74,6 @@ export class UseGridRow extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-gridrow': UseGridRow;
+    "use-gridrow": UseGridRow;
   }
 }

@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseDate } from './use-date';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseDate } from "./use-date";
 
 const meta: Meta<UseDate> = {
-  component: 'use-date',
-  title: 'Web Components/use-date',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-date",
+  title: "Web Components/use-date",
+  tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
     return html`<use-date value="2024-06-01"></use-date>`;
@@ -80,8 +80,8 @@ export const CustomStyles: Story = {
 export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const output = document.getElementById('value-output') as HTMLPreElement;
-      const date = document.getElementById('date-value') as UseDate;
+      const output = document.getElementById("value-output") as HTMLPreElement;
+      const date = document.getElementById("date-value") as UseDate;
       output.textContent = date.value;
     };
     return html`
@@ -99,7 +99,7 @@ export const FormSubmission: Story = {
       const formData = new FormData(event.target as HTMLFormElement);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const output = document.getElementById('output') as HTMLPreElement;
+      const output = document.getElementById("output") as HTMLPreElement;
       output.textContent = queryString;
     };
     return html`
@@ -115,8 +115,8 @@ export const FormSubmission: Story = {
 export const SetValueProgrammatically: Story = {
   render: () => {
     const handleClick = () => {
-      const date = document.getElementById('set-date-value') as UseDate;
-      date.value = '2024-06-01';
+      const date = document.getElementById("set-date-value") as UseDate;
+      date.value = "2024-06-01";
     };
 
     return html`

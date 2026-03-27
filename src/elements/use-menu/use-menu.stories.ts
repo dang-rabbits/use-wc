@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseMenu } from './use-menu';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseMenu } from "./use-menu";
 
 const meta: Meta<UseMenu> = {
-  component: 'use-menu',
-  title: 'Web Components/use-menu',
-  tags: ['autodocs', '!dev', 'utility'],
+  component: "use-menu",
+  title: "Web Components/use-menu",
+  tags: ["autodocs", "!dev", "utility"],
   args: {
     disabled: false,
   },
@@ -118,7 +118,7 @@ export const ChangeInitialItem: Story = {
 export const CheckboxSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+      descrption: "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/",
     },
   },
   render: () => html`
@@ -133,7 +133,7 @@ export const CheckboxSelect: Story = {
 export const RadioSelect: Story = {
   parameters: {
     docs: {
-      descrption: 'https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/',
+      descrption: "https://www.w3.org/WAI/ARIA/apg/patterns/menubar/examples/menubar-editor/",
     },
   },
   render: () => html`
@@ -148,7 +148,7 @@ export const RadioSelect: Story = {
 export const InjectedItems: Story = {
   render: () => {
     function injectItems() {
-      const dropdown = document.getElementById('inject-dropdown');
+      const dropdown = document.getElementById("inject-dropdown");
       if (dropdown) {
         dropdown.innerHTML =
           dropdown.innerHTML +

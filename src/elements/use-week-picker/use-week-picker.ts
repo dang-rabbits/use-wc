@@ -1,23 +1,23 @@
-import { css } from 'lit';
-import { customElement } from 'lit/decorators.js';
-import { formatISOWeek, parseISOWeek } from '../../utils/date-time-aria-labels';
-import { UseCalendarBase } from '../use-calendar-base/use-calendar-base';
+import { css } from "lit";
+import { customElement } from "lit/decorators.js";
+import { formatISOWeek, parseISOWeek } from "../../utils/date-time-aria-labels";
+import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
 
 /**
  * A week-granularity date picker. Value format: YYYY-Www (ISO 8601 week).
  *
  * @fires use-change - Fired on selection with detail `{ value: string; dates: string[] }`
  */
-@customElement('use-week-picker')
+@customElement("use-week-picker")
 export class UseWeekPicker extends UseCalendarBase {
   static styles = [
     UseCalendarBase.styles,
     css`
-      [part~='day']:not([part*='day-empty']) {
+      [part~="day"]:not([part*="day-empty"]) {
         cursor: pointer;
       }
 
-      [part*='day-week-hover']:not([part*='day-empty']) {
+      [part*="day-week-hover"]:not([part*="day-empty"]) {
         background-color: rgba(0, 0, 0, 0.1);
       }
     `,
@@ -27,7 +27,7 @@ export class UseWeekPicker extends UseCalendarBase {
 
   connectedCallback() {
     super.connectedCallback();
-    const attr = this.getAttribute('value') || '';
+    const attr = this.getAttribute("value") || "";
     if (attr) this.value = attr;
   }
 
@@ -36,7 +36,7 @@ export class UseWeekPicker extends UseCalendarBase {
   }
 
   set value(value: string) {
-    if (typeof value === 'string' && value.match(/^\d{4}-W\d{2}$/)) {
+    if (typeof value === "string" && value.match(/^\d{4}-W\d{2}$/)) {
       this.setFormStringValue(value);
       const monday = parseISOWeek(value);
       const weekDates = Array.from({ length: 7 }, (_, i) => {
@@ -73,7 +73,7 @@ export class UseWeekPicker extends UseCalendarBase {
   }
 
   #getWeekDates(dateStr: string): string[] {
-    const [y, m, d] = dateStr.split('-').map(Number);
+    const [y, m, d] = dateStr.split("-").map(Number);
     const date = new Date(y, m - 1, d);
     const dayOfWeek = date.getDay() || 7;
     const monday = new Date(date);
@@ -88,7 +88,7 @@ export class UseWeekPicker extends UseCalendarBase {
   #handleWeekMouseOver = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
     const day = this.getTargetCell(target);
-    const dateStr = day?.getAttribute('data-usewc-date');
+    const dateStr = day?.getAttribute("data-usewc-date");
     if (!dateStr) {
       if (this.#hoverWeekDates.length > 0) {
         this.#hoverWeekDates = [];
@@ -106,7 +106,7 @@ export class UseWeekPicker extends UseCalendarBase {
   };
 
   protected handleDayClick(dateStr: string): void {
-    const [y, m, d] = dateStr.split('-').map(Number);
+    const [y, m, d] = dateStr.split("-").map(Number);
     const isoWeek = formatISOWeek(new Date(y, m - 1, d));
     const dates = this.#getWeekDates(dateStr);
     const enabledDates = dates.filter((date) => !this.dateDisabled(date));
@@ -114,11 +114,11 @@ export class UseWeekPicker extends UseCalendarBase {
     this.setFormStringValue(isoWeek);
     this.setSelectedDates(enabledDates);
     this.dispatchEvent(
-      new CustomEvent('use-change', {
+      new CustomEvent("use-change", {
         detail: { value: isoWeek, dates: enabledDates },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -129,6 +129,6 @@ export class UseWeekPicker extends UseCalendarBase {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-week-picker': UseWeekPicker;
+    "use-week-picker": UseWeekPicker;
   }
 }

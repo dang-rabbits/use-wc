@@ -1,9 +1,9 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import createId from '../../utils/create-id';
-import { UseTreeitem } from '../use-treeitem/use-treeitem';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import createId from "../../utils/create-id";
+import { UseTreeitem } from "../use-treeitem/use-treeitem";
 
-const FORM_DATA_KEY = '__value';
+const FORM_DATA_KEY = "__value";
 
 // TODO `mode?: 'single' | 'multiple' | 'leaf'`
 
@@ -13,7 +13,7 @@ const FORM_DATA_KEY = '__value';
  * @slot default NodeList of `use-treeitem` elements
  * @slot arrow
  */
-@customElement('use-tree')
+@customElement("use-tree")
 export class UseTree extends LitElement {
   static formAssociated = true;
 
@@ -30,14 +30,14 @@ export class UseTree extends LitElement {
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add('disabled');
+      this.#internals.states.add("disabled");
     } else {
-      this.#internals.states.delete('disabled');
+      this.#internals.states.delete("disabled");
     }
   }
 
   get disabled() {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   /**
@@ -52,7 +52,7 @@ export class UseTree extends LitElement {
     return this.lazyQueryItems().find((item) => item.selected);
   }
 
-  @query('use-treeitem')
+  @query("use-treeitem")
   items!: Array<UseTreeitem>;
 
   @query('[part="tree"]', true)
@@ -65,21 +65,21 @@ export class UseTree extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
 
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
 
-    this.addEventListener('focusin', this.#handleFocusIn);
-    this.addEventListener('focusout', this.#handleFocusOut);
+    this.addEventListener("focusin", this.#handleFocusIn);
+    this.addEventListener("focusout", this.#handleFocusOut);
   }
 
   #mouseDownTarget = null as HTMLElement | null;
   #handleMouseDown(event: MouseEvent) {
     this.#mouseDownTarget = event.target as HTMLElement;
-    this.#mouseDownTarget?.setAttribute('tabindex', '0');
+    this.#mouseDownTarget?.setAttribute("tabindex", "0");
   }
 
-  #handleFocusIn(event: HTMLElementEventMap['focusin']) {
+  #handleFocusIn(event: HTMLElementEventMap["focusin"]) {
     let target = event.target as HTMLElement | null;
 
     if (this.#mouseDownTarget) {
@@ -90,15 +90,15 @@ export class UseTree extends LitElement {
 
     this.activeOption = target as UseTreeitem;
     target?.focus();
-    this.setAttribute('tabindex', '-1');
+    this.setAttribute("tabindex", "-1");
   }
 
-  #handleFocusOut(event: HTMLElementEventMap['focusout']) {
+  #handleFocusOut(event: HTMLElementEventMap["focusout"]) {
     if (event.relatedTarget === this) {
       if (this.#activeOption) {
         this.activeOption = this.#activeOption;
         this.#activeOption.focus();
-        this.setAttribute('tabindex', '-1');
+        this.setAttribute("tabindex", "-1");
       }
 
       return;
@@ -108,10 +108,10 @@ export class UseTree extends LitElement {
       return;
     }
 
-    this.setAttribute('tabindex', '0');
+    this.setAttribute("tabindex", "0");
   }
 
-  #handleClick(event: HTMLElementEventMap['click']) {
+  #handleClick(event: HTMLElementEventMap["click"]) {
     this.#mouseDownTarget = null;
 
     if (this.disabled) {
@@ -119,7 +119,7 @@ export class UseTree extends LitElement {
     }
 
     const target = event.target as HTMLElement;
-    const selectOption = target?.closest<UseTreeitem>('use-treeitem');
+    const selectOption = target?.closest<UseTreeitem>("use-treeitem");
 
     if (selectOption?.disabled) {
       return;
@@ -130,7 +130,9 @@ export class UseTree extends LitElement {
       // this.activeOption = selectOption;
       const isToggleIndicator = event
         .composedPath()
-        .some((el) => (el instanceof HTMLElement ? el.getAttribute('part') === 'toggle-indicator' : false));
+        .some((el) =>
+          el instanceof HTMLElement ? el.getAttribute("part") === "toggle-indicator" : false,
+        );
 
       if (!isToggleIndicator) {
         this.#toggleOptionValue(selectOption);
@@ -161,7 +163,9 @@ export class UseTree extends LitElement {
   }
 
   #initializeValue() {
-    const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
+    const selectedValues = this.selected.map(
+      (option) => option.getAttribute("value") ?? option.textContent,
+    );
     if (this.multiple) {
       this.value = selectedValues.map((value) => value ?? null).filter((value) => value != null);
     } else if (selectedValues[0] && selectedValues[0].length > 0) {
@@ -186,19 +190,19 @@ export class UseTree extends LitElement {
     lazyItems.forEach((item) => {
       const expandedNodeClone = expandedNodeIcon?.cloneNode(true) as HTMLElement;
       if (expandedNodeClone) {
-        expandedNodeClone.slot = 'expanded-indicator';
+        expandedNodeClone.slot = "expanded-indicator";
         item.appendChild(expandedNodeClone);
       }
 
       const collapsedNodeClone = collapsedNodeIcon?.cloneNode(true) as HTMLElement;
       if (collapsedNodeClone) {
-        collapsedNodeClone.slot = 'collapsed-indicator';
+        collapsedNodeClone.slot = "collapsed-indicator";
         item.appendChild(collapsedNodeClone);
       }
 
       const selectedNodeClone = selectedNodeIcon?.cloneNode(true) as HTMLElement;
       if (selectedNodeClone) {
-        selectedNodeClone.slot = 'selected-indicator';
+        selectedNodeClone.slot = "selected-indicator";
         item.appendChild(selectedNodeClone);
       }
     });
@@ -209,28 +213,28 @@ export class UseTree extends LitElement {
     return this.#activeOption;
   }
   set activeOption(option: UseTreeitem | null) {
-    this.#activeOption?.setAttribute('tabindex', '-1');
+    this.#activeOption?.setAttribute("tabindex", "-1");
     this.#activeOption = option;
-    option?.setAttribute('tabindex', '0');
+    option?.setAttribute("tabindex", "0");
   }
 
   firstUpdated() {
     this.#initializeValue();
     this.#initializeTreeItems();
 
-    this.setAttribute('role', 'tree');
+    this.setAttribute("role", "tree");
 
-    if (!this.hasAttribute('disabled')) {
+    if (!this.hasAttribute("disabled")) {
       this.activeOption = this.firstSelected ?? this.lazyQueryItems().at(0) ?? null;
-      this.setAttribute('tabindex', '0');
+      this.setAttribute("tabindex", "0");
     }
   }
 
   updated() {
     if (this.multiple) {
-      this.setAttribute('aria-multiselectable', 'true');
+      this.setAttribute("aria-multiselectable", "true");
     } else {
-      this.removeAttribute('aria-multiselectable');
+      this.removeAttribute("aria-multiselectable");
     }
   }
 
@@ -251,7 +255,7 @@ export class UseTree extends LitElement {
       }
     } else if (Array.isArray(value) && value.length > 0) {
       this.#value.set(this.#dataKey, value[0]);
-    } else if (typeof value === 'string' && value.length > 0) {
+    } else if (typeof value === "string" && value.length > 0) {
       this.#value.set(this.#dataKey, value);
     }
 
@@ -259,19 +263,19 @@ export class UseTree extends LitElement {
     const options = this.queryLazyAvailableItems();
 
     options.forEach((option) => {
-      option.selected = values.includes(option.getAttribute('value') ?? option.textContent ?? '');
+      option.selected = values.includes(option.getAttribute("value") ?? option.textContent ?? "");
     });
 
     this.#internals.setFormValue(this.#value);
 
     this.dispatchEvent(
-      new CustomEvent('use-change', {
+      new CustomEvent("use-change", {
         detail: {
           value: this.multiple ? values : (this.#value.get(this.#dataKey) ?? null),
         },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
@@ -280,7 +284,7 @@ export class UseTree extends LitElement {
   }
 
   lazyQueryItems() {
-    return Array.from(this.querySelectorAll('use-treeitem'));
+    return Array.from(this.querySelectorAll("use-treeitem"));
   }
 
   queryLazyAvailableItems() {
@@ -299,7 +303,7 @@ export class UseTree extends LitElement {
         return true;
       }
 
-      return item.parentElement === this || item.parentElement?.closest('use-treeitem')?.expanded;
+      return item.parentElement === this || item.parentElement?.closest("use-treeitem")?.expanded;
     });
   }
 
@@ -308,7 +312,7 @@ export class UseTree extends LitElement {
       return;
     }
 
-    if (['Enter', ' '].includes(event.key) && this.activeOption) {
+    if (["Enter", " "].includes(event.key) && this.activeOption) {
       event.preventDefault();
       this.#toggleOptionValue(this.activeOption);
       return;
@@ -320,20 +324,20 @@ export class UseTree extends LitElement {
 
     let moveTo: UseTreeitem | undefined;
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
         event.stopPropagation();
         if (activeIndex > 0) {
           moveTo = options.at(activeIndex - 1);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
         break;
       // TODO RTL support
-      case 'ArrowRight':
+      case "ArrowRight":
         event.preventDefault();
         event.stopPropagation();
         if (this.activeOption && !this.activeOption.expanded) {
@@ -341,7 +345,7 @@ export class UseTree extends LitElement {
         }
         break;
       // TODO RTL support
-      case 'ArrowLeft':
+      case "ArrowLeft":
         event.preventDefault();
         event.stopPropagation();
         if (this.activeOption && this.activeOption.expanded) {
@@ -351,12 +355,12 @@ export class UseTree extends LitElement {
           moveTo = this.activeOption.parentElement;
         }
         break;
-      case 'Home':
+      case "Home":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(0);
         break;
-      case 'End':
+      case "End":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(options.length - 1);
@@ -410,6 +414,6 @@ export class UseTree extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-tree': UseTree;
+    "use-tree": UseTree;
   }
 }

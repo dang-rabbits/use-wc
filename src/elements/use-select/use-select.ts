@@ -1,7 +1,7 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js';
-import { UseOption } from '../use-option/use-option';
-import createId from '../../utils/create-id';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query, queryAssignedElements } from "lit/decorators.js";
+import { UseOption } from "../use-option/use-option";
+import createId from "../../utils/create-id";
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO valid / invalid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
@@ -11,7 +11,7 @@ import createId from '../../utils/create-id';
 // TODO typeahead
 // TODO groups
 
-const FORM_DATA_KEY = '__value';
+const FORM_DATA_KEY = "__value";
 
 /**
  * ## Multiple
@@ -27,7 +27,7 @@ const FORM_DATA_KEY = '__value';
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
-@customElement('use-select')
+@customElement("use-select")
 export class UseSelect extends LitElement {
   static formAssociated = true;
 
@@ -44,7 +44,7 @@ export class UseSelect extends LitElement {
   name?: string;
 
   @property()
-  placeholder: string = '';
+  placeholder: string = "";
 
   @property({ type: Boolean })
   set disabled(flag) {
@@ -52,7 +52,7 @@ export class UseSelect extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   get selected() {
@@ -63,7 +63,7 @@ export class UseSelect extends LitElement {
     return this.options.find((option) => option.selected);
   }
 
-  @queryAssignedElements({ selector: 'use-option' })
+  @queryAssignedElements({ selector: "use-option" })
   options!: Array<UseOption>;
 
   trigger: HTMLButtonElement | null = null;
@@ -76,8 +76,8 @@ export class UseSelect extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
 
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -94,7 +94,7 @@ export class UseSelect extends LitElement {
   }
 
   #handlePopoverClick(event: Event) {
-    const selectOption = (event.target as HTMLElement)?.closest('use-option') as UseOption;
+    const selectOption = (event.target as HTMLElement)?.closest("use-option") as UseOption;
 
     if (selectOption?.value != null) {
       event.preventDefault();
@@ -127,20 +127,24 @@ export class UseSelect extends LitElement {
     this.label.innerHTML = displayValue ?? this.placeholder;
 
     if (displayValue) {
-      this.#internals.states.delete('placeholder');
+      this.#internals.states.delete("placeholder");
     } else {
-      this.#internals.states.add('placeholder');
+      this.#internals.states.add("placeholder");
     }
   }
 
   get #displayValue() {
     const selected = this.selected;
 
-    return selected.length > 0 ? selected.map((option) => option.textContent).toLocaleString() : undefined;
+    return selected.length > 0
+      ? selected.map((option) => option.textContent).toLocaleString()
+      : undefined;
   }
 
   #initializeValue() {
-    const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
+    const selectedValues = this.selected.map(
+      (option) => option.getAttribute("value") ?? option.textContent,
+    );
 
     this.#value.delete(this.#dataKey);
 
@@ -158,25 +162,25 @@ export class UseSelect extends LitElement {
   set activeOption(option: UseOption | null) {
     this.#activeOption?.setActive(false);
     this.#activeOption = option;
-    this.trigger?.setAttribute('aria-activedescendant', option?.id ?? '');
+    this.trigger?.setAttribute("aria-activedescendant", option?.id ?? "");
     option?.setActive(true);
   }
 
   #initializeActiveOption() {
     const activeOption = this.firstSelected ?? this.options.at(0) ?? null;
     this.activeOption = activeOption;
-    return activeOption?.id ?? '';
+    return activeOption?.id ?? "";
   }
 
   async #initializeDisabled(disabled: boolean) {
     await this.updateComplete;
 
     if (disabled) {
-      this.#internals.states.add('disabled');
-      this.trigger?.setAttribute('disabled', 'disabled');
+      this.#internals.states.add("disabled");
+      this.trigger?.setAttribute("disabled", "disabled");
     } else {
-      this.#internals.states.delete('disabled');
-      this.trigger?.removeAttribute('disabled');
+      this.#internals.states.delete("disabled");
+      this.trigger?.removeAttribute("disabled");
     }
 
     if (this.trigger) {
@@ -200,13 +204,13 @@ export class UseSelect extends LitElement {
   }
 
   #getPopoverOpen() {
-    return this.trigger?.popoverTargetElement?.matches(':popover-open');
+    return this.trigger?.popoverTargetElement?.matches(":popover-open");
   }
 
   #handleKeyDown(event: KeyboardEvent) {
     const isOpen = this.#getPopoverOpen();
 
-    if (!isOpen && ['ArrowDown', 'ArrowUp'].includes(event.key)) {
+    if (!isOpen && ["ArrowDown", "ArrowUp"].includes(event.key)) {
       event.preventDefault();
       (this.trigger?.popoverTargetElement as HTMLElement).showPopover();
       return;
@@ -216,7 +220,7 @@ export class UseSelect extends LitElement {
       return;
     }
 
-    if (['Enter', ' '].includes(event.key) && this.activeOption) {
+    if (["Enter", " "].includes(event.key) && this.activeOption) {
       event.preventDefault();
       this.#toggleOptionValue(this.activeOption);
       return;
@@ -228,17 +232,17 @@ export class UseSelect extends LitElement {
 
     let moveTo: UseOption | undefined;
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
         if (activeIndex > 0) {
           moveTo = options.at(activeIndex - 1);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         moveTo = options.at(activeIndex + 1);
         break;
-      case 'Tab':
+      case "Tab":
         (this.trigger?.popoverTargetElement as HTMLElement).hidePopover();
         break;
     }
@@ -249,10 +253,10 @@ export class UseSelect extends LitElement {
   }
 
   #handlePopoverToggle(event: ToggleEvent) {
-    const opening = event.newState === 'open';
+    const opening = event.newState === "open";
 
     if (this.trigger) {
-      this.trigger.ariaExpanded = opening ? 'true' : 'false';
+      this.trigger.ariaExpanded = opening ? "true" : "false";
     }
 
     if (opening) {
@@ -312,12 +316,12 @@ export class UseSelect extends LitElement {
       display: contents;
     }
 
-    svg[part='trigger-arrow-default'] {
+    svg[part="trigger-arrow-default"] {
       width: 0.5rem;
       height: 0.25rem;
     }
 
-    :host(:state(placeholder)) span[part='trigger-label'] {
+    :host(:state(placeholder)) span[part="trigger-label"] {
       font-style: italic;
     }
 
@@ -334,6 +338,6 @@ export class UseSelect extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-select': UseSelect;
+    "use-select": UseSelect;
   }
 }

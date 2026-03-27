@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { html } from 'lit';
-import { UseDuration } from './use-duration';
+import type { Meta, StoryObj } from "@storybook/web-components-vite";
+import { html } from "lit";
+import { UseDuration } from "./use-duration";
 
 const meta: Meta<UseDuration> = {
-  component: 'use-duration',
-  title: 'Web Components/use-duration',
-  tags: ['autodocs', '!dev', 'input'],
+  component: "use-duration",
+  title: "Web Components/use-duration",
+  tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
     return html`<use-duration value="PT1H30M" days hours minutes seconds></use-duration>`;
@@ -40,23 +40,63 @@ export const InvalidFormat: Story = {
 };
 
 export const French: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" locale="fr-FR" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="P2DT3H4M5S"
+      locale="fr-FR"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration>`,
 };
 
 export const German: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" locale="de-DE" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="P2DT3H4M5S"
+      locale="de-DE"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration>`,
 };
 
 export const Spanish: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" locale="es-ES" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="P2DT3H4M5S"
+      locale="es-ES"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration>`,
 };
 
 export const Japanese: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" locale="ja-JP" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="P2DT3H4M5S"
+      locale="ja-JP"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration>`,
 };
 
 export const Chinese: Story = {
-  render: () => html`<use-duration value="P2DT3H4M5S" locale="zh-CN" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="P2DT3H4M5S"
+      locale="zh-CN"
+      days
+      hours
+      minutes
+      seconds
+    ></use-duration>`,
 };
 
 export const Arabic: Story = {
@@ -74,27 +114,40 @@ export const Arabic: Story = {
 };
 
 export const Disabled: Story = {
-  render: () => html`<use-duration value="PT1H30M" disabled days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration value="PT1H30M" disabled days hours minutes seconds></use-duration>`,
 };
 
 export const ReadOnly: Story = {
-  render: () => html`<use-duration value="PT1H30M" readOnly days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration value="PT1H30M" readOnly days hours minutes seconds></use-duration>`,
 };
 
 export const LongFormat: Story = {
-  render: () => html`<use-duration value="PT1H30M" format="long" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration value="PT1H30M" format="long" days hours minutes seconds></use-duration>`,
 };
 
 export const NarrowFormat: Story = {
-  render: () => html`<use-duration value="PT1H30M" format="narrow" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration value="PT1H30M" format="narrow" days hours minutes seconds></use-duration>`,
 };
 
 export const DigitalFormat: Story = {
-  render: () => html`<use-duration value="PT1H30M" format="digital" hours minutes seconds milliseconds></use-duration>`,
+  render: () =>
+    html`<use-duration
+      value="PT1H30M"
+      format="digital"
+      hours
+      minutes
+      seconds
+      milliseconds
+    ></use-duration>`,
 };
 
 export const CustomID: Story = {
-  render: () => html`<use-duration value="PT1H30M" id="custom-id" days hours minutes seconds></use-duration>`,
+  render: () =>
+    html`<use-duration value="PT1H30M" id="custom-id" days hours minutes seconds></use-duration>`,
 };
 
 export const CustomStyles: Story = {
@@ -155,8 +208,8 @@ export const CustomStyles: Story = {
 export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const output = document.getElementById('value-output') as HTMLPreElement;
-      const duration = document.getElementById('duration-value') as UseDuration;
+      const output = document.getElementById("value-output") as HTMLPreElement;
+      const duration = document.getElementById("duration-value") as UseDuration;
       output.textContent = duration.value;
     };
 
@@ -175,7 +228,7 @@ export const FormSubmission: Story = {
       const formData = new FormData(event.target as HTMLFormElement);
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/30584
       const queryString = decodeURIComponent(new URLSearchParams(formData).toString());
-      const output = document.getElementById('output') as HTMLPreElement;
+      const output = document.getElementById("output") as HTMLPreElement;
       output.textContent = queryString;
     };
 
@@ -192,8 +245,8 @@ export const FormSubmission: Story = {
 export const ProgrammaticSetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const duration = document.getElementById('duration-set-value') as UseDuration;
-      duration.value = 'PT2H30M';
+      const duration = document.getElementById("duration-set-value") as UseDuration;
+      duration.value = "PT2H30M";
     };
 
     return html`

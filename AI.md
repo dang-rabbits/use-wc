@@ -7,7 +7,7 @@ A library of accessible web components built with Lit.dev. These components exte
 Import the entire library in your app's entry point:
 
 ```javascript
-import 'use-wc';
+import "use-wc";
 ```
 
 ## Component Reference
@@ -19,10 +19,10 @@ All component properties, methods, and types are defined in the TypeScript defin
 Import component classes for type checking:
 
 ```typescript
-import { UseSelect, UseCalendar, UseOption } from 'use-wc';
+import { UseSelect, UseCalendar, UseOption } from "use-wc";
 
-const select = document.querySelector<UseSelect>('use-select');
-const calendar = document.querySelector<UseCalendar>('use-calendar');
+const select = document.querySelector<UseSelect>("use-select");
+const calendar = document.querySelector<UseCalendar>("use-calendar");
 ```
 
 Refer to `dist/use-wc.d.ts` and `dist/elements/*/` for complete type definitions including:
@@ -67,12 +67,12 @@ Form-associated custom elements work with native forms:
 Access values via FormData:
 
 ```javascript
-const form = document.querySelector('form');
-form.addEventListener('submit', (e) => {
+const form = document.querySelector("form");
+form.addEventListener("submit", (e) => {
   e.preventDefault();
   const formData = new FormData(form);
-  console.log(formData.get('country'));
-  console.log(formData.get('birthdate'));
+  console.log(formData.get("country"));
+  console.log(formData.get("birthdate"));
 });
 ```
 

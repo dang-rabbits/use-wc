@@ -1,16 +1,19 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import createId from '../../utils/create-id';
-import getDateTimeAriaLabels, { DateTimeAriaLabels, DEFAULT_ARIA_LABELS } from '../../utils/date-time-aria-labels';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
+import createId from "../../utils/create-id";
+import getDateTimeAriaLabels, {
+  DateTimeAriaLabels,
+  DEFAULT_ARIA_LABELS,
+} from "../../utils/date-time-aria-labels";
 
-type DateSegment = 'year' | 'month' | 'day';
+type DateSegment = "year" | "month" | "day";
 
 /**
  * Displays a date picker using segmented inputs for year, month, and day.
  *
  * Uses browser locale for formatting and ARIA labels.
  */
-@customElement('use-date')
+@customElement("use-date")
 export class UseDate extends LitElement {
   static formAssociated = true;
 
@@ -32,20 +35,20 @@ export class UseDate extends LitElement {
   constructor() {
     super();
     this.#internals = this.attachInternals();
-    this.#formId = this.closest('form')?.id;
-    this.#id = this.hasAttribute('id') ? this.getAttribute('id')! : createId();
-    this.#initializeValue(this.getAttribute('value') ?? '');
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    this.#formId = this.closest("form")?.id;
+    this.#id = this.hasAttribute("id") ? this.getAttribute("id")! : createId();
+    this.#initializeValue(this.getAttribute("value") ?? "");
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
   #initializeValue(value: string | null) {
     try {
-      if (value == null || value === '') {
-        this.#valueData = { year: '', month: '', day: '' };
+      if (value == null || value === "") {
+        this.#valueData = { year: "", month: "", day: "" };
       } else {
-        const date = new Date(value.concat('T00:00:00'));
+        const date = new Date(value.concat("T00:00:00"));
         this.#valueData = {
           year: date.getFullYear().toString(),
           month: (date.getMonth() + 1).toString(),
@@ -53,7 +56,7 @@ export class UseDate extends LitElement {
         };
       }
     } catch {
-      this.#valueData = { year: '', month: '', day: '' };
+      this.#valueData = { year: "", month: "", day: "" };
     }
 
     this.#updateInternalValue();
@@ -62,10 +65,10 @@ export class UseDate extends LitElement {
   #initialFormatParts() {
     try {
       const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        timeZone: 'UTC',
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        timeZone: "UTC",
       };
       const formatter = new Intl.DateTimeFormat(this.locale, options);
       const date = new Date(2024, 5, 1); // Sample date for formatting
@@ -85,7 +88,7 @@ export class UseDate extends LitElement {
     return getDateTimeAriaLabels(this.locale, { plural: false });
   }
 
-  #valueData: Record<DateSegment, string> = { year: '', month: '', day: '' };
+  #valueData: Record<DateSegment, string> = { year: "", month: "", day: "" };
 
   #updateInputValues() {
     if (this.yearInput) this.yearInput.value = this.#valueData.year;
@@ -95,7 +98,11 @@ export class UseDate extends LitElement {
 
   #updateInternalValue() {
     const { year, month, day } = this.#valueData;
-    this.#internalValue = [year.padStart(4, '0'), month.padStart(2, '0'), day.padStart(2, '0')].join('-');
+    this.#internalValue = [
+      year.padStart(4, "0"),
+      month.padStart(2, "0"),
+      day.padStart(2, "0"),
+    ].join("-");
     this.#internals.setFormValue(this.#internalValue);
   }
 
@@ -112,7 +119,7 @@ export class UseDate extends LitElement {
     return `${this.id}-segment-${unit}`;
   }
 
-  #internalValue: string = '';
+  #internalValue: string = "";
 
   get id() {
     return this.#id;
@@ -120,33 +127,33 @@ export class UseDate extends LitElement {
   set id(val: string) {
     const old = this.#id;
     this.#id = val;
-    this.requestUpdate('id', old);
+    this.requestUpdate("id", old);
   }
 
   /** @default false */
   @property({ type: Boolean })
   set disabled(flag) {
     if (flag) {
-      this.#internals.states.add('disabled');
+      this.#internals.states.add("disabled");
     } else {
-      this.#internals.states.delete('disabled');
+      this.#internals.states.delete("disabled");
     }
   }
   get disabled(): boolean {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   /** @default false */
-  @property({ type: Boolean, attribute: 'readonly' })
+  @property({ type: Boolean, attribute: "readonly" })
   set readOnly(flag) {
     if (flag) {
-      this.#internals.states.add('readonly');
+      this.#internals.states.add("readonly");
     } else {
-      this.#internals.states.delete('readonly');
+      this.#internals.states.delete("readonly");
     }
   }
   get readOnly(): boolean {
-    return this.#internals.states.has('readonly');
+    return this.#internals.states.has("readonly");
   }
 
   /** @default YYYY-MM-DD */
@@ -161,12 +168,12 @@ export class UseDate extends LitElement {
 
   /** @default User's browser language or 'en-US' */
   @property({ type: String, attribute: true })
-  locale: string = navigator.language || 'en-US';
+  locale: string = navigator.language || "en-US";
 
   render() {
     return html`
       ${this.#formatParts.map((part) => {
-        if (['year', 'month', 'day'].includes(part.type)) {
+        if (["year", "month", "day"].includes(part.type)) {
           return html`
             <input
               type="number"
@@ -174,17 +181,19 @@ export class UseDate extends LitElement {
               ?disabled=${this.disabled}
               ?readonly=${this.readOnly}
               aria-label=${this.#ariaLabels[part.type as keyof DateTimeAriaLabels]}
-              min=${part.type === 'year' ? '0' : '1'}
-              max=${part.type === 'month' ? '12' : part.type === 'day' ? '31' : undefined}
+              min=${part.type === "year" ? "0" : "1"}
+              max=${part.type === "month" ? "12" : part.type === "day" ? "31" : undefined}
               part="segment-input segment-input-${part.type}"
               id="${this.#segmentId(part.type)}"
               form=${this.#formId}
-              size=${part.type === 'year' ? 4 : 2}
+              size=${part.type === "year" ? 4 : 2}
               @input=${this.#handleSegmentInput(part.type as DateSegment)}
             />
           `;
-        } else if (part.type === 'literal') {
-          return html`<span part="segment-literal segment-literal-date" aria-hidden="true">${part.value}</span>`;
+        } else if (part.type === "literal") {
+          return html`<span part="segment-literal segment-literal-date" aria-hidden="true"
+            >${part.value}</span
+          >`;
         }
         return null;
       })}
@@ -217,6 +226,6 @@ export class UseDate extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-date': UseDate;
+    "use-date": UseDate;
   }
 }

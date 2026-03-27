@@ -1,20 +1,20 @@
-import { property } from 'lit/decorators.js';
-import { UseWidget } from '../use-widget/use-widget';
-import { tabbable } from 'tabbable';
+import { property } from "lit/decorators.js";
+import { UseWidget } from "../use-widget/use-widget";
+import { tabbable } from "tabbable";
 
 export class UseGridCell extends UseWidget {
   @property({ type: String, reflect: true })
-  mode: 'widget' | 'action' | 'default' = 'default';
+  mode: "widget" | "action" | "default" = "default";
   #action: HTMLElement | null = null;
 
   connectedCallback() {
-    if (this.mode === 'widget') {
+    if (this.mode === "widget") {
       super.connectedCallback();
     }
 
     // Role will be set by parent context (header/body)
-    if (!this.hasAttribute('role')) {
-      this.setAttribute('role', 'gridcell');
+    if (!this.hasAttribute("role")) {
+      this.setAttribute("role", "gridcell");
     }
 
     setTimeout(() => {
@@ -25,7 +25,7 @@ export class UseGridCell extends UseWidget {
   }
 
   #initializeActions() {
-    if (this.mode === 'action') {
+    if (this.mode === "action") {
       tabbable(this).forEach((el) => {
         el.tabIndex = -1;
         if (!this.#action) {
@@ -33,15 +33,15 @@ export class UseGridCell extends UseWidget {
         }
       });
 
-      this.addEventListener('focusin', () => {
+      this.addEventListener("focusin", () => {
         if (this.#action) {
           this.#action.focus();
           this.tabIndex = -1;
         }
       });
 
-      this.addEventListener('focusout', (e) => {
-        if (!this.closest('use-grid')?.contains(e.relatedTarget as HTMLElement)) {
+      this.addEventListener("focusout", (e) => {
+        if (!this.closest("use-grid")?.contains(e.relatedTarget as HTMLElement)) {
           this.tabIndex = 0;
         }
       });
@@ -49,10 +49,10 @@ export class UseGridCell extends UseWidget {
   }
 }
 
-customElements.define('use-gridcell', UseGridCell);
+customElements.define("use-gridcell", UseGridCell);
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-gridcell': UseGridCell;
+    "use-gridcell": UseGridCell;
   }
 }

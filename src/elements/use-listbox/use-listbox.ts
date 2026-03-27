@@ -1,7 +1,7 @@
-import { LitElement, css, html } from 'lit';
-import { customElement, property, query, queryAssignedElements } from 'lit/decorators.js';
-import { UseOption } from '../use-option/use-option';
-import createId from '../../utils/create-id';
+import { LitElement, css, html } from "lit";
+import { customElement, property, query, queryAssignedElements } from "lit/decorators.js";
+import { UseOption } from "../use-option/use-option";
+import createId from "../../utils/create-id";
 
 // TODO disabled https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
 // TODO valid / invalid https://dev.to/stuffbreaker/custom-forms-with-web-components-and-elementinternals-4jaj
@@ -11,13 +11,13 @@ import createId from '../../utils/create-id';
 // TODO typeahead
 // TODO groups
 
-const FORM_DATA_KEY = '__value';
+const FORM_DATA_KEY = "__value";
 
 /**
  * @slot default NodeList of `use-option` elements
  * @slot arrow
  */
-@customElement('use-listbox')
+@customElement("use-listbox")
 export class UseListbox extends LitElement {
   static formAssociated = true;
 
@@ -34,7 +34,7 @@ export class UseListbox extends LitElement {
   name?: string;
 
   @property()
-  placeholder: string = '';
+  placeholder: string = "";
 
   @property({ type: Boolean, reflect: true })
   multiple = false;
@@ -45,7 +45,7 @@ export class UseListbox extends LitElement {
   }
 
   get disabled() {
-    return this.#internals.states.has('disabled');
+    return this.#internals.states.has("disabled");
   }
 
   /**
@@ -60,7 +60,7 @@ export class UseListbox extends LitElement {
     return this.options.find((option) => option.selected);
   }
 
-  @queryAssignedElements({ selector: 'use-option' })
+  @queryAssignedElements({ selector: "use-option" })
   options!: Array<UseOption>;
 
   @query('[part="listbox"]', true)
@@ -71,8 +71,8 @@ export class UseListbox extends LitElement {
     this.#id = createId();
     this.#internals = this.attachInternals();
 
-    if (this.hasAttribute('disabled')) {
-      this.#internals.states.add('disabled');
+    if (this.hasAttribute("disabled")) {
+      this.#internals.states.add("disabled");
     }
   }
 
@@ -81,7 +81,7 @@ export class UseListbox extends LitElement {
   }
 
   #handleClick(event: Event) {
-    const selectOption = (event.target as HTMLElement)?.closest('use-option') as UseOption;
+    const selectOption = (event.target as HTMLElement)?.closest("use-option") as UseOption;
 
     if (selectOption?.value != null) {
       event.preventDefault();
@@ -113,16 +113,18 @@ export class UseListbox extends LitElement {
     this.#internals.setFormValue(this.value);
 
     this.dispatchEvent(
-      new CustomEvent('use-change', {
+      new CustomEvent("use-change", {
         detail: { value: this.value },
         bubbles: true,
         composed: true,
-      })
+      }),
     );
   }
 
   #initializeValue() {
-    const selectedValues = this.selected.map((option) => option.getAttribute('value') ?? option.textContent);
+    const selectedValues = this.selected.map(
+      (option) => option.getAttribute("value") ?? option.textContent,
+    );
 
     this.#value.delete(this.#dataKey);
 
@@ -148,18 +150,18 @@ export class UseListbox extends LitElement {
   set activeOption(option: UseOption | null) {
     this.#activeOption?.setActive(false);
     this.#activeOption = option;
-    this.listbox.setAttribute('aria-activedescendant', option?.id ?? '');
+    this.listbox.setAttribute("aria-activedescendant", option?.id ?? "");
     option?.setActive(true);
   }
 
   async #initializeDisabled(disabled: boolean) {
     await this.updateComplete;
     if (disabled) {
-      this.#internals.states.add('disabled');
-      this.listbox.removeAttribute('tabindex');
+      this.#internals.states.add("disabled");
+      this.listbox.removeAttribute("tabindex");
     } else {
-      this.#internals.states.delete('disabled');
-      this.listbox.setAttribute('tabindex', '0');
+      this.#internals.states.delete("disabled");
+      this.listbox.setAttribute("tabindex", "0");
     }
   }
 
@@ -182,7 +184,7 @@ export class UseListbox extends LitElement {
       return;
     }
 
-    if (['Enter', ' '].includes(event.key) && this.activeOption) {
+    if (["Enter", " "].includes(event.key) && this.activeOption) {
       event.preventDefault();
       this.#toggleOptionValue(this.activeOption);
       return;
@@ -194,24 +196,24 @@ export class UseListbox extends LitElement {
 
     let moveTo: UseOption | undefined;
     switch (event.key) {
-      case 'ArrowUp':
+      case "ArrowUp":
         event.preventDefault();
         event.stopPropagation();
         if (activeIndex > 0) {
           moveTo = options.at(activeIndex - 1);
         }
         break;
-      case 'ArrowDown':
+      case "ArrowDown":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(activeIndex + 1);
         break;
-      case 'Home':
+      case "Home":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(0);
         break;
-      case 'End':
+      case "End":
         event.preventDefault();
         event.stopPropagation();
         moveTo = options.at(options.length - 1);
@@ -225,7 +227,13 @@ export class UseListbox extends LitElement {
 
   render() {
     return html`
-      <div role="listbox" part="listbox" tabindex=${0} @click=${this.#handleClick} @keydown=${this.#handleKeyDown}>
+      <div
+        role="listbox"
+        part="listbox"
+        tabindex=${0}
+        @click=${this.#handleClick}
+        @keydown=${this.#handleKeyDown}
+      >
         <slot></slot>
       </div>
     `;
@@ -242,7 +250,7 @@ export class UseListbox extends LitElement {
       display: block;
     }
 
-    [part='listbox'] {
+    [part="listbox"] {
       border: 1px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
 
@@ -252,7 +260,7 @@ export class UseListbox extends LitElement {
     }
 
     /* https://github.com/w3c/csswg-drafts/issues/5893 */
-    [part='listbox']:not(:hover):focus-visible ::slotted(use-option:state(active)),
+    [part="listbox"]:not(:hover):focus-visible ::slotted(use-option:state(active)),
     ::slotted(use-option:not(:state(disabled)):hover) {
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
@@ -261,6 +269,6 @@ export class UseListbox extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'use-listbox': UseListbox;
+    "use-listbox": UseListbox;
   }
 }
