@@ -52,7 +52,7 @@ export default {
     include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
     coverage: {
       provider: "v8",
-      reporter: ["text", "lcov"],
+      reporter: ["text", "lcov", "json-summary"],
       include: ["src/**"],
       exclude: ["src/**/*.test.ts"],
     },
