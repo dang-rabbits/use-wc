@@ -10,6 +10,11 @@ const config: StorybookConfig = {
   },
   viteFinal: async (config) => {
     return mergeConfig(config, {
+      server: {
+        headers: {
+          'X-Frame-Options': 'ALLOWALL',
+        },
+      },
       optimizeDeps: {
         include: ['@storybook/addon-docs'],
       },

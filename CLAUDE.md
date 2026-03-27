@@ -8,3 +8,4 @@
 - do not add inline comments
 - use conventional commits for commit messages with lowercase types and scopes
 - PRs should go to the `pre` branch instead of `main` branch
+- Code should be easily readable by humans, use full names instead of shorthand or abbreviations for variables. Things like "buttons" instead of "btns" or "value" instead of "v"
