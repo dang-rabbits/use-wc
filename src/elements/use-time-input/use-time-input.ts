@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels, {
   DateTimeAriaLabels,
@@ -14,7 +15,7 @@ type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPerio
  * Allows users to pick time values with proper localization and formatting.
  */
 @customElement("use-time-input")
-export class UseTimeInput extends LitElement {
+export class UseTimeInput extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -205,10 +206,6 @@ export class UseTimeInput extends LitElement {
         : "";
     }
   }
-
-  /** @default User's browser language or 'en-US' */
-  @property({ type: String, attribute: true })
-  locale: string = navigator.language || "en-US";
 
   @property({ type: String, attribute: true })
   format: "long" | "short" | "narrow" | "digital" = "long";

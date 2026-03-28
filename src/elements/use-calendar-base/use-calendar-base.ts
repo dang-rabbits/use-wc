@@ -1,5 +1,6 @@
-import { LitElement, html, css, TemplateResult, CSSResultGroup } from "lit";
+import { html, css, TemplateResult, CSSResultGroup } from "lit";
 import { property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-time-aria-labels";
 import { map } from "lit/directives/map.js";
 import { tabbable } from "tabbable";
@@ -56,7 +57,7 @@ export type UseCalendarRenderDay = (
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
-export class UseCalendarBase extends LitElement {
+export class UseCalendarBase extends UseLocaleElement {
   static formAssociated = true;
 
   #internals: ElementInternals;
@@ -73,9 +74,6 @@ export class UseCalendarBase extends LitElement {
   /** 1-12 */
   @property({ type: Number, attribute: true, reflect: true })
   month: number = new Date().getMonth() + 1;
-
-  @property({ type: String })
-  locale: string = navigator.language;
 
   @property({ type: Boolean, attribute: true, reflect: true })
   controls: boolean = false;

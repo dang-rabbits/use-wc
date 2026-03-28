@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import * as duration from "duration-fns";
 import getDateTimeAriaLabels, {
@@ -26,7 +27,7 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
  * <baseline-status featureId="intl-duration-format"></baseline-status>
  */
 @customElement("use-duration-input")
-export class UseDurationInput extends LitElement {
+export class UseDurationInput extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -131,10 +132,6 @@ export class UseDurationInput extends LitElement {
     this.#updateInputValues();
   }
   #valueData: Partial<duration.Duration> = {};
-
-  /** @default User's browser language or 'en-US' */
-  @property({ type: String, attribute: true })
-  locale: string = navigator.language || "en-US";
 
   @property({ type: String, attribute: true })
   format: "long" | "short" | "narrow" | "digital" = "short";

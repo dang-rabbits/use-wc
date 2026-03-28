@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import "../use-date-input/use-date-input";
 import "../use-time-input/use-time-input";
@@ -12,7 +13,7 @@ import { UseTimeInput } from "../use-time-input/use-time-input";
  * The value format is ISO 8601-like: `YYYY-MM-DDTHH:MM:SS.mmm`.
  */
 @customElement("use-datetime-input")
-export class UseDatetimeInput extends LitElement {
+export class UseDatetimeInput extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -67,10 +68,6 @@ export class UseDatetimeInput extends LitElement {
   get readOnly(): boolean {
     return this.#internals.states.has("readonly");
   }
-
-  /** @default User's browser language or 'en-US' */
-  @property({ type: String, attribute: true })
-  locale: string = navigator.language || "en-US";
 
   // use-time props
   @property({ type: Boolean, attribute: true }) hours = false;

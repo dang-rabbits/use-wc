@@ -1,5 +1,6 @@
 import { LitElement, TemplateResult, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getMonthNames } from "../../utils/date-time-aria-labels";
 
 type LitHtml = typeof html;
@@ -30,7 +31,7 @@ export type UseMonthPickerRenderMonth = (
  * @slot month-{YYYY-MM} - Per-month content that replaces the default month name (e.g. `month-2026-03`)
  */
 @customElement("use-month-picker")
-export class UseMonthPicker extends LitElement {
+export class UseMonthPicker extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -106,10 +107,6 @@ export class UseMonthPicker extends LitElement {
       this.#internals.states.add("disabled");
     }
   }
-
-  /** BCP 47 locale tag used for month name localisation. Defaults to `navigator.language`. */
-  @property({ type: String })
-  locale: string = navigator.language || "en-US";
 
   /** Minimum selectable year-month in `YYYY-MM` format (inclusive). */
   @property({ type: String })
