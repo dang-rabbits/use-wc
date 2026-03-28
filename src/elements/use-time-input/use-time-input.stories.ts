@@ -1,127 +1,160 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import { UseTime } from "./use-time";
+import { UseTimeInput } from "./use-time-input";
 
-const meta: Meta<UseTime> = {
-  component: "use-time",
-  title: "Web Components/use-time",
+const meta: Meta<UseTimeInput> = {
+  component: "use-time-input",
+  title: "Web Components/use-time-input",
   tags: ["autodocs", "!dev", "input"],
   args: {},
   render: () => {
-    return html`<use-time value="12:30:45"></use-time>`;
+    return html`<use-time-input value="12:30:45"></use-time-input>`;
   },
 };
 
 export default meta;
-type Story = StoryObj<UseTime>;
+type Story = StoryObj<UseTimeInput>;
 
 export const Default: Story = {
-  render: () => html`<use-time value="12:30:45"></use-time>`,
+  render: () => html`<use-time-input value="12:30:45"></use-time-input>`,
 };
 
 export const WithoutValue: Story = {
-  render: () => html`<use-time></use-time>`,
+  render: () => html`<use-time-input></use-time-input>`,
 };
 
 export const OnlyHoursMinutes: Story = {
-  render: () => html`<use-time value="14:30" hours minutes></use-time>`,
+  render: () => html`<use-time-input value="14:30" hours minutes></use-time-input>`,
 };
 
 export const OnlyHours: Story = {
-  render: () => html`<use-time value="09:00:00" hours></use-time>`,
+  render: () => html`<use-time-input value="09:00:00" hours></use-time-input>`,
 };
 
 export const OnlyMinutes: Story = {
-  render: () => html`<use-time value="00:45:00" minutes></use-time>`,
+  render: () => html`<use-time-input value="00:45:00" minutes></use-time-input>`,
 };
 
 export const OnlySeconds: Story = {
-  render: () => html`<use-time value="00:00:30" seconds></use-time>`,
+  render: () => html`<use-time-input value="00:00:30" seconds></use-time-input>`,
 };
 
 export const OnlyDayPeriod: Story = {
-  render: () => html`<use-time value="12:00:00" dayPeriod></use-time>`,
+  render: () => html`<use-time-input value="12:00:00" dayPeriod></use-time-input>`,
 };
 
 export const Midnight: Story = {
-  render: () => html`<use-time value="00:00:00"></use-time>`,
+  render: () => html`<use-time-input value="00:00:00"></use-time-input>`,
 };
 
 export const InvalidFormat: Story = {
-  render: () => html`<use-time value="notatime"></use-time>`,
+  render: () => html`<use-time-input value="notatime"></use-time-input>`,
 };
 
 export const French: Story = {
-  render: () => html`<use-time value="14:30:45" locale="fr-FR"></use-time>`,
+  render: () => html`<use-time-input value="14:30:45" locale="fr-FR"></use-time-input>`,
 };
 
 export const German: Story = {
-  render: () => html`<use-time value="14:30:45" locale="de-DE"></use-time>`,
+  render: () => html`<use-time-input value="14:30:45" locale="de-DE"></use-time-input>`,
 };
 
 export const Spanish: Story = {
-  render: () => html`<use-time value="14:30:45" locale="es-ES"></use-time>`,
+  render: () => html`<use-time-input value="14:30:45" locale="es-ES"></use-time-input>`,
 };
 
 export const Japanese: Story = {
-  render: () => html`<use-time value="14:30:45" locale="ja-JP"></use-time>`,
+  render: () => html`<use-time-input value="14:30:45" locale="ja-JP"></use-time-input>`,
 };
 
 export const Chinese: Story = {
-  render: () => html`<use-time value="14:30:45" locale="zh-CN"></use-time>`,
+  render: () => html`<use-time-input value="14:30:45" locale="zh-CN"></use-time-input>`,
 };
 
 export const Arabic: Story = {
   render: () =>
-    html`<use-time dir="rtl" value="14:30:45" locale="ar-SA" format="narrow"></use-time>`,
+    html`<use-time-input
+      dir="rtl"
+      value="14:30:45"
+      locale="ar-SA"
+      format="narrow"
+    ></use-time-input>`,
 };
 
 export const Disabled: Story = {
-  render: () => html`<use-time value="12:30:45" disabled></use-time>`,
+  render: () => html`<use-time-input value="12:30:45" disabled></use-time-input>`,
 };
 
 export const ReadOnly: Story = {
-  render: () => html`<use-time value="12:30:45" readOnly></use-time>`,
+  render: () => html`<use-time-input value="12:30:45" readOnly></use-time-input>`,
 };
 
 export const LongFormat: Story = {
-  render: () => html`<use-time value="12:30:45" format="long"></use-time>`,
+  render: () => html`<use-time-input value="12:30:45" format="long"></use-time-input>`,
 };
 
 export const NarrowFormat: Story = {
-  render: () => html`<use-time value="12:30:45" format="narrow"></use-time>`,
+  render: () => html`<use-time-input value="12:30:45" format="narrow"></use-time-input>`,
 };
 
 export const DigitalFormat: Story = {
   render: () =>
-    html`<use-time value="12:30:45" format="digital" hours minutes seconds dayPeriod></use-time>`,
+    html`<use-time-input
+      value="12:30:45"
+      format="digital"
+      hours
+      minutes
+      seconds
+      dayPeriod
+    ></use-time-input>`,
 };
 
 export const Hour12: Story = {
   render: () =>
-    html`<use-time value="14:30:45" hourFormat="12" hours minutes seconds dayPeriod></use-time>`,
+    html`<use-time-input
+      value="14:30:45"
+      hourFormat="12"
+      hours
+      minutes
+      seconds
+      dayPeriod
+    ></use-time-input>`,
 };
 
 export const Hour24: Story = {
   render: () =>
-    html`<use-time value="14:30:45" hourFormat="24" hours minutes seconds dayPeriod></use-time>`,
+    html`<use-time-input
+      value="14:30:45"
+      hourFormat="24"
+      hours
+      minutes
+      seconds
+      dayPeriod
+    ></use-time-input>`,
 };
 
 export const FractionalSeconds: Story = {
   render: () =>
-    html`<use-time
+    html`<use-time-input
       value="12:30:45.123"
       hours
       minutes
       seconds
       fractionalSeconds
       dayPeriod
-    ></use-time>`,
+    ></use-time-input>`,
 };
 
 export const CustomID: Story = {
   render: () =>
-    html`<use-time value="12:30:45" id="custom-id" hours minutes seconds dayPeriod></use-time>`,
+    html`<use-time-input
+      value="12:30:45"
+      id="custom-id"
+      hours
+      minutes
+      seconds
+      dayPeriod
+    ></use-time-input>`,
 };
 
 export const CustomStyles: Story = {
@@ -166,7 +199,7 @@ export const CustomStyles: Story = {
     </style>
 
     <label for="custom-time">Custom time</label><br />
-    <use-time
+    <use-time-input
       id="custom-time"
       class="custom-time"
       value="12:30:45"
@@ -175,7 +208,7 @@ export const CustomStyles: Story = {
       minutes
       seconds
       dayPeriod
-    ></use-time>
+    ></use-time-input>
   `,
 };
 
@@ -183,12 +216,12 @@ export const ProgrammaticGetValue: Story = {
   render: () => {
     const handleClick = () => {
       const output = document.getElementById("value-output") as HTMLPreElement;
-      const time = document.getElementById("time-value") as UseTime;
+      const time = document.getElementById("time-value") as UseTimeInput;
       output.textContent = time.value;
     };
 
     return html`
-      <use-time id="time-value" value="12:30:45"></use-time>
+      <use-time-input id="time-value" value="12:30:45"></use-time-input>
       <button type="button" @click=${handleClick}>Show value</button>
       <pre id="value-output"></pre>
     `;
@@ -207,13 +240,13 @@ export const FormSubmission: Story = {
     };
 
     const handleSetValue = () => {
-      const time = document.getElementById("time-set-form") as UseTime;
+      const time = document.getElementById("time-set-form") as UseTimeInput;
       time.value = "15:45:30";
     };
 
     return html`
       <form @submit=${handleSubmit} id="form-submission">
-        <use-time
+        <use-time-input
           value="10:30:45"
           id="time-set-form"
           name="time"
@@ -221,7 +254,7 @@ export const FormSubmission: Story = {
           minutes
           seconds
           dayperiod
-        ></use-time>
+        ></use-time-input>
         <button type="submit">Submit</button>
       </form>
       <button type="button" @click=${handleSetValue}>Set value</button>
@@ -233,12 +266,12 @@ export const FormSubmission: Story = {
 export const ProgrammaticSetValue: Story = {
   render: () => {
     const handleClick = () => {
-      const time = document.getElementById("time-set-value") as UseTime;
+      const time = document.getElementById("time-set-value") as UseTimeInput;
       time.value = "15:45:30";
     };
 
     return html`
-      <use-time id="time-set-value" value="10:30:45"></use-time>
+      <use-time-input id="time-set-value" value="10:30:45"></use-time-input>
       <button type="button" @click=${handleClick}>Set value</button>
     `;
   },

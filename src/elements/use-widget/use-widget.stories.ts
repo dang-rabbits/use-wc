@@ -26,11 +26,11 @@ const meta: Meta<UseWidget> = {
       <use-widget aria-label="widget two">
         <button>hello</button>
         <div>
-          <use-listbox>
+          <use-listbox-input>
             <use-option>hello</use-option>
             <use-option>hello</use-option>
             <use-option>hello</use-option>
-          </use-listbox>
+          </use-listbox-input>
         </div>
         <button>hello</button>
       </use-widget>

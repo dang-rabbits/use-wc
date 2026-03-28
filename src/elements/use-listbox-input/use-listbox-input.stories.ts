@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
-import { UseListbox } from "./use-listbox";
+import { UseListboxInput } from "./use-listbox-input";
 import { html } from "lit";
 
-const meta: Meta<UseListbox> = {
-  component: "use-listbox",
+const meta: Meta<UseListboxInput> = {
+  component: "use-listbox-input",
   subcomponents: { "use-option": "use-option" },
-  title: "Web Components/use-listbox",
+  title: "Web Components/use-listbox-input",
   tags: ["autodocs", "!dev", "input"],
   args: {
     placeholder: "Select a number",
@@ -13,9 +13,9 @@ const meta: Meta<UseListbox> = {
     multiple: false,
     name: "example",
   },
-  render: (args: UseListbox) => {
+  render: (args: UseListboxInput) => {
     return html`
-      <use-listbox
+      <use-listbox-input
         .name=${args.name}
         placeholder=${args.placeholder}
         ?disabled=${args.disabled}
@@ -23,13 +23,13 @@ const meta: Meta<UseListbox> = {
       >
         <use-option value="1" id="option-1" selected>One</use-option>
         <use-option value="2" id="option-2">Two</use-option>
-      </use-listbox>
+      </use-listbox-input>
     `;
   },
 };
 
 export default meta;
-type Story = StoryObj<UseListbox>;
+type Story = StoryObj<UseListboxInput>;
 
 export const Default: Story = {};
 
@@ -47,36 +47,36 @@ export const Placeholder: Story = {
 
 export const DisabledOption: Story = {
   render: () => html`
-    <use-listbox>
+    <use-listbox-input>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2" disabled>Two</use-option>
       <use-option value="3" id="option-3">Three</use-option>
-    </use-listbox>
+    </use-listbox-input>
   `,
 };
 
 export const Multiple: Story = {
   render: () => html`
-    <use-listbox multiple>
+    <use-listbox-input multiple>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
       <use-option value="3" id="option-3">Three</use-option>
-    </use-listbox>
+    </use-listbox-input>
   `,
 };
 
 export const OptionsDivider: Story = {
   render: () => html`
-    <use-listbox>
+    <use-listbox-input>
       <use-option value="1" id="option-1" selected>One</use-option>
       <use-option value="2" id="option-2">Two</use-option>
       <hr />
       <use-option value="3" id="option-3">Three</use-option>
-    </use-listbox>
+    </use-listbox-input>
   `,
 };
 
-export const ChangeEvent: StoryObj<UseListbox> = {
+export const ChangeEvent: StoryObj<UseListboxInput> = {
   render: () => {
     function handleChange(e: CustomEvent<{ value: FormData }>) {
       const output = document.getElementById("change-event-output") as HTMLPreElement;
@@ -85,11 +85,11 @@ export const ChangeEvent: StoryObj<UseListbox> = {
       );
     }
     return html`
-      <use-listbox name="change-event" @use-change=${handleChange} multiple>
+      <use-listbox-input name="change-event" @use-change=${handleChange} multiple>
         <use-option value="1" id="option-1">One</use-option>
         <use-option value="2" id="option-2">Two</use-option>
         <use-option value="3" id="option-3">Three</use-option>
-      </use-listbox>
+      </use-listbox-input>
       <pre id="change-event-output"></pre>
     `;
   },
@@ -112,11 +112,11 @@ export const FormSingleValue: Story = {
       <form @submit=${handleFormSubmit}>
         <div>
           <label for="favorite-fruit">Favorite fruit:</label><br />
-          <use-listbox id="favorite-fruit" name="favorite-fruit">
+          <use-listbox-input id="favorite-fruit" name="favorite-fruit">
             <use-option value="apple" id="apple">Apple</use-option>
             <use-option value="banana" id="banana">Banana</use-option>
             <use-option value="cherry" id="cherry">Cherry</use-option>
-          </use-listbox>
+          </use-listbox-input>
         </div>
         <button>Submit</button>
       </form>
@@ -145,11 +145,11 @@ export const FormMultipleValues: Story = {
       <form @submit=${handleFormSubmit}>
         <div>
           <label for="favorite-fruits">Favorite fruits:</label><br />
-          <use-listbox id="favorite-fruits" name="favorite-fruits[]" multiple>
+          <use-listbox-input id="favorite-fruits" name="favorite-fruits[]" multiple>
             <use-option value="apple" id="apple">Apple</use-option>
             <use-option value="banana" id="banana">Banana</use-option>
             <use-option value="cherry" id="cherry">Cherry</use-option>
-          </use-listbox>
+          </use-listbox-input>
         </div>
         <button>Submit</button>
       </form>
@@ -162,7 +162,7 @@ export const FormMultipleValues: Story = {
 
 export const CustomSelectedIndicatorSlot: Story = {
   render: () => html`
-    <use-listbox>
+    <use-listbox-input>
       <svg
         slot="trigger-arrow"
         fill="currentColor"
@@ -185,14 +185,14 @@ export const CustomSelectedIndicatorSlot: Story = {
         <span slot="selected-indicator">🌊</span>
         Water
       </use-option>
-    </use-listbox>
+    </use-listbox-input>
   `,
 };
 
 export const CustomStyles: Story = {
   render: () => html`
     <style>
-      .custom-use-listbox {
+      .custom-use-listbox-input {
         background-color: blanchedalmond;
         color: orangered;
         border: 2px solid orangered;
@@ -207,37 +207,37 @@ export const CustomStyles: Story = {
         letter-spacing: 2px;
       }
 
-      .custom-use-listbox use-option {
+      .custom-use-listbox-input use-option {
         border-radius: 2px;
         padding: 4px 8px;
         line-height: 24px;
       }
 
-      .custom-use-listbox use-option::part(selected-indicator-default) {
+      .custom-use-listbox-input use-option::part(selected-indicator-default) {
         display: none;
       }
 
-      .custom-use-listbox use-option::part(selected-indicator)::before {
+      .custom-use-listbox-input use-option::part(selected-indicator)::before {
         content: "\\1F525";
         margin-inline-end: 8px;
       }
 
-      .custom-use-listbox:not(:has(use-option:hover)):focus use-option:state(active),
-      .custom-use-listbox use-option:not(:state(disabled)):hover {
+      .custom-use-listbox-input:not(:has(use-option:hover)):focus use-option:state(active),
+      .custom-use-listbox-input use-option:not(:state(disabled)):hover {
         background-color: orangered;
         color: blanchedalmond;
       }
 
-      .custom-use-listbox::part(listbox):focus-visible {
+      .custom-use-listbox-input::part(listbox):focus-visible {
         outline: 2px dashed currentColor;
         outline-offset: 4px;
         box-shadow: none;
       }
     </style>
-    <use-listbox class="custom-use-listbox">
+    <use-listbox-input class="custom-use-listbox-input">
       <use-option value="1" id="option-1">Overcompensate</use-option>
       <use-option value="2" id="option-2" selected>Routines In The Night</use-option>
       <use-option value="3" id="option-3">Paladin Strait</use-option>
-    </use-listbox>
+    </use-listbox-input>
   `,
 };
