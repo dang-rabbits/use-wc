@@ -1,26 +1,18 @@
+## Tech Stack
+
 - TypeScript is used for development
 - vanilla JavaScript is preferred but Lit.dev web components can be used to reuse common patterns like decorators
 - unit tests live in a component's folder with a .test.ts extension and use Playwright for itneractions
-- component CSS exists in the component file directly in the `css` prop
-- design system CSS live in the `src/styles` directory
-- run `npm run lint -- --fix` and `npm run analyze` at the end of each session
-- before committing, these commands should pass successfully: `npm run build-storybook`, `npm run test`, and `npm run lint`
-- do not add inline comments
-- use conventional commits for commit messages with lowercase types and scopes
-- PRs should go to the `pre` branch instead of `main` branch
-- Code should be easily readable by humans, use full names instead of shorthand or abbreviations for variables. Things like "buttons" instead of "btns" or "value" instead of "v"
 
-<!--VITE PLUS START-->
-
-# Using Vite+, the Unified Toolchain for the Web
+## Vite+ Tooling
 
 This project is using Vite+, a unified toolchain built on top of Vite, Rolldown, Vitest, tsdown, Oxlint, Oxfmt, and Vite Task. Vite+ wraps runtime management, package management, and frontend tooling in a single global CLI called `vp`. Vite+ is distinct from Vite, but it invokes Vite through `vp dev` and `vp build`.
 
-## Vite+ Workflow
+### Vite+ Workflow
 
 `vp` is a global binary that handles the full development lifecycle. Run `vp help` to print a list of commands and `vp <command> --help` for information about a specific command.
 
-### Start
+#### Start
 
 - create - Create a new project from a template
 - migrate - Migrate an existing project to Vite+
@@ -29,7 +21,7 @@ This project is using Vite+, a unified toolchain built on top of Vite, Rolldown,
 - install (`i`) - Install dependencies
 - env - Manage Node.js versions
 
-### Develop
+#### Develop
 
 - dev - Run the development server
 - check - Run format, lint, and TypeScript type checks
@@ -37,20 +29,20 @@ This project is using Vite+, a unified toolchain built on top of Vite, Rolldown,
 - fmt - Format code
 - test - Run tests
 
-### Execute
+#### Execute
 
 - run - Run monorepo tasks
 - exec - Execute a command from local `node_modules/.bin`
 - dlx - Execute a package binary without installing it as a dependency
 - cache - Manage the task cache
 
-### Build
+#### Build
 
-- build - Build for production
+- build - Build for Storybook docs
 - pack - Build libraries
 - preview - Preview production build
 
-### Manage Dependencies
+#### Manage Dependencies
 
 Vite+ automatically detects and wraps the underlying package manager such as pnpm, npm, or Yarn through the `packageManager` field in `package.json` or package manager-specific lockfiles.
 
@@ -65,13 +57,13 @@ Vite+ automatically detects and wraps the underlying package manager such as pnp
 - link (`ln`) / unlink - Manage local package links
 - pm - Forward a command to the package manager
 
-### Maintain
+#### Maintain
 
 - upgrade - Update `vp` itself to the latest version
 
 These commands map to their corresponding tools. For example, `vp dev --port 3000` runs Vite's dev server and works the same as Vite. `vp test` runs JavaScript tests through the bundled Vitest. The version of all tools can be checked using `vp --version`. This is useful when researching documentation, features, and bugs.
 
-## Common Pitfalls
+### Common Pitfalls
 
 - **Using the package manager directly:** Do not use pnpm, npm, or Yarn directly. Vite+ can handle all package manager operations.
 - **Always use Vite commands to run tools:** Don't attempt to run `vp vitest` or `vp oxlint`. They do not exist. Use `vp test` and `vp lint` instead.
@@ -81,7 +73,7 @@ These commands map to their corresponding tools. For example, `vp dev --port 300
 - **Import JavaScript modules from `vite-plus`:** Instead of importing from `vite` or `vitest`, all modules should be imported from the project's `vite-plus` dependency. For example, `import { defineConfig } from 'vite-plus';` or `import { expect, test, vi } from 'vite-plus/test';`. You must not install `vitest` to import test utilities.
 - **Type-Aware Linting:** There is no need to install `oxlint-tsgolint`, `vp lint --type-aware` works out of the box.
 
-## CI Integration
+### CI Integration
 
 For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/voidzero-dev/setup-vp) to replace separate `actions/setup-node`, package-manager setup, cache, and install steps with a single action.
 
@@ -93,8 +85,28 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - run: vp test
 ```
 
-## Review Checklist for Agents
+### Review Checklist for Agents
 
 - [ ] Run `vp install` after pulling remote changes and before getting started.
 - [ ] Run `vp check` and `vp test` to validate changes.
-<!--VITE PLUS END-->
+
+## Styling
+
+- component CSS exists in the component file directly in the `css` prop
+- design system CSS live in the `src/styles` directory
+
+## Code Style
+
+- do not add inline comments
+- Code should be easily readable by humans, use full names instead of shorthand or abbreviations for variables. Things like "buttons" instead of "btns" or "value" instead of "v"
+
+## Git Workflow
+
+- use conventional commits for commit messages with lowercase types and scopes
+- PRs should go to the `pre` branch instead of `main` branch
+- before committing, these commands should pass successfully: `vp run build-storybook`, `vp test`, and `vp lint`
+- run `vp check --fix` and `vp run analyze` at the end of each session
+
+## Agents
+
+- features implemented by a Claude agent should always be built in worktrees
