@@ -33,4 +33,19 @@ jobs:
       - name: Install Playwright browsers
         run: vp dlx playwright install --with-deps chromium
       - name: Test
-        run: vp test
+        run: vp test --coverage
+      - name: Check coverage thresholds
+        if: always()
+        run: |
+          node -e "
+          const summary = require('./coverage/coverage-summary.json');
+          const total = summary.total;
+          const threshold = 80;
+          const metrics = ['lines', 'statements', 'functions', 'branches'];
+          for (const metric of metrics) {
+            const pct = total[metric].pct;
+            if (pct < threshold) {
+              console.log('::warning::Coverage for ' + metric + ' is ' + pct + '% (below ' + threshold + '% threshold)');
+            }
+          }
+          "

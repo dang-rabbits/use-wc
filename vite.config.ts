@@ -49,7 +49,13 @@ export default {
     splitting: true,
   },
   test: {
-    include: ["src/**/*.{test,spec}.?(c|m)[jt]s?(x)"],
+    include: ["src/**/*.test.ts"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "lcov", "json-summary"],
+      include: ["src/**"],
+      exclude: ["src/**/*.test.ts"],
+    },
     browser: {
       enabled: true,
       headless: true,
