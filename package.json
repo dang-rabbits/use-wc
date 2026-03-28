@@ -27,7 +27,7 @@
     "preview": "vp preview",
     "analyze": "custom-elements-manifest analyze",
     "storybook": "storybook dev -p ${PORT:-6006}",
-    "build": "vp pack && storybook build",
+    "build": "vp run pack && storybook build",
     "test": "vp test",
     "check": "vp check ./src",
     "prepare": "vp config"
