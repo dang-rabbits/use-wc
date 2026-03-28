@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import { UseDateInputInput } from "./use-date-input";
+import { UseDateInput } from "./use-date-input";
 
-const meta: Meta<UseDateInputInput> = {
+const meta: Meta<UseDateInput> = {
   component: "use-date-input",
   title: "Web Components/use-date-input",
   tags: ["autodocs", "!dev", "input"],
@@ -14,7 +14,7 @@ const meta: Meta<UseDateInputInput> = {
 
 export default meta;
 
-type Story = StoryObj<UseDateInputInput>;
+type Story = StoryObj<UseDateInput>;
 
 export const Default: Story = {
   render: () => html`<use-date-input value=""></use-date-input>`,

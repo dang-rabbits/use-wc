@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
-import { UseDurationInputInput } from "./use-duration-input";
+import { UseDurationInput } from "./use-duration-input";
 
-const meta: Meta<UseDurationInputInput> = {
+const meta: Meta<UseDurationInput> = {
   component: "use-duration-input",
   title: "Web Components/use-duration-input",
   tags: ["autodocs", "!dev", "input"],
@@ -19,7 +19,7 @@ const meta: Meta<UseDurationInputInput> = {
 };
 
 export default meta;
-type Story = StoryObj<UseDurationInputInput>;
+type Story = StoryObj<UseDurationInput>;
 
 export const Default: Story = {
   render: () =>
