@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels, {
   DateTimeAriaLabels,
@@ -14,7 +15,7 @@ type DateSegment = "year" | "month" | "day";
  * Uses browser locale for formatting and ARIA labels.
  */
 @customElement("use-date-input")
-export class UseDateInput extends LitElement {
+export class UseDateInput extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -70,7 +71,7 @@ export class UseDateInput extends LitElement {
         day: "2-digit",
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = new Intl.DateTimeFormat(this.lang, options);
       const date = new Date(2024, 5, 1); // Sample date for formatting
       return formatter.formatToParts(date);
     } catch {
@@ -85,7 +86,7 @@ export class UseDateInput extends LitElement {
   }
 
   #initialAriaLabels() {
-    return getDateTimeAriaLabels(this.locale, { plural: false });
+    return getDateTimeAriaLabels(this.lang, { plural: false });
   }
 
   #valueData: Record<DateSegment, string> = { year: "", month: "", day: "" };
@@ -164,10 +165,6 @@ export class UseDateInput extends LitElement {
     this.#initializeValue(value);
     this.#updateInputValues();
   }
-
-  /** @default User's browser language or 'en-US' */
-  @property({ type: String, attribute: true })
-  locale: string = navigator.language || "en-US";
 
   render() {
     return html`

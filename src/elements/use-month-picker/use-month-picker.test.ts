@@ -58,7 +58,7 @@ describe("use-month-picker", () => {
     });
 
     it("renders month names in the given locale", async () => {
-      render(html`<use-month-picker locale="fr-FR"></use-month-picker>`);
+      render(html`<use-month-picker lang="fr-FR"></use-month-picker>`);
       const picker = getMonthPicker();
       await picker.updateComplete;
       expect(picker.shadowRoot!.textContent).toContain("janv");

@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels, {
   DateTimeAriaLabels,
@@ -14,7 +15,7 @@ type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPerio
  * Allows users to pick time values with proper localization and formatting.
  */
 @customElement("use-time-input")
-export class UseTimeInput extends LitElement {
+export class UseTimeInput extends UseLocaleElement {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -206,10 +207,6 @@ export class UseTimeInput extends LitElement {
     }
   }
 
-  /** @default User's browser language or 'en-US' */
-  @property({ type: String, attribute: true })
-  locale: string = navigator.language || "en-US";
-
   @property({ type: String, attribute: true })
   format: "long" | "short" | "narrow" | "digital" = "long";
 
@@ -217,7 +214,7 @@ export class UseTimeInput extends LitElement {
 
   #initializeHourFormat() {
     if (!this.hourFormat) {
-      const formatter = new Intl.DateTimeFormat(this.locale, { hour: "numeric" });
+      const formatter = new Intl.DateTimeFormat(this.lang, { hour: "numeric" });
       this.hourFormat = formatter.resolvedOptions().hour12 ? "12" : "24";
     }
   }
@@ -235,12 +232,12 @@ export class UseTimeInput extends LitElement {
         timeZone: "UTC",
       };
 
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = new Intl.DateTimeFormat(this.lang, options);
       const date = new Date(2024, 0, 1, 12, 30, 45); // Sample time for formatting
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
       const usesDayPeriod = !!formatter.resolvedOptions().hour12 && this.dayPeriod;
       this.#maxHours = usesDayPeriod ? 12 : 23;
-      this.#ariaLabels = getDateTimeAriaLabels(this.locale);
+      this.#ariaLabels = getDateTimeAriaLabels(this.lang);
       const [amChar, pmChar] = this.#ariaLabels.dayPeriod
         .split("/")
         .map((char) => char.toLowerCase().charAt(0));

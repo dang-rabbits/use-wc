@@ -1,0 +1,67 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Localization" />
+
+# Localization
+
+Components in this library that render locale-sensitive content (such as month names, day names, and date formats) are locale-aware. They resolve their locale automatically based on context, with no configuration required in most cases.
+
+## Resolution Order
+
+When a component needs to determine its locale, it checks in the following order:
+
+1. The `lang` attribute or property set directly on the component
+2. The nearest ancestor element with a `lang` attribute
+3. The browser's `navigator.language`
+4. Fallback: `"en-US"`
+
+## Usage
+
+### Component-level override
+
+Set the `lang` attribute directly on a component to explicitly control its locale:
+
+```html
+<use-month-picker lang="fr-FR"></use-month-picker>
+```
+
+### Ancestor inheritance
+
+Wrap components in a container with a `lang` attribute. All locale-aware components inside will inherit it automatically:
+
+```html
+<div lang="de">
+  <use-month-picker></use-month-picker>
+  <use-date-picker></use-date-picker>
+</div>
+```
+
+### Page-level locale
+
+Set `lang` on the root `<html>` element and all locale-aware components on the page will use it (unless they have a more specific `lang` set):
+
+```html
+<html lang="es">
+  ...
+</html>
+```
+
+## Dynamic Updates
+
+Locale-aware components subscribe to changes on the `<html>` element. Updating `document.documentElement.lang` at runtime will automatically trigger a re-render on all components that do not have an explicit `lang` set:
+
+```js
+document.documentElement.lang = "ja";
+```
+
+## Supported Components
+
+The following components are locale-aware:
+
+- `use-date-input`
+- `use-datetime-input`
+- `use-duration-input`
+- `use-time-input`
+- `use-month-picker`
+- `use-date-picker`
+- `use-week-picker`
