@@ -16,3 +16,4 @@ export * from "./elements/use-week-picker/use-week-picker";
 export * from "./elements/use-month-picker/use-month-picker";
 export * from "./elements/use-datetime-input/use-datetime-input";
 export * from "./elements/use-scrollarea/use-scrollarea";
+export * from "./elements/use-intl-datetime/use-intl-datetime";
