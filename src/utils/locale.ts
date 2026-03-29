@@ -27,8 +27,8 @@ export function subscribeToLocaleChanges(callback: () => void): () => void {
 
 export function resolveLocale(element: Element): string {
   const ancestor = element.closest("[lang]");
-  if (ancestor) {
-    return (ancestor as HTMLElement).lang;
+  if (ancestor instanceof HTMLElement) {
+    return ancestor.lang;
   }
   return navigator.language || "en-US";
 }
