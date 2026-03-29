@@ -71,7 +71,7 @@ export class UseDateInput extends UseLocaleElement {
         day: "2-digit",
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = new Intl.DateTimeFormat(this.lang, options);
       const date = new Date(2024, 5, 1); // Sample date for formatting
       return formatter.formatToParts(date);
     } catch {
@@ -86,7 +86,7 @@ export class UseDateInput extends UseLocaleElement {
   }
 
   #initialAriaLabels() {
-    return getDateTimeAriaLabels(this.locale, { plural: false });
+    return getDateTimeAriaLabels(this.lang, { plural: false });
   }
 
   #valueData: Record<DateSegment, string> = { year: "", month: "", day: "" };

@@ -143,7 +143,7 @@ export class UseDurationInput extends UseLocaleElement {
   #initialFormatParts() {
     try {
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/60608
-      return new Intl.DurationFormat(this.locale, { style: this.format })
+      return new Intl.DurationFormat(this.lang, { style: this.format })
         .formatToParts({
           years: this.years ? 2 : 0,
           months: this.months ? 2 : 0,
@@ -227,7 +227,7 @@ export class UseDurationInput extends UseLocaleElement {
   }
 
   #initialAriaLabels() {
-    return getDateTimeAriaLabels(this.locale, { plural: true });
+    return getDateTimeAriaLabels(this.lang, { plural: true });
   }
 
   render() {

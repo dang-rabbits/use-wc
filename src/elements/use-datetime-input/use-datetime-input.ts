@@ -147,7 +147,7 @@ export class UseDatetimeInput extends UseLocaleElement {
         value=${this.#dateValue}
         .disabled=${this.disabled}
         .readOnly=${this.readOnly}
-        .locale=${this.locale}
+        .lang=${this.lang}
         @input=${this.#handleInput}
         exportparts="segment-input, segment-literal"
       ></use-date-input>
@@ -156,7 +156,7 @@ export class UseDatetimeInput extends UseLocaleElement {
         value=${this.#timeValue}
         .disabled=${this.disabled}
         .readOnly=${this.readOnly}
-        .locale=${this.locale}
+        .lang=${this.lang}
         .hours=${this.hours}
         .minutes=${this.minutes}
         .seconds=${this.seconds}

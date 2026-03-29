@@ -271,7 +271,7 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #previousMonthLabel() {
     const { year, month } = this.#previousMonthData;
-    return new Intl.DateTimeFormat(this.locale, {
+    return new Intl.DateTimeFormat(this.lang, {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
@@ -280,7 +280,7 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #nextMonthLabel() {
     const { year, month } = this.#nextMonthData;
-    return new Intl.DateTimeFormat(this.locale, {
+    return new Intl.DateTimeFormat(this.lang, {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
@@ -299,11 +299,11 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #startDayOffset() {
     const firstOfMonth = new Date(this.year, this.month - 1, 1);
-    return (firstOfMonth.getDay() - getLocaleFirstDay(this.locale) + 7) % 7;
+    return (firstOfMonth.getDay() - getLocaleFirstDay(this.lang) + 7) % 7;
   }
 
   #weekdayNames() {
-    return getDayNames(this.locale, "short");
+    return getDayNames(this.lang, "short");
   }
 
   get #title() {
@@ -314,7 +314,7 @@ export class UseCalendarBase extends UseLocaleElement {
         day: undefined,
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = new Intl.DateTimeFormat(this.lang, options);
       const date = new Date(this.year, this.month - 1, 1);
       return formatter.formatToParts(date);
     } catch {
@@ -747,7 +747,7 @@ export class UseCalendarBase extends UseLocaleElement {
   };
 
   #renderPicker() {
-    const months = getMonthNames(this.locale, "short");
+    const months = getMonthNames(this.lang, "short");
     const startYear = this.min ? (this.#parseDate(this.min)?.getFullYear() ?? 1970) : 1970;
     const endYear = this.max
       ? (this.#parseDate(this.max)?.getFullYear() ?? new Date().getFullYear() + 100)
@@ -800,7 +800,7 @@ export class UseCalendarBase extends UseLocaleElement {
     const endDate = this.#endDate;
     const startDay = startDate && this.#isThisMonth(startDate) ? startDate.getDate() : 1;
     const endDay = endDate && this.#isThisMonth(endDate) ? endDate.getDate() : daysInMonth;
-    const localeFirstDay = getLocaleFirstDay(this.locale);
+    const localeFirstDay = getLocaleFirstDay(this.lang);
     const firstDay =
       startDate && this.#isThisMonth(startDate)
         ? (startDate.getDay() - localeFirstDay + 7) % 7

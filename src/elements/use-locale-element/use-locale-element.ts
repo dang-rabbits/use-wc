@@ -4,18 +4,18 @@ import { resolveLocale, subscribeToLocaleChanges } from "../../utils/locale";
 export class UseLocaleElement extends LitElement {
   static properties = {
     ...LitElement.properties,
-    locale: { type: String, attribute: true },
+    lang: { type: String, attribute: true },
   };
 
   private _explicitLocale: string | undefined;
   private _unsubscribeLocale: (() => void) | undefined;
 
-  get locale(): string {
+  get lang(): string {
     return this._explicitLocale ?? resolveLocale(this);
   }
 
-  set locale(value: string) {
-    const previous = this.locale;
+  set lang(value: string) {
+    const previous = this.lang;
     this._explicitLocale = value;
     this.requestUpdate("locale", previous);
   }
