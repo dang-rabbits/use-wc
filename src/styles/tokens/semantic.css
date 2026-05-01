@@ -166,6 +166,10 @@
   --usewc-color-button-cancel-text-active: var(--usewc-color-gray-700);
   /* - Layout */
   --usewc-layout-button-border: var(--usewc-space-1);
+  --usewc-layout-button-background-size: calc(100% + var(--usewc-layout-button-border) * 2)
+    calc(100% + var(--usewc-layout-button-border) * 2);
+  --usewc-layout-button-background-position: center;
+  --usewc-layout-button-background-repeat: no-repeat;
   --usewc-layout-button-line-height: var(--usewc-line-height-24);
   /* - Effect */
   --usewc-effect-button-border-radius: var(--usewc-effect-border-radius-4);
