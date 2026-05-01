@@ -19,7 +19,7 @@
   --usewc-layout-focus-ring-offset-outside: var(--usewc-space-2);
   --usewc-layout-focus-ring-offset-inside: var(--usewc-space-none);
   --usewc-effect-focus-ring-style: solid;
-  --usewc-transition-focus-ring: 0.05s ease-in-out;
+  --usewc-transition-focus-ring: outline 0.05s ease-in-out;
   --usewc-effect-control-opacity-disabled: 0.5;
   /* - Link */
   --usewc-color-link-text-static: var(--usewc-color-blue-500);
@@ -60,8 +60,12 @@
   --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
   --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
   --usewc-effect-dropdown-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
+  --usewc-effect-dropdown-trigger-side-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 12L8.5 18.9282L8.5 5.0718Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
   --usewc-effect-dropdown-trigger-background-size: 1em;
   --usewc-effect-dropdown-trigger-background-blend-mode: difference;
+  --usewc-effect-menu-item-checkmark-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
+  --usewc-effect-menu-item-checkmark-background-size: 1em;
+  --usewc-effect-menu-item-checkmark-background-blend-mode: difference;
   /* - Layout */
   --usewc-layout-input-border: var(--usewc-space-1-relative);
   --usewc-layout-input-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-input-border));
@@ -197,6 +201,30 @@
   --usewc-layout-button-extra-large-font-size: var(--usewc-font-size-24);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-28);
 
+  /* Menu */
+  --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-4);
+  --usewc-layout-popover-menu-item-padding-block: var(--usewc-space-2);
+  --usewc-layout-popover-menu-item-line-height: var(--usewc-line-height-24);
+  --usewc-color-popover-menu-item-background-static: var(--usewc-color-transparent);
+  --usewc-color-popover-menu-item-background-hover: var(--usewc-color-gray-800);
+  --usewc-color-popover-menu-item-background-active: var(--usewc-color-gray-800);
+  --usewc-effect-popover-menu-item-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-layout-popover-menu-anchor-offset: var(--usewc-space-4);
+  --usewc-layout-popover-menu-padding: var(--usewc-space-4);
+  --usewc-layout-popover-menu-border: var(--usewc-space-1-relative);
+  --usewc-effect-popover-menu-border-style: var(--usewc-effect-border-solid);
+  --usewc-color-popover-menu-background: var(--usewc-color-canvas-background);
+  --usewc-color-popover-menu-border: var(--usewc-color-gray-600);
+  --usewc-effect-popover-menu-border-radius: var(--usewc-effect-border-radius-8);
+  --usewc-layout-popover-menu-header-font-size: var(--usewc-font-size-14);
+  --usewc-font-popover-menu-header-weight: var(--usewc-font-weight-medium);
+  --usewc-color-popover-menu-header-text: var(--usewc-color-gray-400);
+  --usewc-font-popover-menu-shortcut: var(--usewc-font-family-monospace);
+  --usewc-color-popover-menu-shortcut: var(--usewc-color-gray-400);
+  --usewc-color-popover-menu-item-text-static: var(--usewc-color-button-base-text-static);
+  --usewc-color-popover-menu-item-text-hover: var(--usewc-color-button-base-text-static);
+  --usewc-color-popover-menu-item-text-focus: var(--usewc-color-button-base-text-static);
+
   /* Inline code */
   --usewc-layout-code-padding-inline: var(--usewc-space-4);
   --usewc-layout-code-padding-block: var(--usewc-space-none);
@@ -213,7 +241,7 @@
     --usewc-color-document-text: var(--usewc-color-gray-200);
     --usewc-color-document-text-muted: var(--usewc-color-gray-300);
     --usewc-color-document-background: var(--usewc-color-gray-800);
-    --usewc-color-canvas-background: var(--usewc-color-white);
+    --usewc-color-canvas-background: var(--usewc-color-black);
     --usewc-color-focus-ring: var(--usewc-color-blue-200);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
     --usewc-color-input-border-static: var(--usewc-color-gray-600);

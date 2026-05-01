@@ -306,7 +306,9 @@ export class UseDropdown extends LitElement {
       >
         <slot name="trigger-content">
           <slot part="trigger-label" name="trigger-label">${this.label}</slot>
-          <slot part="trigger-icon" name="trigger-icon">${this.#triggerIconText}</slot>
+          <slot part="trigger-icon" name="trigger-icon">
+            <span part="trigger-icon-default" aria-hidden="true">${this.#triggerIconText}</span>
+          </slot>
         </slot>
       </button>
       <div

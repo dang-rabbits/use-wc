@@ -49,6 +49,42 @@
   </use-calendar>
 </div>
 
+<h2>Menu</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Dropdown</h3>
+  <div>
+    <use-dropdown label="Menu">
+      <div role="group" aria-label="File">
+        <button role="menuitem">
+          Open&hellip;
+          <kbd>&#8984;O</kbd>
+        </button>
+        <use-dropdown label="Open recent">
+          <a href="#" role="menuitem">Final draft.docx</a>
+          <a href="#" role="menuitem">Rough draft.docx</a>
+        </use-dropdown>
+        <button role="menuitem">Save</button>
+        <button role="menuitem">Save as&hellip;</button>
+      </div>
+      <hr />
+      <div role="group" aria-label="Speed">
+        <button role="menuitemradio" aria-checked="true" type="button">Slow</button>
+        <button role="menuitemradio" type="button">Medium</button>
+        <button role="menuitemradio" type="button">Fast</button>
+      </div>
+      <hr />
+      <div role="group" aria-label="Features">
+        <button role="menuitemcheckbox" aria-checked="true" type="button">Confetti</button>
+        <button role="menuitemcheckbox" type="button">Fireworks</button>
+        <button role="menuitemcheckbox" aria-checked="true" type="button">Awe</button>
+      </div>
+      <hr />
+      <a href="#" role="menuitem">Support</a>
+      <a href="#" role="menuitem">Documentation</a>
+    </use-dropdown>
+  </div>
+</div>
+
 <h2>Utilities</h2>
 <div style="display: flex; flex-direction: column; gap: 1rem">
   <h3>Focus group</h3>

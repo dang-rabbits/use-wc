@@ -14,9 +14,10 @@
     font-size: var(--usewc-layout-document-text-size);
   }
 
-  :is(button, a, details summary):not([data-appear-as="native"]):focus-visible,
+  :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
   :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as="native"]):focus,
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
+  use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
     outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
     outline-offset: var(--usewc-layout-focus-ring-offset-outside);
@@ -32,7 +33,8 @@
     use-time:not([data-appear-as="native"]),
     use-datetime:not([data-appear-as="native"]),
     use-duration:not([data-appear-as="native"])
-  ) {
+  ),
+  use-listbox-input:not([data-appear-as="native"])::part(listbox) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
     line-height: var(--usewc-layout-input-line-height);
@@ -71,15 +73,12 @@
     }
   }
 
+  use-listbox-input:not([data-appear-as="native"])::part(listbox) {
+    padding: var(--usewc-layout-popover-menu-padding);
+  }
+
   select:not([data-appear-as="native"]) {
     appearance: none;
-    padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
-    background-image: var(--usewc-effect-dropdown-trigger-background-image, none);
-    /* TODO use logical position */
-    background-position: right var(--usewc-layout-input-padding-inline) center;
-    background-repeat: no-repeat;
-    background-size: var(--usewc-effect-dropdown-trigger-background-size, 1em);
-    background-blend-mode: var(--usewc-effect-dropdown-trigger-background-blend-mode, none);
   }
 
   [data-appear-as="input"] {
@@ -212,6 +211,7 @@
   }
 
   :is(button:not([data-appear-as]), [data-appear-as="button"]),
+  use-dropdown,
   input[type="file"]:not([data-appear-as]) {
     &:where(:not(button)),
     &::file-selector-button {
@@ -233,7 +233,8 @@
     --usewc-theme-color-button-background-active: var(--usewc-color-button-base-background-active);
     --usewc-theme-color-button-border-active: var(--usewc-color-button-base-border-active);
 
-    &:not([type="file"]),
+    &::part(trigger),
+    &:not([type="file"], use-dropdown),
     &::file-selector-button {
       display: inline-flex;
       align-items: center;
@@ -254,18 +255,24 @@
         var(--usewc-theme-color-button-border-static);
     }
 
+    &:is(use-dropdown) {
+      display: contents;
+    }
+
     &::file-selector-button {
       margin-inline-end: var(--usewc-layout-input-gap-inline);
     }
 
-    &:is(:hover, :focus-visible):not([type="file"]),
+    &:is(:hover, :focus-visible):not([type="file"], use-dropdown),
+    &::part(trigger):is(:hover, :focus-visible),
     &:is(:hover, :focus-visible)::file-selector-button {
       background: var(--usewc-theme-color-button-background-hover);
       border-color: var(--usewc-theme-color-button-border-hover);
       color: var(--usewc-theme-color-button-text-hover);
     }
 
-    &:active:not([type="file"]),
+    &:active:not([type="file"], use-dropdown),
+    &:active::part(trigger),
     &:active::file-selector-button {
       background: var(--usewc-theme-color-button-background-active);
       border-color: var(--usewc-theme-color-button-border-active);
@@ -522,5 +529,153 @@
       display: inline-flex;
       gap: var(--usewc-layout-input-segment-padding-inline);
     }
+  }
+
+  select:not([data-appear-as="native"]),
+  use-dropdown::part(trigger),
+  use-dropdown use-dropdown::part(trigger) {
+    padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+    background-image: var(--usewc-effect-dropdown-trigger-background-image, none);
+    /* TODO use logical position */
+    background-position: right var(--usewc-layout-input-padding-inline) center;
+    background-repeat: no-repeat;
+    background-size: var(--usewc-effect-dropdown-trigger-background-size, 1em);
+    background-blend-mode: var(--usewc-effect-dropdown-trigger-background-blend-mode, none);
+  }
+
+  use-dropdown use-dropdown::part(trigger) {
+    background-image: var(--usewc-effect-dropdown-trigger-side-background-image);
+    background-position: right center;
+  }
+
+  select:not([data-appear-as="native"]),
+  use-dropdown::part(trigger),
+  use-dropdown use-dropdown::part(trigger) {
+    anchor-name: --use-popover-trigger;
+  }
+
+  use-dropdown::part(trigger-icon-default),
+  use-option::part(selected-indicator-default) {
+    display: none;
+  }
+
+  use-dropdown::part(menu) {
+    border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+      var(--usewc-color-popover-menu-border);
+    padding: var(--usewc-layout-popover-menu-padding);
+    background: var(--usewc-color-popover-menu-background);
+    border-radius: var(--usewc-effect-popover-menu-border-radius);
+    margin: unset;
+  }
+
+  use-dropdown::part(menu) {
+    inset: unset;
+    position: fixed;
+    position-anchor: --use-popover-trigger;
+    inset-block-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset));
+    inset-inline-start: anchor(start);
+    position-try-fallbacks:
+      flip-block,
+      flip-inline,
+      flip-inline flip-block;
+  }
+
+  use-option,
+  use-dropdown :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]),
+  use-dropdown use-dropdown::part(trigger) {
+    border: none;
+    text-align: start;
+    cursor: default;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: var(--usewc-layout-popover-menu-item-padding-inline);
+    line-height: var(--usewc-layout-popover-menu-item-line-height);
+    padding-inline: var(--usewc-layout-popover-menu-item-padding-inline);
+    padding-block: var(--usewc-layout-popover-menu-item-padding-block);
+    background-color: var(--usewc-color-popover-menu-item-background-static);
+    border-radius: var(--usewc-effect-popover-menu-item-border-radius);
+    color: var(--usewc-color-popover-menu-item-text-static);
+    text-decoration: none;
+
+    > *:last-child:not(:first-child) {
+      flex: 0 0 auto;
+      margin-inline-start: auto;
+    }
+  }
+
+  use-listbox-input:is(:hover, :focus) use-option:state(active) {
+    background-color: var(--usewc-color-popover-menu-item-background-active);
+  }
+
+  use-dropdown :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown),
+  use-listbox-input {
+    &:not(use-dropdown):hover,
+    &::part(trigger):hover {
+      background-color: var(--usewc-color-popover-menu-item-background-hover);
+      color: var(--usewc-color-popover-menu-item-text-hover);
+    }
+
+    &:focus-visible,
+    &::part(trigger):focus-visible {
+      background-color: var(--usewc-color-popover-menu-item-background-static);
+      outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
+      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
+      transition: var(--usewc-transition-focus-ring);
+      color: var(--usewc-color-popover-menu-item-text-focus);
+    }
+  }
+
+  use-listbox-input,
+  use-dropdown :is([role="menuitemcheckbox"], [role="menuitemradio"]) {
+    use-option,
+    &:has(+ :is([role="menuitemcheckbox"], [role="menuitemradio"])),
+    & + :is(:is([role="menuitemcheckbox"], [role="menuitemradio"])) {
+      padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+    }
+  }
+
+  use-dropdown,
+  use-listbox-input {
+    [role="group"][aria-label] {
+      &::before {
+        content: attr(aria-label);
+        padding: var(--usewc-layout-popover-menu-padding);
+        font-size: var(--usewc-layout-popover-menu-header-font-size);
+        font-weight: var(--usewc-effect-popover-menu-header-font-weight);
+        color: var(--usewc-color-popover-menu-header-text);
+      }
+    }
+
+    kbd {
+      font-family: var(--usewc-font-popover-menu-shortcut);
+      color: var(--usewc-color-popover-menu-shortcut);
+      margin-inline-start: auto;
+    }
+
+    hr {
+      border: 0;
+      border-block-start: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+        var(--usewc-color-popover-menu-border);
+      margin-block: var(--usewc-layout-popover-menu-padding);
+    }
+  }
+
+  use-dropdown use-dropdown::part(menu) {
+    margin-inline-start: 0.5rem;
+    inset-block-start: calc(
+      anchor(start) - var(--usewc-layout-popover-menu-padding) - var(--usewc-layout-popover-menu-border)
+    );
+    inset-inline-start: anchor(end);
+  }
+
+  use-dropdown [aria-checked="true"],
+  use-option:state(selected) {
+    background-image: var(--usewc-effect-menu-item-checkmark-background-image, none);
+    /* TODO use logical position */
+    background-position: left var(--usewc-layout-input-padding-inline) center;
+    background-repeat: no-repeat;
+    background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
+    background-blend-mode: var(--usewc-effect-menu-item-checkmark-background-blend-mode, none);
   }
 }
