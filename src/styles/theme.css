@@ -642,7 +642,7 @@
         content: attr(aria-label);
         padding: var(--usewc-layout-popover-menu-padding);
         font-size: var(--usewc-layout-popover-menu-header-font-size);
-        font-weight: var(--usewc-effect-popover-menu-header-font-weight);
+        font-weight: var(--usewc-font-popover-menu-header-weight);
         color: var(--usewc-color-popover-menu-header-text);
       }
     }
