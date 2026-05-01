@@ -251,6 +251,9 @@
       cursor: default;
       color: var(--usewc-theme-color-button-text-static);
       background: var(--usewc-theme-color-button-background-static);
+      background-size: var(--usewc-layout-button-background-size);
+      background-position: var(--usewc-layout-button-background-position);
+      background-repeat: var(--usewc-layout-button-background-repeat);
       border: var(--usewc-layout-button-border) var(--usewc-effect-input-border-style)
         var(--usewc-theme-color-button-border-static);
     }
