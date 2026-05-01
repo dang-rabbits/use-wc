@@ -179,6 +179,19 @@ export class UseListboxInput extends LitElement {
     return this.#value;
   }
 
+  #handleMouseOver(event: MouseEvent) {
+    const option = (event.target as HTMLElement)?.closest("use-option") as UseOption;
+    if (option && !option.disabled) {
+      this.activeOption = option;
+    }
+  }
+
+  #handleFocus() {
+    if (!this.activeOption) {
+      this.activeOption = this.firstSelected ?? this.options.at(0) ?? null;
+    }
+  }
+
   #handleKeyDown(event: KeyboardEvent) {
     if (this.disabled) {
       return;
@@ -199,14 +212,12 @@ export class UseListboxInput extends LitElement {
       case "ArrowUp":
         event.preventDefault();
         event.stopPropagation();
-        if (activeIndex > 0) {
-          moveTo = options.at(activeIndex - 1);
-        }
+        moveTo = activeIndex > 0 ? options.at(activeIndex - 1) : options.at(-1);
         break;
       case "ArrowDown":
         event.preventDefault();
         event.stopPropagation();
-        moveTo = options.at(activeIndex + 1);
+        moveTo = activeIndex < options.length - 1 ? options.at(activeIndex + 1) : options.at(0);
         break;
       case "Home":
         event.preventDefault();
@@ -233,6 +244,8 @@ export class UseListboxInput extends LitElement {
         tabindex=${0}
         @click=${this.#handleClick}
         @keydown=${this.#handleKeyDown}
+        @focus=${this.#handleFocus}
+        @mouseover=${this.#handleMouseOver}
       >
         <slot></slot>
       </div>
@@ -259,9 +272,7 @@ export class UseListboxInput extends LitElement {
       opacity: 0.5;
     }
 
-    /* https://github.com/w3c/csswg-drafts/issues/5893 */
-    [part="listbox"]:not(:hover):focus-visible ::slotted(use-option:state(active)),
-    ::slotted(use-option:not(:state(disabled)):hover) {
+    ::slotted(use-option:state(active)) {
       background-color: light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.1));
     }
   `;
