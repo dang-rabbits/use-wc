@@ -322,21 +322,21 @@
       --usewc-theme-color-button-border-active: var(--usewc-color-button-danger-border-active);
     }
 
-    &.cancel {
-      --usewc-theme-color-button-text-static: var(--usewc-color-button-cancel-text-static);
-      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-cancel-text-static-auxiliary);
-      --usewc-theme-color-button-background-static: var(--usewc-color-button-cancel-background-static);
+    &.clear {
+      --usewc-theme-color-button-text-static: var(--usewc-color-button-clear-text-static);
+      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-clear-text-static-auxiliary);
+      --usewc-theme-color-button-background-static: var(--usewc-color-button-clear-background-static);
       --usewc-theme-color-button-background-static-auxiliary: var(
-        --usewc-color-button-cancel-background-static-auxiliary
+        --usewc-color-button-clear-background-static-auxiliary
       );
-      --usewc-theme-color-button-border-static: var(--usewc-color-button-cancel-border-static);
-      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-cancel-border-static-auxiliary);
-      --usewc-theme-color-button-text-hover: var(--usewc-color-button-cancel-text-hover);
-      --usewc-theme-color-button-background-hover: var(--usewc-color-button-cancel-background-hover);
-      --usewc-theme-color-button-border-hover: var(--usewc-color-button-cancel-border-hover);
-      --usewc-theme-color-button-text-active: var(--usewc-color-button-cancel-text-active);
-      --usewc-theme-color-button-background-active: var(--usewc-color-button-cancel-background-active);
-      --usewc-theme-color-button-border-active: var(--usewc-color-button-cancel-border-active);
+      --usewc-theme-color-button-border-static: var(--usewc-color-button-clear-border-static);
+      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-clear-border-static-auxiliary);
+      --usewc-theme-color-button-text-hover: var(--usewc-color-button-clear-text-hover);
+      --usewc-theme-color-button-background-hover: var(--usewc-color-button-clear-background-hover);
+      --usewc-theme-color-button-border-hover: var(--usewc-color-button-clear-border-hover);
+      --usewc-theme-color-button-text-active: var(--usewc-color-button-clear-text-active);
+      --usewc-theme-color-button-background-active: var(--usewc-color-button-clear-background-active);
+      --usewc-theme-color-button-border-active: var(--usewc-color-button-clear-border-active);
     }
 
     &.auxiliary:not(:is(:hover, :focus-visible, :active)) {

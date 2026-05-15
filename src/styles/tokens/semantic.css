@@ -152,18 +152,18 @@
   --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-red-500);
   --usewc-color-button-danger-text-hover: var(--usewc-color-white);
   /* -- Cancel color */
-  --usewc-color-button-cancel-background-static: transaprent;
-  --usewc-color-button-cancel-background-static-auxiliary: transparent;
-  --usewc-color-button-cancel-background-hover: var(--usewc-color-gray-100);
-  --usewc-color-button-cancel-background-active: var(--usewc-color-gray-200);
-  --usewc-color-button-cancel-border-static: transparent;
-  --usewc-color-button-cancel-border-static-auxiliary: var(--usewc-color-gray-100);
-  --usewc-color-button-cancel-border-hover: transparent;
-  --usewc-color-button-cancel-border-active: transparent;
-  --usewc-color-button-cancel-text-static: var(--usewc-color-gray-700);
-  --usewc-color-button-cancel-text-static-auxiliary: var(--usewc-color-gray-700);
-  --usewc-color-button-cancel-text-hover: var(--usewc-color-gray-700);
-  --usewc-color-button-cancel-text-active: var(--usewc-color-gray-700);
+  --usewc-color-button-clear-background-static: transparent;
+  --usewc-color-button-clear-background-static-auxiliary: transparent;
+  --usewc-color-button-clear-background-hover: var(--usewc-color-gray-100);
+  --usewc-color-button-clear-background-active: var(--usewc-color-gray-200);
+  --usewc-color-button-clear-border-static: transparent;
+  --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-100);
+  --usewc-color-button-clear-border-hover: transparent;
+  --usewc-color-button-clear-border-active: transparent;
+  --usewc-color-button-clear-text-static: var(--usewc-color-gray-700);
+  --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-gray-700);
+  --usewc-color-button-clear-text-hover: var(--usewc-color-gray-700);
+  --usewc-color-button-clear-text-active: var(--usewc-color-gray-700);
   /* - Layout */
   --usewc-layout-button-border: var(--usewc-space-1);
   --usewc-layout-button-background-size: calc(100% + var(--usewc-layout-button-border) * 2)
@@ -266,12 +266,12 @@
     --usewc-color-button-base-border-hover: var(--usewc-color-gray-500);
     --usewc-color-button-base-border-active: var(--usewc-color-gray-400);
     --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-600);
-    --usewc-color-button-cancel-text-static: var(--usewc-color-gray-200);
-    --usewc-color-button-cancel-text-hover: var(--usewc-color-gray-200);
-    --usewc-color-button-cancel-background-hover: var(--usewc-color-gray-700);
-    --usewc-color-button-cancel-border-hover: var(--usewc-color-gray-700);
-    --usewc-color-button-cancel-text-static-auxiliary: var(--usewc-color-gray-300);
-    --usewc-color-button-cancel-border-static-auxiliary: var(--usewc-color-gray-600);
+    --usewc-color-button-clear-text-static: var(--usewc-color-gray-200);
+    --usewc-color-button-clear-text-hover: var(--usewc-color-gray-200);
+    --usewc-color-button-clear-background-hover: var(--usewc-color-gray-700);
+    --usewc-color-button-clear-border-hover: var(--usewc-color-gray-700);
+    --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-gray-300);
+    --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-600);
     --usewc-color-button-primary-background-static: var(--usewc-color-blue-400);
     --usewc-color-button-primary-background-hover: var(--usewc-color-blue-500);
     --usewc-color-button-primary-background-active: var(--usewc-color-blue-600);
