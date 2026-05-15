@@ -11,7 +11,7 @@
     color: var(--usewc-color-document-text);
     background-color: var(--usewc-color-document-background);
     font-family: var(--usewc-font-document-family);
-    font-size: var(--usewc-layout-document-text-size);
+    font-size: var(--usewc-font-document-size);
   }
 
   :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
@@ -60,7 +60,7 @@
     &:disabled,
     &[aria-disabled="true"],
     &:has(:disabled, [aria-disabled="true"]) {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -140,7 +140,7 @@
     }
 
     &:disabled {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -284,7 +284,7 @@
 
     &:disabled,
     &[aria-disabled="true"] {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -547,7 +547,7 @@
   }
 
   use-dropdown use-dropdown::part(trigger) {
-    background-image: var(--usewc-effect-dropdown-trigger-side-background-image);
+    background-image: var(--usewc-effect-dropdown-trigger-nested-background-image);
     background-position: right center;
   }
 

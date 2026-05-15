@@ -1,6 +1,6 @@
 :root {
   /* Layout */
-  --usewc-layout-document-text-size: var(--usewc-font-size-16);
+  --usewc-font-document-size: var(--usewc-font-size-16);
   --usewc-color-document-text: var(--usewc-color-gray-700);
   --usewc-color-document-text-muted: var(--usewc-color-gray-500);
   --usewc-color-document-background: var(--usewc-color-white);
@@ -20,7 +20,7 @@
   --usewc-effect-outline-offset-flush: var(--usewc-space-none);
   --usewc-effect-outline-style: solid;
   --usewc-effect-outline-transition: outline 0.05s ease-in-out;
-  --usewc-effect-control-opacity-disabled: 0.5;
+  --usewc-effect-form-opacity-disabled: 0.5;
   /* - Link */
   --usewc-color-link-text-static: var(--usewc-color-blue-500);
   --usewc-color-link-text-hover: var(--usewc-color-blue-600);
@@ -28,7 +28,6 @@
   --usewc-color-link-text-visited: var(--usewc-color-indigo-500);
   --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-600);
   --usewc-color-link-text-visited-active: var(--usewc-color-indigo-700);
-  --usewc-color-link-text-visited-visited: var(--usewc-color-indigo-500);
   --usewc-effect-link-text-decoration: underline;
 
   /* Form */
@@ -60,7 +59,7 @@
   --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
   --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
   --usewc-effect-dropdown-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
-  --usewc-effect-dropdown-trigger-side-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 12L8.5 18.9282L8.5 5.0718Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
+  --usewc-effect-dropdown-trigger-nested-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 12L8.5 18.9282L8.5 5.0718Z' fill='rgba(255,255,255,0.5' /%3E%3C/svg%3E");
   --usewc-effect-dropdown-trigger-background-size: 1em;
   --usewc-effect-dropdown-trigger-background-blend-mode: difference;
   --usewc-effect-menu-item-checkmark-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
@@ -76,7 +75,6 @@
   /* - Effect */
   --usewc-effect-input-border-style: solid;
   --usewc-effect-input-border-radius: var(--usewc-effect-border-radius-4);
-  --usewc-effect-input-opacity-disabled: 0.5;
   /* - Font */
   --usewc-font-input-size: var(--usewc-font-size-16);
 
