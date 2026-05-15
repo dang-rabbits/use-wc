@@ -13,13 +13,13 @@
   --usewc-font-input-family: inherit;
 
   /* Controls */
-  /* - Focus ring */
-  --usewc-color-focus-ring: var(--usewc-color-blue-500);
-  --usewc-layout-focus-ring-size: var(--usewc-space-2);
-  --usewc-layout-focus-ring-offset-outside: var(--usewc-space-2);
-  --usewc-layout-focus-ring-offset-inside: var(--usewc-space-none);
-  --usewc-effect-focus-ring-style: solid;
-  --usewc-transition-focus-ring: outline 0.05s ease-in-out;
+  /* - Outline (focus indicator) */
+  --usewc-color-outline: var(--usewc-color-blue-500);
+  --usewc-effect-outline-size: var(--usewc-space-2);
+  --usewc-effect-outline-offset: var(--usewc-space-2);
+  --usewc-effect-outline-offset-flush: var(--usewc-space-none);
+  --usewc-effect-outline-style: solid;
+  --usewc-effect-outline-transition: outline 0.05s ease-in-out;
   --usewc-effect-control-opacity-disabled: 0.5;
   /* - Link */
   --usewc-color-link-text-static: var(--usewc-color-blue-500);
@@ -246,7 +246,7 @@
     --usewc-color-document-text-muted: var(--usewc-color-gray-300);
     --usewc-color-document-background: var(--usewc-color-gray-800);
     --usewc-color-canvas-background: var(--usewc-color-black);
-    --usewc-color-focus-ring: var(--usewc-color-blue-200);
+    --usewc-color-outline: var(--usewc-color-blue-200);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
     --usewc-color-input-border-static: var(--usewc-color-gray-600);
     --usewc-color-input-text-static: var(--usewc-color-gray-200);

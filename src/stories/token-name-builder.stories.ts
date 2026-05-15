@@ -121,7 +121,7 @@ const meta: Meta = {
                   <option>gap</option>
                   <option>size</option>
                   <option>line-height</option>
-                  <option>focus-ring</option>
+                  <option>outline</option>
                   <option>shadow</option>
                 </select>
               </td>

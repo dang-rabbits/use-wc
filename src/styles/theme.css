@@ -19,9 +19,9 @@
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
   use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
-    outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
-    outline-offset: var(--usewc-layout-focus-ring-offset-outside);
-    transition: var(--usewc-transition-focus-ring);
+    outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
   }
 
   :is(
@@ -54,7 +54,7 @@
 
     &:is(:focus, :has(input:focus), :focus-within) {
       border-color: var(--usewc-color-input-border-focus);
-      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
+      outline-offset: var(--usewc-effect-outline-offset-flush);
     }
 
     &:disabled,
@@ -622,9 +622,9 @@
     &:focus-visible,
     &::part(trigger):focus-visible {
       background-color: var(--usewc-color-popover-menu-item-background-static);
-      outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
-      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
-      transition: var(--usewc-transition-focus-ring);
+      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      outline-offset: var(--usewc-effect-outline-offset-flush);
+      transition: var(--usewc-effect-outline-transition);
       color: var(--usewc-color-popover-menu-item-text-focus);
     }
   }
