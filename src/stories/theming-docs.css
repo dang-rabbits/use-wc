@@ -4,5 +4,5 @@ body,
   color: var(--usewc-color-document-text) !important;
   background-color: var(--usewc-color-document-background) !important;
   font-family: var(--usewc-font-document-family) !important;
-  font-size: var(--usewc-layout-document-text-size) !important;
+  font-size: var(--usewc-font-document-size) !important;
 }

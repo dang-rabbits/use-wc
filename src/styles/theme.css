@@ -11,7 +11,7 @@
     color: var(--usewc-color-document-text);
     background-color: var(--usewc-color-document-background);
     font-family: var(--usewc-font-document-family);
-    font-size: var(--usewc-layout-document-text-size);
+    font-size: var(--usewc-font-document-size);
   }
 
   :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
@@ -19,9 +19,9 @@
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
   use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
-    outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
-    outline-offset: var(--usewc-layout-focus-ring-offset-outside);
-    transition: var(--usewc-transition-focus-ring);
+    outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
   }
 
   :is(
@@ -54,13 +54,13 @@
 
     &:is(:focus, :has(input:focus), :focus-within) {
       border-color: var(--usewc-color-input-border-focus);
-      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
+      outline-offset: var(--usewc-effect-outline-offset-flush);
     }
 
     &:disabled,
     &[aria-disabled="true"],
     &:has(:disabled, [aria-disabled="true"]) {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -140,7 +140,7 @@
     }
 
     &:disabled {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -284,7 +284,7 @@
 
     &:disabled,
     &[aria-disabled="true"] {
-      opacity: var(--usewc-effect-control-opacity-disabled);
+      opacity: var(--usewc-effect-form-opacity-disabled);
       pointer-events: none;
     }
 
@@ -322,21 +322,21 @@
       --usewc-theme-color-button-border-active: var(--usewc-color-button-danger-border-active);
     }
 
-    &.cancel {
-      --usewc-theme-color-button-text-static: var(--usewc-color-button-cancel-text-static);
-      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-cancel-text-static-auxiliary);
-      --usewc-theme-color-button-background-static: var(--usewc-color-button-cancel-background-static);
+    &.clear {
+      --usewc-theme-color-button-text-static: var(--usewc-color-button-clear-text-static);
+      --usewc-theme-color-button-text-static-auxiliary: var(--usewc-color-button-clear-text-static-auxiliary);
+      --usewc-theme-color-button-background-static: var(--usewc-color-button-clear-background-static);
       --usewc-theme-color-button-background-static-auxiliary: var(
-        --usewc-color-button-cancel-background-static-auxiliary
+        --usewc-color-button-clear-background-static-auxiliary
       );
-      --usewc-theme-color-button-border-static: var(--usewc-color-button-cancel-border-static);
-      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-cancel-border-static-auxiliary);
-      --usewc-theme-color-button-text-hover: var(--usewc-color-button-cancel-text-hover);
-      --usewc-theme-color-button-background-hover: var(--usewc-color-button-cancel-background-hover);
-      --usewc-theme-color-button-border-hover: var(--usewc-color-button-cancel-border-hover);
-      --usewc-theme-color-button-text-active: var(--usewc-color-button-cancel-text-active);
-      --usewc-theme-color-button-background-active: var(--usewc-color-button-cancel-background-active);
-      --usewc-theme-color-button-border-active: var(--usewc-color-button-cancel-border-active);
+      --usewc-theme-color-button-border-static: var(--usewc-color-button-clear-border-static);
+      --usewc-theme-color-button-border-static-auxiliary: var(--usewc-color-button-clear-border-static-auxiliary);
+      --usewc-theme-color-button-text-hover: var(--usewc-color-button-clear-text-hover);
+      --usewc-theme-color-button-background-hover: var(--usewc-color-button-clear-background-hover);
+      --usewc-theme-color-button-border-hover: var(--usewc-color-button-clear-border-hover);
+      --usewc-theme-color-button-text-active: var(--usewc-color-button-clear-text-active);
+      --usewc-theme-color-button-background-active: var(--usewc-color-button-clear-background-active);
+      --usewc-theme-color-button-border-active: var(--usewc-color-button-clear-border-active);
     }
 
     &.auxiliary:not(:is(:hover, :focus-visible, :active)) {
@@ -547,7 +547,7 @@
   }
 
   use-dropdown use-dropdown::part(trigger) {
-    background-image: var(--usewc-effect-dropdown-trigger-side-background-image);
+    background-image: var(--usewc-effect-dropdown-trigger-nested-background-image);
     background-position: right center;
   }
 
@@ -622,9 +622,9 @@
     &:focus-visible,
     &::part(trigger):focus-visible {
       background-color: var(--usewc-color-popover-menu-item-background-static);
-      outline: var(--usewc-layout-focus-ring-size) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
-      outline-offset: var(--usewc-layout-focus-ring-offset-inside);
-      transition: var(--usewc-transition-focus-ring);
+      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      outline-offset: var(--usewc-effect-outline-offset-flush);
+      transition: var(--usewc-effect-outline-transition);
       color: var(--usewc-color-popover-menu-item-text-focus);
     }
   }
