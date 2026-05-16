@@ -14,29 +14,29 @@
     font-size: var(--usewc-font-document-size);
   }
 
-  :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
+  :is(button, a, details summary, use-widget):not(.appearance-native):focus-visible,
   :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input, use-duration-input):not(
-      [data-appear-as="native"]
+      .appearance-native
     ):focus,
-  input[type="file"]:not([data-appear-as="native"]):focus-visible,
-  use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
-  [data-appear-as="input"]:has(input:focus) {
+  input[type="file"]:not(.appearance-native):focus-visible,
+  use-dropdown:not(.appearance-native)::part(trigger):focus-visible,
+  .appearance-input:has(input:focus) {
     outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
     outline-offset: var(--usewc-effect-outline-offset);
     transition: var(--usewc-effect-outline-transition);
   }
 
   :is(
-    input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [data-appear-as])),
+    input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])),
     select,
     textarea,
-    [data-appear-as="input"],
+    .appearance-input,
     use-date-input,
     use-time-input,
     use-datetime-input,
     use-duration-input
-  ):not([data-appear-as="native"]),
-  use-listbox-input:not([data-appear-as="native"])::part(listbox) {
+  ):not(.appearance-native),
+  use-listbox-input:not(.appearance-native)::part(listbox) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
     line-height: var(--usewc-layout-input-line-height);
@@ -49,7 +49,7 @@
     color: var(--usewc-color-input-text-static);
     border-radius: var(--usewc-effect-input-border-radius);
 
-    &:not(:is(:disabled, [aria-disabled="true"], [data-appear-as="input"])):hover,
+    &:not(:is(:disabled, [aria-disabled="true"], .appearance-input)):hover,
     &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover) {
       border-color: var(--usewc-color-input-border-hover);
     }
@@ -75,15 +75,15 @@
     }
   }
 
-  use-listbox-input:not([data-appear-as="native"])::part(listbox) {
+  use-listbox-input:not(.appearance-native)::part(listbox) {
     padding: var(--usewc-layout-popover-menu-padding);
   }
 
-  select:not([data-appear-as="native"]) {
+  select:not(.appearance-native) {
     appearance: none;
   }
 
-  [data-appear-as="input"] {
+  .appearance-input {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -190,11 +190,11 @@
    * - https://codepen.io/ShadowShahriar/pen/zYPPYrQ
    * - https://open-ui.org/components/enhanced-range-input.explainer/
    */
-  input[type="range"]:not([data-appear-as="native"]) {
+  input[type="range"]:not(.appearance-native) {
     accent-color: var(--usewc-color-range-thumb-background-static);
   }
 
-  :is(a:not([data-appear-as]), [data-appear-as="a"]) {
+  :is(a:not([class*="appearance-"]), .appearance-a) {
     &:where(:not(a)) {
       all: unset;
     }
@@ -212,9 +212,9 @@
     }
   }
 
-  :is(button:not([data-appear-as]), [data-appear-as="button"]),
+  :is(button:not([class*="appearance-"]), .appearance-button),
   use-dropdown,
-  input[type="file"]:not([data-appear-as]) {
+  input[type="file"]:not([class*="appearance-"]) {
     &:where(:not(button)),
     &::file-selector-button {
       all: unset;
@@ -376,12 +376,12 @@
     }
   }
 
-  input[type="file"]:not([data-appear-as]) {
+  input[type="file"]:not([class*="appearance-"]) {
     border-radius: var(--usewc-effect-input-border-radius);
   }
 
   code,
-  [data-appear-as="code"] {
+  .appearance-code {
     display: inline-block;
     font-family: var(--usewc-font-code-family);
     font-size: var(--usewc-font-code-size);
@@ -453,7 +453,7 @@
     }
   }
 
-  details:not([data-appear-as="native"]) {
+  details:not(.appearance-native) {
     summary {
       all: unset;
 
@@ -485,7 +485,7 @@
      input styling block. The date and time sub-inputs live in shadow DOM and are reached via
      ::part(date) and ::part(time) to override their internal layout. Segment inputs are
      re-exported via exportparts so ::part(segment-input) reaches them too. */
-  use-datetime-input:not([data-appear-as="native"]) {
+  use-datetime-input:not(.appearance-native) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
@@ -532,7 +532,7 @@
   }
 
   /* Segment based controls */
-  :is(use-date-input, use-time-input):not([data-appear-as="native"]) {
+  :is(use-date-input, use-time-input):not(.appearance-native) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
@@ -571,7 +571,7 @@
     }
   }
 
-  use-duration-input:not([data-appear-as="native"]) {
+  use-duration-input:not(.appearance-native) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
@@ -610,7 +610,7 @@
     }
   }
 
-  select:not([data-appear-as="native"]),
+  select:not(.appearance-native),
   use-dropdown::part(trigger),
   use-dropdown use-dropdown::part(trigger) {
     padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
@@ -627,7 +627,7 @@
     background-position: right center;
   }
 
-  select:not([data-appear-as="native"]),
+  select:not(.appearance-native),
   use-dropdown::part(trigger),
   use-dropdown use-dropdown::part(trigger) {
     anchor-name: --use-popover-trigger;
