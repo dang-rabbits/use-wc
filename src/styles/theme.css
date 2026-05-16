@@ -15,7 +15,9 @@
   }
 
   :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
-  :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input):not([data-appear-as="native"]):focus,
+  :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input, use-duration-input):not(
+      [data-appear-as="native"]
+    ):focus,
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
   use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
@@ -31,7 +33,8 @@
     [data-appear-as="input"],
     use-date-input,
     use-time-input,
-    use-datetime-input
+    use-datetime-input,
+    use-duration-input
   ):not([data-appear-as="native"]),
   use-listbox-input:not([data-appear-as="native"])::part(listbox) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
@@ -568,16 +571,42 @@
     }
   }
 
-  :is(use-datetime, use-duration):not([data-appear-as="native"]) {
+  use-duration-input:not([data-appear-as="native"]) {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
     gap: var(--usewc-layout-input-gap-inline);
-  }
-
-  use-duration:not([data-appear-as="native"]) {
-    padding-inline-end: var(--usewc-layout-input-padding-inline);
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
     &::part(segment) {
       display: inline-flex;
+      align-items: center;
       gap: var(--usewc-layout-input-segment-padding-inline);
+    }
+
+    &::part(segment-input) {
+      all: unset;
+      box-sizing: content-box;
+      appearance: none;
+      field-sizing: content;
+      background: var(--usewc-color-input-segment-background-static);
+      outline: none;
+      border-radius: var(--usewc-effect-input-border-radius);
+      min-width: 2ch;
+      width: fit-content;
+      text-align: end;
+      padding-inline: var(--usewc-layout-input-segment-padding-inline);
+      font-variant-numeric: tabular-nums;
+    }
+
+    &::part(segment-input):hover {
+      background: var(--usewc-color-input-segment-background-hover);
+    }
+
+    &::part(segment-input):focus,
+    &::selection {
+      background: var(--usewc-color-input-segment-background-focus);
+      color: var(--usewc-color-input-segment-text-focus);
     }
   }
 
