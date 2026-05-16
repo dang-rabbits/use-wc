@@ -20,12 +20,15 @@
   "types": "./dist/use-wc.d.ts",
   "exports": {
     ".": "./dist/use-wc.mjs",
+    "./design-tokens.css": "./dist/design-tokens.css",
+    "./design-system.css": "./dist/design-system.css",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "pack": "tsc && vp run analyze && vp pack",
+    "pack": "tsc && vp run analyze && vp pack && vp run generate-docs",
     "preview": "vp preview",
     "analyze": "custom-elements-manifest analyze",
+    "generate-docs": "node scripts/generate-docs.mjs",
     "storybook": "storybook dev -p ${PORT:-6006}",
     "build": "vp run pack && storybook build",
     "test": "vp test",
