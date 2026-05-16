@@ -477,13 +477,6 @@
 }
 
 @layer web-components {
-  /* Composite segmented controls */
-  use-datetime-input:not([data-appear-as="native"]) {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--usewc-layout-input-gap-inline);
-  }
-
   /* Segment based controls */
   :is(use-date-input, use-time-input):not([data-appear-as="native"]) {
     display: inline-flex;
