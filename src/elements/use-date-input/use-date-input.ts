@@ -107,9 +107,20 @@ export class UseDateInput extends UseLocaleElement {
     this.#internals.setFormValue(this.#internalValue);
   }
 
+  #segmentMaximum: Record<DateSegment, number | null> = {
+    year: null,
+    month: 12,
+    day: 31,
+  };
+
   #handleSegmentInput(segment: DateSegment) {
     return (event: Event) => {
       const target = event.target as HTMLInputElement;
+      const maximum = this.#segmentMaximum[segment];
+      const numericValue = parseInt(target.value, 10);
+      if (maximum !== null && !isNaN(numericValue) && numericValue > maximum) {
+        target.value = String(maximum);
+      }
       this.#valueData[segment] = target.value;
       this.#updateInternalValue();
     };
