@@ -15,7 +15,7 @@
   }
 
   :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
-  :is(input, textarea, select, use-date-input, use-time-input):not([data-appear-as="native"]):focus,
+  :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input):not([data-appear-as="native"]):focus,
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
   use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
@@ -30,7 +30,8 @@
     textarea,
     [data-appear-as="input"],
     use-date-input,
-    use-time-input
+    use-time-input,
+    use-datetime-input
   ):not([data-appear-as="native"]),
   use-listbox-input:not([data-appear-as="native"])::part(listbox) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
@@ -477,6 +478,56 @@
 }
 
 @layer web-components {
+  /* Composite datetime control — host gets the single input wrapper appearance via the main
+     input styling block. The date and time sub-inputs live in shadow DOM and are reached via
+     ::part(date) and ::part(time) to override their internal layout. Segment inputs are
+     re-exported via exportparts so ::part(segment-input) reaches them too. */
+  use-datetime-input:not([data-appear-as="native"]) {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    gap: var(--usewc-layout-input-gap-inline);
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
+
+    &::part(date),
+    &::part(time) {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usewc-layout-input-segment-padding-inline);
+    }
+
+    &::part(segment-input) {
+      all: unset;
+      box-sizing: content-box;
+      appearance: none;
+      field-sizing: content;
+      background: var(--usewc-color-input-segment-background-static);
+      outline: none;
+      border-radius: var(--usewc-effect-input-border-radius);
+      min-width: 2ch;
+      width: fit-content;
+      text-align: end;
+      padding-inline: var(--usewc-layout-input-segment-padding-inline);
+      font-variant-numeric: tabular-nums;
+    }
+
+    &::part(segment-input-dayPeriod) {
+      text-align: center;
+      min-width: 2em;
+      padding-inline: 0;
+    }
+
+    &::part(segment-input):hover {
+      background: var(--usewc-color-input-segment-background-hover);
+    }
+
+    &::part(segment-input):focus,
+    &::selection {
+      background: var(--usewc-color-input-segment-background-focus);
+      color: var(--usewc-color-input-segment-text-focus);
+    }
+  }
+
   /* Segment based controls */
   :is(use-date-input, use-time-input):not([data-appear-as="native"]) {
     display: inline-flex;
