@@ -29,7 +29,7 @@
   <input type="file" class="danger" />
   <input type="file" class="clear" />
   <input type="file" disabled />
-  <input type="file" data-appear-as="native" />
+  <input type="file" class="appearance-native" />
   <use-field>
     <label for="file-field">File Field</label>
     <input type="file" id="file-field" placeholder="Enter your file" />
@@ -37,8 +37,8 @@
   </use-field>
 
   <h4>Unstyled</h4>
-  <p>You can escape from the theme styles by adding the <code>data-appear-as="native"</code> attribute.</p>
-  <input type="text" placeholder="Enter your name" data-appear-as="native" />
+  <p>You can escape from the theme styles by adding the <code>class="appearance-native"</code> class.</p>
+  <input type="text" placeholder="Enter your name" class="appearance-native" />
   <p>You can escape from the theme styles by wrapping the UI in a <code>use-theme-escape</code> element.</p>
   <use-theme-escape>
     <input type="text" class="primary auxiliary" />
@@ -65,7 +65,7 @@
   <h3>As input</h3>
   <use-field>
     <label for="as-input-field">As input field</label>
-    <div data-appear-as="input">
+    <div class="appearance-input">
       <span>Prefix</span>
       <input id="as-input-field" placeholder="embedded input" />
       <span>Suffix</span>
@@ -73,7 +73,7 @@
   </use-field>
   <use-field>
     <label for="as-input-field-2">As input field 2</label>
-    <div data-appear-as="input">
+    <div class="appearance-input">
       <span>Prefix</span>
       <input id="as-input-field-2" placeholder="embedded input" disabled />
       <span>Suffix</span>
@@ -81,7 +81,7 @@
   </use-field>
   <use-field>
     <label for="as-input-field-3">As input field 3</label>
-    <div data-appear-as="input">
+    <div class="appearance-input">
       <button type="button" class="small">Button</button>
       <input id="as-input-field-3" placeholder="embedded input" />
       <button type="button" class="small">Button</button>
@@ -105,7 +105,7 @@
   <option value="2">Option 2</option>
   <option value="3">Option 3</option>
 </select>
-<select data-appear-as="native">
+<select class="appearance-native">
   <option value="1">Native select</option>
 </select>
 
@@ -128,7 +128,7 @@
 </use-field>
 <use-field>
   <label for="range-native">Native</label>
-  <input type="range" id="range-native" data-appear-as="native" />
+  <input type="range" id="range-native" class="appearance-native" />
 </use-field>
 
 <h3>Checkbox</h3>
@@ -198,7 +198,7 @@
     <button type="button" class="clear auxiliary">Clear auxiliary</button>
     <button type="button" class="clear" disabled>Clear disabled</button>
     <h5>Unstyled</h5>
-    <button type="button" data-appear-as="native">Native</button>
+    <button type="button" class="appearance-native">Native</button>
   </div>
   <h4>Sizes</h4>
   <div style="display: flex; gap: 0.5rem; align-items: center">
@@ -210,8 +210,8 @@
   </div>
   <h4>As link</h4>
   <div>
-    <button type="button" class="clear" data-appear-as="a">Button as Link</button>
-    <button type="button" class="clear" data-appear-as="a">Button as Link disabled</button>
+    <button type="button" class="clear appearance-a">Button as Link</button>
+    <button type="button" class="clear appearance-a">Button as Link disabled</button>
   </div>
 </div>
 <h3>Details</h3>
@@ -220,7 +220,7 @@
   <p>This is a details content</p>
 </details>
 <details>
-  <summary data-appear-as="button">As button</summary>
+  <summary class="appearance-button">As button</summary>
   <p>This is a details content</p>
 </details>
 <h3>Link</h3>
@@ -228,11 +228,11 @@
   <a href="#">Link</a>
   <h4>As button</h4>
   <div style="display: flex; gap: 0.5rem; align-items: center">
-    <a href="#" data-appear-as="button">Base button</a>
-    <a href="#" data-appear-as="button" class="primary">Primary button</a>
-    <a href="#" data-appear-as="button" class="danger">Danger button</a>
-    <a href="#" data-appear-as="button" class="clear">Clear button</a>
+    <a href="#" class="appearance-button">Base button</a>
+    <a href="#" class="appearance-button primary">Primary button</a>
+    <a href="#" class="appearance-button danger">Danger button</a>
+    <a href="#" class="appearance-button clear">Clear button</a>
   </div>
   <h4>Unstyled</h4>
-  <a href="#" data-appear-as="native">Native</a>
+  <a href="#" class="appearance-native">Native</a>
 </div>
