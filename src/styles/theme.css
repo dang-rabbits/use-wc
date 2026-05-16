@@ -15,7 +15,7 @@
   }
 
   :is(button, a, details summary, use-widget):not([data-appear-as="native"]):focus-visible,
-  :is(input, textarea, select, use-date, use-time, use-datetime, use-duration):not([data-appear-as="native"]):focus,
+  :is(input, textarea, select, use-date-input):not([data-appear-as="native"]):focus,
   input[type="file"]:not([data-appear-as="native"]):focus-visible,
   use-dropdown:not([data-appear-as="native"])::part(trigger):focus-visible,
   [data-appear-as="input"]:has(input:focus) {
@@ -26,14 +26,11 @@
 
   :is(
     input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [data-appear-as])),
-    select:not([data-appear-as="native"]),
+    select,
     textarea,
     [data-appear-as="input"],
-    use-date:not([data-appear-as="native"]),
-    use-time:not([data-appear-as="native"]),
-    use-datetime:not([data-appear-as="native"]),
-    use-duration:not([data-appear-as="native"])
-  ),
+    use-date-input
+  ):not([data-appear-as="native"]),
   use-listbox-input:not([data-appear-as="native"])::part(listbox) {
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
@@ -480,9 +477,7 @@
 
 @layer web-components {
   /* Segment based controls */
-  :is(use-date, use-time, use-datetime, use-duration):not([data-appear-as="native"]),
-  use-datetime::part(date),
-  use-datetime::part(time) {
+  :is(use-date-input):not([data-appear-as="native"]) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
