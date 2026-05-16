@@ -73,17 +73,12 @@ function generateMarkdown(declaration) {
       typeText(event.type),
       descriptionText(event.description),
     ]);
-    sections.push(
-      `## Events\n\n${renderTable(["Name", "Type", "Description"], rows)}`,
-    );
+    sections.push(`## Events\n\n${renderTable(["Name", "Type", "Description"], rows)}`);
   }
 
   const slots = declaration.slots ?? [];
   if (slots.length > 0) {
-    const rows = slots.map((slot) => [
-      `\`${slot.name}\``,
-      descriptionText(slot.description),
-    ]);
+    const rows = slots.map((slot) => [`\`${slot.name}\``, descriptionText(slot.description)]);
     sections.push(`## Slots\n\n${renderTable(["Name", "Description"], rows)}`);
   }
 
@@ -105,18 +100,14 @@ function generateMarkdown(declaration) {
       escapeCell(state.name),
       descriptionText(state.description),
     ]);
-    sections.push(
-      `## CSS States\n\n${renderTable(["State", "Description"], rows)}`,
-    );
+    sections.push(`## CSS States\n\n${renderTable(["State", "Description"], rows)}`);
   }
 
   return sections.join("\n\n");
 }
 
 if (!existsSync(manifestPath)) {
-  console.error(
-    `custom-elements.json not found at ${manifestPath}. Run 'vp run analyze' first.`,
-  );
+  console.error(`custom-elements.json not found at ${manifestPath}. Run 'vp run analyze' first.`);
   process.exit(1);
 }
 
