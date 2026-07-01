@@ -37,16 +37,13 @@ export default {
     dts: {
       tsgo: true,
     },
-    exports: true,
+    exports: false,
     plugins: [
       cssEntries({
         "design-system": resolve(rootDir, "src/styles/theme.css"),
-        "default-tokens": resolve(rootDir, "src/styles/tokens.css"),
+        tokens: resolve(rootDir, "src/styles/tokens.css"),
       }),
     ],
-  },
-  css: {
-    splitting: true,
   },
   test: {
     include: ["src/**/*.test.ts"],
