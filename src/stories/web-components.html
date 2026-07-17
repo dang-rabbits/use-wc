@@ -13,6 +13,18 @@
   <use-duration-input value="PT1H30M" hours minutes></use-duration-input>
 </div>
 
+<h2>Buttons</h2>
+<div style="display: flex; flex-direction: column; gap: 1rem">
+  <h3>Sizing</h3>
+  <div style="display: flex; align-items: center; gap: 0.5rem">
+    <button class="extra-small" type="button">Extra small</button>
+    <button class="small" type="button">Small</button>
+    <button type="button">Base (default)</button>
+    <button class="large" type="button">Large</button>
+    <button class="extra-large" type="button">Extra large</button>
+  </div>
+</div>
+
 <h2>Selection</h2>
 <div style="display: flex; flex-direction: column; gap: 1rem">
   <h3>Select</h3>
@@ -21,6 +33,30 @@
     <use-option value="banana" id="select-banana">Banana</use-option>
     <use-option value="cherry" id="select-cherry">Cherry</use-option>
   </use-select-input>
+
+  <h4>Sizing</h4>
+  <div style="display: flex; align-items: center; gap: 0.5rem">
+    <use-select-input class="extra-small" placeholder="Extra small">
+      <use-option value="apple" id="select-xs-apple">Apple</use-option>
+      <use-option value="banana" id="select-xs-banana">Banana</use-option>
+    </use-select-input>
+    <use-select-input class="small" placeholder="Small">
+      <use-option value="apple" id="select-sm-apple">Apple</use-option>
+      <use-option value="banana" id="select-sm-banana">Banana</use-option>
+    </use-select-input>
+    <use-select-input placeholder="Base (default)">
+      <use-option value="apple" id="select-base-apple">Apple</use-option>
+      <use-option value="banana" id="select-base-banana">Banana</use-option>
+    </use-select-input>
+    <use-select-input class="large" placeholder="Large">
+      <use-option value="apple" id="select-lg-apple">Apple</use-option>
+      <use-option value="banana" id="select-lg-banana">Banana</use-option>
+    </use-select-input>
+    <use-select-input class="extra-large" placeholder="Extra large">
+      <use-option value="apple" id="select-xl-apple">Apple</use-option>
+      <use-option value="banana" id="select-xl-banana">Banana</use-option>
+    </use-select-input>
+  </div>
 
   <h3>Listbox</h3>
   <use-listbox-input>
@@ -81,6 +117,30 @@
       <hr />
       <a href="#" role="menuitem">Support</a>
       <a href="#" role="menuitem">Documentation</a>
+    </use-dropdown>
+  </div>
+
+  <h4>Sizing</h4>
+  <div style="display: flex; align-items: center; gap: 0.5rem">
+    <use-dropdown class="extra-small" label="Extra small">
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
+    </use-dropdown>
+    <use-dropdown class="small" label="Small">
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
+    </use-dropdown>
+    <use-dropdown label="Base (default)">
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
+    </use-dropdown>
+    <use-dropdown class="large" label="Large">
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
+    </use-dropdown>
+    <use-dropdown class="extra-large" label="Extra large">
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
     </use-dropdown>
   </div>
 </div>
