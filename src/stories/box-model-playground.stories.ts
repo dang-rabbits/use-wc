@@ -139,6 +139,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
   { name: "outline-color", list: "color", category: "color" },
   { name: "outline-offset", list: "size", category: "effect" },
   { name: "box-shadow", list: "effect", category: "effect" },
+  { name: "text-shadow", list: "effect", category: "effect" },
   {
     name: "background",
     list: "color",
