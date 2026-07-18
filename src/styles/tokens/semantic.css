@@ -1,18 +1,22 @@
 :root {
-  /* Layout */
-  --usewc-font-document-size: var(--usewc-font-size-16);
+  /* Document */
+  /* - Color */
   --usewc-color-document-text: var(--usewc-color-gray-700);
   --usewc-color-document-text-muted: var(--usewc-color-gray-500);
   --usewc-color-document-background: var(--usewc-color-white);
   --usewc-color-canvas-background: var(--usewc-color-white);
 
   /* Typography */
+  --usewc-font-document-size: var(--usewc-font-size-16);
   --usewc-font-document-family: var(--usewc-font-family-sans-serif);
   --usewc-font-code-family: var(--usewc-font-family-monospace);
   --usewc-font-quote-family: var(--usewc-font-family-serif);
   --usewc-font-input-family: inherit;
+  --usewc-font-button-family: inherit;
 
   /* Controls */
+  /* - Disabled */
+  --usewc-effect-form-opacity-disabled: 0.5;
   /* - Outline (focus indicator) */
   --usewc-color-outline: var(--usewc-color-blue-500);
   --usewc-effect-outline-size: var(--usewc-space-2);
@@ -20,7 +24,6 @@
   --usewc-effect-outline-offset-flush: var(--usewc-space-none);
   --usewc-effect-outline-style: solid;
   --usewc-effect-outline-transition: outline 0.05s ease-in-out;
-  --usewc-effect-form-opacity-disabled: 0.5;
   /* - Link */
   --usewc-color-link-text-static: var(--usewc-color-blue-500);
   --usewc-color-link-text-hover: var(--usewc-color-blue-600);
@@ -35,12 +38,13 @@
   --usewc-color-form-helper-text: var(--usewc-color-gray-500);
   --usewc-color-form-helper-text-invalid: var(--usewc-color-red-500);
   --usewc-color-form-label-text: var(--usewc-color-gray-700);
+  /* - Font */
+  --usewc-font-form-helper-text-size: var(--usewc-font-size-14);
+  --usewc-font-form-label-size: var(--usewc-font-size-16);
   /* - Layout */
-  --usewc-layout-form-helper-text-font-size: var(--usewc-font-size-14);
   --usewc-layout-form-helper-text-line-height: var(--usewc-line-height-24);
-  --usewc-layout-form-label-font-size: var(--usewc-font-size-16);
   --usewc-layout-form-label-line-height: var(--usewc-line-height-24);
-  --usewc-layout-form-selector-margin-inline: 0;
+  --usewc-layout-form-selector-margin-inline: var(--usewc-space-none);
   --usewc-layout-form-selector-margin-block: calc((1lh - 1em) / 2);
   --usewc-layout-form-selector-gap: var(--usewc-space-4);
   --usewc-layout-form-field-gap: var(--usewc-space-4);
@@ -164,43 +168,44 @@
   --usewc-color-button-clear-text-active: var(--usewc-color-gray-700);
   /* - Layout */
   --usewc-layout-button-border: var(--usewc-space-1);
-  --usewc-layout-button-background-size: calc(100% + var(--usewc-layout-button-border) * 2)
-    calc(100% + var(--usewc-layout-button-border) * 2);
-  --usewc-layout-button-background-position: center;
-  --usewc-layout-button-background-repeat: no-repeat;
   --usewc-layout-button-line-height: var(--usewc-line-height-24);
   /* - Effect */
   --usewc-effect-button-border-radius: var(--usewc-effect-border-radius-4);
   --usewc-effect-button-border-style: solid;
+  --usewc-effect-button-background-size: calc(100% + var(--usewc-layout-button-border) * 2)
+    calc(100% + var(--usewc-layout-button-border) * 2);
+  --usewc-effect-button-background-position: center;
+  --usewc-effect-button-background-repeat: no-repeat;
   /* - Sizes */
   /* -- Base size */
   --usewc-layout-button-base-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
   --usewc-layout-button-base-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
   --usewc-layout-button-base-gap: var(--usewc-space-4);
-  --usewc-layout-button-base-font-size: var(--usewc-font-size-16);
+  --usewc-font-button-base-size: var(--usewc-font-size-16);
+  --usewc-font-button-weight: var(--usewc-font-weight-medium);
   /* -- Extra small size */
   --usewc-layout-button-extra-small-padding-block: var(--usewc-space-none);
   --usewc-layout-button-extra-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-small-gap: var(--usewc-space-2);
-  --usewc-layout-button-extra-small-font-size: var(--usewc-font-size-12);
+  --usewc-font-button-extra-small-size: var(--usewc-font-size-12);
   --usewc-layout-button-extra-small-line-height: var(--usewc-line-height-18);
   /* -- Small size */
   --usewc-layout-button-small-padding-block: calc(var(--usewc-space-2) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-gap: var(--usewc-space-2);
-  --usewc-layout-button-small-font-size: var(--usewc-font-size-14);
+  --usewc-font-button-small-size: var(--usewc-font-size-14);
   --usewc-layout-button-small-line-height: var(--usewc-line-height-20);
   /* -- Large size */
   --usewc-layout-button-large-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
   --usewc-layout-button-large-padding-inline: calc(var(--usewc-space-16) - var(--usewc-layout-button-border));
   --usewc-layout-button-large-gap: var(--usewc-space-4);
-  --usewc-layout-button-large-font-size: var(--usewc-font-size-18);
+  --usewc-font-button-large-size: var(--usewc-font-size-18);
   --usewc-layout-button-large-line-height: var(--usewc-line-height-28);
   /* -- Extra large size */
   --usewc-layout-button-extra-large-padding-block: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-large-padding-inline: calc(var(--usewc-space-24) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-large-gap: var(--usewc-space-8);
-  --usewc-layout-button-extra-large-font-size: var(--usewc-font-size-24);
+  --usewc-font-button-extra-large-size: var(--usewc-font-size-24);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-28);
 
   /* Menu */
@@ -218,10 +223,10 @@
   --usewc-color-popover-menu-background: var(--usewc-color-canvas-background);
   --usewc-color-popover-menu-border: var(--usewc-color-gray-600);
   --usewc-effect-popover-menu-border-radius: var(--usewc-effect-border-radius-8);
-  --usewc-layout-popover-menu-header-font-size: var(--usewc-font-size-14);
+  --usewc-font-popover-menu-header-size: var(--usewc-font-size-14);
   --usewc-font-popover-menu-header-weight: var(--usewc-font-weight-medium);
   --usewc-color-popover-menu-header-text: var(--usewc-color-gray-400);
-  --usewc-font-popover-menu-shortcut: var(--usewc-font-family-monospace);
+  --usewc-font-popover-menu-shortcut-family: var(--usewc-font-family-monospace);
   --usewc-color-popover-menu-shortcut: var(--usewc-color-gray-400);
   --usewc-color-popover-menu-item-text-static: var(--usewc-color-button-base-text-static);
   --usewc-color-popover-menu-item-text-hover: var(--usewc-color-button-base-text-static);
