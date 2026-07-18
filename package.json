@@ -62,10 +62,20 @@
     "storybook-addon-tag-badges": "^1.4.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.29.1",
-    "vite-plus": "^0.1.11",
+    "vite-plus": "^0.1.24",
     "vitest-browser-lit": "^1.0.1"
   },
   "overrides": {
+    "@actions/http-client": {
+      "undici": "^6.27.0"
+    },
+    "@semantic-release/github": {
+      "undici": "^7.28.0"
+    },
+    "brace-expansion": "^5.0.6",
+    "esbuild": "^0.28.1",
+    "npm": "^11.18.0",
+    "postcss": "^8.5.10",
     "storybook": "$storybook",
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
     "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
