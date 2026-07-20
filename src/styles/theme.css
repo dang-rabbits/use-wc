@@ -239,7 +239,7 @@
     --usewc-layout-button-padding-block: var(--usewc-layout-button-base-padding-block);
     --usewc-layout-button-padding-inline: var(--usewc-layout-button-base-padding-inline);
     --usewc-layout-button-gap: var(--usewc-layout-button-base-gap);
-    --usewc-layout-button-font-size: var(--usewc-layout-button-base-font-size);
+    --usewc-font-button-size: var(--usewc-font-button-base-size);
 
     &::part(trigger),
     &:not([type="file"], use-dropdown),
@@ -252,16 +252,16 @@
       line-height: var(--usewc-layout-button-line-height);
       padding-block: var(--usewc-layout-button-padding-block);
       padding-inline: var(--usewc-layout-button-padding-inline);
-      font-family: var(--usewc-font-input-family);
-      font-size: var(--usewc-layout-button-font-size);
-      font-weight: var(--usewc-font-weight-semibold);
+      font-family: var(--usewc-font-button-family);
+      font-size: var(--usewc-font-button-size);
+      font-weight: var(--usewc-font-button-weight);
       white-space: nowrap;
       cursor: default;
       color: var(--usewc-color-button-text-static);
       background: var(--usewc-color-button-background-static);
-      background-size: var(--usewc-layout-button-background-size);
-      background-position: var(--usewc-layout-button-background-position);
-      background-repeat: var(--usewc-layout-button-background-repeat);
+      background-size: var(--usewc-effect-button-background-size);
+      background-position: var(--usewc-effect-button-background-position);
+      background-repeat: var(--usewc-effect-button-background-repeat);
       border: var(--usewc-layout-button-border) var(--usewc-effect-input-border-style)
         var(--usewc-color-button-border-static);
     }
@@ -350,28 +350,28 @@
     &.extra-small {
       --usewc-layout-button-padding-block: var(--usewc-layout-button-extra-small-padding-block);
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
-      --usewc-layout-button-font-size: var(--usewc-layout-button-extra-small-font-size);
+      --usewc-font-button-size: var(--usewc-font-button-extra-small-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-extra-small-line-height);
     }
 
     &.small {
       --usewc-layout-button-padding-block: var(--usewc-layout-button-small-padding-block);
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-small-padding-inline);
-      --usewc-layout-button-font-size: var(--usewc-layout-button-small-font-size);
+      --usewc-font-button-size: var(--usewc-font-button-small-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-small-line-height);
     }
 
     &.large {
       --usewc-layout-button-padding-block: var(--usewc-layout-button-large-padding-block);
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-large-padding-inline);
-      --usewc-layout-button-font-size: var(--usewc-layout-button-large-font-size);
+      --usewc-font-button-size: var(--usewc-font-button-large-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-large-line-height);
     }
 
     &.extra-large {
       --usewc-layout-button-padding-block: var(--usewc-layout-button-extra-large-padding-block);
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
-      --usewc-layout-button-font-size: var(--usewc-layout-button-extra-large-font-size);
+      --usewc-font-button-size: var(--usewc-font-button-extra-large-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-extra-large-line-height);
     }
   }
@@ -382,41 +382,41 @@
   use-select-input {
     --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-base-padding-block);
     --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-base-padding-inline);
-    --usewc-layout-select-trigger-font-size: var(--usewc-layout-button-base-font-size);
+    --usewc-font-select-trigger-size: var(--usewc-font-button-base-size);
     --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-line-height);
 
     &::part(trigger) {
       padding-block: var(--usewc-layout-select-trigger-padding-block);
       padding-inline: var(--usewc-layout-select-trigger-padding-inline);
-      font-size: var(--usewc-layout-select-trigger-font-size);
+      font-size: var(--usewc-font-select-trigger-size);
       line-height: var(--usewc-layout-select-trigger-line-height);
     }
 
     &.extra-small {
       --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-small-padding-block);
       --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
-      --usewc-layout-select-trigger-font-size: var(--usewc-layout-button-extra-small-font-size);
+      --usewc-font-select-trigger-size: var(--usewc-font-button-extra-small-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-small-line-height);
     }
 
     &.small {
       --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-small-padding-block);
       --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-small-padding-inline);
-      --usewc-layout-select-trigger-font-size: var(--usewc-layout-button-small-font-size);
+      --usewc-font-select-trigger-size: var(--usewc-font-button-small-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-small-line-height);
     }
 
     &.large {
       --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-large-padding-block);
       --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-large-padding-inline);
-      --usewc-layout-select-trigger-font-size: var(--usewc-layout-button-large-font-size);
+      --usewc-font-select-trigger-size: var(--usewc-font-button-large-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-large-line-height);
     }
 
     &.extra-large {
       --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-large-padding-block);
       --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
-      --usewc-layout-select-trigger-font-size: var(--usewc-layout-button-extra-large-font-size);
+      --usewc-font-select-trigger-size: var(--usewc-font-button-extra-large-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-large-line-height);
     }
   }
@@ -461,14 +461,14 @@
     label {
       grid-area: label;
       color: var(--usewc-color-form-label-text);
-      font-size: var(--usewc-layout-form-label-font-size);
+      font-size: var(--usewc-font-form-label-size);
     }
 
     > *:not(label) {
       margin: 0;
       grid-area: description;
       color: var(--usewc-color-form-helper-text);
-      font-size: var(--usewc-layout-form-helper-text-font-size);
+      font-size: var(--usewc-font-form-helper-text-size);
     }
   }
 
@@ -480,14 +480,14 @@
 
     label {
       color: var(--usewc-color-form-label-text);
-      font-size: var(--usewc-layout-form-label-font-size);
+      font-size: var(--usewc-font-form-label-size);
       line-height: var(--usewc-layout-form-label-line-height);
     }
 
     > *:not(label, input) {
       margin: 0;
       color: var(--usewc-color-form-helper-text);
-      font-size: var(--usewc-layout-form-helper-text-font-size);
+      font-size: var(--usewc-font-form-helper-text-size);
       line-height: var(--usewc-layout-form-helper-text-line-height);
     }
 
@@ -769,14 +769,14 @@
       &::before {
         content: attr(aria-label);
         padding: var(--usewc-layout-popover-menu-padding);
-        font-size: var(--usewc-layout-popover-menu-header-font-size);
+        font-size: var(--usewc-font-popover-menu-header-size);
         font-weight: var(--usewc-font-popover-menu-header-weight);
         color: var(--usewc-color-popover-menu-header-text);
       }
     }
 
     kbd {
-      font-family: var(--usewc-font-popover-menu-shortcut);
+      font-family: var(--usewc-font-popover-menu-shortcut-family);
       color: var(--usewc-color-popover-menu-shortcut);
       margin-inline-start: auto;
     }

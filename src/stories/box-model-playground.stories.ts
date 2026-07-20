@@ -106,7 +106,7 @@ const layoutProperties: ReadonlyArray<PlaygroundProperty> = [
     name: "font-size",
     list: "font",
     category: "layout",
-    defaultValue: "var(--usewc-layout-button-base-font-size)",
+    defaultValue: "var(--usewc-font-button-base-size)",
   },
 ];
 
