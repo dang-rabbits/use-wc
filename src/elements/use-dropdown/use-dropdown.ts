@@ -133,11 +133,12 @@ export class UseDropdown extends LitElement {
   }
 
   #handlePopoverClick(event: Event) {
-    if (event.target instanceof UseDropdown && event.target !== this) {
+    const target = event.target as HTMLElement;
+    const nearestDropdown = target.closest("use-dropdown");
+
+    if (nearestDropdown != null && nearestDropdown !== this) {
       return;
     }
-
-    const target = event.target as HTMLElement;
 
     if (target.getAttribute("menu-item")?.includes("keep-open")) {
       return;
