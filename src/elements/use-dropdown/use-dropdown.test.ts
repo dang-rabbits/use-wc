@@ -1,0 +1,117 @@
+import { expect, describe, it } from "vite-plus/test";
+import { userEvent } from "vite-plus/test/browser";
+import { render } from "vitest-browser-lit";
+import { html } from "lit";
+
+import "./use-dropdown";
+import { UseDropdown } from "./use-dropdown";
+
+// Popover show/hide dispatches its "toggle" event as a queued task rather than
+// synchronously, so state-based assertions need to wait past the current task.
+function waitForOpenState(dropdown: UseDropdown, expected: boolean) {
+  return new Promise<void>((resolve, reject) => {
+    const deadline = Date.now() + 1000;
+    const check = () => {
+      if (dropdown.matches(":state(open)") === expected) {
+        resolve();
+        return;
+      }
+      if (Date.now() > deadline) {
+        reject(new Error(`Timed out waiting for :state(open) to be ${expected}`));
+        return;
+      }
+      setTimeout(check, 10);
+    };
+    check();
+  });
+}
+
+// For "stays open" assertions there is no state transition to poll for, so instead give
+// any incorrectly-queued close a chance to land before asserting it didn't happen.
+function settle() {
+  return new Promise<void>((resolve) => setTimeout(resolve, 100));
+}
+
+describe("use-dropdown", () => {
+  describe("nested dropdowns", () => {
+    function renderNested() {
+      render(html`
+        <use-dropdown label="Menu">
+          <button role="menuitem">menu item 1</button>
+          <use-dropdown id="nested">
+            <div slot="trigger-content">▶</div>
+            <button role="menuitem">nested menu item 1</button>
+          </use-dropdown>
+        </use-dropdown>
+      `);
+
+      const outer = document.querySelector("use-dropdown") as UseDropdown;
+      const nested = document.querySelector("#nested") as UseDropdown;
+      return { outer, nested };
+    }
+
+    it("stays open when the nested trigger's slotted trigger-content is clicked", async () => {
+      const { outer, nested } = renderNested();
+      await outer.updateComplete;
+      await nested.updateComplete;
+
+      await userEvent.click(outer.trigger!);
+      await waitForOpenState(outer, true);
+
+      // Dispatched directly on the element (rather than via userEvent's coordinate-based
+      // click) so the target is unambiguously the slotted div, not whatever happens to be
+      // under its bounding-box center.
+      const triggerContent = nested.querySelector('[slot="trigger-content"]') as HTMLElement;
+      triggerContent.click();
+      await settle();
+
+      expect(outer.matches(":state(open)")).toBe(true);
+    });
+
+    it("stays open when the nested trigger's shadow button is clicked", async () => {
+      const { outer, nested } = renderNested();
+      await outer.updateComplete;
+      await nested.updateComplete;
+
+      await userEvent.click(outer.trigger!);
+      await waitForOpenState(outer, true);
+
+      nested.trigger?.click();
+      await settle();
+
+      expect(outer.matches(":state(open)")).toBe(true);
+    });
+
+    it("closes when a plain menu item is clicked", async () => {
+      const { outer } = renderNested();
+      await outer.updateComplete;
+
+      await userEvent.click(outer.trigger!);
+      await waitForOpenState(outer, true);
+
+      const item = outer.querySelector('[role="menuitem"]') as HTMLElement;
+      item.click();
+
+      await waitForOpenState(outer, false);
+    });
+
+    it("stays open when a menu-item='keep-open' item is clicked", async () => {
+      render(html`
+        <use-dropdown label="Menu">
+          <button role="menuitem" menu-item="keep-open">keep open item</button>
+        </use-dropdown>
+      `);
+      const outer = document.querySelector("use-dropdown") as UseDropdown;
+      await outer.updateComplete;
+
+      await userEvent.click(outer.trigger!);
+      await waitForOpenState(outer, true);
+
+      const item = outer.querySelector('[role="menuitem"]') as HTMLElement;
+      item.click();
+      await settle();
+
+      expect(outer.matches(":state(open)")).toBe(true);
+    });
+  });
+});
