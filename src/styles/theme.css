@@ -688,24 +688,29 @@
   }
 
   use-dropdown::part(menu) {
+    --min-size: 30vh;
+    --max-size: 80vh;
+
+    inset: unset;
+    height: unset;
+    position-anchor: --use-popover-trigger;
+    position: fixed;
+    position-area: bottom span-right;
+    min-block-size: var(--min-size);
+    max-block-size: min(100% - var(--usewc-layout-popover-menu-anchor-offset), var(--max-size));
+    position-try: most-height flip-block;
+    margin-block: var(--usewc-layout-popover-menu-anchor-offset);
+    overflow: auto;
     border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
       var(--usewc-color-popover-menu-border);
     padding: var(--usewc-layout-popover-menu-padding);
     background: var(--usewc-color-popover-menu-background);
     border-radius: var(--usewc-effect-popover-menu-border-radius);
-    margin: unset;
-  }
 
-  use-dropdown::part(menu) {
-    inset: unset;
-    position: fixed;
-    position-anchor: --use-popover-trigger;
-    inset-block-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset));
-    inset-inline-start: anchor(start);
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      flip-inline flip-block;
+    @supports (min-block-size: calc-size(fit-content, min(size, 1px))) {
+      min-block-size: calc-size(fit-content, min(size, var(--min-size)));
+      max-block-size: calc-size(stretch, min(size, var(--max-size)));
+    }
   }
 
   use-option,
@@ -795,6 +800,24 @@
       anchor(start) - var(--usewc-layout-popover-menu-padding) - var(--usewc-layout-popover-menu-border)
     );
     inset-inline-start: anchor(end);
+    overflow-y: auto;
+    block-size: stretch;
+    min-height: 30vh;
+    margin-block: var(--usewc-layout-popover-menu-anchor-offset);
+    position-try:
+      flip-block,
+      flip-inline,
+      flip-inline flip-block,
+      --use-popover-submenu-fill-viewport;
+  }
+
+  @position-try --use-popover-submenu-fill-viewport {
+    inset-block-start: calc(
+      anchor(start) - var(--usewc-layout-popover-menu-padding) - var(--usewc-layout-popover-menu-border)
+    );
+    inset-block-end: 0;
+    inset-inline-start: anchor(end);
+    block-size: stretch;
   }
 
   use-dropdown [aria-checked="true"],
