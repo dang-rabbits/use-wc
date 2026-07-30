@@ -751,8 +751,7 @@ const meta: Meta = {
           id=${GENERATED_ID}
           style="font-family: monospace; padding: 1rem; background: var(--usewc-color-code-background); color: var(--usewc-color-code-text); border: 1px solid var(--usewc-color-code-border); border-radius: 0.25rem; white-space: pre-wrap; min-height: 4rem; margin: 0;"
         >
-/* (no values yet) */</pre
-        >
+/* (no values yet) */</pre>
       </div>
     </div>
   `,

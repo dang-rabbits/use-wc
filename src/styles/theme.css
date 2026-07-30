@@ -16,8 +16,8 @@
 
   :is(button, a, details summary, use-widget):not(.appearance-native):focus-visible,
   :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input, use-duration-input):not(
-      .appearance-native
-    ):focus,
+    .appearance-native
+  ):focus,
   input[type="file"]:not(.appearance-native):focus-visible,
   use-dropdown:not(.appearance-native)::part(trigger):focus-visible,
   .appearance-input:has(input:focus) {
