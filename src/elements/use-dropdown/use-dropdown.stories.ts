@@ -123,19 +123,34 @@ export const CustomAccessibleItems: Story = {
 
 export const CustomTriggerContent: Story = {
   render: () => html`
-    <use-dropdown>
+    <use-dropdown aria-label="Menu">
       <svg
         slot="trigger-content"
         width="12"
         height="12"
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
-        aria-label="Menu"
       >
         <rect y="2" width="24" height="2" fill="currentColor" />
         <rect y="11" width="24" height="2" fill="currentColor" />
         <rect y="20" width="24" height="2" fill="currentColor" />
       </svg>
+      <button role="menuitem">menu item 1</button>
+      <button role="menuitem">menu item 2</button>
+      <button role="menuitem">menu item 3</button>
+    </use-dropdown>
+  `,
+};
+
+export const IconOnly: Story = {
+  parameters: {
+    docs: {
+      description:
+        "Omit `label` and set `aria-label` on `use-dropdown` for an icon-only trigger with a real accessible name.",
+    },
+  },
+  render: () => html`
+    <use-dropdown aria-label="Menu">
       <button role="menuitem">menu item 1</button>
       <button role="menuitem">menu item 2</button>
       <button role="menuitem">menu item 3</button>

@@ -1,5 +1,6 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { ifDefined } from "lit/directives/if-defined.js";
 import createId from "../../utils/create-id";
 import { getTabIndex } from "tabbable";
 
@@ -42,6 +43,9 @@ const TABBABLE_SELECTOR = `
  * items that allows a user to manipulate a user interface or content. Read the
  * WCAG guidance for more details:
  * [https://www.w3.org/WAI/ARIA/apg/patterns/menubar/](https://www.w3.org/WAI/ARIA/apg/patterns/menubar/)
+ *
+ * For an icon-only trigger, omit `label` and set `aria-label` on `use-dropdown` itself — it is
+ * forwarded to the trigger button so the control still has an accessible name.
  *
  * @slot default
  * @slot trigger-content
@@ -98,6 +102,10 @@ export class UseDropdown extends LitElement {
 
   get #popoverId() {
     return `${this.getId()}-dropdown`;
+  }
+
+  get #triggerAriaLabel() {
+    return this.getAttribute("aria-label") ?? undefined;
   }
 
   #findTabbables() {
@@ -302,6 +310,7 @@ export class UseDropdown extends LitElement {
         aria-controls=${this.#popoverId}
         aria-haspopup="menu"
         aria-expanded="false"
+        aria-label=${ifDefined(this.#triggerAriaLabel)}
         ?disabled=${this.disabled}
         @keydown=${this.#handleKeyDown}
       >

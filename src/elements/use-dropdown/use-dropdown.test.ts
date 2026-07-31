@@ -120,6 +120,35 @@ describe("use-dropdown", () => {
     });
   });
 
+  describe("accessible name", () => {
+    it("forwards the host's aria-label to the trigger button", async () => {
+      render(html`
+        <use-dropdown aria-label="Menu">
+          <button role="menuitem">menu item 1</button>
+        </use-dropdown>
+      `);
+
+      const dropdown = document.querySelector("use-dropdown") as UseDropdown;
+      await dropdown.updateComplete;
+
+      expect(dropdown.trigger?.getAttribute("aria-label")).toBe("Menu");
+    });
+
+    it("leaves no visible label text when label is omitted", async () => {
+      render(html`
+        <use-dropdown aria-label="Menu">
+          <button role="menuitem">menu item 1</button>
+        </use-dropdown>
+      `);
+
+      const dropdown = document.querySelector("use-dropdown") as UseDropdown;
+      await dropdown.updateComplete;
+
+      const label = dropdown.shadowRoot!.querySelector('[part="trigger-label"]') as HTMLElement;
+      expect(label.textContent?.trim()).toBe("");
+    });
+  });
+
   describe("viewport overflow", () => {
     it("keeps a menu taller than the viewport within bounds and scrollable", async () => {
       const items = Array.from({ length: 60 }, (_, index) => index + 1);
