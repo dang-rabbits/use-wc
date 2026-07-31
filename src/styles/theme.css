@@ -714,10 +714,13 @@
     height: unset;
     position-anchor: --use-popover-trigger;
     position: fixed;
-    position-area: bottom span-right;
+    position-area: block-end span-inline-end;
     min-block-size: var(--min-size);
     max-block-size: min(100% - var(--usewc-layout-popover-menu-anchor-offset), var(--max-size));
-    position-try: flip-block;
+    position-try:
+      flip-block,
+      flip-inline,
+      flip-inline flip-block;
     margin-block: var(--usewc-layout-popover-menu-anchor-offset);
     overflow: auto;
     border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
@@ -730,6 +733,10 @@
       min-block-size: calc-size(fit-content, min(size, var(--min-size)));
       max-block-size: calc-size(stretch, min(size, var(--max-size)));
     }
+  }
+
+  use-dropdown[inlinealign="end"]::part(menu) {
+    position-area: block-end span-inline-start;
   }
 
   use-option,
@@ -814,6 +821,12 @@
   }
 
   use-dropdown use-dropdown::part(menu) {
+    /*
+     * !important: this must win over use-dropdown[inlinealign="end"]::part(menu) above, which
+     * has higher specificity (an attribute selector) than this descendant selector does. Nested
+     * submenus always position to the side of their parent trigger, independent of inlinealign.
+     */
+    position-area: block-end span-inline-end !important;
     inset-inline-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset) * 2);
     inset-block-start: calc(
       anchor(start) - var(--usewc-layout-popover-menu-anchor-offset) -

@@ -8,10 +8,17 @@ const meta: Meta<UseDropdown> = {
   tags: ["autodocs", "!dev", "utility"],
   args: {
     disabled: false,
+    inlinealign: "start",
+  },
+  argTypes: {
+    inlinealign: {
+      control: { type: "select" },
+      options: ["start", "end"],
+    },
   },
   render: (args) => {
     return html`
-      <use-dropdown ?disabled=${args.disabled} label="Dropdown">
+      <use-dropdown ?disabled=${args.disabled} inlinealign=${args.inlinealign} label="Dropdown">
         <button role="menuitem">menu item 1</button>
         <button role="menuitem">menu item 2</button>
         <button role="menuitem">menu item 3</button>
