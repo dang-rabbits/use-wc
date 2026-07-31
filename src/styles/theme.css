@@ -15,28 +15,19 @@
   }
 
   :is(button, a, details summary, use-widget):not(.appearance-native):focus-visible,
-  :is(
-    input,
-    textarea,
-    select,
-    use-date-input,
-    use-time-input,
-    use-datetime-input,
-    use-duration-input
-  ):not(.appearance-native):focus,
+  :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input, use-duration-input):not(
+    .appearance-native
+  ):focus,
   input[type="file"]:not(.appearance-native):focus-visible,
   use-dropdown:not(.appearance-native)::part(trigger):focus-visible,
   .appearance-input:has(input:focus) {
-    outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style)
-      var(--usewc-color-outline);
+    outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
     outline-offset: var(--usewc-effect-outline-offset);
     transition: var(--usewc-effect-outline-transition);
   }
 
   :is(
-    input:not(
-      :is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])
-    ),
+    input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])),
     select,
     textarea,
     .appearance-input,
@@ -232,17 +223,11 @@
 
     /* Scoped color tokens — default to base, remapped by variant classes */
     --usewc-color-button-text-static: var(--usewc-color-button-base-text-static);
-    --usewc-color-button-text-static-auxiliary: var(
-      --usewc-color-button-base-text-static-auxiliary
-    );
+    --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-base-text-static-auxiliary);
     --usewc-color-button-background-static: var(--usewc-color-button-base-background-static);
-    --usewc-color-button-background-static-auxiliary: var(
-      --usewc-color-button-base-background-static-auxiliary
-    );
+    --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-base-background-static-auxiliary);
     --usewc-color-button-border-static: var(--usewc-color-button-base-border-static);
-    --usewc-color-button-border-static-auxiliary: var(
-      --usewc-color-button-base-border-static-auxiliary
-    );
+    --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-base-border-static-auxiliary);
     --usewc-color-button-text-hover: var(--usewc-color-button-base-text-hover);
     --usewc-color-button-background-hover: var(--usewc-color-button-base-background-hover);
     --usewc-color-button-border-hover: var(--usewc-color-button-base-border-hover);
@@ -298,7 +283,7 @@
     }
 
     &:active:not([type="file"], use-dropdown),
-    &:active::part(trigger),
+    &::part(trigger):active,
     &:active::file-selector-button {
       background: var(--usewc-color-button-background-active);
       border-color: var(--usewc-color-button-border-active);
@@ -313,17 +298,11 @@
 
     &.primary {
       --usewc-color-button-text-static: var(--usewc-color-button-primary-text-static);
-      --usewc-color-button-text-static-auxiliary: var(
-        --usewc-color-button-primary-text-static-auxiliary
-      );
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-primary-text-static-auxiliary);
       --usewc-color-button-background-static: var(--usewc-color-button-primary-background-static);
-      --usewc-color-button-background-static-auxiliary: var(
-        --usewc-color-button-primary-background-static-auxiliary
-      );
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-primary-background-static-auxiliary);
       --usewc-color-button-border-static: var(--usewc-color-button-primary-border-static);
-      --usewc-color-button-border-static-auxiliary: var(
-        --usewc-color-button-primary-border-static-auxiliary
-      );
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-primary-border-static-auxiliary);
       --usewc-color-button-text-hover: var(--usewc-color-button-primary-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-primary-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-primary-border-hover);
@@ -334,17 +313,11 @@
 
     &.danger {
       --usewc-color-button-text-static: var(--usewc-color-button-danger-text-static);
-      --usewc-color-button-text-static-auxiliary: var(
-        --usewc-color-button-danger-text-static-auxiliary
-      );
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-danger-text-static-auxiliary);
       --usewc-color-button-background-static: var(--usewc-color-button-danger-background-static);
-      --usewc-color-button-background-static-auxiliary: var(
-        --usewc-color-button-danger-background-static-auxiliary
-      );
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-danger-background-static-auxiliary);
       --usewc-color-button-border-static: var(--usewc-color-button-danger-border-static);
-      --usewc-color-button-border-static-auxiliary: var(
-        --usewc-color-button-danger-border-static-auxiliary
-      );
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-danger-border-static-auxiliary);
       --usewc-color-button-text-hover: var(--usewc-color-button-danger-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-danger-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-danger-border-hover);
@@ -355,17 +328,11 @@
 
     &.clear {
       --usewc-color-button-text-static: var(--usewc-color-button-clear-text-static);
-      --usewc-color-button-text-static-auxiliary: var(
-        --usewc-color-button-clear-text-static-auxiliary
-      );
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-clear-text-static-auxiliary);
       --usewc-color-button-background-static: var(--usewc-color-button-clear-background-static);
-      --usewc-color-button-background-static-auxiliary: var(
-        --usewc-color-button-clear-background-static-auxiliary
-      );
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-clear-background-static-auxiliary);
       --usewc-color-button-border-static: var(--usewc-color-button-clear-border-static);
-      --usewc-color-button-border-static-auxiliary: var(
-        --usewc-color-button-clear-border-static-auxiliary
-      );
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-clear-border-static-auxiliary);
       --usewc-color-button-text-hover: var(--usewc-color-button-clear-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-clear-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-clear-border-hover);
@@ -426,12 +393,8 @@
     }
 
     &.extra-small {
-      --usewc-layout-select-trigger-padding-block: var(
-        --usewc-layout-button-extra-small-padding-block
-      );
-      --usewc-layout-select-trigger-padding-inline: var(
-        --usewc-layout-button-extra-small-padding-inline
-      );
+      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-small-padding-block);
+      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
       --usewc-font-select-trigger-size: var(--usewc-font-button-extra-small-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-small-line-height);
     }
@@ -451,12 +414,8 @@
     }
 
     &.extra-large {
-      --usewc-layout-select-trigger-padding-block: var(
-        --usewc-layout-button-extra-large-padding-block
-      );
-      --usewc-layout-select-trigger-padding-inline: var(
-        --usewc-layout-button-extra-large-padding-inline
-      );
+      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-large-padding-block);
+      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
       --usewc-font-select-trigger-size: var(--usewc-font-button-extra-large-size);
       --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-large-line-height);
     }
@@ -478,8 +437,7 @@
     padding-block: var(--usewc-layout-code-padding-block);
     border-radius: var(--usewc-effect-code-border-radius);
     line-height: var(--usewc-layout-code-line-height);
-    border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid)
-      var(--usewc-color-code-border);
+    border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid) var(--usewc-color-code-border);
   }
 
   use-selector input:is([type="checkbox"], [type="radio"]),
@@ -577,9 +535,7 @@
     align-items: center;
     width: fit-content;
     gap: var(--usewc-layout-input-gap-inline);
-    padding-inline: calc(
-      var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline)
-    );
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
     &::part(date),
     &::part(time) {
@@ -626,9 +582,7 @@
     align-items: center;
     width: fit-content;
     gap: var(--usewc-layout-input-segment-padding-inline);
-    padding-inline: calc(
-      var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline)
-    );
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
     &::part(segment-input) {
       all: unset;
@@ -667,9 +621,7 @@
     align-items: center;
     width: fit-content;
     gap: var(--usewc-layout-input-gap-inline);
-    padding-inline: calc(
-      var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline)
-    );
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
     &::part(segment) {
       display: inline-flex;
@@ -706,9 +658,7 @@
   select:not(.appearance-native),
   use-dropdown::part(trigger),
   use-dropdown use-dropdown::part(trigger) {
-    padding-inline-end: calc(
-      var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width)
-    );
+    padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
     background-image: var(--usewc-effect-dropdown-trigger-background-image, none);
     /* TODO use logical position */
     background-position: right var(--usewc-layout-input-padding-inline) center;
@@ -791,8 +741,7 @@
     background-color: var(--usewc-color-popover-menu-item-background-active);
   }
 
-  use-dropdown
-    :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown),
+  use-dropdown :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown),
   use-listbox-input {
     &:not(use-dropdown):hover,
     &::part(trigger):hover {
@@ -803,8 +752,7 @@
     &:focus-visible,
     &::part(trigger):focus-visible {
       background-color: var(--usewc-color-popover-menu-item-background-static);
-      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style)
-        var(--usewc-color-outline);
+      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
       outline-offset: var(--usewc-effect-outline-offset-flush);
       transition: var(--usewc-effect-outline-transition);
       color: var(--usewc-color-popover-menu-item-text-focus);
@@ -816,9 +764,7 @@
     use-option,
     &:has(+ :is([role="menuitemcheckbox"], [role="menuitemradio"])),
     & + :is(:is([role="menuitemcheckbox"], [role="menuitemradio"])) {
-      padding-inline-start: calc(
-        var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width)
-      );
+      padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
     }
   }
 
@@ -842,8 +788,8 @@
 
     hr {
       border: 0;
-      border-block-start: var(--usewc-layout-popover-menu-border)
-        var(--usewc-effect-popover-menu-border-style) var(--usewc-color-popover-menu-border);
+      border-block-start: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+        var(--usewc-color-popover-menu-border);
       margin-block: var(--usewc-layout-popover-menu-padding);
     }
   }
