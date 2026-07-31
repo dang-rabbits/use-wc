@@ -174,4 +174,51 @@ describe("use-dropdown", () => {
       expect(rect.top).toBeGreaterThanOrEqual(triggerRect.bottom);
     });
   });
+
+  describe("menu alignment", () => {
+    // Centered via flexbox, rather than a fixed pixel margin, so the trigger sits equally
+    // clear of both viewport edges regardless of the test runner's viewport width —
+    // otherwise flip-inline or the viewport clamp could mask a real regression.
+    async function renderAligned(inlinealign?: "start" | "end") {
+      render(html`
+        <div style="display: flex; justify-content: center;">
+          <use-dropdown label="Menu" inlinealign=${inlinealign ?? "start"}>
+            <button role="menuitem">menu item 1</button>
+            <button role="menuitem">menu item 2</button>
+            <button role="menuitem">menu item 3</button>
+          </use-dropdown>
+        </div>
+      `);
+
+      const dropdown = document.querySelector("use-dropdown") as UseDropdown;
+      await dropdown.updateComplete;
+      return dropdown;
+    }
+
+    it("aligns the menu's inline-start edge with the trigger by default", async () => {
+      const dropdown = await renderAligned();
+
+      await userEvent.click(dropdown.trigger!);
+      await waitForOpenState(dropdown, true);
+
+      const menu = dropdown.shadowRoot!.querySelector('[part="menu"]') as HTMLElement;
+      const menuRect = menu.getBoundingClientRect();
+      const triggerRect = dropdown.trigger!.getBoundingClientRect();
+
+      expect(menuRect.left).toBeCloseTo(triggerRect.left, 0);
+    });
+
+    it("aligns the menu's inline-end edge with the trigger when inlinealign is end", async () => {
+      const dropdown = await renderAligned("end");
+
+      await userEvent.click(dropdown.trigger!);
+      await waitForOpenState(dropdown, true);
+
+      const menu = dropdown.shadowRoot!.querySelector('[part="menu"]') as HTMLElement;
+      const menuRect = menu.getBoundingClientRect();
+      const triggerRect = dropdown.trigger!.getBoundingClientRect();
+
+      expect(menuRect.right).toBeCloseTo(triggerRect.right, 0);
+    });
+  });
 });

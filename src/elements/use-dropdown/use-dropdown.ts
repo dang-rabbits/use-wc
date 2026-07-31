@@ -53,6 +53,9 @@ const TABBABLE_SELECTOR = `
  * @slot trigger-arrow
  *
  * @state open `use-dropdown:state(open)`: The open state of the dropdown.
+ * @attr inlinealign `"start" | "end"`: Aligns the menu along the inline axis relative to the
+ * trigger. Applies to top-level menus only; nested submenus are always positioned to the side
+ * of their parent trigger.
  */
 @customElement("use-dropdown")
 export class UseDropdown extends LitElement {
@@ -80,6 +83,16 @@ export class UseDropdown extends LitElement {
 
   @property()
   label!: string;
+
+  /**
+   * Aligns the menu along the inline axis relative to the trigger. Applies to top-level
+   * menus; nested submenus are always positioned to the side of their parent trigger.
+   *
+   * - `start`: the menu's inline-start edge aligns with the trigger's inline-start edge
+   * - `end`: the menu's inline-end edge aligns with the trigger's inline-end edge
+   */
+  @property({ type: String, reflect: true })
+  inlinealign: "start" | "end" = "start";
 
   constructor() {
     super();
