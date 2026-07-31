@@ -5,6 +5,11 @@ import { html } from "lit";
 
 import "./use-dropdown";
 import { UseDropdown } from "./use-dropdown";
+// The dropdown's positioning and scroll behavior live in the design system's theme layer,
+// not in the component's own styles, so it has to be loaded explicitly here. theme.css
+// consumes custom properties defined in tokens.css, so both are required.
+import "../../styles/tokens.css";
+import "../../styles/theme.css";
 
 // Popover show/hide dispatches its "toggle" event as a queued task rather than
 // synchronously, so state-based assertions need to wait past the current task.
@@ -112,6 +117,32 @@ describe("use-dropdown", () => {
       await settle();
 
       expect(outer.matches(":state(open)")).toBe(true);
+    });
+  });
+
+  describe("viewport overflow", () => {
+    it("keeps a menu taller than the viewport within bounds and scrollable", async () => {
+      const items = Array.from({ length: 60 }, (_, index) => index + 1);
+      render(html`
+        <use-dropdown label="Menu">
+          ${items.map((item) => html`<button role="menuitem">menu item ${item}</button>`)}
+        </use-dropdown>
+      `);
+
+      const dropdown = document.querySelector("use-dropdown") as UseDropdown;
+      await dropdown.updateComplete;
+
+      await userEvent.click(dropdown.trigger!);
+      await waitForOpenState(dropdown, true);
+
+      const menu = dropdown.shadowRoot!.querySelector('[part="menu"]') as HTMLElement;
+      const rect = menu.getBoundingClientRect();
+      const triggerRect = dropdown.trigger!.getBoundingClientRect();
+
+      expect(rect.top).toBeGreaterThanOrEqual(0);
+      expect(rect.bottom).toBeLessThanOrEqual(window.innerHeight);
+      expect(menu.scrollHeight).toBeGreaterThan(menu.clientHeight);
+      expect(rect.top).toBeGreaterThanOrEqual(triggerRect.bottom);
     });
   });
 });

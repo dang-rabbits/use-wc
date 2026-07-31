@@ -283,7 +283,7 @@
     }
 
     &:active:not([type="file"], use-dropdown),
-    &:active::part(trigger),
+    &::part(trigger):active,
     &:active::file-selector-button {
       background: var(--usewc-color-button-background-active);
       border-color: var(--usewc-color-button-border-active);
@@ -688,24 +688,29 @@
   }
 
   use-dropdown::part(menu) {
+    --min-size: 30vh;
+    --max-size: 80vh;
+
+    inset: unset;
+    height: unset;
+    position-anchor: --use-popover-trigger;
+    position: fixed;
+    position-area: bottom span-right;
+    min-block-size: var(--min-size);
+    max-block-size: min(100% - var(--usewc-layout-popover-menu-anchor-offset), var(--max-size));
+    position-try: flip-block;
+    margin-block: var(--usewc-layout-popover-menu-anchor-offset);
+    overflow: auto;
     border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
       var(--usewc-color-popover-menu-border);
     padding: var(--usewc-layout-popover-menu-padding);
     background: var(--usewc-color-popover-menu-background);
     border-radius: var(--usewc-effect-popover-menu-border-radius);
-    margin: unset;
-  }
 
-  use-dropdown::part(menu) {
-    inset: unset;
-    position: fixed;
-    position-anchor: --use-popover-trigger;
-    inset-block-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset));
-    inset-inline-start: anchor(start);
-    position-try-fallbacks:
-      flip-block,
-      flip-inline,
-      flip-inline flip-block;
+    @supports (min-block-size: calc-size(fit-content, min(size, 1px))) {
+      min-block-size: calc-size(fit-content, min(size, var(--min-size)));
+      max-block-size: calc-size(stretch, min(size, var(--max-size)));
+    }
   }
 
   use-option,
@@ -790,11 +795,15 @@
   }
 
   use-dropdown use-dropdown::part(menu) {
-    margin-inline-start: 0.5rem;
+    inset-inline-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset) * 2);
     inset-block-start: calc(
-      anchor(start) - var(--usewc-layout-popover-menu-padding) - var(--usewc-layout-popover-menu-border)
+      anchor(start) - var(--usewc-layout-popover-menu-anchor-offset) -
+        var(--usewc-layout-popover-menu-item-padding-block)
     );
-    inset-inline-start: anchor(end);
+    position-try:
+      flip-block,
+      flip-inline,
+      flip-inline flip-block;
   }
 
   use-dropdown [aria-checked="true"],
