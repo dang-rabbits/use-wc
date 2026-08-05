@@ -1,6 +1,21 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
+import { customElement } from "lit/decorators.js";
 import { UseDatePicker } from "./use-date-picker";
+
+@customElement("demo-date-picker-render-day")
+class DemoDatePickerRenderDay extends UseDatePicker {
+  renderDay(data: { day: number; date: string }, h: typeof html) {
+    const isWeekend = new Date(`${data.date}T00:00:00`).getDay() % 6 === 0;
+    return isWeekend ? h`<strong>${data.day}</strong>` : super.renderDay(data, h);
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    "demo-date-picker-render-day": DemoDatePickerRenderDay;
+  }
+}
 
 const meta: Meta<UseDatePicker> = {
   component: "use-date-picker",
@@ -121,4 +136,51 @@ export const StartAndEndDates: StoryObj<UseDatePicker> = {
       controls
     ></use-date-picker>`;
   },
+};
+
+/**
+ * The `renderDay` property accepts a function `({ day, date }, html) => TemplateResult | string`
+ * that replaces the default day number inside every cell, including leading and trailing
+ * cells from the adjacent month. Use it to add badges, links, or any inline markup per day.
+ */
+export const CustomRenderer: StoryObj<UseDatePicker> = {
+  render: () => {
+    const holidays: Record<string, string> = {
+      "2026-03-17": "🍀",
+      "2026-03-25": "🎉",
+    };
+    return html`
+      <use-date-picker
+        year="2026"
+        month="3"
+        .renderDay=${({ day, date }: { day: number; date: string }, h: typeof html) =>
+          holidays[date] ? h`${day}<span>&nbsp;${holidays[date]}</span>` : String(day)}
+      ></use-date-picker>
+    `;
+  },
+};
+
+/**
+ * Named slots (`date-YYYY-MM-DD`) let you inject per-date content from light DOM
+ * without touching JavaScript. The slot replaces whatever `renderDay` returns.
+ */
+export const NamedSlots: StoryObj<UseDatePicker> = {
+  render: () => html`
+    <use-date-picker year="2026" month="3">
+      <span slot="date-2026-03-01" title="First of the month">1️⃣</span>
+      <span slot="date-2026-03-17" title="St. Patrick's Day">🍀</span>
+    </use-date-picker>
+  `,
+};
+
+/**
+ * To customize day rendering for every instance of a date picker in your app, extend
+ * `UseDatePicker` and override `renderDay` on the subclass instead of setting the
+ * property per instance. The `html` argument works the same way inside the override,
+ * and `super.renderDay(data, html)` falls back to the default (or parent override's)
+ * rendering for dates you don't want to customize.
+ */
+export const SubclassOverride: StoryObj<UseDatePicker> = {
+  render: () =>
+    html`<demo-date-picker-render-day year="2026" month="3"></demo-date-picker-render-day>`,
 };
