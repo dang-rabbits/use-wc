@@ -5,6 +5,17 @@ import { getMonthNames } from "../../utils/date-time-aria-labels";
 
 type LitHtml = typeof html;
 
+/**
+ * Renders the label inside a single month cell. `month` is 1-12; `name` is
+ * the locale's short month name. The `html` argument is Lit's tag function,
+ * passed in so consumers do not need to import `lit` themselves — use it to
+ * return markup, since a plain returned string is escaped.
+ *
+ * See the `renderMonth` usage examples on `UseMonthPicker` — this type's own
+ * docblock isn't picked up by the custom-elements-manifest analyzer (it only
+ * reads class and member JSDoc), so it never reaches the generated docs or
+ * Storybook.
+ */
 export type UseMonthPickerRenderMonth = (
   data: { month: number; name: string },
   html: LitHtml,
@@ -13,6 +24,25 @@ export type UseMonthPickerRenderMonth = (
 /**
  * A standalone form-associated year-month picker.
  * Emits ISO 8601 `YYYY-MM` values.
+ *
+ * Customize month rendering on an instance:
+ * ```ts
+ * monthPicker.renderMonth = ({ month, name }, html) =>
+ *   month === 12 ? html`${name} ❄️` : name;
+ * ```
+ *
+ * Or override on a subclass to apply it to every instance, falling back to
+ * `super.renderMonth(...)` for months you don't want to customize:
+ * ```ts
+ * class MyMonthPicker extends UseMonthPicker {
+ *   renderMonth(data: { month: number; name: string }, html: LitHtml) {
+ *     if (data.month === 12) {
+ *       return html`${data.name} ❄️`;
+ *     }
+ *     return super.renderMonth(data, html);
+ *   }
+ * }
+ * ```
  *
  * @element use-month-picker
  * @fires use-change - Fired when the user selects a month. Detail: `{ value: string }`
@@ -228,7 +258,19 @@ export class UseMonthPicker extends UseLocaleElement {
     );
   }
 
-  renderMonth: UseMonthPickerRenderMonth = ({ name }) => name;
+  /**
+   * See {@link UseMonthPickerRenderMonth}. Assigning a new function on an
+   * instance (e.g. via `.renderMonth=${fn}` in a Lit template) after first
+   * render does not schedule a re-render on its own — call `requestUpdate()`
+   * if needed.
+   *
+   * Declared as a regular method rather than a class field so subclass
+   * overrides can call `super.renderMonth(data, html)` to fall back to the
+   * default (or a parent override's) rendering.
+   */
+  renderMonth(data: { month: number; name: string }, _html: LitHtml): TemplateResult | string {
+    return data.name;
+  }
 
   #handleKeyDown = (event: KeyboardEvent) => {
     if (!this.navigationEnabled) return;

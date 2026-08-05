@@ -66,6 +66,22 @@ function generateMarkdown(declaration) {
     );
   }
 
+  const methods = (declaration.members ?? []).filter((member) => member.kind === "method");
+  if (methods.length > 0) {
+    const rows = methods.map((method) => {
+      const params = (method.parameters ?? [])
+        .map((parameter) => `${parameter.name}: ${parameter.type?.text ?? "unknown"}`)
+        .join(", ");
+      const signature = `(${params})${method.return?.type?.text ? `: ${method.return.type.text}` : ""}`;
+      return [
+        escapeCell(method.name),
+        `\`${escapeCell(signature)}\``,
+        descriptionText(method.description),
+      ];
+    });
+    sections.push(`## Methods\n\n${renderTable(["Name", "Signature", "Description"], rows)}`);
+  }
+
   const events = declaration.events ?? [];
   if (events.length > 0) {
     const rows = events.map((event) => [

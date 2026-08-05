@@ -13,6 +13,25 @@ const INITIAL_TABINDEX_ATTR = "data-usewc-calendar-tabindex";
 
 type LitHtml = typeof html;
 
+/**
+ * Renders the content of a single day cell. Called for every cell in the
+ * grid, including leading and trailing filler cells from the previous and
+ * next month, so `date` may fall outside the displayed month.
+ *
+ * `day` is the numeric day of month (not zero-padded); `date` is the ISO
+ * `YYYY-MM-DD` string for that cell. The `html` argument is Lit's tag
+ * function, passed in so consumers do not need to import `lit` themselves —
+ * use it to return markup, since a plain returned string is escaped.
+ *
+ * The result only controls the cell's inner content, not the cell wrapper's
+ * `part` or ARIA attributes. Light DOM content slotted into
+ * `date-{YYYY-MM-DD}` replaces the result for that date.
+ *
+ * See the `renderDay` usage examples on `UseDatePicker`/`UseWeekPicker` — this
+ * type's own docblock isn't picked up by the custom-elements-manifest
+ * analyzer (it only reads class and member JSDoc), so it never reaches the
+ * generated docs or Storybook.
+ */
 export type UseCalendarRenderDay = (
   data: { day: number; date: string },
   html: LitHtml,
@@ -395,7 +414,19 @@ export class UseCalendarBase extends UseLocaleElement {
     }
   }
 
-  renderDay: UseCalendarRenderDay = ({ day }) => String(day);
+  /**
+   * See {@link UseCalendarRenderDay}. Assigning a new function on an
+   * instance (e.g. via `.renderDay=${fn}` in a Lit template) after first
+   * render does not schedule a re-render on its own — call `requestUpdate()`
+   * if needed.
+   *
+   * Declared as a regular method rather than a class field so subclass
+   * overrides can call `super.renderDay(data, html)` to fall back to the
+   * default (or a parent override's) rendering.
+   */
+  renderDay(data: { day: number; date: string }, _html: LitHtml): TemplateResult | string {
+    return String(data.day);
+  }
 
   get #todayDate() {
     return this.getDateForDay(new Date().getDate());

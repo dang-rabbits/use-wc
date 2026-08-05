@@ -6,6 +6,25 @@ import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
 /**
  * A week-granularity date picker. Value format: YYYY-Www (ISO 8601 week).
  *
+ * Customize day rendering on an instance:
+ * ```ts
+ * weekPicker.renderDay = ({ day, date }, html) =>
+ *   date === "2026-03-17" ? html`<strong>${day}</strong>` : String(day);
+ * ```
+ *
+ * Or override on a subclass to apply it to every instance, falling back to
+ * `super.renderDay(...)` for dates you don't want to customize:
+ * ```ts
+ * class MyWeekPicker extends UseWeekPicker {
+ *   renderDay(data: { day: number; date: string }, html: LitHtml) {
+ *     if (data.date === "2026-03-17") {
+ *       return html`<strong>${data.day}</strong>`;
+ *     }
+ *     return super.renderDay(data, html);
+ *   }
+ * }
+ * ```
+ *
  * @fires use-change - Fired on selection with detail `{ value: string; dates: string[] }`
  */
 @customElement("use-week-picker")
