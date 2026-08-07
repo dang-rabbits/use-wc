@@ -200,7 +200,7 @@
       calc(l + var(--usewc-effect-button-primary-border-step) * var(--usewc-effect-button-primary-border-direction)) c h
   );
   --usewc-color-button-primary-border-static-auxiliary: oklch(
-    from var(--usewc-color-button-primary-background-static) calc(l + 0.08) calc(c * 0.92) h
+    from var(--usewc-color-button-primary-background-static) l c h / 0.55
   );
   --usewc-color-button-primary-border-hover: oklch(
     from var(--usewc-color-button-primary-background-hover)
@@ -220,7 +220,9 @@
   --usewc-color-button-primary-background-active-auxiliary: oklch(
     from var(--usewc-color-button-primary-background-static) l c h / 0.15
   );
-  --usewc-color-button-primary-border-hover-auxiliary: var(--usewc-color-button-primary-background-static);
+  --usewc-color-button-primary-border-hover-auxiliary: oklch(
+    from var(--usewc-color-button-primary-background-static) l c h / 0.85
+  );
   /* -- Danger color: derived */
   --usewc-color-button-danger-background-hover: oklch(
     from var(--usewc-color-button-danger-background-static)
@@ -235,7 +237,7 @@
       calc(l + var(--usewc-effect-button-danger-border-step) * var(--usewc-effect-button-danger-border-direction)) c h
   );
   --usewc-color-button-danger-border-static-auxiliary: oklch(
-    from var(--usewc-color-button-danger-background-static) calc(l + 0.08) calc(c * 0.92) h
+    from var(--usewc-color-button-danger-background-static) l c h / 0.55
   );
   --usewc-color-button-danger-border-hover: oklch(
     from var(--usewc-color-button-danger-background-hover)
@@ -253,7 +255,9 @@
   --usewc-color-button-danger-background-active-auxiliary: oklch(
     from var(--usewc-color-button-danger-background-static) l c h / 0.15
   );
-  --usewc-color-button-danger-border-hover-auxiliary: var(--usewc-color-button-danger-background-static);
+  --usewc-color-button-danger-border-hover-auxiliary: oklch(
+    from var(--usewc-color-button-danger-background-static) l c h / 0.85
+  );
   /* -- Cancel color: no fill to derive from, so it tints from the ink color instead */
   --usewc-color-button-clear-background-hover: oklch(from var(--usewc-color-document-text) l c h / 0.07);
   --usewc-color-button-clear-background-active: oklch(from var(--usewc-color-document-text) l c h / 0.13);
@@ -335,7 +339,7 @@
   --usewc-font-button-extra-small-size: var(--usewc-font-size-12);
   --usewc-layout-button-extra-small-line-height: var(--usewc-line-height-18);
   /* -- Small size */
-  --usewc-layout-button-small-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
+  --usewc-layout-button-small-padding-block: calc(var(--usewc-space-2) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-gap: var(--usewc-space-2);
   --usewc-font-button-small-size: var(--usewc-font-size-14);
@@ -421,6 +425,32 @@
     --usewc-effect-button-primary-border-step-hover: 0.1;
     --usewc-effect-button-danger-border-step: 0.08;
     --usewc-effect-button-danger-border-step-hover: 0.1;
+    /* A low-alpha wash of the fill barely lifts off a near-black page — it
+       needs more alpha here than on white to read as a hover state at all. */
+    --usewc-color-button-primary-background-hover-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.22
+    );
+    --usewc-color-button-primary-background-active-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.32
+    );
+    --usewc-color-button-primary-border-static-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.65
+    );
+    --usewc-color-button-primary-border-hover-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.9
+    );
+    --usewc-color-button-danger-background-hover-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.22
+    );
+    --usewc-color-button-danger-background-active-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.32
+    );
+    --usewc-color-button-danger-border-static-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.65
+    );
+    --usewc-color-button-danger-border-hover-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.9
+    );
     --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-700);
     --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-gray-600);
     --usewc-color-button-shadow-lightness: 0;
