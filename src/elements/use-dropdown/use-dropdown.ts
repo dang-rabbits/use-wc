@@ -359,20 +359,6 @@ export class UseDropdown extends LitElement {
     :host(:state(disabled)) {
       pointer-events: none;
     }
-
-    [part="menu"]:popover-open {
-      display: flex;
-      flex-direction: column;
-      justify-items: stretch;
-    }
-
-    ::slotted(hr) {
-      margin-inline: 0;
-    }
-
-    ::slotted([role="group"]) {
-      display: contents;
-    }
   `;
 }
 
