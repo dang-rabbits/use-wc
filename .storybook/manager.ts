@@ -1,6 +1,7 @@
 import { create } from "storybook/theming";
 import logo from "./logo.svg";
 import { addons } from "storybook/manager-api";
+import "./brand-color-tool";
 
 const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
 
