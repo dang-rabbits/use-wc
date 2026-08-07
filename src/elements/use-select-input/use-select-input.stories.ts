@@ -29,7 +29,7 @@ const meta: Meta<UseSelectInput> = {
 export default meta;
 type Story = StoryObj<UseSelectInput>;
 
-export const Default: Story = {};
+export const Default: Story = { parameters: { allowTheme: true } };
 
 export const Disabled: Story = {
   args: {

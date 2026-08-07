@@ -9,6 +9,7 @@ async function handleCopyToClipboard() {
 const meta: Meta = {
   title: "Token Name Builder",
   tags: ["autodocs", "!dev", "utility"],
+  parameters: { allowTheme: true },
   args: {},
   render: () => {
     function handleFormChange(event: Event) {

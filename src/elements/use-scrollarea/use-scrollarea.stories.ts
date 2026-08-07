@@ -59,6 +59,7 @@ const scrollShadowStyles = html`
 `;
 
 export const Vertical: Story = {
+  parameters: { allowTheme: true },
   render: () => html`
     ${scrollShadowStyles}
     <use-scrollarea class="scroll-demo">

@@ -627,6 +627,7 @@ function renderStateSelector() {
 const meta: Meta = {
   title: "Box Model Playground",
   tags: ["autodocs", "!dev", "utility"],
+  parameters: { allowTheme: true },
   args: {},
   render: () => html`
     <style>

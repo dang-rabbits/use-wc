@@ -12,7 +12,7 @@ const meta: Meta<UseWeekPicker> = {
 
 export default meta;
 
-export const Default: StoryObj<UseWeekPicker> = {};
+export const Default: StoryObj<UseWeekPicker> = { parameters: { allowTheme: true } };
 
 export const Controls: StoryObj<UseWeekPicker> = {
   render: () => {

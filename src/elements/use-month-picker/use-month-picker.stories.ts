@@ -12,7 +12,7 @@ const meta: Meta<UseMonthPicker> = {
 
 export default meta;
 
-export const Default: StoryObj<UseMonthPicker> = {};
+export const Default: StoryObj<UseMonthPicker> = { parameters: { allowTheme: true } };
 
 /** A month can be pre-selected by setting the `value` attribute to an ISO 8601 `YYYY-MM` string. */
 export const WithValue: StoryObj<UseMonthPicker> = {

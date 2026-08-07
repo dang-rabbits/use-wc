@@ -27,6 +27,7 @@ type Story = StoryObj<UseMenu>;
 export const Default: Story = {
   parameters: {
     showPanel: false,
+    allowTheme: true,
   },
 };
 

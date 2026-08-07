@@ -46,7 +46,7 @@ const meta: Meta<UseWidget> = {
 export default meta;
 type Story = StoryObj<UseWidget>;
 
-export const Default: Story = {};
+export const Default: Story = { parameters: { allowTheme: true } };
 
 export const Inert: Story = {
   render: () => {

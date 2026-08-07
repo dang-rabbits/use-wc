@@ -34,7 +34,7 @@ const meta: Meta<UseTree> = {
 export default meta;
 type Story = StoryObj<UseTree>;
 
-export const Default: Story = {};
+export const Default: Story = { parameters: { allowTheme: true } };
 
 export const Disabled: Story = {
   args: {
