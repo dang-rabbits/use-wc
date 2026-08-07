@@ -1,4 +1,4 @@
-@layer theme, escape;
+@layer theme, web-components, escape;
 
 @layer theme {
   *,
@@ -593,16 +593,6 @@
   }
 }
 
-@layer escape {
-  use-theme-escape {
-    display: contents;
-
-    * {
-      all: revert;
-    }
-  }
-}
-
 @layer web-components {
   /* Composite datetime control — host gets the single input wrapper appearance via the main
      input styling block. The date and time sub-inputs live in shadow DOM and are reached via
@@ -917,5 +907,20 @@
     background-position: left var(--usewc-layout-input-padding-inline) center;
     background-repeat: no-repeat;
     background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
+  }
+}
+
+@layer escape {
+  use-theme-escape {
+    display: contents;
+
+    *,
+    ::part(trigger),
+    ::part(trigger-label),
+    ::part(trigger-icon),
+    ::part(trigger-icon-default),
+    ::part(menu) {
+      all: revert;
+    }
   }
 }
