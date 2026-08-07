@@ -16,6 +16,7 @@ export default meta;
 type Story = StoryObj<UseTimeInput>;
 
 export const Default: Story = {
+  parameters: { allowTheme: true },
   render: () => html`<use-time-input value="12:30:45"></use-time-input>`,
 };
 

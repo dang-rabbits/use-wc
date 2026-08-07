@@ -47,6 +47,7 @@ export const Default: Story = {
 };
 
 export const SingleSelect: Story = {
+  parameters: { allowTheme: true },
   render: () => html`
     <use-grid selectmode="single">
       <use-gridhead>

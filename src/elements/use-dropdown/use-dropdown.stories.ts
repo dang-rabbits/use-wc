@@ -37,6 +37,13 @@ export const Default: Story = {
   },
 };
 
+export const Themed: Story = {
+  parameters: {
+    showPanel: false,
+    allowTheme: true,
+  },
+};
+
 export const Inert: Story = {
   render: () => {
     return html`

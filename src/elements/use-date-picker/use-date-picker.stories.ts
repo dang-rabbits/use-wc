@@ -28,7 +28,7 @@ const meta: Meta<UseDatePicker> = {
 
 export default meta;
 
-export const Default: StoryObj<UseDatePicker> = {};
+export const Default: StoryObj<UseDatePicker> = { parameters: { allowTheme: true } };
 
 export const Controls: StoryObj<UseDatePicker> = {
   render: () => {

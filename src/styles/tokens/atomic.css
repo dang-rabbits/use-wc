@@ -4,9 +4,12 @@
   --usewc-space-1: 0.0625rem;
   --usewc-space-2: 0.125rem;
   --usewc-space-4: 0.25rem;
+  --usewc-space-6: 0.375rem;
   --usewc-space-8: 0.5rem;
+  --usewc-space-10: 0.625rem;
   --usewc-space-12: 0.75rem;
   --usewc-space-16: 1rem;
+  --usewc-space-20: 1.25rem;
   --usewc-space-24: 1.5rem;
   --usewc-space-32: 2rem;
   --usewc-space-48: 3rem;
@@ -32,6 +35,7 @@
   --usewc-font-size-14: 0.875rem;
   --usewc-font-size-16: 1rem;
   --usewc-font-size-18: 1.125rem;
+  --usewc-font-size-20: 1.25rem;
   --usewc-font-size-24: 1.5rem;
 
   /** Font weight */
@@ -62,33 +66,35 @@
   --usewc-color-unset: unset;
   --usewc-color-white: #fff;
   --usewc-color-black: #000;
-  --usewc-color-gray-900: oklch(0.152 0.002 260.7);
-  --usewc-color-gray-800: oklch(0.252 0.004 260.7);
-  --usewc-color-gray-700: oklch(0.352 0.005 260.7);
-  --usewc-color-gray-600: oklch(0.451 0.007 260.7);
-  --usewc-color-gray-500: oklch(0.551 0.009 260.7);
-  --usewc-color-gray-400: oklch(0.651 0.007 260.7);
-  --usewc-color-gray-300: oklch(0.751 0.005 260.7);
-  --usewc-color-gray-200: oklch(0.85 0.003 260.7);
-  --usewc-color-gray-100: oklch(0.95 0.001 260.7);
-  --usewc-color-blue-900: oklch(0.08 0.054 263.9);
-  --usewc-color-blue-800: oklch(0.18 0.122 263.9);
-  --usewc-color-blue-700: oklch(0.28 0.19 263.9);
-  --usewc-color-blue-600: oklch(0.38 0.258 263.9);
-  --usewc-color-blue-500: oklch(0.48 0.314 263.9);
-  --usewc-color-blue-400: oklch(0.58 0.246 263.9);
-  --usewc-color-blue-300: oklch(0.68 0.182 263.9);
-  --usewc-color-blue-200: oklch(0.78 0.121 263.9);
-  --usewc-color-blue-100: oklch(0.88 0.064 263.9);
-  --usewc-color-red-900: oklch(0.23 0.094 27.5);
-  --usewc-color-red-800: oklch(0.32 0.131 27.5);
-  --usewc-color-red-700: oklch(0.41 0.167 27.5);
-  --usewc-color-red-600: oklch(0.5 0.204 27.5);
-  --usewc-color-red-500: oklch(0.59 0.241 27.5);
-  --usewc-color-red-400: oklch(0.68 0.208 27.5);
-  --usewc-color-red-300: oklch(0.77 0.136 27.5);
-  --usewc-color-red-200: oklch(0.86 0.076 27.5);
-  --usewc-color-red-100: oklch(0.95 0.025 27.5);
+  --usewc-color-gray-950: oklch(0.13 0.006 264);
+  --usewc-color-gray-900: oklch(0.185 0.008 264);
+  --usewc-color-gray-800: oklch(0.338 0.01 264);
+  --usewc-color-gray-700: oklch(0.438 0.012 264);
+  --usewc-color-gray-600: oklch(0.532 0.013 264);
+  --usewc-color-gray-500: oklch(0.625 0.012 264);
+  --usewc-color-gray-400: oklch(0.735 0.01 264);
+  --usewc-color-gray-300: oklch(0.869 0.008 264);
+  --usewc-color-gray-200: oklch(0.917 0.006 264);
+  --usewc-color-gray-100: oklch(0.955 0.004 264);
+  --usewc-color-gray-50: oklch(0.974 0.003 264);
+  --usewc-color-blue-900: oklch(0.3 0.115 258);
+  --usewc-color-blue-800: oklch(0.395 0.15 258);
+  --usewc-color-blue-700: oklch(0.478 0.18 258);
+  --usewc-color-blue-600: oklch(0.545 0.196 258);
+  --usewc-color-blue-500: oklch(0.615 0.18 258);
+  --usewc-color-blue-400: oklch(0.7 0.15 258);
+  --usewc-color-blue-300: oklch(0.79 0.12 258);
+  --usewc-color-blue-200: oklch(0.865 0.08 258);
+  --usewc-color-blue-100: oklch(0.93 0.045 258);
+  --usewc-color-red-900: oklch(0.3 0.115 25);
+  --usewc-color-red-800: oklch(0.39 0.15 25);
+  --usewc-color-red-700: oklch(0.47 0.18 25);
+  --usewc-color-red-600: oklch(0.545 0.205 25);
+  --usewc-color-red-500: oklch(0.62 0.195 25);
+  --usewc-color-red-400: oklch(0.7 0.165 25);
+  --usewc-color-red-300: oklch(0.8 0.115 25);
+  --usewc-color-red-200: oklch(0.88 0.07 25);
+  --usewc-color-red-100: oklch(0.94 0.035 25);
   --usewc-color-indigo-100: #f0f5ff;
   --usewc-color-indigo-200: #e0e9ff;
   --usewc-color-indigo-300: #c7d2fe;
@@ -109,6 +115,17 @@
   --usewc-effect-border-radius-none: 0;
   --usewc-effect-border-radius-2: 0.125rem;
   --usewc-effect-border-radius-4: 0.25rem;
+  --usewc-effect-border-radius-6: 0.375rem;
   --usewc-effect-border-radius-8: 0.5rem;
   --usewc-effect-border-radius-full: 100%;
+
+  /** Motion */
+  --usewc-transition-duration-fast: 120ms;
+  --usewc-transition-easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --usewc-transition-duration-fast: 0ms;
+  }
 }

@@ -31,7 +31,7 @@ const meta: Meta<UseFocusgroup> = {
 export default meta;
 type Story = StoryObj<UseFocusgroup>;
 
-export const Default: Story = {};
+export const Default: Story = { parameters: { allowTheme: true } };
 
 export const Inline: Story = {
   args: {

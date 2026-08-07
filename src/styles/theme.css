@@ -1,4 +1,4 @@
-@layer theme, escape;
+@layer theme, web-components, escape;
 
 @layer theme {
   *,
@@ -124,7 +124,7 @@
     height: var(--usewc-layout-selector-height);
     border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
       var(--usewc-color-input-border-static);
-    border-radius: var(--usewc-effect-input-border-radius);
+    border-radius: var(--usewc-effect-selector-border-radius);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -231,15 +231,48 @@
     --usewc-color-button-text-hover: var(--usewc-color-button-base-text-hover);
     --usewc-color-button-background-hover: var(--usewc-color-button-base-background-hover);
     --usewc-color-button-border-hover: var(--usewc-color-button-base-border-hover);
+    --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-base-background-hover-auxiliary);
+    --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-base-border-hover-auxiliary);
     --usewc-color-button-text-active: var(--usewc-color-button-base-text-active);
     --usewc-color-button-background-active: var(--usewc-color-button-base-background-active);
     --usewc-color-button-border-active: var(--usewc-color-button-base-border-active);
+    --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-base-background-active-auxiliary);
+
+    /* Scoped depth tokens — the outset cast is always computed from the
+       lightness/alpha knobs plus a variant's tint (borrowed for its hue only)
+       and chroma multiplier; variants swap the first shadow layer between
+       flat and the inset lip. */
+    --usewc-color-button-shadow-tint: var(--usewc-color-button-base-shadow-tint);
+    --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-base-shadow-chroma-multiplier);
+    --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-base-shadow-alpha-multiplier);
+    --usewc-color-button-shadow-outset: oklch(
+      from var(--usewc-color-button-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-shadow-chroma-multiplier)) h /
+        calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-shadow-alpha-multiplier))
+    );
+    --usewc-color-button-shadow-outset-hover: oklch(
+      from var(--usewc-color-button-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-shadow-chroma-multiplier)) h /
+        calc(
+          var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-shadow-alpha-multiplier) *
+            var(--usewc-color-button-shadow-alpha-hover-multiplier)
+        )
+    );
+    --usewc-effect-button-box-shadow-outset: 0 1px 2px 0 var(--usewc-color-button-shadow-outset);
+    --usewc-effect-button-box-shadow-outset-hover: 0 2px 4px 0 var(--usewc-color-button-shadow-outset-hover);
+    --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-none);
+    --usewc-effect-button-box-shadow:
+      var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset);
+    --usewc-effect-button-box-shadow-hover:
+      var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset-hover);
+    --usewc-effect-button-box-shadow-active: var(--usewc-effect-button-box-shadow-layer);
 
     /* Scoped layout tokens — default to base, remapped by size classes */
     --usewc-layout-button-padding-block: var(--usewc-layout-button-base-padding-block);
     --usewc-layout-button-padding-inline: var(--usewc-layout-button-base-padding-inline);
     --usewc-layout-button-gap: var(--usewc-layout-button-base-gap);
     --usewc-font-button-size: var(--usewc-font-button-base-size);
+    --usewc-effect-button-radius: var(--usewc-effect-button-border-radius);
 
     &::part(trigger),
     &:not([type="file"], use-dropdown),
@@ -248,7 +281,7 @@
       align-items: center;
       justify-content: center;
       gap: var(--usewc-layout-button-gap);
-      border-radius: var(--usewc-effect-input-border-radius);
+      border-radius: var(--usewc-effect-button-radius);
       line-height: var(--usewc-layout-button-line-height);
       padding-block: var(--usewc-layout-button-padding-block);
       padding-inline: var(--usewc-layout-button-padding-inline);
@@ -262,8 +295,10 @@
       background-size: var(--usewc-effect-button-background-size);
       background-position: var(--usewc-effect-button-background-position);
       background-repeat: var(--usewc-effect-button-background-repeat);
-      border: var(--usewc-layout-button-border) var(--usewc-effect-input-border-style)
+      border: var(--usewc-layout-button-border) var(--usewc-effect-button-border-style)
         var(--usewc-color-button-border-static);
+      box-shadow: var(--usewc-effect-button-box-shadow);
+      transition: var(--usewc-transition-control);
     }
 
     &::part(trigger) {
@@ -286,6 +321,7 @@
       background: var(--usewc-color-button-background-hover);
       border-color: var(--usewc-color-button-border-hover);
       color: var(--usewc-color-button-text-hover);
+      box-shadow: var(--usewc-effect-button-box-shadow-hover);
     }
 
     &:active:not([type="file"], use-dropdown),
@@ -294,6 +330,7 @@
       background: var(--usewc-color-button-background-active);
       border-color: var(--usewc-color-button-border-active);
       color: var(--usewc-color-button-text-active);
+      box-shadow: var(--usewc-effect-button-box-shadow-active);
     }
 
     &:disabled,
@@ -312,9 +349,16 @@
       --usewc-color-button-text-hover: var(--usewc-color-button-primary-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-primary-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-primary-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-primary-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-primary-border-hover-auxiliary);
       --usewc-color-button-text-active: var(--usewc-color-button-primary-text-active);
       --usewc-color-button-background-active: var(--usewc-color-button-primary-background-active);
       --usewc-color-button-border-active: var(--usewc-color-button-primary-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-primary-background-active-auxiliary);
+      --usewc-color-button-shadow-tint: var(--usewc-color-button-primary-shadow-tint);
+      --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-primary-shadow-chroma-multiplier);
+      --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-primary-shadow-alpha-multiplier);
+      --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-inset);
     }
 
     &.danger {
@@ -327,9 +371,16 @@
       --usewc-color-button-text-hover: var(--usewc-color-button-danger-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-danger-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-danger-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-danger-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-danger-border-hover-auxiliary);
       --usewc-color-button-text-active: var(--usewc-color-button-danger-text-active);
       --usewc-color-button-background-active: var(--usewc-color-button-danger-background-active);
       --usewc-color-button-border-active: var(--usewc-color-button-danger-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-danger-background-active-auxiliary);
+      --usewc-color-button-shadow-tint: var(--usewc-color-button-danger-shadow-tint);
+      --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-danger-shadow-chroma-multiplier);
+      --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-danger-shadow-alpha-multiplier);
+      --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-inset);
     }
 
     &.clear {
@@ -342,15 +393,34 @@
       --usewc-color-button-text-hover: var(--usewc-color-button-clear-text-hover);
       --usewc-color-button-background-hover: var(--usewc-color-button-clear-background-hover);
       --usewc-color-button-border-hover: var(--usewc-color-button-clear-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-clear-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-clear-border-hover-auxiliary);
       --usewc-color-button-text-active: var(--usewc-color-button-clear-text-active);
       --usewc-color-button-background-active: var(--usewc-color-button-clear-background-active);
       --usewc-color-button-border-active: var(--usewc-color-button-clear-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-clear-background-active-auxiliary);
+      --usewc-effect-button-box-shadow: none;
+      --usewc-effect-button-box-shadow-hover: none;
+      --usewc-effect-button-box-shadow-active: none;
     }
 
-    &.auxiliary:not(:is(:hover, :focus-visible, :active)) {
-      background: transparent;
-      color: var(--usewc-color-button-text-static-auxiliary);
-      border-color: var(--usewc-color-button-border-static-auxiliary);
+    /* Outline modifier: stays transparent-filled and bordered through hover
+       and press instead of filling solid, washing its accent underneath. Set
+       as custom properties (not direct background/border-color) so they
+       inherit into ::part(trigger) and ::file-selector-button. */
+    &.auxiliary {
+      --usewc-color-button-background-static: var(--usewc-color-button-background-static-auxiliary);
+      --usewc-color-button-text-static: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-border-static: var(--usewc-color-button-border-static-auxiliary);
+      --usewc-color-button-text-hover: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-background-hover: var(--usewc-color-button-background-hover-auxiliary);
+      --usewc-color-button-border-hover: var(--usewc-color-button-border-hover-auxiliary);
+      --usewc-color-button-text-active: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-background-active: var(--usewc-color-button-background-active-auxiliary);
+      --usewc-color-button-border-active: var(--usewc-color-button-border-hover-auxiliary);
+      --usewc-effect-button-box-shadow: none;
+      --usewc-effect-button-box-shadow-hover: none;
+      --usewc-effect-button-box-shadow-active: none;
     }
 
     &.extra-small {
@@ -358,6 +428,7 @@
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
       --usewc-font-button-size: var(--usewc-font-button-extra-small-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-extra-small-line-height);
+      --usewc-effect-button-radius: var(--usewc-effect-button-extra-small-border-radius);
     }
 
     &.small {
@@ -365,6 +436,7 @@
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-small-padding-inline);
       --usewc-font-button-size: var(--usewc-font-button-small-size);
       --usewc-layout-button-line-height: var(--usewc-layout-button-small-line-height);
+      --usewc-effect-button-radius: var(--usewc-effect-button-small-border-radius);
     }
 
     &.large {
@@ -517,16 +589,6 @@
 
     &:is([open], :open) summary::before {
       content: "▼";
-    }
-  }
-}
-
-@layer escape {
-  use-theme-escape {
-    display: contents;
-
-    * {
-      all: revert;
     }
   }
 }
@@ -845,5 +907,20 @@
     background-position: left var(--usewc-layout-input-padding-inline) center;
     background-repeat: no-repeat;
     background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
+  }
+}
+
+@layer escape {
+  use-theme-escape {
+    display: contents;
+
+    *,
+    ::part(trigger),
+    ::part(trigger-label),
+    ::part(trigger-icon),
+    ::part(trigger-icon-default),
+    ::part(menu) {
+      all: revert;
+    }
   }
 }

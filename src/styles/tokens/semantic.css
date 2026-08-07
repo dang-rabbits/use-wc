@@ -1,4 +1,7 @@
 :root {
+  /* Brand */
+  --usewc-color-brand-primary: var(--usewc-color-blue-600);
+
   /* Document */
   /* - Color */
   --usewc-color-document-text: var(--usewc-color-gray-700);
@@ -16,18 +19,24 @@
 
   /* Controls */
   /* - Disabled */
-  --usewc-effect-form-opacity-disabled: 0.5;
+  --usewc-effect-form-opacity-disabled: 0.45;
   /* - Outline (focus indicator) */
-  --usewc-color-outline: var(--usewc-color-blue-500);
+  --usewc-color-outline: var(--usewc-color-blue-600);
   --usewc-effect-outline-size: var(--usewc-space-2);
   --usewc-effect-outline-offset: var(--usewc-space-2);
   --usewc-effect-outline-offset-flush: var(--usewc-space-none);
   --usewc-effect-outline-style: solid;
   --usewc-effect-outline-transition: outline 0.05s ease-in-out;
+  /* - Motion */
+  --usewc-transition-control:
+    color var(--usewc-transition-duration-fast) var(--usewc-transition-easing-standard),
+    background-color var(--usewc-transition-duration-fast) var(--usewc-transition-easing-standard),
+    border-color var(--usewc-transition-duration-fast) var(--usewc-transition-easing-standard),
+    box-shadow var(--usewc-transition-duration-fast) var(--usewc-transition-easing-standard);
   /* - Link */
-  --usewc-color-link-text-static: var(--usewc-color-blue-500);
-  --usewc-color-link-text-hover: var(--usewc-color-blue-600);
-  --usewc-color-link-text-active: var(--usewc-color-blue-700);
+  --usewc-color-link-text-static: var(--usewc-color-blue-600);
+  --usewc-color-link-text-hover: var(--usewc-color-blue-700);
+  --usewc-color-link-text-active: var(--usewc-color-blue-800);
   --usewc-color-link-text-visited: var(--usewc-color-indigo-500);
   --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-600);
   --usewc-color-link-text-visited-active: var(--usewc-color-indigo-700);
@@ -36,7 +45,7 @@
   /* Form */
   /* - Color */
   --usewc-color-form-helper-text: var(--usewc-color-gray-500);
-  --usewc-color-form-helper-text-invalid: var(--usewc-color-red-500);
+  --usewc-color-form-helper-text-invalid: var(--usewc-color-red-600);
   --usewc-color-form-label-text: var(--usewc-color-gray-700);
   /* - Font */
   --usewc-font-form-helper-text-size: var(--usewc-font-size-14);
@@ -54,10 +63,10 @@
   --usewc-color-input-background-static: var(--usewc-color-white);
   --usewc-color-input-border-static: var(--usewc-color-gray-300);
   --usewc-color-input-border-hover: var(--usewc-color-gray-500);
-  --usewc-color-input-border-focus: var(--usewc-color-blue-500);
+  --usewc-color-input-border-focus: var(--usewc-color-blue-600);
   --usewc-color-input-text-static: var(--usewc-color-gray-700);
   --usewc-color-input-text-placeholder: var(--usewc-color-gray-400);
-  --usewc-color-input-border-invalid: var(--usewc-color-red-500);
+  --usewc-color-input-border-invalid: var(--usewc-color-red-600);
   --usewc-color-input-segment-background-static: transparent;
   --usewc-color-input-segment-background-hover: transparent;
   --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
@@ -72,14 +81,14 @@
   --usewc-effect-menu-item-checkmark-background-size: 1em;
   /* - Layout */
   --usewc-layout-input-border: var(--usewc-space-1-relative);
-  --usewc-layout-input-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-input-border));
+  --usewc-layout-input-padding-block: calc(var(--usewc-space-6) - var(--usewc-layout-input-border));
   --usewc-layout-input-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-input-border));
   --usewc-layout-input-gap-inline: var(--usewc-layout-input-padding-inline);
   --usewc-layout-input-segment-padding-inline: var(--usewc-space-2-relative);
   --usewc-layout-input-line-height: var(--usewc-line-height-24);
   /* - Effect */
   --usewc-effect-input-border-style: solid;
-  --usewc-effect-input-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-effect-input-border-radius: var(--usewc-effect-border-radius-6);
   /* - Font */
   --usewc-font-input-size: var(--usewc-font-size-16);
 
@@ -88,13 +97,13 @@
   --usewc-layout-range-thumb-width: var(--usewc-space-16);
   --usewc-layout-range-thumb-height: var(--usewc-space-16);
   --usewc-effect-range-thumb-border-radius: var(--usewc-effect-border-radius-full);
-  --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
-  --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-600);
-  --usewc-color-range-thumb-background-active: var(--usewc-color-blue-700);
+  --usewc-color-range-thumb-background-static: var(--usewc-color-brand-primary);
+  --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-700);
+  --usewc-color-range-thumb-background-active: var(--usewc-color-blue-800);
   --usewc-layout-range-track-height: var(--usewc-space-8);
   --usewc-effect-range-track-border-radius: var(--usewc-effect-input-border-radius);
   --usewc-color-range-track-background-static: var(--usewc-color-gray-100);
-  --usewc-color-range-track-background-progress: var(--usewc-color-blue-500);
+  --usewc-color-range-track-background-progress: var(--usewc-color-brand-primary);
   --usewc-color-range-track-border-static: oklch(from var(--usewc-color-gray-500) l c h / 0.5);
   --usewc-color-range-track-border-hover: var(--usewc-color-gray-300);
   --usewc-layout-range-track-border: var(--usewc-space-1-relative);
@@ -104,83 +113,222 @@
   --usewc-layout-selector-width: 1em;
   --usewc-layout-selector-height: 1em;
   --usewc-layout-selector-checkbox-icon-border-size: 0.125em;
+  /* - Effect */
+  --usewc-effect-selector-border-radius: var(--usewc-effect-border-radius-4);
   /* - Color */
   --usewc-color-selector-background-static: transparent;
   --usewc-color-selector-background-focus: var(--usewc-color-gray-100);
   --usewc-color-selector-background-hover: oklch(from var(--usewc-color-gray-100) l c h / 0.5);
-  --usewc-color-selector-background-checked: var(--usewc-color-blue-400);
+  --usewc-color-selector-background-checked: var(--usewc-color-brand-primary);
   --usewc-color-selector-border-static: var(--usewc-color-gray-300);
-  --usewc-color-selector-border-focus: var(--usewc-color-blue-500);
+  --usewc-color-selector-border-focus: var(--usewc-color-blue-600);
   --usewc-color-selector-border-hover: var(--usewc-color-gray-500);
   --usewc-color-selector-border-checked: var(--usewc-color-selector-background-checked);
   --usewc-color-selector-icon-fill: var(--usewc-color-white);
 
   /* Button */
   /* - Color */
-  /* -- Base color */
-  --usewc-color-button-base-background-static: var(--usewc-color-gray-100);
+  /* -- Base color: fills, everything else derives from the fill below */
+  --usewc-color-button-base-background-static: var(--usewc-color-white);
   --usewc-color-button-base-background-static-auxiliary: transparent;
-  --usewc-color-button-base-background-hover: var(--usewc-color-gray-200);
-  --usewc-color-button-base-background-active: var(--usewc-color-gray-300);
-  --usewc-color-button-base-border-static: var(--usewc-color-gray-300);
-  --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-300);
-  --usewc-color-button-base-border-hover: var(--usewc-color-gray-400);
-  --usewc-color-button-base-border-active: var(--usewc-color-gray-500);
-  --usewc-color-button-base-text-static: var(--usewc-color-gray-700);
-  --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-gray-700);
-  --usewc-color-button-base-text-hover: var(--usewc-color-gray-700);
-  --usewc-color-button-base-text-active: var(--usewc-color-gray-700);
-  /* -- Primary color */
-  --usewc-color-button-primary-background-static: var(--usewc-color-blue-500);
+  --usewc-color-button-primary-background-static: var(--usewc-color-brand-primary);
   --usewc-color-button-primary-background-static-auxiliary: transparent;
-  --usewc-color-button-primary-background-hover: var(--usewc-color-blue-600);
-  --usewc-color-button-primary-background-active: var(--usewc-color-blue-700);
-  --usewc-color-button-primary-border-static: var(--usewc-color-transparent);
-  --usewc-color-button-primary-border-static-auxiliary: var(--usewc-color-blue-500);
-  --usewc-color-button-primary-border-hover: var(--usewc-color-blue-600);
-  --usewc-color-button-primary-border-active: var(--usewc-color-blue-700);
-  --usewc-color-button-primary-text-static: var(--usewc-color-white);
-  --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-blue-500);
-  --usewc-color-button-primary-text-hover: var(--usewc-color-white);
-  --usewc-color-button-primary-text-active: var(--usewc-color-white);
-  /* -- Danger color */
-  --usewc-color-button-danger-background-static: var(--usewc-color-red-500);
+  --usewc-color-button-danger-background-static: var(--usewc-color-red-600);
   --usewc-color-button-danger-background-static-auxiliary: transparent;
-  --usewc-color-button-danger-background-hover: var(--usewc-color-red-600);
-  --usewc-color-button-danger-background-active: var(--usewc-color-red-700);
-  --usewc-color-button-danger-border-static: var(--usewc-color-red-500);
-  --usewc-color-button-danger-border-hover: var(--usewc-color-red-600);
-  --usewc-color-button-danger-border-active: var(--usewc-color-red-700);
-  --usewc-color-button-danger-text-static: var(--usewc-color-white);
-  --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-red-500);
-  --usewc-color-button-danger-text-hover: var(--usewc-color-white);
-  /* -- Cancel color */
   --usewc-color-button-clear-background-static: transparent;
   --usewc-color-button-clear-background-static-auxiliary: transparent;
-  --usewc-color-button-clear-background-hover: var(--usewc-color-gray-100);
-  --usewc-color-button-clear-background-active: var(--usewc-color-gray-200);
+  /* -- Derivation knobs: hover/active/border are computed off the fill above.
+     -shift flips which direction interaction moves lightness (dark mode
+     hovers lighter, not darker); -border-direction flips which direction the
+     border sits relative to its own face. Light mode moves in, dark mode
+     moves out — see the dark-mode block below. */
+  --usewc-effect-button-base-shift: -1;
+  --usewc-effect-button-base-hover-step: 0.028;
+  --usewc-effect-button-base-active-step: 0.055;
+  --usewc-effect-button-base-border-direction: -1;
+  --usewc-effect-button-base-border-step: 0.09;
+  --usewc-effect-button-base-border-step-hover: 0.11;
+  --usewc-effect-button-primary-shift: -1;
+  --usewc-effect-button-primary-hover-step: 0.055;
+  --usewc-effect-button-primary-active-step: 0.1;
+  --usewc-effect-button-primary-border-direction: -1;
+  --usewc-effect-button-primary-border-step: 0.09;
+  --usewc-effect-button-primary-border-step-hover: 0.11;
+  --usewc-effect-button-danger-shift: -1;
+  --usewc-effect-button-danger-hover-step: 0.055;
+  --usewc-effect-button-danger-active-step: 0.1;
+  --usewc-effect-button-danger-border-direction: -1;
+  --usewc-effect-button-danger-border-step: 0.09;
+  --usewc-effect-button-danger-border-step-hover: 0.11;
+  /* -- Base color: derived */
+  --usewc-color-button-base-background-hover: oklch(
+    from var(--usewc-color-button-base-background-static)
+      calc(l + var(--usewc-effect-button-base-hover-step) * var(--usewc-effect-button-base-shift)) c h
+  );
+  --usewc-color-button-base-background-active: oklch(
+    from var(--usewc-color-button-base-background-static)
+      calc(l + var(--usewc-effect-button-base-active-step) * var(--usewc-effect-button-base-shift)) c h
+  );
+  --usewc-color-button-base-border-static: oklch(
+    from var(--usewc-color-button-base-background-static)
+      calc(l + var(--usewc-effect-button-base-border-step) * var(--usewc-effect-button-base-border-direction)) c h
+  );
+  --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-300);
+  --usewc-color-button-base-border-hover: oklch(
+    from var(--usewc-color-button-base-background-hover)
+      calc(l + var(--usewc-effect-button-base-border-step-hover) * var(--usewc-effect-button-base-border-direction)) c h
+  );
+  --usewc-color-button-base-border-active: var(--usewc-color-button-base-border-hover);
+  --usewc-color-button-base-text-static: var(--usewc-color-document-text);
+  --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-document-text);
+  --usewc-color-button-base-text-hover: var(--usewc-color-document-text);
+  --usewc-color-button-base-text-active: var(--usewc-color-document-text);
+  --usewc-color-button-base-background-hover-auxiliary: oklch(from var(--usewc-color-document-text) l c h / 0.07);
+  --usewc-color-button-base-background-active-auxiliary: oklch(from var(--usewc-color-document-text) l c h / 0.13);
+  --usewc-color-button-base-border-hover-auxiliary: var(--usewc-color-button-base-border-static-auxiliary);
+  /* -- Primary color: derived */
+  --usewc-color-button-primary-background-hover: oklch(
+    from var(--usewc-color-button-primary-background-static)
+      calc(l + var(--usewc-effect-button-primary-hover-step) * var(--usewc-effect-button-primary-shift)) c h
+  );
+  --usewc-color-button-primary-background-active: oklch(
+    from var(--usewc-color-button-primary-background-static)
+      calc(l + var(--usewc-effect-button-primary-active-step) * var(--usewc-effect-button-primary-shift)) c h
+  );
+  --usewc-color-button-primary-border-static: oklch(
+    from var(--usewc-color-button-primary-background-static)
+      calc(l + var(--usewc-effect-button-primary-border-step) * var(--usewc-effect-button-primary-border-direction)) c h
+  );
+  --usewc-color-button-primary-border-static-auxiliary: oklch(
+    from var(--usewc-color-button-primary-background-static) l c h / 0.55
+  );
+  --usewc-color-button-primary-border-hover: oklch(
+    from var(--usewc-color-button-primary-background-hover)
+      calc(
+        l + var(--usewc-effect-button-primary-border-step-hover) * var(--usewc-effect-button-primary-border-direction)
+      )
+      c h
+  );
+  --usewc-color-button-primary-border-active: var(--usewc-color-button-primary-border-hover);
+  --usewc-color-button-primary-text-static: var(--usewc-color-white);
+  --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-button-primary-background-static);
+  --usewc-color-button-primary-text-hover: var(--usewc-color-white);
+  --usewc-color-button-primary-text-active: var(--usewc-color-white);
+  --usewc-color-button-primary-background-hover-auxiliary: oklch(
+    from var(--usewc-color-button-primary-background-static) l c h / 0.09
+  );
+  --usewc-color-button-primary-background-active-auxiliary: oklch(
+    from var(--usewc-color-button-primary-background-static) l c h / 0.15
+  );
+  --usewc-color-button-primary-border-hover-auxiliary: oklch(
+    from var(--usewc-color-button-primary-background-static) l c h / 0.85
+  );
+  /* -- Danger color: derived */
+  --usewc-color-button-danger-background-hover: oklch(
+    from var(--usewc-color-button-danger-background-static)
+      calc(l + var(--usewc-effect-button-danger-hover-step) * var(--usewc-effect-button-danger-shift)) c h
+  );
+  --usewc-color-button-danger-background-active: oklch(
+    from var(--usewc-color-button-danger-background-static)
+      calc(l + var(--usewc-effect-button-danger-active-step) * var(--usewc-effect-button-danger-shift)) c h
+  );
+  --usewc-color-button-danger-border-static: oklch(
+    from var(--usewc-color-button-danger-background-static)
+      calc(l + var(--usewc-effect-button-danger-border-step) * var(--usewc-effect-button-danger-border-direction)) c h
+  );
+  --usewc-color-button-danger-border-static-auxiliary: oklch(
+    from var(--usewc-color-button-danger-background-static) l c h / 0.55
+  );
+  --usewc-color-button-danger-border-hover: oklch(
+    from var(--usewc-color-button-danger-background-hover)
+      calc(l + var(--usewc-effect-button-danger-border-step-hover) * var(--usewc-effect-button-danger-border-direction))
+      c h
+  );
+  --usewc-color-button-danger-border-active: var(--usewc-color-button-danger-border-hover);
+  --usewc-color-button-danger-text-static: var(--usewc-color-white);
+  --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-button-danger-background-static);
+  --usewc-color-button-danger-text-hover: var(--usewc-color-white);
+  --usewc-color-button-danger-text-active: var(--usewc-color-white);
+  --usewc-color-button-danger-background-hover-auxiliary: oklch(
+    from var(--usewc-color-button-danger-background-static) l c h / 0.09
+  );
+  --usewc-color-button-danger-background-active-auxiliary: oklch(
+    from var(--usewc-color-button-danger-background-static) l c h / 0.15
+  );
+  --usewc-color-button-danger-border-hover-auxiliary: oklch(
+    from var(--usewc-color-button-danger-background-static) l c h / 0.85
+  );
+  /* -- Cancel color: no fill to derive from, so it tints from the ink color instead */
+  --usewc-color-button-clear-background-hover: oklch(from var(--usewc-color-document-text) l c h / 0.07);
+  --usewc-color-button-clear-background-active: oklch(from var(--usewc-color-document-text) l c h / 0.13);
   --usewc-color-button-clear-border-static: transparent;
-  --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-100);
+  --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-200);
   --usewc-color-button-clear-border-hover: transparent;
   --usewc-color-button-clear-border-active: transparent;
-  --usewc-color-button-clear-text-static: var(--usewc-color-gray-700);
-  --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-gray-700);
-  --usewc-color-button-clear-text-hover: var(--usewc-color-gray-700);
-  --usewc-color-button-clear-text-active: var(--usewc-color-gray-700);
+  --usewc-color-button-clear-text-static: var(--usewc-color-document-text);
+  --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-document-text);
+  --usewc-color-button-clear-text-hover: var(--usewc-color-document-text);
+  --usewc-color-button-clear-text-active: var(--usewc-color-document-text);
+  --usewc-color-button-clear-background-hover-auxiliary: var(--usewc-color-button-clear-background-hover);
+  --usewc-color-button-clear-background-active-auxiliary: var(--usewc-color-button-clear-background-active);
+  --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-gray-500);
+  /* -- Shadow color */
+  --usewc-color-button-shadow-lightness: 0.25;
+  --usewc-color-button-shadow-chroma: 0.01;
+  --usewc-color-button-shadow-alpha: 0.16;
+  --usewc-color-button-shadow-alpha-hover-multiplier: 1.4;
+  --usewc-color-button-shadow-inset: oklch(from var(--usewc-color-white) l c h / 0.18);
+  /* Base already reads as separated from the page by its border, so its cast
+     only needs to be a hint; primary/danger have no border contrast to lean
+     on, so they keep the full alpha. Each tint is a real color token — the
+     shadow formula below borrows only its hue via oklch(from …), not a bare
+     hue number. */
+  --usewc-color-button-base-shadow-tint: var(--usewc-color-gray-900);
+  --usewc-effect-button-base-shadow-chroma-multiplier: 1;
+  --usewc-effect-button-base-shadow-alpha-multiplier: 0.5;
+  --usewc-color-button-primary-shadow-tint: var(--usewc-color-brand-primary);
+  --usewc-effect-button-primary-shadow-chroma-multiplier: 6;
+  --usewc-effect-button-primary-shadow-alpha-multiplier: 1;
+  --usewc-color-button-danger-shadow-tint: var(--usewc-color-red-600);
+  --usewc-effect-button-danger-shadow-chroma-multiplier: 6;
+  --usewc-effect-button-danger-shadow-alpha-multiplier: 1;
+  --usewc-color-button-clear-shadow-tint: var(--usewc-color-gray-900);
+  --usewc-effect-button-clear-shadow-chroma-multiplier: 1;
+  --usewc-effect-button-clear-shadow-alpha-multiplier: 0.5;
   /* - Layout */
   --usewc-layout-button-border: var(--usewc-space-1);
   --usewc-layout-button-line-height: var(--usewc-line-height-24);
   /* - Effect */
-  --usewc-effect-button-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-effect-button-border-radius: var(--usewc-effect-border-radius-6);
+  --usewc-effect-button-extra-small-border-radius: var(--usewc-effect-border-radius-4);
+  --usewc-effect-button-small-border-radius: var(--usewc-effect-border-radius-4);
   --usewc-effect-button-border-style: solid;
   --usewc-effect-button-background-size: calc(100% + var(--usewc-layout-button-border) * 2)
     calc(100% + var(--usewc-layout-button-border) * 2);
   --usewc-effect-button-background-position: center;
   --usewc-effect-button-background-repeat: no-repeat;
+  --usewc-effect-button-box-shadow-none: 0 0 transparent;
+  --usewc-effect-button-box-shadow-inset: inset 0 var(--usewc-layout-button-border) 0 0
+    var(--usewc-color-button-shadow-inset);
+  --usewc-effect-button-box-shadow-outset: 0 1px 2px 0
+    oklch(
+      from var(--usewc-color-button-base-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-base-shadow-chroma-multiplier)) h /
+        calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier))
+    );
+  --usewc-effect-button-box-shadow-outset-hover: 0 2px 4px 0
+    oklch(
+      from var(--usewc-color-button-base-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-base-shadow-chroma-multiplier)) h /
+        calc(
+          var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier) *
+            var(--usewc-color-button-shadow-alpha-hover-multiplier)
+        )
+    );
   /* - Sizes */
   /* -- Base size */
-  --usewc-layout-button-base-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
-  --usewc-layout-button-base-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
+  --usewc-layout-button-base-padding-block: calc(var(--usewc-space-6) - var(--usewc-layout-button-border));
+  --usewc-layout-button-base-padding-inline: calc(var(--usewc-space-16) - var(--usewc-layout-button-border));
   --usewc-layout-button-base-gap: var(--usewc-space-4);
   --usewc-font-button-base-size: var(--usewc-font-size-16);
   --usewc-font-button-weight: var(--usewc-font-weight-medium);
@@ -192,22 +340,22 @@
   --usewc-layout-button-extra-small-line-height: var(--usewc-line-height-18);
   /* -- Small size */
   --usewc-layout-button-small-padding-block: calc(var(--usewc-space-2) - var(--usewc-layout-button-border));
-  --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-small-padding-inline: calc(var(--usewc-space-12) - var(--usewc-layout-button-border));
   --usewc-layout-button-small-gap: var(--usewc-space-2);
   --usewc-font-button-small-size: var(--usewc-font-size-14);
   --usewc-layout-button-small-line-height: var(--usewc-line-height-20);
   /* -- Large size */
-  --usewc-layout-button-large-padding-block: calc(var(--usewc-space-4) - var(--usewc-layout-button-border));
-  --usewc-layout-button-large-padding-inline: calc(var(--usewc-space-16) - var(--usewc-layout-button-border));
+  --usewc-layout-button-large-padding-block: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-large-padding-inline: calc(var(--usewc-space-20) - var(--usewc-layout-button-border));
   --usewc-layout-button-large-gap: var(--usewc-space-4);
   --usewc-font-button-large-size: var(--usewc-font-size-18);
   --usewc-layout-button-large-line-height: var(--usewc-line-height-28);
   /* -- Extra large size */
-  --usewc-layout-button-extra-large-padding-block: calc(var(--usewc-space-8) - var(--usewc-layout-button-border));
+  --usewc-layout-button-extra-large-padding-block: calc(var(--usewc-space-10) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-large-padding-inline: calc(var(--usewc-space-24) - var(--usewc-layout-button-border));
   --usewc-layout-button-extra-large-gap: var(--usewc-space-8);
-  --usewc-font-button-extra-large-size: var(--usewc-font-size-24);
-  --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-28);
+  --usewc-font-button-extra-large-size: var(--usewc-font-size-20);
+  --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-32);
 
   /* Menu */
   --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-4);
@@ -239,7 +387,7 @@
   --usewc-layout-code-line-height: var(--usewc-line-height-20);
   --usewc-effect-code-border-radius: var(--usewc-effect-border-radius-4);
   --usewc-color-code-text: var(--usewc-color-red-700);
-  --usewc-color-code-background: oklch(from var(--usewc-color-red-500) l c h / 0.125);
+  --usewc-color-code-background: oklch(from var(--usewc-color-red-600) l c h / 0.125);
   --usewc-color-code-border: var(--usewc-color-transparent);
   --usewc-font-code-size: var(--usewc-font-size-14);
 }
@@ -248,9 +396,11 @@
   :root {
     --usewc-color-document-text: var(--usewc-color-gray-200);
     --usewc-color-document-text-muted: var(--usewc-color-gray-300);
-    --usewc-color-document-background: var(--usewc-color-gray-800);
+    --usewc-color-document-background: var(--usewc-color-gray-950);
     --usewc-color-canvas-background: var(--usewc-color-black);
-    --usewc-color-outline: var(--usewc-color-blue-200);
+    /* The primary/danger fill stays the same shade in both themes — only the
+       focus ring lightens in the dark. */
+    --usewc-color-outline: var(--usewc-color-blue-400);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
     --usewc-color-input-border-static: var(--usewc-color-gray-600);
     --usewc-color-input-text-static: var(--usewc-color-gray-200);
@@ -258,58 +408,67 @@
     --usewc-color-form-label-text: var(--usewc-color-gray-100);
     --usewc-color-form-helper-text: var(--usewc-color-gray-400);
     --usewc-color-form-helper-text-invalid: var(--usewc-color-red-400);
-    --usewc-color-button-base-text-static: var(--usewc-color-gray-100);
-    --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-gray-300);
-    --usewc-color-button-base-text-hover: var(--usewc-color-gray-100);
-    --usewc-color-button-base-text-active: var(--usewc-color-gray-100);
-    --usewc-color-button-base-background-static: var(--usewc-color-gray-700);
-    --usewc-color-button-base-background-hover: var(--usewc-color-gray-600);
-    --usewc-color-button-base-background-active: var(--usewc-color-gray-500);
-    --usewc-color-button-base-background-static-auxiliary: transparent;
-    --usewc-color-button-base-border-static: var(--usewc-color-gray-600);
-    --usewc-color-button-base-border-hover: var(--usewc-color-gray-500);
-    --usewc-color-button-base-border-active: var(--usewc-color-gray-400);
-    --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-600);
-    --usewc-color-button-clear-text-static: var(--usewc-color-gray-200);
-    --usewc-color-button-clear-text-hover: var(--usewc-color-gray-200);
-    --usewc-color-button-clear-background-hover: var(--usewc-color-gray-700);
-    --usewc-color-button-clear-border-hover: var(--usewc-color-gray-700);
-    --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-gray-300);
-    --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-600);
-    --usewc-color-button-primary-background-static: var(--usewc-color-blue-400);
-    --usewc-color-button-primary-background-hover: var(--usewc-color-blue-500);
-    --usewc-color-button-primary-background-active: var(--usewc-color-blue-600);
-    --usewc-color-button-primary-border-static: var(--usewc-color-blue-400);
-    --usewc-color-button-primary-border-hover: var(--usewc-color-blue-500);
-    --usewc-color-button-primary-border-active: var(--usewc-color-blue-600);
-    --usewc-color-button-primary-text-static: var(--usewc-color-white);
-    --usewc-color-button-primary-text-hover: var(--usewc-color-white);
-    --usewc-color-button-primary-text-active: var(--usewc-color-white);
-    --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-blue-200);
-    --usewc-color-button-primary-border-static-auxiliary: var(--usewc-color-blue-200);
-    --usewc-color-button-danger-background-static: var(--usewc-color-red-500);
-    --usewc-color-button-danger-background-hover: var(--usewc-color-red-600);
-    --usewc-color-button-danger-background-active: var(--usewc-color-red-700);
-    --usewc-color-button-danger-border-static: var(--usewc-color-red-500);
-    --usewc-color-button-danger-border-hover: var(--usewc-color-red-600);
-    --usewc-color-button-danger-border-active: var(--usewc-color-red-700);
-    --usewc-color-button-danger-text-static: var(--usewc-color-white);
-    --usewc-color-button-danger-text-hover: var(--usewc-color-white);
-    --usewc-color-button-danger-text-active: var(--usewc-color-white);
-    --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-red-300);
-    --usewc-color-button-danger-border-static-auxiliary: var(--usewc-color-red-300);
-    --usewc-color-link-text-static: var(--usewc-color-blue-300);
-    --usewc-color-link-text-hover: var(--usewc-color-blue-400);
-    --usewc-color-link-text-active: var(--usewc-color-blue-500);
+    /* A dark control is lighter than what surrounds it, so interaction has to
+       move lightness the opposite way, and its border has to run lighter
+       than its own face rather than darker. */
+    --usewc-color-button-base-background-static: var(--usewc-color-gray-900);
+    --usewc-effect-button-base-shift: 1;
+    --usewc-effect-button-base-border-direction: 1;
+    --usewc-effect-button-base-border-step: 0.14;
+    --usewc-effect-button-base-border-step-hover: 0.16;
+    --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-700);
+    /* Solid fills are already lighter than the dark surface, so they keep the
+       light-mode direction — darkening still reads as pressing toward it —
+       but need a shallower border step or the derived border overpowers the
+       fill. */
+    --usewc-effect-button-primary-border-step: 0.08;
+    --usewc-effect-button-primary-border-step-hover: 0.1;
+    --usewc-effect-button-danger-border-step: 0.08;
+    --usewc-effect-button-danger-border-step-hover: 0.1;
+    /* A low-alpha wash of the fill barely lifts off a near-black page — it
+       needs more alpha here than on white to read as a hover state at all. */
+    --usewc-color-button-primary-background-hover-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.22
+    );
+    --usewc-color-button-primary-background-active-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.32
+    );
+    --usewc-color-button-primary-border-static-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.65
+    );
+    --usewc-color-button-primary-border-hover-auxiliary: oklch(
+      from var(--usewc-color-button-primary-background-static) l c h / 0.9
+    );
+    --usewc-color-button-danger-background-hover-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.22
+    );
+    --usewc-color-button-danger-background-active-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.32
+    );
+    --usewc-color-button-danger-border-static-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.65
+    );
+    --usewc-color-button-danger-border-hover-auxiliary: oklch(
+      from var(--usewc-color-button-danger-background-static) l c h / 0.9
+    );
+    --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-700);
+    --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-gray-600);
+    --usewc-color-button-shadow-lightness: 0;
+    --usewc-color-button-shadow-chroma: 0;
+    --usewc-color-button-shadow-alpha: 0.3;
+    --usewc-color-button-shadow-inset: oklch(from var(--usewc-color-white) l c h / 0.08);
+    --usewc-color-link-text-static: var(--usewc-color-blue-400);
+    --usewc-color-link-text-hover: var(--usewc-color-blue-500);
+    --usewc-color-link-text-active: var(--usewc-color-blue-600);
     --usewc-color-code-text: var(--usewc-color-red-200);
     --usewc-color-input-border-hover: var(--usewc-color-gray-500);
-    --usewc-color-input-border-focus: var(--usewc-color-blue-200);
+    --usewc-color-input-border-focus: var(--usewc-color-blue-400);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
     --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
     --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
-    --usewc-color-range-thumb-background-static: var(--usewc-color-blue-400);
-    --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-300);
-    --usewc-color-range-thumb-background-active: var(--usewc-color-blue-200);
+    --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
+    --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-400);
+    --usewc-color-range-thumb-background-active: var(--usewc-color-blue-300);
     --usewc-color-range-track-background-static: var(--usewc-color-gray-800);
     --usewc-color-range-track-border-static: var(--usewc-color-gray-700);
     --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);

@@ -97,6 +97,7 @@ use-select-input::part(trigger-arrow) {
 - `space`
 - `font`
 - `effect`
+- `transition`
 
 ##### Component Categories
 
@@ -124,11 +125,14 @@ use-select-input::part(trigger-arrow) {
 - `focus-ring`
 - `padding`
 - `gap`
+- `shadow`
 
 ##### Property modifiers
 
 - `inline`
 - `block`
+- `inset`
+- `outset`
 
 ##### State
 
@@ -140,6 +144,25 @@ use-select-input::part(trigger-arrow) {
 - `readonly`
 - `placeholder`
 - `invalid`
+
+##### Derivation knobs
+
+Some components (currently `button`) compute their hover/active/border colors
+from a single fill with `oklch(from …)` instead of naming every state
+explicitly. The knobs behind that derivation follow the same
+`--usewc-effect-<component>-<variant>-<name>` shape as any other effect token:
+
+- `shift` - which direction interaction moves lightness (`-1` darkens, `1`
+  lightens — dark-mode surfaces flip this)
+- `hover-step` / `active-step` - how far hover/active move the fill's lightness
+- `border-direction` - which direction the border sits relative to its own
+  face (`-1` darker, `1` lighter)
+- `border-step` / `border-step-hover` - how far the border moves from the face
+
+A component that derives its states this way still keeps a plain,
+overridable token for every state name (e.g.
+`--usewc-color-button-base-background-hover`) — the knobs only describe how
+that value's default is computed, not a replacement for the name.
 
 ## Inspiration
 

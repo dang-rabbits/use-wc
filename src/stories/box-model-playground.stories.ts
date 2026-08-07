@@ -115,7 +115,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     name: "border-style",
     list: "all",
     category: "effect",
-    defaultValue: "var(--usewc-effect-input-border-style)",
+    defaultValue: "var(--usewc-effect-button-border-style)",
   },
   {
     name: "border-color",
@@ -131,14 +131,25 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     name: "border-radius",
     list: "effect",
     category: "effect",
-    defaultValue: "var(--usewc-effect-input-border-radius)",
+    defaultValue: "var(--usewc-effect-button-border-radius)",
   },
   { name: "corner-shape", list: "all", category: "effect" },
   { name: "outline-size", list: "size", category: "effect" },
   { name: "outline-style", list: "all", category: "effect" },
   { name: "outline-color", list: "color", category: "color" },
   { name: "outline-offset", list: "size", category: "effect" },
-  { name: "box-shadow", list: "effect", category: "effect" },
+  {
+    name: "box-shadow",
+    list: "effect",
+    category: "effect",
+    defaultValue:
+      "var(--usewc-effect-button-box-shadow-none), var(--usewc-effect-button-box-shadow-outset)",
+    stateDefaults: {
+      hover:
+        "var(--usewc-effect-button-box-shadow-none), var(--usewc-effect-button-box-shadow-outset-hover)",
+      active: "var(--usewc-effect-button-box-shadow-none)",
+    },
+  },
   { name: "text-shadow", list: "effect", category: "effect" },
   {
     name: "background",
@@ -616,6 +627,7 @@ function renderStateSelector() {
 const meta: Meta = {
   title: "Box Model Playground",
   tags: ["autodocs", "!dev", "utility"],
+  parameters: { allowTheme: true },
   args: {},
   render: () => html`
     <style>
