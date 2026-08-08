@@ -118,6 +118,7 @@
   --usewc-effect-border-radius-6: 0.375rem;
   --usewc-effect-border-radius-8: 0.5rem;
   --usewc-effect-border-radius-full: 100%;
+  --usewc-effect-border-radius-pill: 9999px;
 
   /** Motion */
   --usewc-transition-duration-fast: 120ms;
