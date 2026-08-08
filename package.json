@@ -29,7 +29,7 @@
     "preview": "vp preview",
     "analyze": "custom-elements-manifest analyze",
     "generate-docs": "node scripts/generate-docs.mjs",
-    "storybook": "storybook dev -p ${PORT:-6006}",
+    "storybook": "EDITOR=code storybook dev -p ${PORT:-6006} --no-open",
     "build": "vp run pack && storybook build",
     "test": "vp test",
     "check": "vp check ./src",

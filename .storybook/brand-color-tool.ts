@@ -26,6 +26,7 @@ function BrandColorTool() {
         border: "none",
         background: "none",
         cursor: "pointer",
+        borderRadius: 14,
       },
     }),
     override
