@@ -1,0 +1,20 @@
+@layer use-theme.code {
+  code,
+  .appearance-code {
+    display: inline-block;
+    font-family: var(--usewc-font-code-family);
+    font-size: var(--usewc-font-code-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-code-text);
+    background: var(--usewc-color-code-background);
+    padding-inline: var(--usewc-layout-code-padding-inline);
+    padding-block: var(--usewc-layout-code-padding-block);
+    border-radius: var(--usewc-effect-code-border-radius);
+    line-height: var(--usewc-layout-code-line-height);
+    border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid) var(--usewc-color-code-border);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

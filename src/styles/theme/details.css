@@ -1,0 +1,26 @@
+@layer use-theme.details {
+  details:not(.appearance-native) {
+    /* :not([class*="appearance-"]) guards against a summary opted into a different appearance
+     category (.appearance-button, most commonly). Cascade layers rank strictly by layer order
+     before specificity, so without this guard this layer's `all: unset` always beats the button
+     family's styling on a themed summary.appearance-button, regardless of specificity. */
+    summary:not([class*="appearance-"]) {
+      all: unset;
+
+      &::before {
+        content: "▶";
+        display: inline-block;
+        width: 1em;
+      }
+    }
+
+    use-theme-escape & summary:not([class*="appearance-"]),
+    use-theme-escape & summary:not([class*="appearance-"])::before {
+      all: revert-layer;
+    }
+
+    &:is([open], :open) summary:not([class*="appearance-"])::before {
+      content: "▼";
+    }
+  }
+}

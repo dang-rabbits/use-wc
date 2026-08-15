@@ -1,0 +1,141 @@
+@layer use-theme.input {
+  :where(
+    input:not(:where([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])),
+    select,
+    textarea,
+    .appearance-input,
+    use-date-input,
+    use-time-input,
+    use-datetime-input,
+    use-duration-input
+  ):not(.appearance-native) {
+    --usewc-color-input-border: var(--usewc-color-input-border-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-outline-offset: var(--usewc-effect-outline-offset-flush);
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
+
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style) var(--usewc-color-input-border);
+    line-height: var(--usewc-layout-input-line-height);
+    padding-block: var(--usewc-layout-input-padding-block);
+    padding-inline: var(--usewc-layout-input-padding-inline);
+    background: var(--usewc-color-input-background-static);
+    font-family: var(--usewc-font-input-family);
+    font-size: var(--usewc-font-input-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-input-text-static);
+    border-radius: var(--usewc-effect-input-border-radius);
+    opacity: var(--usewc-effect-opacity);
+    pointer-events: var(--usewc-effect-pointer-events);
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
+
+    &:not(:where(:disabled, [aria-disabled="true"], .appearance-input)):hover,
+    &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover) {
+      --usewc-color-input-border: var(--usewc-color-input-border-hover);
+    }
+
+    &:where(:focus, :has(input:focus), :focus-within) {
+      --usewc-color-input-border: var(--usewc-color-input-border-focus);
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"],
+    &:has(:disabled, [aria-disabled="true"]) {
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
+    }
+
+    &:where(:user-invalid, [aria-invalid="true"], :has(:is(:user-invalid, [aria-invalid="true"]))) {
+      --usewc-color-input-border: var(--usewc-color-input-border-invalid);
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    /* Escapes for a pseudo-element (here and throughout this file) are declared as siblings, not
+     nested inside the pseudo-element's own rule: `&` resolves through an implicit `:is()`, and
+     `:is()`/`:where()` silently drop any argument ending in a pseudo-element, so a nested
+     `use-theme-escape &::placeholder` would wrap `<selector>::placeholder` in `:is()` and match
+     nothing. */
+    &::placeholder {
+      color: var(--usewc-color-input-text-placeholder);
+    }
+
+    use-theme-escape &::placeholder {
+      all: revert-layer;
+    }
+  }
+
+  /* Can't join the shared input-family rule above via `:where()` the way select/textarea do —
+   `::part()` inside a `:where()`/`:is()` argument list is invalid and silently dropped by the
+   browser, taking the whole alternative down with it. Stands alone instead. */
+  use-listbox-input:not(.appearance-native)::part(listbox) {
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
+      var(--usewc-color-input-border-static);
+    padding: var(--usewc-layout-popover-menu-padding);
+    background: var(--usewc-color-input-background-static);
+    font-family: var(--usewc-font-input-family);
+    font-size: var(--usewc-font-input-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-input-text-static);
+    border-radius: var(--usewc-effect-input-border-radius);
+  }
+
+  use-theme-escape use-listbox-input:not(.appearance-native)::part(listbox) {
+    all: revert-layer;
+  }
+
+  select:not(.appearance-native) {
+    appearance: none;
+  }
+
+  .appearance-input {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: text-top;
+    gap: var(--usewc-layout-input-gap-inline);
+
+    &:has(button:first-child) {
+      padding-inline-start: var(--usewc-layout-input-padding-block);
+    }
+
+    &:has(button:last-child) {
+      padding-inline-end: var(--usewc-layout-input-padding-block);
+    }
+
+    > :not(input) {
+      flex: 0 0 auto;
+    }
+
+    input:not(:is([type="checkbox"], [type="radio"], [type="range"])) {
+      flex: 1 1 auto;
+      padding: 0;
+      border: none;
+      background: transparent;
+      border-radius: 0;
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  /**
+   * There are many difficulties with styling range inputs so we opted for `accent-color` instead.
+   * - cannot style tick marks
+   * - cannot style track progress with border radius
+   * - duplicate CSS rules for Firefox and Webkit
+   *
+   * - https://codepen.io/ShadowShahriar/pen/zYPPYrQ
+   * - https://open-ui.org/components/enhanced-range-input.explainer/
+   */
+  input[type="range"]:not(.appearance-native) {
+    accent-color: var(--usewc-color-range-thumb-background-static);
+  }
+}

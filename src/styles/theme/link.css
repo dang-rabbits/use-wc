@@ -1,0 +1,33 @@
+@layer use-theme.link {
+  :is(a:not([class*="appearance-"]), .appearance-a) {
+    &:where(:not(a)) {
+      all: unset;
+    }
+
+    --usewc-color-link-text: var(--usewc-color-link-text-static);
+    --usewc-effect-outline-width: 0;
+
+    color: var(--usewc-color-link-text);
+    text-decoration: var(--usewc-effect-link-text-decoration);
+    cursor: pointer;
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &:is(:hover, :focus-visible) {
+      --usewc-color-link-text: var(--usewc-color-link-text-hover);
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:active {
+      --usewc-color-link-text: var(--usewc-color-link-text-active);
+    }
+  }
+}

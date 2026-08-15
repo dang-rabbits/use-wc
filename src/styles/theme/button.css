@@ -1,0 +1,264 @@
+@layer use-theme.button {
+  :where(button:not([class*="appearance-"]), .appearance-button),
+  input[type="file"]:not([class*="appearance-"]) {
+    &:where(:not(button)),
+    &::file-selector-button {
+      all: unset;
+      display: inline-flex;
+    }
+
+    --usewc-color-button-text-static: var(--usewc-color-button-base-text-static);
+    --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-base-text-static-auxiliary);
+    --usewc-color-button-background-static: var(--usewc-color-button-base-background-static);
+    --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-base-background-static-auxiliary);
+    --usewc-color-button-border-static: var(--usewc-color-button-base-border-static);
+    --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-base-border-static-auxiliary);
+    --usewc-color-button-text-hover: var(--usewc-color-button-base-text-hover);
+    --usewc-color-button-background-hover: var(--usewc-color-button-base-background-hover);
+    --usewc-color-button-border-hover: var(--usewc-color-button-base-border-hover);
+    --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-base-background-hover-auxiliary);
+    --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-base-border-hover-auxiliary);
+    --usewc-color-button-text-active: var(--usewc-color-button-base-text-active);
+    --usewc-color-button-background-active: var(--usewc-color-button-base-background-active);
+    --usewc-color-button-border-active: var(--usewc-color-button-base-border-active);
+    --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-base-background-active-auxiliary);
+
+    --usewc-color-button-shadow-tint: var(--usewc-color-button-base-shadow-tint);
+    --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-base-shadow-chroma-multiplier);
+    --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-base-shadow-alpha-multiplier);
+    --usewc-color-button-shadow-outset: oklch(
+      from var(--usewc-color-button-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-shadow-chroma-multiplier)) h /
+        calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-shadow-alpha-multiplier))
+    );
+    --usewc-color-button-shadow-outset-hover: oklch(
+      from var(--usewc-color-button-shadow-tint) var(--usewc-color-button-shadow-lightness)
+        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-shadow-chroma-multiplier)) h /
+        calc(
+          var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-shadow-alpha-multiplier) *
+            var(--usewc-color-button-shadow-alpha-hover-multiplier)
+        )
+    );
+    --usewc-effect-button-box-shadow-outset: 0 1px 2px 0 var(--usewc-color-button-shadow-outset);
+    --usewc-effect-button-box-shadow-outset-hover: 0 2px 4px 0 var(--usewc-color-button-shadow-outset-hover);
+    --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-none);
+    --usewc-effect-button-box-shadow-static:
+      var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset);
+    --usewc-effect-button-box-shadow-hover:
+      var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset-hover);
+    --usewc-effect-button-box-shadow-active: var(--usewc-effect-button-box-shadow-layer);
+
+    --usewc-layout-button-padding-block: var(--usewc-layout-button-base-padding-block);
+    --usewc-layout-button-padding-inline: var(--usewc-layout-button-base-padding-inline);
+    --usewc-layout-button-gap: var(--usewc-layout-button-base-gap);
+    --usewc-font-button-size: var(--usewc-font-button-base-size);
+    --usewc-effect-button-radius: var(--usewc-effect-button-border-radius);
+    --usewc-color-button-text: var(--usewc-color-button-text-static);
+    --usewc-color-button-background: var(--usewc-color-button-background-static);
+    --usewc-color-button-border: var(--usewc-color-button-border-static);
+    --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
+
+    &:not([type="file"]),
+    &::file-selector-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--usewc-layout-button-gap);
+      border-radius: var(--usewc-effect-button-radius);
+      line-height: var(--usewc-layout-button-line-height);
+      padding-block: var(--usewc-layout-button-padding-block);
+      padding-inline: var(--usewc-layout-button-padding-inline);
+      font-family: var(--usewc-font-button-family);
+      font-size: var(--usewc-font-button-size);
+      font-weight: var(--usewc-font-button-weight);
+      white-space: nowrap;
+      cursor: default;
+      color: var(--usewc-color-button-text);
+      background: var(--usewc-color-button-background);
+      background-size: var(--usewc-effect-button-background-size);
+      background-position: var(--usewc-effect-button-background-position);
+      background-repeat: var(--usewc-effect-button-background-repeat);
+      border: var(--usewc-layout-button-border) var(--usewc-effect-button-border-style) var(--usewc-color-button-border);
+      box-shadow: var(--usewc-effect-button-box-shadow);
+      opacity: var(--usewc-effect-opacity);
+      pointer-events: var(--usewc-effect-pointer-events);
+      outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      outline-offset: var(--usewc-effect-outline-offset);
+      transition: var(--usewc-transition-control), var(--usewc-effect-outline-transition);
+    }
+
+    /* Split into two rather than one shared escape: the paint rule above is a 2-alternative
+     list, and nesting a single `use-theme-escape &` would wrap both in `:is()`, silently
+     dropping the `::file-selector-button` half (see the placeholder escape note above). */
+    use-theme-escape &:not([type="file"]) {
+      all: revert-layer;
+    }
+
+    use-theme-escape &::file-selector-button {
+      all: revert-layer;
+    }
+
+    &:not([type="file"]):has(> use-caret) {
+      /*
+     * :not([type="file"]) is repeated here — not just for scoping — because it's load-bearing
+     * for specificity. padding-inline above is set by the bare &:not([type="file"]) selector;
+     * without matching that same specificity here, this rule loses the cascade and the padding
+     * never actually shrinks.
+     */
+      padding-inline-end: calc(
+        var(--usewc-layout-button-padding-inline) - var(--usewc-layout-dropdown-trigger-icon-size) / 4
+      );
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    &::file-selector-button {
+      margin-inline-end: var(--usewc-layout-input-gap-inline);
+    }
+
+    &:where(:hover, :focus-visible),
+    &:hover::file-selector-button {
+      --usewc-color-button-text: var(--usewc-color-button-text-hover);
+      --usewc-color-button-background: var(--usewc-color-button-background-hover);
+      --usewc-color-button-border: var(--usewc-color-button-border-hover);
+      --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-hover);
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:active,
+    &:active::file-selector-button {
+      --usewc-color-button-text: var(--usewc-color-button-text-active);
+      --usewc-color-button-background: var(--usewc-color-button-background-active);
+      --usewc-color-button-border: var(--usewc-color-button-border-active);
+      --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-active);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
+    }
+
+    &.primary {
+      --usewc-color-button-text-static: var(--usewc-color-button-primary-text-static);
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-primary-text-static-auxiliary);
+      --usewc-color-button-background-static: var(--usewc-color-button-primary-background-static);
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-primary-background-static-auxiliary);
+      --usewc-color-button-border-static: var(--usewc-color-button-primary-border-static);
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-primary-border-static-auxiliary);
+      --usewc-color-button-text-hover: var(--usewc-color-button-primary-text-hover);
+      --usewc-color-button-background-hover: var(--usewc-color-button-primary-background-hover);
+      --usewc-color-button-border-hover: var(--usewc-color-button-primary-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-primary-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-primary-border-hover-auxiliary);
+      --usewc-color-button-text-active: var(--usewc-color-button-primary-text-active);
+      --usewc-color-button-background-active: var(--usewc-color-button-primary-background-active);
+      --usewc-color-button-border-active: var(--usewc-color-button-primary-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-primary-background-active-auxiliary);
+      --usewc-color-button-shadow-tint: var(--usewc-color-button-primary-shadow-tint);
+      --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-primary-shadow-chroma-multiplier);
+      --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-primary-shadow-alpha-multiplier);
+      --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-inset);
+    }
+
+    &.danger {
+      --usewc-color-button-text-static: var(--usewc-color-button-danger-text-static);
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-danger-text-static-auxiliary);
+      --usewc-color-button-background-static: var(--usewc-color-button-danger-background-static);
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-danger-background-static-auxiliary);
+      --usewc-color-button-border-static: var(--usewc-color-button-danger-border-static);
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-danger-border-static-auxiliary);
+      --usewc-color-button-text-hover: var(--usewc-color-button-danger-text-hover);
+      --usewc-color-button-background-hover: var(--usewc-color-button-danger-background-hover);
+      --usewc-color-button-border-hover: var(--usewc-color-button-danger-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-danger-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-danger-border-hover-auxiliary);
+      --usewc-color-button-text-active: var(--usewc-color-button-danger-text-active);
+      --usewc-color-button-background-active: var(--usewc-color-button-danger-background-active);
+      --usewc-color-button-border-active: var(--usewc-color-button-danger-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-danger-background-active-auxiliary);
+      --usewc-color-button-shadow-tint: var(--usewc-color-button-danger-shadow-tint);
+      --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-danger-shadow-chroma-multiplier);
+      --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-danger-shadow-alpha-multiplier);
+      --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-inset);
+    }
+
+    &.clear {
+      --usewc-color-button-text-static: var(--usewc-color-button-clear-text-static);
+      --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-clear-text-static-auxiliary);
+      --usewc-color-button-background-static: var(--usewc-color-button-clear-background-static);
+      --usewc-color-button-background-static-auxiliary: var(--usewc-color-button-clear-background-static-auxiliary);
+      --usewc-color-button-border-static: var(--usewc-color-button-clear-border-static);
+      --usewc-color-button-border-static-auxiliary: var(--usewc-color-button-clear-border-static-auxiliary);
+      --usewc-color-button-text-hover: var(--usewc-color-button-clear-text-hover);
+      --usewc-color-button-background-hover: var(--usewc-color-button-clear-background-hover);
+      --usewc-color-button-border-hover: var(--usewc-color-button-clear-border-hover);
+      --usewc-color-button-background-hover-auxiliary: var(--usewc-color-button-clear-background-hover-auxiliary);
+      --usewc-color-button-border-hover-auxiliary: var(--usewc-color-button-clear-border-hover-auxiliary);
+      --usewc-color-button-text-active: var(--usewc-color-button-clear-text-active);
+      --usewc-color-button-background-active: var(--usewc-color-button-clear-background-active);
+      --usewc-color-button-border-active: var(--usewc-color-button-clear-border-active);
+      --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-clear-background-active-auxiliary);
+      --usewc-effect-button-box-shadow-static: none;
+      --usewc-effect-button-box-shadow-hover: none;
+      --usewc-effect-button-box-shadow-active: none;
+    }
+
+    &.auxiliary {
+      --usewc-color-button-background-static: var(--usewc-color-button-background-static-auxiliary);
+      --usewc-color-button-text-static: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-border-static: var(--usewc-color-button-border-static-auxiliary);
+      --usewc-color-button-text-hover: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-background-hover: var(--usewc-color-button-background-hover-auxiliary);
+      --usewc-color-button-border-hover: var(--usewc-color-button-border-hover-auxiliary);
+      --usewc-color-button-text-active: var(--usewc-color-button-text-static-auxiliary);
+      --usewc-color-button-background-active: var(--usewc-color-button-background-active-auxiliary);
+      --usewc-color-button-border-active: var(--usewc-color-button-border-hover-auxiliary);
+      --usewc-effect-button-box-shadow-static: none;
+      --usewc-effect-button-box-shadow-hover: none;
+      --usewc-effect-button-box-shadow-active: none;
+    }
+
+    &.extra-small {
+      --usewc-layout-button-padding-block: var(--usewc-layout-button-extra-small-padding-block);
+      --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
+      --usewc-font-button-size: var(--usewc-font-button-extra-small-size);
+      --usewc-layout-button-line-height: var(--usewc-layout-button-extra-small-line-height);
+      --usewc-effect-button-radius: var(--usewc-effect-button-extra-small-border-radius);
+    }
+
+    &.small {
+      --usewc-layout-button-padding-block: var(--usewc-layout-button-small-padding-block);
+      --usewc-layout-button-padding-inline: var(--usewc-layout-button-small-padding-inline);
+      --usewc-font-button-size: var(--usewc-font-button-small-size);
+      --usewc-layout-button-line-height: var(--usewc-layout-button-small-line-height);
+      --usewc-effect-button-radius: var(--usewc-effect-button-small-border-radius);
+    }
+
+    &.large {
+      --usewc-layout-button-padding-block: var(--usewc-layout-button-large-padding-block);
+      --usewc-layout-button-padding-inline: var(--usewc-layout-button-large-padding-inline);
+      --usewc-font-button-size: var(--usewc-font-button-large-size);
+      --usewc-layout-button-line-height: var(--usewc-layout-button-large-line-height);
+    }
+
+    &.extra-large {
+      --usewc-layout-button-padding-block: var(--usewc-layout-button-extra-large-padding-block);
+      --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
+      --usewc-font-button-size: var(--usewc-font-button-extra-large-size);
+      --usewc-layout-button-line-height: var(--usewc-layout-button-extra-large-line-height);
+    }
+  }
+
+  input[type="file"]:not([class*="appearance-"]) {
+    border-radius: var(--usewc-effect-input-border-radius);
+  }
+}

@@ -1,0 +1,33 @@
+@layer use-theme.icon {
+  use-option::part(selected-indicator-default) {
+    display: none;
+  }
+
+  /* Only matches the built-in ▼/▶ glyph — `use-caret` renders a custom `UseCaret.customIcon`
+   under a different part name so this masking never fights with it. */
+  use-caret::part(icon-default) {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+    inline-size: var(--usewc-layout-dropdown-trigger-icon-size);
+    block-size: var(--usewc-layout-dropdown-trigger-icon-size);
+    background-color: var(--usewc-effect-dropdown-trigger-icon-background-color, currentColor);
+    mask-image: var(--usewc-effect-dropdown-trigger-icon-mask-image, none);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  use-theme-escape use-caret::part(icon-default) {
+    all: revert-layer;
+  }
+
+  use-menu use-caret::part(icon-default) {
+    mask-image: var(--usewc-effect-dropdown-trigger-icon-nested-mask-image, none);
+  }
+
+  use-caret::part(icon) {
+    margin-inline-start: auto;
+  }
+}
