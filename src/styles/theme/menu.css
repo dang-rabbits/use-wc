@@ -1,0 +1,172 @@
+@layer use-theme.menu {
+  use-menu:popover-open {
+    --min-size: 30vh;
+    --max-size: 80vh;
+
+    min-block-size: var(--min-size);
+    max-block-size: min(100% - var(--usewc-layout-popover-menu-anchor-offset), var(--max-size));
+    margin-block: var(--usewc-layout-popover-menu-anchor-offset);
+    overflow: auto;
+    border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+      var(--usewc-color-popover-menu-border);
+    padding: var(--usewc-layout-popover-menu-padding);
+    background: var(--usewc-color-popover-menu-background);
+    border-radius: var(--usewc-effect-popover-menu-border-radius);
+
+    @supports (min-block-size: calc-size(fit-content, min(size, 1px))) {
+      min-block-size: calc-size(fit-content, min(size, var(--min-size)));
+      max-block-size: calc-size(stretch, min(size, var(--max-size)));
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-option,
+  use-menu :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]) {
+    --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+    --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-static);
+    --usewc-effect-outline-width: 0;
+
+    border: none;
+    text-align: start;
+    cursor: default;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    gap: var(--usewc-layout-popover-menu-item-padding-inline);
+    line-height: var(--usewc-layout-popover-menu-item-line-height);
+    padding-inline: var(--usewc-layout-popover-menu-item-padding-inline);
+    padding-block: var(--usewc-layout-popover-menu-item-padding-block);
+    background-color: var(--usewc-color-popover-menu-item-background);
+    border-radius: var(--usewc-effect-popover-menu-item-border-radius);
+    color: var(--usewc-color-popover-menu-item-text);
+    text-decoration: none;
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
+
+    > *:last-child:not(:first-child) {
+      flex: 0 0 auto;
+      margin-inline-start: auto;
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &:hover {
+      --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-hover);
+      --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-hover);
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+      --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+      --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-focus);
+    }
+  }
+
+  use-listbox-input:is(:hover, :focus) use-option:state(active) {
+    --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-active);
+  }
+
+  use-listbox-input {
+    --usewc-effect-outline-width: 0;
+
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+  }
+
+  use-menu :is([role="menuitemcheckbox"], [role="menuitemradio"]),
+  use-listbox-input {
+    use-option,
+    &:has(+ :where([role="menuitemcheckbox"], [role="menuitemradio"])),
+    & + :where([role="menuitemcheckbox"], [role="menuitemradio"]) {
+      padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+  }
+
+  use-menu,
+  use-listbox-input {
+    [role="group"][aria-label] {
+      &::before {
+        content: attr(aria-label);
+        padding: var(--usewc-layout-popover-menu-padding);
+        font-size: var(--usewc-font-popover-menu-header-size);
+        font-weight: var(--usewc-font-popover-menu-header-weight);
+        color: var(--usewc-color-popover-menu-header-text);
+      }
+
+      use-theme-escape &::before {
+        all: revert-layer;
+      }
+    }
+
+    kbd {
+      font-family: var(--usewc-font-popover-menu-shortcut-family);
+      color: var(--usewc-color-popover-menu-shortcut);
+      margin-inline-start: auto;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    hr {
+      border: 0;
+      border-block-start: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+        var(--usewc-color-popover-menu-border);
+      margin-block: var(--usewc-layout-popover-menu-padding);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+  }
+
+  use-menu:state(nested):popover-open {
+    /*
+   * !important: this must win over the anchoralign-driven position-area rules the component
+   * sets on itself in its own shadow stylesheet. Submenus always position to the side of
+   * their parent trigger, independent of anchoralign.
+   */
+    position-area: block-end span-inline-end !important;
+    inset-inline-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset) * 2);
+    inset-block-start: calc(
+      anchor(start) - var(--usewc-layout-popover-menu-anchor-offset) -
+        var(--usewc-layout-popover-menu-item-padding-block)
+    );
+    position-try:
+      flip-block,
+      flip-inline,
+      flip-inline flip-block;
+  }
+
+  use-menu [aria-checked="true"],
+  use-option:state(selected) {
+    background-image: var(--usewc-effect-menu-item-checkmark-background-image, none);
+    /* TODO use logical position */
+    background-position: left var(--usewc-layout-input-padding-inline) center;
+    background-repeat: no-repeat;
+    background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

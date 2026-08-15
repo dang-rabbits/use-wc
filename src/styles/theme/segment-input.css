@@ -1,0 +1,86 @@
+@layer use-theme.segment-input {
+  :is(use-datetime-input, use-date-input, use-time-input, use-duration-input):not(.appearance-native) {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    gap: var(--usewc-layout-input-segment-padding-inline);
+    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
+
+    --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-static);
+    --usewc-color-input-segment-text: var(--usewc-color-input-text-static);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &::part(segment-input) {
+      all: unset;
+      box-sizing: content-box;
+      appearance: none;
+      field-sizing: content;
+      outline: none;
+      border-radius: var(--usewc-effect-input-border-radius);
+      min-width: 2ch;
+      width: fit-content;
+      text-align: end;
+      padding-inline: var(--usewc-layout-input-segment-padding-inline);
+      font-variant-numeric: tabular-nums;
+      background: var(--usewc-color-input-segment-background);
+      color: var(--usewc-color-input-segment-text);
+    }
+
+    use-theme-escape &::part(segment-input) {
+      all: revert-layer;
+    }
+
+    &::part(segment-input-dayPeriod) {
+      text-align: center;
+      min-width: 2em;
+      padding-inline: 0;
+    }
+
+    &::part(segment-input):hover {
+      --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-hover);
+    }
+
+    &::part(segment-input):focus {
+      --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-focus);
+      --usewc-color-input-segment-text: var(--usewc-color-input-segment-text-focus);
+    }
+
+    &::selection {
+      background: var(--usewc-color-input-segment-background-focus);
+      color: var(--usewc-color-input-segment-text-focus);
+    }
+
+    use-theme-escape &::selection {
+      all: revert-layer;
+    }
+  }
+
+  :is(use-datetime-input):not(.appearance-native) {
+    &::part(date),
+    &::part(time) {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usewc-layout-input-segment-padding-inline);
+    }
+
+    use-theme-escape &::part(date),
+    use-theme-escape &::part(time) {
+      all: revert-layer;
+    }
+  }
+
+  use-duration-input:not(.appearance-native) {
+    &::part(segment) {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usewc-layout-input-segment-padding-inline);
+    }
+
+    use-theme-escape &::part(segment) {
+      all: revert-layer;
+    }
+  }
+}

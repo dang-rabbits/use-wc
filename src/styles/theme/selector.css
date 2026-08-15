@@ -1,0 +1,91 @@
+@layer use-theme.selector {
+  input:is([type="checkbox"], [type="radio"]) {
+    all: unset;
+    appearance: none;
+    box-sizing: border-box;
+    width: var(--usewc-layout-selector-width);
+    height: var(--usewc-layout-selector-height);
+    border-radius: var(--usewc-effect-selector-border-radius);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    vertical-align: text-top;
+
+    --usewc-color-selector-border: var(--usewc-color-selector-border-static);
+    --usewc-color-selector-background: var(--usewc-color-selector-background-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
+
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style) var(--usewc-color-selector-border);
+    background: var(--usewc-color-selector-background);
+    opacity: var(--usewc-effect-opacity);
+    pointer-events: var(--usewc-effect-pointer-events);
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &:hover:not(:disabled):not(:checked) {
+      --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
+      --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
+    }
+
+    &:checked {
+      --usewc-color-selector-border: var(--usewc-color-selector-border-checked);
+      --usewc-color-selector-background: var(--usewc-color-selector-background-checked);
+    }
+
+    &:focus {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+    }
+
+    use-theme-escape &::after {
+      all: revert-layer;
+    }
+
+    &[type="checkbox"]:checked {
+      &::after {
+        display: block;
+        position: absolute;
+        inset-block-start: 10%;
+        inset-inline-start: 33%;
+        border-inline-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
+          var(--usewc-color-selector-icon-fill);
+        border-block-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
+          var(--usewc-color-selector-icon-fill);
+        width: 40%;
+        height: 60%;
+        transform: rotate(45deg);
+      }
+    }
+
+    &[type="radio"] {
+      border-radius: 50%;
+
+      &:checked::after {
+        transform: scale(0.6);
+        width: 100%;
+        height: 100%;
+        border-radius: inherit;
+        background: var(--usewc-color-selector-icon-fill);
+      }
+    }
+  }
+}

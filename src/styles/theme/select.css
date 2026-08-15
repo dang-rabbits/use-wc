@@ -1,0 +1,10 @@
+@layer use-theme.select {
+  select:not(.appearance-native) {
+    padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+    background-image: var(--usewc-effect-select-trigger-background-image, none);
+    /* TODO use logical position */
+    background-position: right var(--usewc-layout-input-padding-inline) center;
+    background-repeat: no-repeat;
+    background-size: var(--usewc-effect-select-trigger-background-size, 1em);
+  }
+}

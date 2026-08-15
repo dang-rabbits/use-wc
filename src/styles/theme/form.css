@@ -1,0 +1,67 @@
+@layer use-theme.form {
+  use-selector input:is([type="checkbox"], [type="radio"]),
+  input:is([type="checkbox"], [type="radio"]):has(+ label) {
+    margin-inline: var(--usewc-layout-form-selector-margin-inline);
+    margin-block: var(--usewc-layout-form-selector-margin-block);
+  }
+
+  use-selector {
+    display: grid;
+    grid-template-areas: "input label" ". description";
+    gap: 0 var(--usewc-layout-form-selector-gap);
+    line-height: 1.5em;
+    align-items: start;
+    justify-content: start;
+
+    input:is([type="checkbox"], [type="radio"]) {
+      grid-area: input;
+    }
+
+    label {
+      grid-area: label;
+      color: var(--usewc-color-form-label-text);
+      font-size: var(--usewc-font-form-label-size);
+    }
+
+    > *:not(label) {
+      margin: 0;
+      grid-area: description;
+      color: var(--usewc-color-form-helper-text);
+      font-size: var(--usewc-font-form-helper-text-size);
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-field {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+
+    label {
+      color: var(--usewc-color-form-label-text);
+      font-size: var(--usewc-font-form-label-size);
+      line-height: var(--usewc-layout-form-label-line-height);
+    }
+
+    > *:not(label, input) {
+      margin: 0;
+      color: var(--usewc-color-form-helper-text);
+      font-size: var(--usewc-font-form-helper-text-size);
+      line-height: var(--usewc-layout-form-helper-text-line-height);
+    }
+
+    &:has(input:is(:user-invalid, [aria-invalid="true"])) {
+      > *:not(label, input) {
+        color: var(--usewc-color-form-helper-text-invalid);
+      }
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

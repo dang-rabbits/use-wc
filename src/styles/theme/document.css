@@ -1,0 +1,8 @@
+@layer use-theme.document {
+  body {
+    color: var(--usewc-color-document-text);
+    background-color: var(--usewc-color-document-background);
+    font-family: var(--usewc-font-document-family);
+    font-size: var(--usewc-font-document-size);
+  }
+}
