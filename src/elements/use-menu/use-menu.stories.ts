@@ -28,8 +28,12 @@ type Story = StoryObj<UseMenu>;
 export const Default: Story = {
   parameters: {
     showPanel: false,
-    allowTheme: true,
   },
+};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
 };
 
 export const Inert: Story = {

@@ -50,6 +50,12 @@ const preview: Preview = {
       theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
         ? themes.dark
         : themes.normal,
+      // Keeps the `<use-theme-escape>` wrapper the preview decorator below adds (see its own
+      // comment) out of "Show code" — that wrapper is preview-only scaffolding, not something a
+      // consumer would ever write themselves.
+      source: {
+        excludeDecorators: true,
+      },
     },
 
     a11y: {

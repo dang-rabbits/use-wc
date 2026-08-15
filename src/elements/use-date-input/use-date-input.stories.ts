@@ -17,8 +17,12 @@ export default meta;
 type Story = StoryObj<UseDateInput>;
 
 export const Default: Story = {
-  parameters: { allowTheme: true },
   render: () => html`<use-date-input value=""></use-date-input>`,
+};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
 };
 
 export const French: Story = {

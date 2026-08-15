@@ -18,8 +18,12 @@ export default meta;
 type Story = StoryObj<UseDatetimeInput>;
 
 export const Default: Story = {
-  parameters: { allowTheme: true },
   render: () => html`<use-datetime-input value=""></use-datetime-input>`,
+};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
 };
 
 export const WithValue: Story = {

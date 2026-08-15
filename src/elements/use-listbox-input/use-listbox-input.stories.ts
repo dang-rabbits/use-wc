@@ -31,7 +31,12 @@ const meta: Meta<UseListboxInput> = {
 export default meta;
 type Story = StoryObj<UseListboxInput>;
 
-export const Default: Story = { parameters: { allowTheme: true } };
+export const Default: Story = {};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
+};
 
 export const Disabled: Story = {
   args: {

@@ -59,7 +59,6 @@ const scrollShadowStyles = html`
 `;
 
 export const Vertical: Story = {
-  parameters: { allowTheme: true },
   render: () => html`
     ${scrollShadowStyles}
     <use-scrollarea class="scroll-demo">
@@ -69,6 +68,11 @@ export const Vertical: Story = {
       )}
     </use-scrollarea>
   `,
+};
+
+export const Theme: Story = {
+  ...Vertical,
+  parameters: { ...Vertical.parameters, allowTheme: true },
 };
 
 export const Horizontal: Story = {

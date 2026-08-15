@@ -46,8 +46,14 @@ export const Default: Story = {
   `,
 };
 
-export const SingleSelect: Story = {
+/** Unlike Default, not tagged `!autodocs`/`!dev` — this is the one story meant to actually show
+ * on the doc page. */
+export const Theme: Story = {
+  render: Default.render,
   parameters: { allowTheme: true },
+};
+
+export const SingleSelect: Story = {
   render: () => html`
     <use-grid selectmode="single">
       <use-gridhead>
