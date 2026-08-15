@@ -31,7 +31,13 @@ const meta: Meta<UseFocusgroup> = {
 export default meta;
 type Story = StoryObj<UseFocusgroup>;
 
-export const Default: Story = { parameters: { allowTheme: true } };
+export const Default: Story = {};
+
+/** The same example as {@link Default}, themed. */
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
+};
 
 export const Inline: Story = {
   args: {
@@ -97,11 +103,14 @@ export const Toolbar: Story = {
         aria-orientation="horizontal"
         class="custom-toolbar"
       >
-        <use-dropdown label="font">
+        <button type="button" popovertarget="toolbar-font-menu">
+          <use-caret>font</use-caret>
+        </button>
+        <use-menu id="toolbar-font-menu" aria-label="font">
           <button type="button" role="menuitem">Arial</button>
           <button type="button" role="menuitem">Times New Roman</button>
           <button type="button" role="menuitem">Courier New</button>
-        </use-dropdown>
+        </use-menu>
         <div role="group" aria-label="text formatting">
           <button type="button">bold</button>
           <button type="button">italic</button>
