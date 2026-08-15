@@ -1,6 +1,4 @@
-@layer theme, web-components, escape;
-
-@layer theme {
+@layer use-theme {
   *,
   *::before,
   *::after {
@@ -14,20 +12,8 @@
     font-size: var(--usewc-font-document-size);
   }
 
-  :is(button, a, details summary, use-widget):not(.appearance-native):focus-visible,
-  :is(input, textarea, select, use-date-input, use-time-input, use-datetime-input, use-duration-input):not(
-    .appearance-native
-  ):focus,
-  input[type="file"]:not(.appearance-native):focus-visible,
-  use-dropdown:not(.appearance-native)::part(trigger):focus-visible,
-  .appearance-input:has(input:focus) {
-    outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
-    outline-offset: var(--usewc-effect-outline-offset);
-    transition: var(--usewc-effect-outline-transition);
-  }
-
-  :is(
-    input:not(:is([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])),
+  :where(
+    input:not(:where([type="checkbox"], [type="radio"], [type="range"], [type="file"], [class*="appearance-"])),
     select,
     textarea,
     .appearance-input,
@@ -35,10 +21,14 @@
     use-time-input,
     use-datetime-input,
     use-duration-input
-  ):not(.appearance-native),
-  use-listbox-input:not(.appearance-native)::part(listbox) {
-    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
-      var(--usewc-color-input-border-static);
+  ):not(.appearance-native) {
+    --usewc-color-input-border: var(--usewc-color-input-border-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-outline-offset: var(--usewc-effect-outline-offset-flush);
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
+
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style) var(--usewc-color-input-border);
     line-height: var(--usewc-layout-input-line-height);
     padding-block: var(--usewc-layout-input-padding-block);
     padding-inline: var(--usewc-layout-input-padding-inline);
@@ -48,35 +38,68 @@
     font-weight: var(--usewc-font-weight-normal);
     color: var(--usewc-color-input-text-static);
     border-radius: var(--usewc-effect-input-border-radius);
+    opacity: var(--usewc-effect-opacity);
+    pointer-events: var(--usewc-effect-pointer-events);
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
 
-    &:not(:is(:disabled, [aria-disabled="true"], .appearance-input)):hover,
+    &:not(:where(:disabled, [aria-disabled="true"], .appearance-input)):hover,
     &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover) {
-      border-color: var(--usewc-color-input-border-hover);
+      --usewc-color-input-border: var(--usewc-color-input-border-hover);
     }
 
-    &:is(:focus, :has(input:focus), :focus-within) {
-      border-color: var(--usewc-color-input-border-focus);
-      outline-offset: var(--usewc-effect-outline-offset-flush);
+    &:where(:focus, :has(input:focus), :focus-within) {
+      --usewc-color-input-border: var(--usewc-color-input-border-focus);
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
     }
 
     &:disabled,
     &[aria-disabled="true"],
     &:has(:disabled, [aria-disabled="true"]) {
-      opacity: var(--usewc-effect-form-opacity-disabled);
-      pointer-events: none;
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
     }
 
+    &:where(:user-invalid, [aria-invalid="true"], :has(:is(:user-invalid, [aria-invalid="true"]))) {
+      --usewc-color-input-border: var(--usewc-color-input-border-invalid);
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    /* Escapes for a pseudo-element (here and throughout this file) are declared as siblings, not
+     nested inside the pseudo-element's own rule: `&` resolves through an implicit `:is()`, and
+     `:is()`/`:where()` silently drop any argument ending in a pseudo-element, so a nested
+     `use-theme-escape &::placeholder` would wrap `<selector>::placeholder` in `:is()` and match
+     nothing. */
     &::placeholder {
       color: var(--usewc-color-input-text-placeholder);
     }
 
-    &:is(:user-invalid, [aria-invalid="true"], :has(:is(:user-invalid, [aria-invalid="true"]))) {
-      border-color: var(--usewc-color-input-border-invalid);
+    use-theme-escape &::placeholder {
+      all: revert-layer;
     }
   }
 
+  /* Can't join the shared input-family rule above via `:where()` the way select/textarea do —
+   `::part()` inside a `:where()`/`:is()` argument list is invalid and silently dropped by the
+   browser, taking the whole alternative down with it. Stands alone instead. */
   use-listbox-input:not(.appearance-native)::part(listbox) {
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
+      var(--usewc-color-input-border-static);
     padding: var(--usewc-layout-popover-menu-padding);
+    background: var(--usewc-color-input-background-static);
+    font-family: var(--usewc-font-input-family);
+    font-size: var(--usewc-font-input-size);
+    font-weight: var(--usewc-font-weight-normal);
+    color: var(--usewc-color-input-text-static);
+    border-radius: var(--usewc-effect-input-border-radius);
+  }
+
+  use-theme-escape use-listbox-input:not(.appearance-native)::part(listbox) {
+    all: revert-layer;
   }
 
   select:not(.appearance-native) {
@@ -116,14 +139,25 @@
     }
   }
 
+  /**
+   * There are many difficulties with styling range inputs so we opted for `accent-color` instead.
+   * - cannot style tick marks
+   * - cannot style track progress with border radius
+   * - duplicate CSS rules for Firefox and Webkit
+   *
+   * - https://codepen.io/ShadowShahriar/pen/zYPPYrQ
+   * - https://open-ui.org/components/enhanced-range-input.explainer/
+   */
+  input[type="range"]:not(.appearance-native) {
+    accent-color: var(--usewc-color-range-thumb-background-static);
+  }
+
   input:is([type="checkbox"], [type="radio"]) {
     all: unset;
     appearance: none;
     box-sizing: border-box;
     width: var(--usewc-layout-selector-width);
     height: var(--usewc-layout-selector-height);
-    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
-      var(--usewc-color-input-border-static);
     border-radius: var(--usewc-effect-selector-border-radius);
     display: inline-flex;
     align-items: center;
@@ -131,25 +165,52 @@
     position: relative;
     vertical-align: text-top;
 
+    --usewc-color-selector-border: var(--usewc-color-selector-border-static);
+    --usewc-color-selector-background: var(--usewc-color-selector-background-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
+
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style) var(--usewc-color-selector-border);
+    background: var(--usewc-color-selector-background);
+    opacity: var(--usewc-effect-opacity);
+    pointer-events: var(--usewc-effect-pointer-events);
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
     &:hover:not(:disabled):not(:checked) {
-      border-color: var(--usewc-color-selector-border-hover);
-      background: var(--usewc-color-selector-background-hover);
+      --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
+      --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
     }
 
     &:checked {
-      border-color: var(--usewc-color-selector-border-checked);
-      background: var(--usewc-color-selector-background-checked);
+      --usewc-color-selector-border: var(--usewc-color-selector-border-checked);
+      --usewc-color-selector-background: var(--usewc-color-selector-background-checked);
     }
 
-    &:disabled {
-      opacity: var(--usewc-effect-form-opacity-disabled);
-      pointer-events: none;
+    &:focus {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:disabled,
+    &[aria-disabled="true"] {
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
     }
 
     &::after {
       content: "";
       position: absolute;
       inset: 0;
+    }
+
+    use-theme-escape &::after {
+      all: revert-layer;
     }
 
     &[type="checkbox"]:checked {
@@ -181,39 +242,39 @@
     }
   }
 
-  /**
-   * There are many difficulties with styling range inputs so we opted for `accent-color` instead.
-   * - cannot style tick marks
-   * - cannot style track progress with border radius
-   * - duplicate CSS rules for Firefox and Webkit
-   *
-   * - https://codepen.io/ShadowShahriar/pen/zYPPYrQ
-   * - https://open-ui.org/components/enhanced-range-input.explainer/
-   */
-  input[type="range"]:not(.appearance-native) {
-    accent-color: var(--usewc-color-range-thumb-background-static);
-  }
-
   :is(a:not([class*="appearance-"]), .appearance-a) {
     &:where(:not(a)) {
       all: unset;
     }
 
-    color: var(--usewc-color-link-text-static);
+    --usewc-color-link-text: var(--usewc-color-link-text-static);
+    --usewc-effect-outline-width: 0;
+
+    color: var(--usewc-color-link-text);
     text-decoration: var(--usewc-effect-link-text-decoration);
     cursor: pointer;
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
 
     &:is(:hover, :focus-visible) {
-      color: var(--usewc-color-link-text-hover);
+      --usewc-color-link-text: var(--usewc-color-link-text-hover);
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
     }
 
     &:active {
-      color: var(--usewc-color-link-text-active);
+      --usewc-color-link-text: var(--usewc-color-link-text-active);
     }
   }
 
-  :is(button:not([class*="appearance-"]), .appearance-button),
-  use-dropdown,
+  :where(button:not([class*="appearance-"]), .appearance-button),
   input[type="file"]:not([class*="appearance-"]) {
     &:where(:not(button)),
     &::file-selector-button {
@@ -221,7 +282,6 @@
       display: inline-flex;
     }
 
-    /* Scoped color tokens — default to base, remapped by variant classes */
     --usewc-color-button-text-static: var(--usewc-color-button-base-text-static);
     --usewc-color-button-text-static-auxiliary: var(--usewc-color-button-base-text-static-auxiliary);
     --usewc-color-button-background-static: var(--usewc-color-button-base-background-static);
@@ -238,10 +298,6 @@
     --usewc-color-button-border-active: var(--usewc-color-button-base-border-active);
     --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-base-background-active-auxiliary);
 
-    /* Scoped depth tokens — the outset cast is always computed from the
-       lightness/alpha knobs plus a variant's tint (borrowed for its hue only)
-       and chroma multiplier; variants swap the first shadow layer between
-       flat and the inset lip. */
     --usewc-color-button-shadow-tint: var(--usewc-color-button-base-shadow-tint);
     --usewc-effect-button-shadow-chroma-multiplier: var(--usewc-effect-button-base-shadow-chroma-multiplier);
     --usewc-effect-button-shadow-alpha-multiplier: var(--usewc-effect-button-base-shadow-alpha-multiplier);
@@ -261,21 +317,26 @@
     --usewc-effect-button-box-shadow-outset: 0 1px 2px 0 var(--usewc-color-button-shadow-outset);
     --usewc-effect-button-box-shadow-outset-hover: 0 2px 4px 0 var(--usewc-color-button-shadow-outset-hover);
     --usewc-effect-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-none);
-    --usewc-effect-button-box-shadow:
+    --usewc-effect-button-box-shadow-static:
       var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset);
     --usewc-effect-button-box-shadow-hover:
       var(--usewc-effect-button-box-shadow-layer), var(--usewc-effect-button-box-shadow-outset-hover);
     --usewc-effect-button-box-shadow-active: var(--usewc-effect-button-box-shadow-layer);
 
-    /* Scoped layout tokens — default to base, remapped by size classes */
     --usewc-layout-button-padding-block: var(--usewc-layout-button-base-padding-block);
     --usewc-layout-button-padding-inline: var(--usewc-layout-button-base-padding-inline);
     --usewc-layout-button-gap: var(--usewc-layout-button-base-gap);
     --usewc-font-button-size: var(--usewc-font-button-base-size);
     --usewc-effect-button-radius: var(--usewc-effect-button-border-radius);
+    --usewc-color-button-text: var(--usewc-color-button-text-static);
+    --usewc-color-button-background: var(--usewc-color-button-background-static);
+    --usewc-color-button-border: var(--usewc-color-button-border-static);
+    --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-static);
+    --usewc-effect-outline-width: 0;
+    --usewc-effect-opacity: 1;
+    --usewc-effect-pointer-events: auto;
 
-    &::part(trigger),
-    &:not([type="file"], use-dropdown),
+    &:not([type="file"]),
     &::file-selector-button {
       display: inline-flex;
       align-items: center;
@@ -290,53 +351,75 @@
       font-weight: var(--usewc-font-button-weight);
       white-space: nowrap;
       cursor: default;
-      color: var(--usewc-color-button-text-static);
-      background: var(--usewc-color-button-background-static);
+      color: var(--usewc-color-button-text);
+      background: var(--usewc-color-button-background);
       background-size: var(--usewc-effect-button-background-size);
       background-position: var(--usewc-effect-button-background-position);
       background-repeat: var(--usewc-effect-button-background-repeat);
-      border: var(--usewc-layout-button-border) var(--usewc-effect-button-border-style)
-        var(--usewc-color-button-border-static);
+      border: var(--usewc-layout-button-border) var(--usewc-effect-button-border-style) var(--usewc-color-button-border);
       box-shadow: var(--usewc-effect-button-box-shadow);
-      transition: var(--usewc-transition-control);
+      opacity: var(--usewc-effect-opacity);
+      pointer-events: var(--usewc-effect-pointer-events);
+      outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      outline-offset: var(--usewc-effect-outline-offset);
+      transition: var(--usewc-transition-control), var(--usewc-effect-outline-transition);
     }
 
-    &::part(trigger) {
+    /* Split into two rather than one shared escape: the paint rule above is a 2-alternative
+     list, and nesting a single `use-theme-escape &` would wrap both in `:is()`, silently
+     dropping the `::file-selector-button` half (see the placeholder escape note above). */
+    use-theme-escape &:not([type="file"]) {
+      all: revert-layer;
+    }
+
+    use-theme-escape &::file-selector-button {
+      all: revert-layer;
+    }
+
+    &:not([type="file"]):has(> use-caret) {
+      /*
+     * :not([type="file"]) is repeated here — not just for scoping — because it's load-bearing
+     * for specificity. padding-inline above is set by the bare &:not([type="file"]) selector;
+     * without matching that same specificity here, this rule loses the cascade and the padding
+     * never actually shrinks.
+     */
       padding-inline-end: calc(
         var(--usewc-layout-button-padding-inline) - var(--usewc-layout-dropdown-trigger-icon-size) / 4
       );
-    }
 
-    &:is(use-dropdown) {
-      display: contents;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
 
     &::file-selector-button {
       margin-inline-end: var(--usewc-layout-input-gap-inline);
     }
 
-    &:is(:hover, :focus-visible):not([type="file"], use-dropdown),
-    &::part(trigger):is(:hover, :focus-visible),
-    &:is(:hover, :focus-visible)::file-selector-button {
-      background: var(--usewc-color-button-background-hover);
-      border-color: var(--usewc-color-button-border-hover);
-      color: var(--usewc-color-button-text-hover);
-      box-shadow: var(--usewc-effect-button-box-shadow-hover);
+    &:where(:hover, :focus-visible),
+    &:hover::file-selector-button {
+      --usewc-color-button-text: var(--usewc-color-button-text-hover);
+      --usewc-color-button-background: var(--usewc-color-button-background-hover);
+      --usewc-color-button-border: var(--usewc-color-button-border-hover);
+      --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-hover);
     }
 
-    &:active:not([type="file"], use-dropdown),
-    &::part(trigger):active,
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    &:active,
     &:active::file-selector-button {
-      background: var(--usewc-color-button-background-active);
-      border-color: var(--usewc-color-button-border-active);
-      color: var(--usewc-color-button-text-active);
-      box-shadow: var(--usewc-effect-button-box-shadow-active);
+      --usewc-color-button-text: var(--usewc-color-button-text-active);
+      --usewc-color-button-background: var(--usewc-color-button-background-active);
+      --usewc-color-button-border: var(--usewc-color-button-border-active);
+      --usewc-effect-button-box-shadow: var(--usewc-effect-button-box-shadow-active);
     }
 
     &:disabled,
     &[aria-disabled="true"] {
-      opacity: var(--usewc-effect-form-opacity-disabled);
-      pointer-events: none;
+      --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
     }
 
     &.primary {
@@ -399,15 +482,11 @@
       --usewc-color-button-background-active: var(--usewc-color-button-clear-background-active);
       --usewc-color-button-border-active: var(--usewc-color-button-clear-border-active);
       --usewc-color-button-background-active-auxiliary: var(--usewc-color-button-clear-background-active-auxiliary);
-      --usewc-effect-button-box-shadow: none;
+      --usewc-effect-button-box-shadow-static: none;
       --usewc-effect-button-box-shadow-hover: none;
       --usewc-effect-button-box-shadow-active: none;
     }
 
-    /* Outline modifier: stays transparent-filled and bordered through hover
-       and press instead of filling solid, washing its accent underneath. Set
-       as custom properties (not direct background/border-color) so they
-       inherit into ::part(trigger) and ::file-selector-button. */
     &.auxiliary {
       --usewc-color-button-background-static: var(--usewc-color-button-background-static-auxiliary);
       --usewc-color-button-text-static: var(--usewc-color-button-text-static-auxiliary);
@@ -418,7 +497,7 @@
       --usewc-color-button-text-active: var(--usewc-color-button-text-static-auxiliary);
       --usewc-color-button-background-active: var(--usewc-color-button-background-active-auxiliary);
       --usewc-color-button-border-active: var(--usewc-color-button-border-hover-auxiliary);
-      --usewc-effect-button-box-shadow: none;
+      --usewc-effect-button-box-shadow-static: none;
       --usewc-effect-button-box-shadow-hover: none;
       --usewc-effect-button-box-shadow-active: none;
     }
@@ -454,51 +533,6 @@
     }
   }
 
-  /* Sizing-only: use-select-input's trigger looks like a button but is not a
-     member of the button group above (no color styling), so it gets its own
-     scoped layout tokens defaulting to the button base sizing. */
-  use-select-input {
-    --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-base-padding-block);
-    --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-base-padding-inline);
-    --usewc-font-select-trigger-size: var(--usewc-font-button-base-size);
-    --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-line-height);
-
-    &::part(trigger) {
-      padding-block: var(--usewc-layout-select-trigger-padding-block);
-      padding-inline: var(--usewc-layout-select-trigger-padding-inline);
-      font-size: var(--usewc-font-select-trigger-size);
-      line-height: var(--usewc-layout-select-trigger-line-height);
-    }
-
-    &.extra-small {
-      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-small-padding-block);
-      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);
-      --usewc-font-select-trigger-size: var(--usewc-font-button-extra-small-size);
-      --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-small-line-height);
-    }
-
-    &.small {
-      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-small-padding-block);
-      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-small-padding-inline);
-      --usewc-font-select-trigger-size: var(--usewc-font-button-small-size);
-      --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-small-line-height);
-    }
-
-    &.large {
-      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-large-padding-block);
-      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-large-padding-inline);
-      --usewc-font-select-trigger-size: var(--usewc-font-button-large-size);
-      --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-large-line-height);
-    }
-
-    &.extra-large {
-      --usewc-layout-select-trigger-padding-block: var(--usewc-layout-button-extra-large-padding-block);
-      --usewc-layout-select-trigger-padding-inline: var(--usewc-layout-button-extra-large-padding-inline);
-      --usewc-font-select-trigger-size: var(--usewc-font-button-extra-large-size);
-      --usewc-layout-select-trigger-line-height: var(--usewc-layout-button-extra-large-line-height);
-    }
-  }
-
   input[type="file"]:not([class*="appearance-"]) {
     border-radius: var(--usewc-effect-input-border-radius);
   }
@@ -516,6 +550,10 @@
     border-radius: var(--usewc-effect-code-border-radius);
     line-height: var(--usewc-layout-code-line-height);
     border: var(--usewc-space-1-relative) var(--usewc-effect-border-solid) var(--usewc-color-code-border);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
   }
 
   use-selector input:is([type="checkbox"], [type="radio"]),
@@ -548,6 +586,10 @@
       color: var(--usewc-color-form-helper-text);
       font-size: var(--usewc-font-form-helper-text-size);
     }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
   }
 
   use-field {
@@ -574,6 +616,10 @@
         color: var(--usewc-color-form-helper-text-invalid);
       }
     }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
   }
 
   details:not(.appearance-native) {
@@ -587,24 +633,76 @@
       }
     }
 
+    use-theme-escape & summary,
+    use-theme-escape & summary::before {
+      all: revert-layer;
+    }
+
     &:is([open], :open) summary::before {
       content: "▼";
     }
   }
-}
 
-@layer web-components {
-  /* Composite datetime control — host gets the single input wrapper appearance via the main
-     input styling block. The date and time sub-inputs live in shadow DOM and are reached via
-     ::part(date) and ::part(time) to override their internal layout. Segment inputs are
-     re-exported via exportparts so ::part(segment-input) reaches them too. */
-  use-datetime-input:not(.appearance-native) {
+  :is(use-datetime-input, use-date-input, use-time-input, use-duration-input):not(.appearance-native) {
     display: inline-flex;
     align-items: center;
     width: fit-content;
-    gap: var(--usewc-layout-input-gap-inline);
+    gap: var(--usewc-layout-input-segment-padding-inline);
     padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
 
+    --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-static);
+    --usewc-color-input-segment-text: var(--usewc-color-input-text-static);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &::part(segment-input) {
+      all: unset;
+      box-sizing: content-box;
+      appearance: none;
+      field-sizing: content;
+      outline: none;
+      border-radius: var(--usewc-effect-input-border-radius);
+      min-width: 2ch;
+      width: fit-content;
+      text-align: end;
+      padding-inline: var(--usewc-layout-input-segment-padding-inline);
+      font-variant-numeric: tabular-nums;
+      background: var(--usewc-color-input-segment-background);
+      color: var(--usewc-color-input-segment-text);
+    }
+
+    use-theme-escape &::part(segment-input) {
+      all: revert-layer;
+    }
+
+    &::part(segment-input-dayPeriod) {
+      text-align: center;
+      min-width: 2em;
+      padding-inline: 0;
+    }
+
+    &::part(segment-input):hover {
+      --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-hover);
+    }
+
+    &::part(segment-input):focus {
+      --usewc-color-input-segment-background: var(--usewc-color-input-segment-background-focus);
+      --usewc-color-input-segment-text: var(--usewc-color-input-segment-text-focus);
+    }
+
+    &::selection {
+      background: var(--usewc-color-input-segment-background-focus);
+      color: var(--usewc-color-input-segment-text-focus);
+    }
+
+    use-theme-escape &::selection {
+      all: revert-layer;
+    }
+  }
+
+  :is(use-datetime-input):not(.appearance-native) {
     &::part(date),
     &::part(time) {
       display: inline-flex;
@@ -612,114 +710,21 @@
       gap: var(--usewc-layout-input-segment-padding-inline);
     }
 
-    &::part(segment-input) {
-      all: unset;
-      box-sizing: content-box;
-      appearance: none;
-      field-sizing: content;
-      background: var(--usewc-color-input-segment-background-static);
-      outline: none;
-      border-radius: var(--usewc-effect-input-border-radius);
-      min-width: 2ch;
-      width: fit-content;
-      text-align: end;
-      padding-inline: var(--usewc-layout-input-segment-padding-inline);
-      font-variant-numeric: tabular-nums;
-    }
-
-    &::part(segment-input-dayPeriod) {
-      text-align: center;
-      min-width: 2em;
-      padding-inline: 0;
-    }
-
-    &::part(segment-input):hover {
-      background: var(--usewc-color-input-segment-background-hover);
-    }
-
-    &::part(segment-input):focus,
-    &::selection {
-      background: var(--usewc-color-input-segment-background-focus);
-      color: var(--usewc-color-input-segment-text-focus);
-    }
-  }
-
-  /* Segment based controls */
-  :is(use-date-input, use-time-input):not(.appearance-native) {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    gap: var(--usewc-layout-input-segment-padding-inline);
-    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
-
-    &::part(segment-input) {
-      all: unset;
-      box-sizing: content-box;
-      appearance: none;
-      field-sizing: content;
-      background: var(--usewc-color-input-segment-background-static);
-      outline: none;
-      border-radius: var(--usewc-effect-input-border-radius);
-      min-width: 2ch;
-      width: fit-content;
-      text-align: end;
-      padding-inline: var(--usewc-layout-input-segment-padding-inline);
-      font-variant-numeric: tabular-nums;
-    }
-
-    &::part(segment-input-dayPeriod) {
-      text-align: center;
-      min-width: 2em;
-      padding-inline: 0;
-    }
-
-    &::part(segment-input):hover {
-      background: var(--usewc-color-input-segment-background-hover);
-    }
-
-    &::part(segment-input):focus,
-    &::selection {
-      background: var(--usewc-color-input-segment-background-focus);
-      color: var(--usewc-color-input-segment-text-focus);
+    use-theme-escape &::part(date),
+    use-theme-escape &::part(time) {
+      all: revert-layer;
     }
   }
 
   use-duration-input:not(.appearance-native) {
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    gap: var(--usewc-layout-input-gap-inline);
-    padding-inline: calc(var(--usewc-layout-input-padding-inline) - var(--usewc-layout-input-segment-padding-inline));
-
     &::part(segment) {
       display: inline-flex;
       align-items: center;
       gap: var(--usewc-layout-input-segment-padding-inline);
     }
 
-    &::part(segment-input) {
-      all: unset;
-      box-sizing: content-box;
-      appearance: none;
-      field-sizing: content;
-      background: var(--usewc-color-input-segment-background-static);
-      outline: none;
-      border-radius: var(--usewc-effect-input-border-radius);
-      min-width: 2ch;
-      width: fit-content;
-      text-align: end;
-      padding-inline: var(--usewc-layout-input-segment-padding-inline);
-      font-variant-numeric: tabular-nums;
-    }
-
-    &::part(segment-input):hover {
-      background: var(--usewc-color-input-segment-background-hover);
-    }
-
-    &::part(segment-input):focus,
-    &::selection {
-      background: var(--usewc-color-input-segment-background-focus);
-      color: var(--usewc-color-input-segment-text-focus);
+    use-theme-escape &::part(segment) {
+      all: revert-layer;
     }
   }
 
@@ -732,21 +737,13 @@
     background-size: var(--usewc-effect-select-trigger-background-size, 1em);
   }
 
-  select:not(.appearance-native),
-  use-dropdown::part(trigger),
-  use-dropdown use-dropdown::part(trigger) {
-    anchor-name: --use-popover-trigger;
-  }
-
-  use-dropdown {
-    anchor-scope: --use-popover-trigger;
-  }
-
   use-option::part(selected-indicator-default) {
     display: none;
   }
 
-  use-dropdown::part(trigger-icon-default) {
+  /* Only matches the built-in ▼/▶ glyph — `use-caret` renders a custom `UseCaret.customIcon`
+   under a different part name so this masking never fights with it. */
+  use-caret::part(icon-default) {
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
@@ -760,29 +757,24 @@
     mask-position: center;
   }
 
-  use-dropdown use-dropdown::part(trigger-icon-default) {
+  use-theme-escape use-caret::part(icon-default) {
+    all: revert-layer;
+  }
+
+  use-menu use-caret::part(icon-default) {
     mask-image: var(--usewc-effect-dropdown-trigger-icon-nested-mask-image, none);
   }
 
-  use-dropdown use-dropdown::part(trigger-icon) {
+  use-caret::part(icon) {
     margin-inline-start: auto;
   }
 
-  use-dropdown::part(menu) {
+  use-menu:popover-open {
     --min-size: 30vh;
     --max-size: 80vh;
 
-    inset: unset;
-    height: unset;
-    position-anchor: --use-popover-trigger;
-    position: fixed;
-    position-area: block-end span-inline-end;
     min-block-size: var(--min-size);
     max-block-size: min(100% - var(--usewc-layout-popover-menu-anchor-offset), var(--max-size));
-    position-try:
-      flip-block,
-      flip-inline,
-      flip-inline flip-block;
     margin-block: var(--usewc-layout-popover-menu-anchor-offset);
     overflow: auto;
     border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
@@ -795,15 +787,18 @@
       min-block-size: calc-size(fit-content, min(size, var(--min-size)));
       max-block-size: calc-size(stretch, min(size, var(--max-size)));
     }
-  }
 
-  use-dropdown[inlinealign="end"]::part(menu) {
-    position-area: block-end span-inline-start;
+    use-theme-escape & {
+      all: revert-layer;
+    }
   }
 
   use-option,
-  use-dropdown :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]),
-  use-dropdown use-dropdown::part(trigger) {
+  use-menu :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]) {
+    --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+    --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-static);
+    --usewc-effect-outline-width: 0;
+
     border: none;
     text-align: start;
     cursor: default;
@@ -814,49 +809,69 @@
     line-height: var(--usewc-layout-popover-menu-item-line-height);
     padding-inline: var(--usewc-layout-popover-menu-item-padding-inline);
     padding-block: var(--usewc-layout-popover-menu-item-padding-block);
-    background-color: var(--usewc-color-popover-menu-item-background-static);
+    background-color: var(--usewc-color-popover-menu-item-background);
     border-radius: var(--usewc-effect-popover-menu-item-border-radius);
-    color: var(--usewc-color-popover-menu-item-text-static);
+    color: var(--usewc-color-popover-menu-item-text);
     text-decoration: none;
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
 
     > *:last-child:not(:first-child) {
       flex: 0 0 auto;
       margin-inline-start: auto;
     }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    &:hover {
+      --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-hover);
+      --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-hover);
+    }
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+      --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+      --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-focus);
+    }
   }
 
   use-listbox-input:is(:hover, :focus) use-option:state(active) {
-    background-color: var(--usewc-color-popover-menu-item-background-active);
+    --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-active);
   }
 
-  use-dropdown :is([role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"], use-dropdown),
   use-listbox-input {
-    &:not(use-dropdown):hover,
-    &::part(trigger):hover {
-      background-color: var(--usewc-color-popover-menu-item-background-hover);
-      color: var(--usewc-color-popover-menu-item-text-hover);
+    --usewc-effect-outline-width: 0;
+
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
+
+    use-theme-escape & {
+      all: revert-layer;
     }
 
-    &:focus-visible,
-    &::part(trigger):focus-visible {
-      background-color: var(--usewc-color-popover-menu-item-background-static);
-      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
-      outline-offset: var(--usewc-effect-outline-offset-flush);
-      transition: var(--usewc-effect-outline-transition);
-      color: var(--usewc-color-popover-menu-item-text-focus);
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
     }
   }
 
-  use-listbox-input,
-  use-dropdown :is([role="menuitemcheckbox"], [role="menuitemradio"]) {
+  use-menu :is([role="menuitemcheckbox"], [role="menuitemradio"]),
+  use-listbox-input {
     use-option,
-    &:has(+ :is([role="menuitemcheckbox"], [role="menuitemradio"])),
-    & + :is(:is([role="menuitemcheckbox"], [role="menuitemradio"])) {
+    &:has(+ :where([role="menuitemcheckbox"], [role="menuitemradio"])),
+    & + :where([role="menuitemcheckbox"], [role="menuitemradio"]) {
       padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
   }
 
-  use-dropdown,
+  use-menu,
   use-listbox-input {
     [role="group"][aria-label] {
       &::before {
@@ -866,12 +881,20 @@
         font-weight: var(--usewc-font-popover-menu-header-weight);
         color: var(--usewc-color-popover-menu-header-text);
       }
+
+      use-theme-escape &::before {
+        all: revert-layer;
+      }
     }
 
     kbd {
       font-family: var(--usewc-font-popover-menu-shortcut-family);
       color: var(--usewc-color-popover-menu-shortcut);
       margin-inline-start: auto;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
 
     hr {
@@ -879,15 +902,19 @@
       border-block-start: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
         var(--usewc-color-popover-menu-border);
       margin-block: var(--usewc-layout-popover-menu-padding);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
   }
 
-  use-dropdown use-dropdown::part(menu) {
+  use-menu:state(nested):popover-open {
     /*
-     * !important: this must win over use-dropdown[inlinealign="end"]::part(menu) above, which
-     * has higher specificity (an attribute selector) than this descendant selector does. Nested
-     * submenus always position to the side of their parent trigger, independent of inlinealign.
-     */
+   * !important: this must win over the anchoralign-driven position-area rules the component
+   * sets on itself in its own shadow stylesheet. Submenus always position to the side of
+   * their parent trigger, independent of anchoralign.
+   */
     position-area: block-end span-inline-end !important;
     inset-inline-start: calc(anchor(end) + var(--usewc-layout-popover-menu-anchor-offset) * 2);
     inset-block-start: calc(
@@ -900,27 +927,16 @@
       flip-inline flip-block;
   }
 
-  use-dropdown [aria-checked="true"],
+  use-menu [aria-checked="true"],
   use-option:state(selected) {
     background-image: var(--usewc-effect-menu-item-checkmark-background-image, none);
     /* TODO use logical position */
     background-position: left var(--usewc-layout-input-padding-inline) center;
     background-repeat: no-repeat;
     background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
-  }
-}
 
-@layer escape {
-  use-theme-escape {
-    display: contents;
-
-    *,
-    ::part(trigger),
-    ::part(trigger-label),
-    ::part(trigger-icon),
-    ::part(trigger-icon-default),
-    ::part(menu) {
-      all: revert;
+    use-theme-escape & {
+      all: revert-layer;
     }
   }
 }

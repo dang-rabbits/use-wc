@@ -63,32 +63,34 @@ body.light-theme {
 }
 
 /* imported use-wc.css */
-use-select-input::part(trigger) {
+button {
   all: unset;
   display: inline-flex;
   align-items: center;
   border: var(--usewc-size-input-border) solid var(--usewc-color-input-border-static);
   padding: var(--usewc-space-input-padding-block) var(--usewc-space-input-padding-inline);
   gap: var(--usewc-space-input-gap);
+
+  /* A resolved slot, not a state name — the one property assignment below
+     reads this, and every state rule below only ever remaps it. */
+  background-color: var(--usewc-color-input-background);
 }
 
-use-select-input::part(trigger):hover {
-  background-color: var(--usewc-color-input-background-hover);
+button:hover {
+  --usewc-color-input-background: var(--usewc-color-input-background-hover);
 }
 
-use-select-input::part(trigger):focus-visible {
+button:focus-visible {
   outline: var(--usewc-size-focus-ring) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
   outline-offset: var(--usewc-space-input-focus-ring);
 }
 
-use-select-input::part(trigger-label) {
-  color: var(--usewc-color-input-text-static);
-}
-
-use-select-input::part(trigger-arrow) {
+use-caret::part(icon-default) {
   color: var(--usewc-color-input-trigger-static);
 }
 ```
+
+Because `:hover` only ever reassigns the `--usewc-color-input-background` slot instead of setting `background-color` directly, the rule doubles as the reset point for `use-theme-escape` — reverting the single property-assigning rule reverts every state along with it, with nothing left over to unwind separately per state.
 
 ##### Token Categories
 
