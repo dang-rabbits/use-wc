@@ -34,8 +34,12 @@ type Story = StoryObj<UseCaret>;
 export const Default: Story = {
   parameters: {
     showPanel: false,
-    allowTheme: true,
   },
+};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
 };
 
 /** The `icon` slot replaces the default caret glyph entirely. */

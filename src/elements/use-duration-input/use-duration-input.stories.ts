@@ -22,9 +22,13 @@ export default meta;
 type Story = StoryObj<UseDurationInput>;
 
 export const Default: Story = {
-  parameters: { allowTheme: true },
   render: () =>
     html`<use-duration-input value="PT1H30M" days hours minutes seconds></use-duration-input>`,
+};
+
+export const Theme: Story = {
+  ...Default,
+  parameters: { ...Default.parameters, allowTheme: true },
 };
 
 export const DaysHoursMinutesSeconds: Story = {

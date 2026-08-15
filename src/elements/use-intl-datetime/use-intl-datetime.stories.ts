@@ -12,7 +12,6 @@ export default meta;
 type Story = StoryObj<UseIntlDatetime>;
 
 export const Date: Story = {
-  parameters: { allowTheme: true },
   render: () => html`
     <p><use-intl-datetime datestyle="short" value="2024-07-04" lang="en-US"></use-intl-datetime></p>
     <p>
@@ -21,6 +20,11 @@ export const Date: Story = {
     <p><use-intl-datetime datestyle="long" value="2024-07-04" lang="en-US"></use-intl-datetime></p>
     <p><use-intl-datetime datestyle="full" value="2024-07-04" lang="en-US"></use-intl-datetime></p>
   `,
+};
+
+export const Theme: Story = {
+  ...Date,
+  parameters: { ...Date.parameters, allowTheme: true },
 };
 
 export const Time: Story = {
