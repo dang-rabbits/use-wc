@@ -6,21 +6,47 @@
      family's styling on a themed summary.appearance-button, regardless of specificity. */
     summary:not([class*="appearance-"]) {
       all: unset;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usewc-layout-button-gap);
+    }
 
-      &::before {
-        content: "▶";
-        display: inline-block;
-        width: 1em;
-      }
+    /* Both the plain and button-styled summary share the same masked-icon disclosure indicator
+     `use-caret`/`use-menu` use, rather than a literal ▶/▼ character. `use-caret` itself isn't
+     reused here: its closed/open direction comes from being nested inside a use-menu, a
+     different question from whether this details is open. */
+    summary:not([class*="appearance-"])::before,
+    summary.appearance-button::before {
+      content: "";
+      display: inline-block;
+      inline-size: var(--usewc-layout-dropdown-trigger-icon-size);
+      block-size: var(--usewc-layout-dropdown-trigger-icon-size);
+      background-color: var(--usewc-effect-dropdown-trigger-icon-background-color, currentColor);
+      mask-image: var(--usewc-effect-dropdown-trigger-icon-nested-mask-image, none);
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+
+    &:is([open], :open) summary:not([class*="appearance-"])::before,
+    &:is([open], :open) summary.appearance-button::before {
+      mask-image: var(--usewc-effect-dropdown-trigger-icon-mask-image, none);
+    }
+
+    /* Mirrors the button family's own :has(> use-caret) padding reduction, on the leading side
+     instead of the trailing one. No specificity trick needed here — the details layer already
+     outranks button outright. */
+    summary.appearance-button {
+      padding-inline-start: calc(
+        var(--usewc-layout-button-padding-inline) - var(--usewc-layout-dropdown-trigger-icon-size) / 4
+      );
     }
 
     use-theme-escape & summary:not([class*="appearance-"]),
-    use-theme-escape & summary:not([class*="appearance-"])::before {
+    use-theme-escape & summary:not([class*="appearance-"])::before,
+    use-theme-escape & summary.appearance-button::before,
+    use-theme-escape & summary.appearance-button {
       all: revert-layer;
-    }
-
-    &:is([open], :open) summary:not([class*="appearance-"])::before {
-      content: "▼";
     }
   }
 }
