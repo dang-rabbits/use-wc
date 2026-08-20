@@ -330,3 +330,33 @@
     </use-listbox-input>
   </use-widget>
 </div>
+
+<h2>Badges</h2>
+<div style="display: flex; align-items: center; gap: 3rem; padding-block: 1rem">
+  <div style="display: inline-block">
+    <button id="badge-count-anchor" type="button">Inbox</button>
+    <use-badge anchortarget="badge-count-anchor">3</use-badge>
+  </div>
+
+  <div style="display: inline-block">
+    <button id="badge-overflow-anchor" type="button">Notifications</button>
+    <use-badge anchortarget="badge-overflow-anchor">99+</use-badge>
+  </div>
+
+  <div style="display: inline-block">
+    <button id="badge-dot-anchor" type="button">Alerts</button>
+    <use-badge anchortarget="badge-dot-anchor" dot aria-label="Unread alerts"></use-badge>
+  </div>
+
+  <div style="display: inline-block">
+    <button id="badge-menu-anchor" popovertarget="badge-menu">
+      <use-caret>Actions</use-caret>
+    </button>
+    <use-menu id="badge-menu" aria-label="Actions">
+      <button role="menuitem">Rename</button>
+      <button role="menuitem">Duplicate</button>
+      <button role="menuitem">Delete</button>
+    </use-menu>
+    <use-badge anchortarget="badge-menu-anchor" dot aria-label="New actions available"></use-badge>
+  </div>
+</div>

@@ -1,6 +1,8 @@
 :root {
   /* Brand */
   --usewc-color-brand-primary: var(--usewc-color-blue-600);
+  /* A brighter oklch lift off #f76a15, still in-gamut */
+  --usewc-color-brand-accent: oklch(0.73 0.165 44.7);
 
   /* Document */
   /* - Color */
@@ -356,6 +358,21 @@
   --usewc-layout-button-extra-large-gap: var(--usewc-space-8);
   --usewc-font-button-extra-large-size: var(--usewc-font-size-20);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-32);
+
+  /* Badge */
+  --usewc-color-badge-background-static: var(--usewc-color-brand-accent);
+  /* Scaled rather than a fixed white/black: the accent is light enough (2.99:1 with white text,
+     vs. 7.03:1 with black) that a static color would misjudge it, and would silently stop
+     matching if the accent itself is ever overridden. */
+  --usewc-color-badge-text-static: contrast-color(var(--usewc-color-badge-background-static));
+  --usewc-color-badge-border: var(--usewc-color-document-background);
+  --usewc-layout-badge-padding-inline: var(--usewc-space-6);
+  --usewc-layout-badge-min-size: var(--usewc-space-16);
+  --usewc-layout-badge-dot-size: var(--usewc-space-12);
+  --usewc-layout-badge-border: var(--usewc-space-1);
+  --usewc-font-badge-size: var(--usewc-font-size-12);
+  --usewc-font-badge-weight: var(--usewc-font-weight-medium);
+  --usewc-effect-badge-border-radius: var(--usewc-effect-border-radius-pill);
 
   /* Menu */
   --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-4);
