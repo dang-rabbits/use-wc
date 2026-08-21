@@ -461,11 +461,11 @@ export class UseTimeInput extends UseLocaleElement {
       gap: 0.5ch;
 
       input {
+        -moz-appearance: textfield;
         font-variant-numeric: tabular-nums;
         field-sizing: content;
         text-align: end;
         min-width: 2ch;
-        text-align: end;
       }
 
       input::part(segment-input-fractionalSecond) {

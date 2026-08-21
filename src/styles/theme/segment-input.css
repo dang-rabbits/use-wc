@@ -17,6 +17,7 @@
       all: unset;
       box-sizing: content-box;
       appearance: none;
+      -moz-appearance: textfield;
       field-sizing: content;
       outline: none;
       border-radius: var(--usewc-effect-input-border-radius);
@@ -48,12 +49,12 @@
       --usewc-color-input-segment-text: var(--usewc-color-input-segment-text-focus);
     }
 
-    &::selection {
+    &::part(segment-input)::selection {
       background: var(--usewc-color-input-segment-background-focus);
       color: var(--usewc-color-input-segment-text-focus);
     }
 
-    use-theme-escape &::selection {
+    use-theme-escape &::part(segment-input)::selection {
       all: revert-layer;
     }
   }

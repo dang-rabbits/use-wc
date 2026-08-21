@@ -274,15 +274,20 @@ export class UseDurationInput extends UseLocaleElement {
   }
 
   static styles = css`
+    :host {
+      input {
+        -moz-appearance: textfield;
+        font-variant-numeric: tabular-nums;
+        field-sizing: content;
+        text-align: end;
+        min-width: 2ch;
+      }
+    }
+
     :host([format="digital"]) {
       display: inline-flex;
       align-items: center;
       gap: 0.5ch;
-
-      input {
-        field-sizing: content;
-        text-align: end;
-      }
     }
 
     input::-webkit-outer-spin-button,
