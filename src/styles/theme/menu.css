@@ -71,7 +71,7 @@
     }
   }
 
-  use-listbox-input:is(:hover, :focus) use-option:state(active) {
+  use-listbox-input:not(:has(use-option:hover)):focus use-option:state(active) {
     --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-active);
   }
 

@@ -74,8 +74,9 @@
    `::part()` inside a `:where()`/`:is()` argument list is invalid and silently dropped by the
    browser, taking the whole alternative down with it. Stands alone instead. */
   use-listbox-input:not(.appearance-native)::part(listbox) {
-    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style)
-      var(--usewc-color-input-border-static);
+    --usewc-color-input-border: var(--usewc-color-input-border-static);
+
+    border: var(--usewc-layout-input-border) var(--usewc-effect-input-border-style) var(--usewc-color-input-border);
     padding: var(--usewc-layout-popover-menu-padding);
     background: var(--usewc-color-input-background-static);
     font-family: var(--usewc-font-input-family);
@@ -83,9 +84,36 @@
     font-weight: var(--usewc-font-weight-normal);
     color: var(--usewc-color-input-text-static);
     border-radius: var(--usewc-effect-input-border-radius);
+    outline: 0 var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
   }
 
   use-theme-escape use-listbox-input:not(.appearance-native)::part(listbox) {
+    all: revert-layer;
+  }
+
+  use-listbox-input:not(.appearance-native)::part(listbox):hover {
+    --usewc-color-input-border: var(--usewc-color-input-border-hover);
+  }
+
+  use-theme-escape use-listbox-input:not(.appearance-native)::part(listbox):hover {
+    all: revert-layer;
+  }
+
+  /* The actually-focused element with `delegatesFocus` is this inner part, not the host —
+   Chromium's `:focus-visible` heuristic doesn't reliably propagate to the host through
+   delegation, so the ring has to be driven from here or the browser's native default outline
+   shows on the part instead. Border flips to the same focus color as the outline (matching the
+   shared input pattern above) so the two read as one seamless ring instead of a gray border
+   inside a mismatched blue ring. */
+  use-listbox-input:not(.appearance-native)::part(listbox):focus-visible {
+    --usewc-color-input-border: var(--usewc-color-input-border-focus);
+
+    outline-width: var(--usewc-effect-outline-size);
+  }
+
+  use-theme-escape use-listbox-input:not(.appearance-native)::part(listbox):focus-visible {
     all: revert-layer;
   }
 

@@ -106,6 +106,9 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - PRs should go to the `pre` branch instead of `main` branch
 - before committing, these commands should pass successfully: `vp run build-storybook`, `vp test`, and `vp lint`
 - run `vp check --fix` and `vp run analyze` at the end of each session
+- if the change is tied to an issue, include the issue ID in the branch name
+- an issue ID never goes in a commit title or in the body of a PR description — it always belongs in a footer, as `Resolves #XXX`, `Closes #XXX`, or `Fixes #XXX` (whichever fits the issue better), placed last in the commit message or PR description
+- PR descriptions must follow the structure in `.github/pull_request_template.md` (currently Why / How / Notes); drop a section's headline entirely if it has nothing under it (e.g. no Notes) rather than leaving it empty
 
 ## Agents
 
