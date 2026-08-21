@@ -448,7 +448,7 @@ export class UseMenu extends LitElement {
     :host(:popover-open) [part="menu"] {
       display: flex;
       flex-direction: column;
-      justify-items: stretch;
+      align-items: stretch;
     }
 
     ::slotted(hr) {
