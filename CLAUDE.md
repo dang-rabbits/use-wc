@@ -109,4 +109,4 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 
 ## Agents
 
-- features implemented by a Claude agent should always be built in worktrees
+- features implemented by a Claude agent should be built in the main checkout, not a separate git worktree
