@@ -213,6 +213,37 @@
     <button type="button" class="clear appearance-a">Button as Link</button>
     <button type="button" class="clear appearance-a">Button as Link disabled</button>
   </div>
+  <h4>Custom background</h4>
+  <div>
+    <button
+      type="button"
+      style="
+        --usewc-color-button-background-static: linear-gradient(
+          to bottom,
+          var(--usewc-color-indigo-500),
+          var(--usewc-color-blue-500)
+        );
+        --usewc-color-button-background-hover: linear-gradient(
+          to bottom,
+          var(--usewc-color-indigo-600),
+          var(--usewc-color-blue-600)
+        );
+        --usewc-color-button-background-active: linear-gradient(
+          to bottom,
+          var(--usewc-color-indigo-700),
+          var(--usewc-color-blue-700)
+        );
+        --usewc-color-button-text-static: var(--usewc-color-white);
+        --usewc-color-button-text-hover: var(--usewc-color-white);
+        --usewc-color-button-text-active: var(--usewc-color-white);
+        --usewc-color-button-border-static: var(--usewc-color-transparent);
+        --usewc-color-button-border-hover: var(--usewc-color-blue-700);
+        --usewc-color-button-border-active: var(--usewc-color-blue-800);
+      "
+    >
+      Gradient button
+    </button>
+  </div>
 </div>
 <h3>Details</h3>
 <details>
