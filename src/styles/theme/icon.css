@@ -1,10 +1,6 @@
 @layer use-theme.icon {
-  use-option::part(selected-indicator-default) {
-    display: none;
-  }
-
-  /* Only matches the built-in ▼/▶ glyph — `use-caret` renders a custom `UseCaret.customIcon`
-   under a different part name so this masking never fights with it. */
+  /* Only matches the built-in ▼/▶ glyph — `use-caret` renders a custom `UseCaret.icon` /
+   `UseCaret.nestedIcon` under a different part name so this masking never fights with it. */
   use-caret::part(icon-default) {
     display: inline-block;
     overflow: hidden;
@@ -29,5 +25,88 @@
 
   use-caret::part(icon) {
     margin-inline-start: auto;
+  }
+
+  /* Same masking shape as use-caret's icon-default, shared by every ✔-style selected indicator
+   — `use-option` renders its own `selected-indicator-default`, `-custom` swap for the same
+   reason use-caret does: real custom content shouldn't be clobbered by this masking. Color is its
+   own token, same as use-caret's, so a theme can recolor the checkmark independently of what
+   shape it masks. */
+  use-option::part(selected-indicator-default),
+  use-treeitem::part(selected-indicator-default) {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+    inline-size: var(--usewc-layout-selected-indicator-size);
+    block-size: var(--usewc-layout-selected-indicator-size);
+    background-color: var(--usewc-effect-selected-indicator-color, currentColor);
+    mask-image: var(--usewc-effect-selected-indicator-mask-image, none);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  use-theme-escape use-option::part(selected-indicator-default),
+  use-theme-escape use-treeitem::part(selected-indicator-default) {
+    all: revert-layer;
+  }
+
+  /* The deselected indicator has no built-in glyph: `--usewc-effect-deselected-indicator-mask-image`
+   defaults to the `none` keyword (no mask layer at all — the box would otherwise paint fully
+   opaque) and `--usewc-effect-deselected-indicator-color` defaults to `transparent`, so together
+   they read as blank out of the box. A theme sets both to show something (an empty checkbox
+   outline, for instance) — the mask supplies the shape, the color paints it. Either way this
+   occupies the exact same box as its selected sibling, or swapping between the two shifts every
+   option/item's content sideways depending on selection state. */
+  use-option::part(deselected-indicator-default),
+  use-treeitem::part(deselected-indicator-default) {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+    inline-size: var(--usewc-layout-selected-indicator-size);
+    block-size: var(--usewc-layout-selected-indicator-size);
+    background-color: var(--usewc-effect-deselected-indicator-color, transparent);
+    mask-image: var(--usewc-effect-deselected-indicator-mask-image, none);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  use-theme-escape use-option::part(deselected-indicator-default),
+  use-theme-escape use-treeitem::part(deselected-indicator-default) {
+    all: revert-layer;
+  }
+
+  /* Expanded/collapsed are a state pair, not a checked/unchecked contrast, but still get their
+   own color tokens for the same reason the selected indicator does — a theme may want the
+   disclosure glyph a different shade than the surrounding text. */
+  use-treeitem::part(expanded-indicator-default),
+  use-treeitem::part(collapsed-indicator-default) {
+    display: inline-block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-indent: 100%;
+    inline-size: var(--usewc-layout-tree-item-indicator-size);
+    block-size: var(--usewc-layout-tree-item-indicator-size);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+
+  use-treeitem::part(expanded-indicator-default) {
+    background-color: var(--usewc-effect-tree-item-expanded-indicator-color, currentColor);
+    mask-image: var(--usewc-effect-tree-item-expanded-indicator-mask-image, none);
+  }
+
+  use-treeitem::part(collapsed-indicator-default) {
+    background-color: var(--usewc-effect-tree-item-collapsed-indicator-color, currentColor);
+    mask-image: var(--usewc-effect-tree-item-collapsed-indicator-mask-image, none);
+  }
+
+  use-theme-escape use-treeitem::part(expanded-indicator-default),
+  use-theme-escape use-treeitem::part(collapsed-indicator-default) {
+    all: revert-layer;
   }
 }

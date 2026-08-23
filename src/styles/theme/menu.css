@@ -91,9 +91,12 @@
     }
   }
 
+  /* use-option's own checkmark now renders in-flow (a slot, not a background-image), so it
+   already reserves its own leading space via the shared gap/padding above — no extra reservation
+   needed here. This block only concerns the native [role="menuitemcheckbox"/"menuitemradio"]
+   items, whose checkmark is still theme.css's own background-image on the host. */
   use-menu :is([role="menuitemcheckbox"], [role="menuitemradio"]),
   use-listbox-input {
-    use-option,
     &:has(+ :where([role="menuitemcheckbox"], [role="menuitemradio"])),
     & + :where([role="menuitemcheckbox"], [role="menuitemradio"]) {
       padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
@@ -160,8 +163,10 @@
       flip-inline flip-block;
   }
 
-  use-menu [aria-checked="true"],
-  use-option:state(selected) {
+  /* use-option's own checkmark is themed separately, in icon.css, as a mask on its
+   selected-indicator part rather than a background-image on the host — this rule only concerns
+   the native [aria-checked] menu items, which have no shadow part to target. */
+  use-menu [aria-checked="true"] {
     background-image: var(--usewc-effect-menu-item-checkmark-background-image, none);
     /* TODO use logical position */
     background-position: left var(--usewc-layout-input-padding-inline) center;

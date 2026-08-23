@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { UseListboxInput } from "./use-listbox-input";
+import { UseOption } from "../use-option/use-option";
 import { html } from "lit";
 
 const meta: Meta<UseListboxInput> = {
@@ -7,6 +8,17 @@ const meta: Meta<UseListboxInput> = {
   subcomponents: { "use-option": "use-option" },
   title: "Web Components/use-listbox-input",
   tags: ["autodocs", "!dev", "input"],
+  // selectedIcon/deselectedIcon are static, page-wide hooks — Storybook doesn't reload the
+  // module between sibling stories, so without this reset, viewing
+  // GlobalDefaultIndicatorsViaStatics would leave every other story on this page showing its
+  // icons too.
+  decorators: [
+    (story) => {
+      UseOption.selectedIcon = undefined;
+      UseOption.deselectedIcon = undefined;
+      return story();
+    },
+  ],
   args: {
     placeholder: "Select a number",
     disabled: false,
@@ -165,7 +177,13 @@ export const FormMultipleValues: Story = {
   },
 };
 
-export const CustomSelectedIndicatorSlot: Story = {
+/**
+ * Both indicators are independent slots: `selected-indicator` replaces the checkmark, and
+ * `deselected-indicator` replaces the (empty) placeholder shown otherwise — filling in the
+ * latter is how a consumer renders an empty checkbox instead of just reserved blank space.
+ * Either can be left unset to keep the built-in default for that state.
+ */
+export const CustomIndicatorSlots: Story = {
   render: () => html`
     <use-listbox-input>
       <svg
@@ -184,14 +202,57 @@ export const CustomSelectedIndicatorSlot: Story = {
       </svg>
       <use-option value="1" id="option-1" selected>
         <span slot="selected-indicator">🔥</span>
+        <span slot="deselected-indicator">💨</span>
         Fire
       </use-option>
       <use-option value="2" id="option-2">
         <span slot="selected-indicator">🌊</span>
+        <span slot="deselected-indicator">💨</span>
         Water
       </use-option>
+      <use-option value="3" id="option-3">Earth (built-in indicators)</use-option>
     </use-listbox-input>
   `,
+};
+
+/**
+ * For an indicator that isn't just a CSS swap — different markup, an icon font, logic beyond a
+ * mask — set the static `UseOption.selectedIcon` / `UseOption.deselectedIcon` hooks. Every
+ * `<use-option>` in the page picks them up; consumers keep writing the same tag, no new element
+ * to register or remember to use. Do this once, as early as possible (an app's entry point,
+ * before any options connect) — Lit calls `render()` fresh on every update, so an instance only
+ * reflects the change once something causes it to re-render, and the hook applies globally for
+ * the rest of the page's lifetime, this story included.
+ *
+ * ```ts
+ * import { UseOption } from "use-wc";
+ *
+ * UseOption.selectedIcon = "★";
+ * UseOption.deselectedIcon = "☆";
+ * ```
+ *
+ * Rendered in its own iframe on the Docs page (`docs.story.inline: false`) rather than just
+ * relying on the meta-level decorator: the Docs page otherwise mounts every story's markup
+ * together, in a batch, into one shared document — so by the time any `<use-option>` on the page
+ * actually connects and reads the static, this story has already flipped it, and every sibling's
+ * options pick up the override too, regardless of the decorator resetting it before each story
+ * *starts*. An iframed story gets its own document and its own fresh module graph, so its static
+ * mutation can't reach the rest of the page. Viewed standalone in Canvas, only one story mounts
+ * at a time in the first place, so the decorator's reset works as intended there either way.
+ */
+export const GlobalDefaultIndicatorsViaStatics: Story = {
+  parameters: { docs: { story: { inline: false } } },
+  render: () => {
+    UseOption.selectedIcon = "★";
+    UseOption.deselectedIcon = "☆";
+
+    return html`
+      <use-listbox-input>
+        <use-option value="1" id="option-1" selected>One</use-option>
+        <use-option value="2" id="option-2">Two</use-option>
+      </use-listbox-input>
+    `;
+  },
 };
 
 export const CustomStyles: Story = {

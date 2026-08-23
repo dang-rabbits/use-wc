@@ -71,8 +71,8 @@ describe("use-caret", () => {
     expect(assigned[0].id).toBe("custom-icon");
   });
 
-  it("renders a bare customIcon string instead of the built-in caret when set", async () => {
-    UseCaret.customIcon = "→";
+  it("renders a bare icon string instead of the built-in caret when set", async () => {
+    UseCaret.icon = "→";
 
     try {
       render(html`
@@ -90,12 +90,12 @@ describe("use-caret", () => {
       const icon = trigger.shadowRoot!.querySelector('[part="icon-custom"]') as HTMLElement;
       expect(icon.textContent).toBe("→");
     } finally {
-      UseCaret.customIcon = undefined;
+      UseCaret.icon = undefined;
     }
   });
 
-  it("renders a customIcon function's string return value instead of the built-in caret", async () => {
-    UseCaret.customIcon = () => "→";
+  it("renders an icon function's string return value instead of the built-in caret", async () => {
+    UseCaret.icon = () => "→";
 
     try {
       render(html`
@@ -113,12 +113,12 @@ describe("use-caret", () => {
       const icon = trigger.shadowRoot!.querySelector('[part="icon-custom"]') as HTMLElement;
       expect(icon.textContent).toBe("→");
     } finally {
-      UseCaret.customIcon = undefined;
+      UseCaret.icon = undefined;
     }
   });
 
-  it("renders a customIcon template built from the html tag it's passed", async () => {
-    UseCaret.customIcon = (customHtml) => {
+  it("renders an icon template built from the html tag it's passed", async () => {
+    UseCaret.icon = (customHtml) => {
       expect(customHtml).toBe(html);
       return customHtml`<span id="custom-icon-template">custom</span>`;
     };
@@ -139,12 +139,13 @@ describe("use-caret", () => {
       const custom = trigger.shadowRoot!.querySelector("#custom-icon-template");
       expect(custom?.textContent).toBe("custom");
     } finally {
-      UseCaret.customIcon = undefined;
+      UseCaret.icon = undefined;
     }
   });
 
-  it("tells a customIcon function whether each trigger is nested", async () => {
-    UseCaret.customIcon = (_html, isNested) => (isNested ? "nested" : "top-level");
+  it("only affects triggers matching its own nesting: icon for top-level, nestedIcon for nested", async () => {
+    UseCaret.icon = "top-level";
+    UseCaret.nestedIcon = "nested";
 
     try {
       render(html`
@@ -175,7 +176,31 @@ describe("use-caret", () => {
       expect(topLevelIcon.textContent).toBe("top-level");
       expect(nestedIcon.textContent).toBe("nested");
     } finally {
-      UseCaret.customIcon = undefined;
+      UseCaret.icon = undefined;
+      UseCaret.nestedIcon = undefined;
+    }
+  });
+
+  it("falls back to the built-in glyph for a kind whose static is left unset", async () => {
+    UseCaret.nestedIcon = "nested";
+
+    try {
+      render(html`
+        <button popovertarget="menu">
+          <use-caret>Menu</use-caret>
+        </button>
+        <use-menu id="menu" aria-label="Menu">
+          <button role="menuitem">menu item 1</button>
+        </use-menu>
+      `);
+
+      const trigger = document.querySelector("use-caret") as UseCaret;
+      await trigger.updateComplete;
+
+      const icon = trigger.shadowRoot!.querySelector('[part="icon-default"]') as HTMLElement;
+      expect(icon.textContent).toBe("▼");
+    } finally {
+      UseCaret.nestedIcon = undefined;
     }
   });
 

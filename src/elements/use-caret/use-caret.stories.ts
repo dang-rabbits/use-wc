@@ -7,12 +7,13 @@ const meta: Meta<UseCaret> = {
   component: "use-caret",
   title: "Web Components/use-caret",
   tags: ["autodocs", "!dev", "utility"],
-  // customIcon is a static, page-wide hook — Storybook doesn't reload the module between
+  // icon/nestedIcon are static, page-wide hooks — Storybook doesn't reload the module between
   // sibling stories, so without this reset, viewing GlobalDefaultCaretViaCustomIcon would leave
   // every other story on this page showing its caret too.
   decorators: [
     (story) => {
-      UseCaret.customIcon = undefined;
+      UseCaret.icon = undefined;
+      UseCaret.nestedIcon = undefined;
       return story();
     },
   ],
@@ -61,33 +62,34 @@ export const CustomIconViaSlot: Story = {
 
 /**
  * For a caret that isn't just a CSS swap — different markup, an icon font, logic beyond a mask —
- * set the static `UseCaret.customIcon` hook. Every `<use-caret>` in the page picks it up;
- * consumers keep writing the same tag, no new element to register or remember to use. Do this
- * once, as early as possible (an app's entry point, before any triggers connect) —
- * Lit calls `render()` fresh on every update, so an instance only reflects the change once
- * something causes it to re-render, and the hook applies globally for the rest of the page's
- * lifetime, this story included. A bare string, as here, sidesteps any risk of a `TemplateResult`
- * built from a different `lit-html` copy than this component's own — pass a function instead
- * when the icon needs to vary per trigger.
+ * set the static `UseCaret.icon` hook (and `UseCaret.nestedIcon` for submenu triggers). Every
+ * `<use-caret>` in the page picks them up; consumers keep writing the same tag, no new element to
+ * register or remember to use. Do this once, as early as possible (an app's entry point, before
+ * any triggers connect) — Lit calls `render()` fresh on every update, so an instance only
+ * reflects the change once something causes it to re-render, and the hook applies globally for
+ * the rest of the page's lifetime, this story included. A bare string, as here, sidesteps any
+ * risk of a `TemplateResult` built from a different `lit-html` copy than this component's own —
+ * pass a function instead when the icon needs richer logic.
  *
  * ```ts
  * import { UseCaret } from "use-wc";
  *
- * UseCaret.customIcon = "→";
+ * UseCaret.icon = "→";
  * ```
  *
- * Excluded from this page's autodocs (`!autodocs`) rather than just relying on the meta-level
- * decorator: the Docs page mounts every story's markup together, in a batch, after all of their
- * `render()` functions have already run — so by the time any `<use-caret>` on the page actually
- * connects and reads the static, this story has already flipped it, and every sibling's caret
- * picks up "→" too, regardless of the decorator resetting it before each story *starts*. Viewed
- * standalone in Canvas, only one story mounts at a time, so the decorator's reset works as
- * intended.
+ * Rendered in its own iframe on the Docs page (`docs.story.inline: false`) rather than just
+ * relying on the meta-level decorator: the Docs page otherwise mounts every story's markup
+ * together, in a batch, into one shared document — so by the time any `<use-caret>` on the page
+ * actually connects and reads the static, this story has already flipped it, and every sibling's
+ * caret picks up "→" too, regardless of the decorator resetting it before each story *starts*. An
+ * iframed story gets its own document and its own fresh module graph, so its static mutation
+ * can't reach the rest of the page. Viewed standalone in Canvas, only one story mounts at a time
+ * in the first place, so the decorator's reset works as intended there either way.
  */
 export const GlobalDefaultCaretViaCustomIcon: Story = {
-  tags: ["!autodocs"],
+  parameters: { docs: { story: { inline: false } } },
   render: () => {
-    UseCaret.customIcon = "→";
+    UseCaret.icon = "→";
 
     return html`
       <button id="use-caret-custom-icon-hook" popovertarget="use-caret-custom-icon-hook-menu">

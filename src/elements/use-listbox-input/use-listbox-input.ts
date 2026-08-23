@@ -15,7 +15,6 @@ const FORM_DATA_KEY = "__value";
 
 /**
  * @slot default NodeList of `use-option` elements
- * @slot arrow
  */
 @customElement("use-listbox-input")
 export class UseListboxInput extends LitElement {

@@ -49,23 +49,21 @@ type HtmlTag = typeof html;
  * the same effect without writing a `::part()` rule at all.)
  *
  * `::part()` only reaches CSS-expressible changes (a mask, a background, a transform). For
- * anything else — different markup, an icon font, logic beyond a mask — set the static
- * `customIcon` hook. Every `<use-caret>` in the page picks it up; consumers keep writing the
- * same tag, no new element to register or remember to use instead. Set it once, as early as
- * possible (an app's entry point, before any triggers connect) — Lit calls `render()` fresh on
- * every update, so an already-connected instance only reflects the change once something causes
- * it to re-render:
+ * anything else — different markup, an icon font, logic beyond a mask — set the static `icon`
+ * and `nestedIcon` hooks. Every `<use-caret>` in the page picks them up; consumers keep writing
+ * the same tag, no new element to register or remember to use instead. `icon` supplies a
+ * top-level trigger's glyph, `nestedIcon` a submenu trigger's — set whichever apply; an unset one
+ * keeps the built-in ▼/▶ for that case. Set them once, as early as possible (an app's entry
+ * point, before any triggers connect) — Lit calls `render()` fresh on every update, so an
+ * already-connected instance only reflects the change once something causes it to re-render:
  *
  * ```ts
- * // A bare string or TemplateResult is used as-is, on every trigger, nested or not:
- * UseCaret.customIcon = "→";
+ * // A bare string or TemplateResult is used as-is, on every trigger of that kind:
+ * UseCaret.icon = "▾";
+ * UseCaret.nestedIcon = "▸";
  *
- * // A function is called on every render instead, and told whether this particular trigger is
- * // nested — the same distinction the built-in ▼/▶ caret already makes for submenus:
- * UseCaret.customIcon = (html, isNested) =>
- *   isNested
- *     ? html`<my-icon name="chevron-right"></my-icon>`
- *     : html`<my-icon name="chevron-down"></my-icon>`;
+ * // A function is called on every render instead:
+ * UseCaret.nestedIcon = (html) => html`<my-icon name="chevron-right"></my-icon>`;
  * ```
  *
  * The function form is called with the component's own `html` tag as its (optional) first
@@ -73,8 +71,7 @@ type HtmlTag = typeof html;
  * copy of `lit-html` in its module graph, and a `TemplateResult` built from a *different* copy
  * than the one this component renders with can silently fail to render. Taking `html` in as a
  * parameter sidesteps that: whatever's returned is guaranteed to come from the same `lit-html`
- * this component already uses. A bare string skips the concern entirely, at the cost of not
- * being able to vary by `isNested`.
+ * this component already uses. A bare string skips the concern entirely.
  *
  * Only need to change the icon on **some** triggers, not every one in the app? Extend the
  * class, override `render()` normally, and register the subclass under a different tag name so
@@ -95,29 +92,33 @@ type HtmlTag = typeof html;
 @customElement("use-caret")
 export class UseCaret extends LitElement {
   /**
-   * Global override for the default caret. When set, every `<use-caret>` in the page
-   * renders this inside `part(icon-default)` instead of the built-in ▼/▶ character. A plain
-   * string or `TemplateResult` is used as-is for every trigger, nested or not — for a caret that
-   * still needs to point sideways on a submenu trigger, use the function form instead: it's
-   * called with the component's own `html` tag and whether *this* trigger is nested, so a
-   * returned template is guaranteed to come from the same `lit-html` instance this component
-   * renders with, and can still vary the same way the built-in caret does. Unset (the default)
-   * keeps the built-in caret.
+   * Global override for a top-level trigger's caret. When set, every non-nested `<use-caret>` in
+   * the page renders this inside `part(icon-default)` instead of the built-in ▼ character. A
+   * plain string or `TemplateResult` is used as-is; the function form is called with the
+   * component's own `html` tag, so a returned template is guaranteed to come from the same
+   * `lit-html` instance this component renders with. Unset (the default) keeps the built-in ▼.
    */
-  static customIcon?:
-    | ((html: HtmlTag, isNested: boolean) => TemplateResult | string)
-    | TemplateResult
-    | string;
+  static icon?: ((html: HtmlTag) => TemplateResult | string) | TemplateResult | string;
+
+  /**
+   * Global override for a submenu trigger's caret — the counterpart to {@link icon} for a
+   * `<use-caret>` nested inside a `use-menu`. Unset (the default) keeps the built-in ▶.
+   */
+  static nestedIcon?: ((html: HtmlTag) => TemplateResult | string) | TemplateResult | string;
 
   get #isNested() {
     return this.closest("use-menu") != null;
   }
 
+  get #customIcon() {
+    return this.#isNested ? UseCaret.nestedIcon : UseCaret.icon;
+  }
+
   get #iconContent(): TemplateResult | string {
-    const customIcon = UseCaret.customIcon;
+    const customIcon = this.#customIcon;
 
     if (typeof customIcon === "function") {
-      return customIcon(html, this.#isNested);
+      return customIcon(html);
     }
 
     if (customIcon !== undefined) {
@@ -128,9 +129,9 @@ export class UseCaret extends LitElement {
   }
 
   render() {
-    // theme.css masks part(icon-default) into the built-in ▼/▶ glyph; a customIcon is real
+    // theme.css masks part(icon-default) into the built-in ▼/▶ glyph; a custom icon is real
     // content meant to be seen, so it renders under a different part name instead.
-    const part = UseCaret.customIcon === undefined ? "icon-default" : "icon-custom";
+    const part = this.#customIcon === undefined ? "icon-default" : "icon-custom";
 
     return html`
       <slot></slot>
