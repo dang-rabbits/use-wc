@@ -10,6 +10,16 @@ type Indicator = (typeof indicators)[number];
 /**
  * Accessible grid component following [WAI-ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
  *
+ * ## Grid Cell Modes
+ * The `mode` attribute of the `use-gridcell` element determines how the cell behaves in terms of focus and interaction. The possible values are:
+ *
+ * - `'none'` - the cell itself is focusable and it does not contain any interactive elements.
+ * - `'widget'` - the cell itself is focusable and it contains more than one interactive element. To access the interactive elements, the user must press `Enter` or `F2`, and to restore focus to the cell, the user must press `Esc` or `F2`.
+ * - `'action'` - the cell itself is not focusable and it contains a single interactive element. The user can tab to the interactive elements directly.
+ *
+ * ## Accessible Label
+ * Provide `aria-label` or `aria-labelledby` on the `use-grid` element so screen readers can identify the grid.
+ *
  * @slot - Grid content (use-gridhead/use-gridbody rows)
  */
 @customElement("use-grid")
@@ -49,8 +59,23 @@ export class UseGrid extends LitElement {
       return;
     }
 
-    this.#observer = new MutationObserver(() => {
-      this.#initializeGridRows();
+    this.#observer = new MutationObserver((records) => {
+      const hasGridRowChange = records.some(
+        (record) =>
+          Array.from(record.addedNodes).some(
+            (n) =>
+              n instanceof HTMLElement &&
+              (n.tagName.toLowerCase() === "use-gridrow" ||
+                n.querySelector("use-gridrow") !== null),
+          ) ||
+          Array.from(record.removedNodes).some(
+            (n) => n instanceof HTMLElement && n.tagName.toLowerCase() === "use-gridrow",
+          ),
+      );
+      if (hasGridRowChange) {
+        this.#invalidateCellCache();
+        this.#initializeGridRows();
+      }
     });
     this.#observer.observe(this, { attributes: false, childList: true, subtree: true });
   }
@@ -63,6 +88,26 @@ export class UseGrid extends LitElement {
   get #dataKey() {
     return this.name ?? FORM_DATA_KEY;
   }
+
+  #cellCache: { cells: HTMLElement[]; colCount: number } | null = null;
+
+  #invalidateCellCache() {
+    this.#cellCache = null;
+  }
+
+  #getCellCache(): { cells: HTMLElement[]; colCount: number } {
+    if (!this.#cellCache) {
+      const cells = Array.from(
+        this.querySelectorAll<HTMLElement>("use-gridrow:not([disabled]) use-gridcell"),
+      );
+      const firstRow = this.querySelector("use-gridrow");
+      const colCount = firstRow ? firstRow.querySelectorAll("use-gridcell").length || 1 : 1;
+      this.#cellCache = { cells, colCount };
+    }
+    return this.#cellCache;
+  }
+
+  #initializing = false;
 
   set value(value: string[] | string) {
     const newValue = new FormData();
@@ -93,19 +138,31 @@ export class UseGrid extends LitElement {
     // @ts-expect-error - we're not using File
     this.#value = this.selectmode === "multiple" ? values : values[0];
 
-    this.dispatchEvent(
-      new CustomEvent("use-change", {
-        detail: {
-          value: this.selectmode === "multiple" ? values : newValue.get(this.#dataKey),
-        },
-        bubbles: true,
-        composed: true,
-      }),
-    );
+    if (!this.#initializing) {
+      this.dispatchEvent(
+        new CustomEvent("use-change", {
+          detail: {
+            value: this.selectmode === "multiple" ? values : newValue.get(this.#dataKey),
+          },
+          bubbles: true,
+          composed: true,
+        }),
+      );
+    }
   }
 
   get value(): string[] | string | null {
     return this.#value;
+  }
+
+  updated(changedProps: Map<string, unknown>) {
+    if (changedProps.has("selectmode")) {
+      if (this.selectmode === "multiple") {
+        this.setAttribute("aria-multiselectable", "true");
+      } else {
+        this.removeAttribute("aria-multiselectable");
+      }
+    }
   }
 
   // Keyboard navigation and selection logic
@@ -126,11 +183,8 @@ export class UseGrid extends LitElement {
   }
 
   #onKeyDown = (event: KeyboardEvent) => {
-    const active = document.activeElement?.closest("use-gridcell") as HTMLElement;
-    // Only consider cells in enabled rows
-    const cells = Array.from(
-      this.querySelectorAll<HTMLElement>("use-gridrow:not([disabled]) use-gridcell"),
-    );
+    const active = (event.target as HTMLElement)?.closest("use-gridcell") as HTMLElement;
+    const { cells, colCount: cols } = this.#getCellCache();
     if (!cells.length) return;
     const currentIndex = cells.indexOf(active);
     if (currentIndex === -1) return;
@@ -147,7 +201,6 @@ export class UseGrid extends LitElement {
     }
 
     let nextIndex = currentIndex;
-    const cols = this.#getColCount();
 
     switch (event.key) {
       case "ArrowRight":
@@ -228,7 +281,11 @@ export class UseGrid extends LitElement {
       selectRow.getAttribute("value") != null
     ) {
       const rowValue = selectRow.getAttribute("value") ?? selectRow.textContent ?? "";
-      let newValue = (this.#value as string[]) ?? [];
+      let newValue: string[] = Array.isArray(this.#value)
+        ? [...this.#value]
+        : this.#value
+          ? [this.#value as string]
+          : [];
       if (selectRow.hasAttribute("selected")) {
         newValue = newValue.filter((v) => v !== rowValue);
       } else if (this.selectmode === "multiple") {
@@ -267,18 +324,9 @@ export class UseGrid extends LitElement {
     }
   }
 
-  #getColCount(): number {
-    // Try to infer column count from first row
-    const firstRow = this.querySelector("use-gridrow");
-    if (firstRow) {
-      return firstRow.querySelectorAll("use-gridcell").length || 1;
-    }
-    return 1;
-  }
-
   render() {
     return html`
-      <div role="grid" part="grid">
+      <div part="grid">
         <slot name="selected-indicator" part="selected-indicator">
           <span part="selected-indicator-default" aria-hidden="true">✔</span>
         </slot>
@@ -307,7 +355,21 @@ export class UseGrid extends LitElement {
 
   #initializeGridRows() {
     this.#unwatchMutations();
+    this.#initializing = true;
     const selectedValues: string[] = [];
+
+    const allRows = Array.from(this.querySelectorAll("use-gridrow")) as Array<UseGridRow>;
+    const { colCount } = this.#getCellCache();
+    this.setAttribute("aria-rowcount", String(allRows.length));
+    this.setAttribute("aria-colcount", String(colCount));
+
+    allRows.forEach((row, rowIndex) => {
+      row.setAttribute("aria-rowindex", String(rowIndex + 1));
+      const cells = Array.from(row.querySelectorAll<HTMLElement>("use-gridcell"));
+      cells.forEach((cell, colIndex) => {
+        cell.setAttribute("aria-colindex", String(colIndex + 1));
+      });
+    });
 
     this.#lazyQueryGridBodyRows().forEach((row) => {
       if (row.selected && row.value) {
@@ -329,6 +391,7 @@ export class UseGrid extends LitElement {
     });
 
     this.value = selectedValues;
+    this.#initializing = false;
 
     const firstCell = this.querySelector(
       "use-gridrow:not([disabled]) use-gridcell",
