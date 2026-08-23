@@ -120,9 +120,31 @@
   --usewc-effect-border-radius-full: 100%;
   --usewc-effect-border-radius-pill: 9999px;
 
+  /**
+   * Icon
+   *
+   * Authored for `mask-image`, not `background-image`: the mask only reads the alpha channel, so
+   * the `fill`/`stroke` colors here are arbitrary and the consuming rule paints the glyph with
+   * `background-color` (usually `currentColor`). That is why these need no dark-theme override.
+   *
+   * Named on the logical axes rather than by physical direction. CSS logical properties do not
+   * mirror an image's contents, so the two inline-axis values are swapped under `:dir(rtl)` below
+   * — a consumer overriding either token gets correct RTL for free.
+   */
+  --usewc-icon-caret-block-end: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='black' /%3E%3C/svg%3E");
+  --usewc-icon-caret-block-start: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8L18.9282 15.5L5.0718 15.5L12 8Z' fill='black' /%3E%3C/svg%3E");
+  --usewc-icon-caret-inline-end: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 12L8.5 18.9282L8.5 5.0718Z' fill='black' /%3E%3C/svg%3E");
+  --usewc-icon-caret-inline-start: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 12L15.5 5.0718L15.5 18.9282Z' fill='black' /%3E%3C/svg%3E");
+  --usewc-icon-checkmark: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
+
   /** Motion */
   --usewc-transition-duration-fast: 120ms;
   --usewc-transition-easing-standard: cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+:root:dir(rtl) {
+  --usewc-icon-caret-inline-end: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 12L15.5 5.0718L15.5 18.9282Z' fill='black' /%3E%3C/svg%3E");
+  --usewc-icon-caret-inline-start: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M16 12L8.5 18.9282L8.5 5.0718Z' fill='black' /%3E%3C/svg%3E");
 }
 
 @media (prefers-reduced-motion: reduce) {

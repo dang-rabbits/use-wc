@@ -10,8 +10,18 @@ const FORM_DATA_KEY = "__value";
 /**
  * Custom input control for managing selected values in a hierarchy.
  *
+ * A convenience for distributing a custom indicator to every item at once: slot an icon into
+ * `use-tree` itself under `expanded-indicator`, `collapsed-indicator`, `selected-indicator`, or
+ * `deselected-indicator`, and it's cloned into each lazily-discovered `use-treeitem`'s matching
+ * slot. This is per-item slotting, just done once for the whole tree — it doesn't replace
+ * `use-treeitem`'s own static hooks (`expandedIcon`, `collapsedIcon`, `selectedIcon`,
+ * `deselectedIcon`), which still apply for indicators the tree hasn't cloned one over.
+ *
  * @slot default NodeList of `use-treeitem` elements
- * @slot arrow
+ * @slot expanded-indicator - Cloned into every item's `expanded-indicator` slot.
+ * @slot collapsed-indicator - Cloned into every item's `collapsed-indicator` slot.
+ * @slot selected-indicator - Cloned into every item's `selected-indicator` slot.
+ * @slot deselected-indicator - Cloned into every item's `deselected-indicator` slot.
  */
 @customElement("use-tree")
 export class UseTree extends LitElement {
@@ -173,38 +183,32 @@ export class UseTree extends LitElement {
     }
   }
 
+  #indicatorSlotNames = [
+    "expanded-indicator",
+    "collapsed-indicator",
+    "selected-indicator",
+    "deselected-indicator",
+  ] as const;
+
   #initializeTreeItems() {
     const lazyItems = this.lazyQueryItems();
-    const expandedNodeIcon = (
-      this.shadowRoot?.querySelector('slot[name="expanded-indicator"]') as HTMLSlotElement | null
-    )?.assignedElements({ flatten: true })[0] as HTMLElement;
 
-    const collapsedNodeIcon = (
-      this.shadowRoot?.querySelector('slot[name="collapsed-indicator"]') as HTMLSlotElement | null
-    )?.assignedElements({ flatten: true })[0] as HTMLElement;
+    const indicatorIcons = this.#indicatorSlotNames.map((slotName) => {
+      const icon = (
+        this.shadowRoot?.querySelector(`slot[name="${slotName}"]`) as HTMLSlotElement | null
+      )?.assignedElements({ flatten: true })[0] as HTMLElement | undefined;
 
-    const selectedNodeIcon = (
-      this.shadowRoot?.querySelector('slot[name="selected-indicator"]') as HTMLSlotElement | null
-    )?.assignedElements({ flatten: true })[0] as HTMLElement;
+      return { slotName, icon };
+    });
 
     lazyItems.forEach((item) => {
-      const expandedNodeClone = expandedNodeIcon?.cloneNode(true) as HTMLElement;
-      if (expandedNodeClone) {
-        expandedNodeClone.slot = "expanded-indicator";
-        item.appendChild(expandedNodeClone);
-      }
-
-      const collapsedNodeClone = collapsedNodeIcon?.cloneNode(true) as HTMLElement;
-      if (collapsedNodeClone) {
-        collapsedNodeClone.slot = "collapsed-indicator";
-        item.appendChild(collapsedNodeClone);
-      }
-
-      const selectedNodeClone = selectedNodeIcon?.cloneNode(true) as HTMLElement;
-      if (selectedNodeClone) {
-        selectedNodeClone.slot = "selected-indicator";
-        item.appendChild(selectedNodeClone);
-      }
+      indicatorIcons.forEach(({ slotName, icon }) => {
+        const clone = icon?.cloneNode(true) as HTMLElement | undefined;
+        if (clone) {
+          clone.slot = slotName;
+          item.appendChild(clone);
+        }
+      });
     });
   }
 
@@ -385,6 +389,7 @@ export class UseTree extends LitElement {
         <slot name="expanded-indicator" part="expanded-indicator"></slot>
         <slot name="collapsed-indicator" part="collapsed-indicator"></slot>
         <slot name="selected-indicator" part="selected-indicator" aria-hidden="true"></slot>
+        <slot name="deselected-indicator" part="deselected-indicator" aria-hidden="true"></slot>
         <slot></slot>
       </div>
     `;

@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { UseTree } from "./use-tree";
+import { UseTreeitem } from "../use-treeitem/use-treeitem";
 import { html } from "lit";
 
 const meta: Meta<UseTree> = {
@@ -7,6 +8,19 @@ const meta: Meta<UseTree> = {
   subcomponents: { "use-treeitem": "use-treeitem" },
   title: "Web Components/use-tree",
   tags: ["autodocs", "!dev", "input"],
+  // expandedIcon/collapsedIcon/selectedIcon/deselectedIcon are static, page-wide hooks —
+  // Storybook doesn't reload the module between sibling stories, so without this reset, viewing
+  // GlobalDefaultIndicatorsViaStatics would leave every other story on this page showing its
+  // icons too.
+  decorators: [
+    (story) => {
+      UseTreeitem.expandedIcon = undefined;
+      UseTreeitem.collapsedIcon = undefined;
+      UseTreeitem.selectedIcon = undefined;
+      UseTreeitem.deselectedIcon = undefined;
+      return story();
+    },
+  ],
   args: {
     disabled: false,
     multiple: false,
@@ -152,12 +166,21 @@ export const FormMultipleValues: Story = {
   },
 };
 
-export const CustomSelectedIndicatorSlot: Story = {
+/**
+ * Slotting an icon into `use-tree` itself, under any of its four indicator slot names, clones it
+ * into every item's matching slot — a shortcut over slotting each `use-treeitem` individually. All
+ * four are independent: `expanded-indicator`/`collapsed-indicator` cover the disclosure glyph,
+ * `selected-indicator`/`deselected-indicator` the selection glyph — filling in the latter is how
+ * a consumer renders an empty checkbox instead of just reserved blank space. Any of the four can
+ * be left unset to keep that indicator's built-in default.
+ */
+export const CustomIndicatorSlots: Story = {
   render: () => html`
     <use-tree>
       <span slot="expanded-indicator">⬇️</span>
       <span slot="collapsed-indicator">➡️</span>
       <span slot="selected-indicator">✅</span>
+      <span slot="deselected-indicator">⬜</span>
       <use-treeitem value="1" id="option-1" selected>
         First
         <use-treeitem> First A </use-treeitem>
@@ -178,6 +201,50 @@ export const CustomSelectedIndicatorSlot: Story = {
       </use-treeitem>
     </use-tree>
   `,
+};
+
+/**
+ * For an indicator that isn't just a CSS swap — different markup, an icon font, logic beyond a
+ * mask — set the static `UseTreeitem.expandedIcon` / `collapsedIcon` / `selectedIcon` /
+ * `deselectedIcon` hooks. Every `<use-treeitem>` in the page picks them up; consumers keep
+ * writing the same tag, no new element to register or remember to use. Do this once, as early as
+ * possible (an app's entry point, before any items connect) — Lit calls `render()` fresh on
+ * every update, so an instance only reflects the change once something causes it to re-render,
+ * and the hook applies globally for the rest of the page's lifetime, this story included.
+ *
+ * ```ts
+ * import { UseTreeitem } from "use-wc";
+ *
+ * UseTreeitem.expandedIcon = "▾";
+ * UseTreeitem.collapsedIcon = "▸";
+ * ```
+ *
+ * Rendered in its own iframe on the Docs page (`docs.story.inline: false`) rather than just
+ * relying on the meta-level decorator: the Docs page otherwise mounts every story's markup
+ * together, in a batch, into one shared document — so by the time any `<use-treeitem>` on the
+ * page actually connects and reads the static, this story has already flipped it, and every
+ * sibling's items pick up the override too, regardless of the decorator resetting it before each
+ * story *starts*. An iframed story gets its own document and its own fresh module graph, so its
+ * static mutation can't reach the rest of the page. Viewed standalone in Canvas, only one story
+ * mounts at a time in the first place, so the decorator's reset works as intended there either
+ * way.
+ */
+export const GlobalDefaultIndicatorsViaStatics: Story = {
+  parameters: { docs: { story: { inline: false } } },
+  render: () => {
+    UseTreeitem.expandedIcon = "▾";
+    UseTreeitem.collapsedIcon = "▸";
+
+    return html`
+      <use-tree>
+        <use-treeitem value="1" id="option-1" selected expanded>
+          One
+          <use-treeitem value="1a" id="option-1-a">One A</use-treeitem>
+        </use-treeitem>
+        <use-treeitem value="2" id="option-2">Two</use-treeitem>
+      </use-tree>
+    `;
+  },
 };
 
 export const CustomStyles: Story = {
