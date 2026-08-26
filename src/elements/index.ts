@@ -15,4 +15,5 @@ import "./use-week-picker/use-week-picker";
 import "./use-month-picker/use-month-picker";
 import "./use-datetime-input/use-datetime-input";
 import "./use-intl-datetime/use-intl-datetime";
+import "./use-intl-number/use-intl-number";
 import "./use-badge/use-badge";

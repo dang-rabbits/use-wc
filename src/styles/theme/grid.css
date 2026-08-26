@@ -1,0 +1,15 @@
+/* Grid — a cell holding a use-intl-number reads as tabular data, so it defaults to end-aligned
+   text with tabular-nums, which locks every digit to the same width so values stack and compare
+   cleanly down a column. text-align and font-variant-numeric are both inherited, so setting them
+   on use-gridcell reaches the formatted text inside use-intl-number's shadow root without needing
+   a rule scoped to use-intl-number itself. */
+@layer use-theme.grid {
+  use-gridcell:has(use-intl-number) {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
