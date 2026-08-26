@@ -6,6 +6,7 @@ import "./use-gridhead";
 import "./use-gridbody";
 import "./use-gridrow";
 import "./use-gridcell";
+import "../use-intl-number/use-intl-number";
 import { UseGrid } from "./use-grid";
 
 const meta: Meta<UseGrid> = {
@@ -46,10 +47,49 @@ export const Default: Story = {
   `,
 };
 
-/** Unlike Default, not tagged `!autodocs`/`!dev` — this is the one story meant to actually show
- * on the doc page. */
 export const Theme: Story = {
-  render: Default.render,
+  render: (args) => html`
+    <use-grid
+      ?disabled=${args.disabled}
+      .name=${args.name}
+      .role=${args.role}
+      .selectmode=${args.selectmode}
+    >
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Header 1</use-gridcell>
+          <use-gridcell>Header 2</use-gridcell>
+          <use-gridcell>Price</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow>
+          <use-gridcell>Row 1, Cell 1</use-gridcell>
+          <use-gridcell>Row 1, Cell 2</use-gridcell>
+          <use-gridcell>
+            <use-intl-number
+              numberstyle="currency"
+              currency="USD"
+              value="1234.5"
+              lang="en-US"
+            ></use-intl-number>
+          </use-gridcell>
+        </use-gridrow>
+        <use-gridrow>
+          <use-gridcell>Row 2, Cell 1</use-gridcell>
+          <use-gridcell>Row 2, Cell 2</use-gridcell>
+          <use-gridcell>
+            <use-intl-number
+              numberstyle="currency"
+              currency="USD"
+              value="76.2"
+              lang="en-US"
+            ></use-intl-number>
+          </use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
   parameters: { allowTheme: true },
 };
 
