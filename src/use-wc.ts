@@ -17,4 +17,5 @@ export * from "./elements/use-month-picker/use-month-picker";
 export * from "./elements/use-datetime-input/use-datetime-input";
 export * from "./elements/use-scrollarea/use-scrollarea";
 export * from "./elements/use-intl-datetime/use-intl-datetime";
+export * from "./elements/use-intl-number/use-intl-number";
 export * from "./elements/use-badge/use-badge";
