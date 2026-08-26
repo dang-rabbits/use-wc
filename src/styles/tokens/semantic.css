@@ -393,15 +393,15 @@
   --usewc-layout-popover-menu-item-padding-block: var(--usewc-space-2);
   --usewc-layout-popover-menu-item-line-height: var(--usewc-line-height-24);
   --usewc-color-popover-menu-item-background-static: var(--usewc-color-transparent);
-  --usewc-color-popover-menu-item-background-hover: var(--usewc-color-gray-800);
-  --usewc-color-popover-menu-item-background-active: var(--usewc-color-gray-800);
+  --usewc-color-popover-menu-item-background-hover: var(--usewc-color-selector-background-hover);
+  --usewc-color-popover-menu-item-background-active: var(--usewc-color-selector-background-hover);
   --usewc-effect-popover-menu-item-border-radius: var(--usewc-effect-border-radius-4);
   --usewc-layout-popover-menu-anchor-offset: var(--usewc-space-4);
   --usewc-layout-popover-menu-padding: var(--usewc-space-4);
   --usewc-layout-popover-menu-border: var(--usewc-space-1-relative);
   --usewc-effect-popover-menu-border-style: var(--usewc-effect-border-solid);
   --usewc-color-popover-menu-background: var(--usewc-color-canvas-background);
-  --usewc-color-popover-menu-border: var(--usewc-color-gray-600);
+  --usewc-color-popover-menu-border: var(--usewc-color-button-base-border-static);
   --usewc-effect-popover-menu-border-radius: var(--usewc-effect-border-radius-8);
   --usewc-font-popover-menu-header-size: var(--usewc-font-size-14);
   --usewc-font-popover-menu-header-weight: var(--usewc-font-weight-medium);
