@@ -30,7 +30,7 @@ describe("use-anchored", () => {
   it("does nothing when target is unset", async () => {
     render(html`
       <use-anchored>
-        <div id="thing" popover>Content</div>
+        <div id="thing" popover class="appearance-native">Content</div>
       </use-anchored>
     `);
 
@@ -44,7 +44,7 @@ describe("use-anchored", () => {
     render(html`
       <button id="anchor-target">Anchor</button>
       <use-anchored target="anchor-target">
-        <div id="thing" popover>Content</div>
+        <div id="thing" popover class="appearance-native">Content</div>
       </use-anchored>
     `);
 
@@ -62,7 +62,7 @@ describe("use-anchored", () => {
     render(html`
       <button id="anchor-target">Anchor</button>
       <use-anchored target="anchor-target">
-        <div id="thing" popover>Content</div>
+        <div id="thing" popover class="appearance-native">Content</div>
       </use-anchored>
     `);
 
@@ -79,7 +79,7 @@ describe("use-anchored", () => {
       <button id="first-anchor">First</button>
       <button id="second-anchor">Second</button>
       <use-anchored target="first-anchor">
-        <div id="thing" popover>Content</div>
+        <div id="thing" popover class="appearance-native">Content</div>
       </use-anchored>
     `);
 
@@ -101,7 +101,7 @@ describe("use-anchored", () => {
     render(html`
       <button id="anchor-target">Anchor</button>
       <use-anchored target="anchor-target">
-        <div id="thing" popover>Content</div>
+        <div id="thing" popover class="appearance-native">Content</div>
       </use-anchored>
     `);
 
@@ -119,7 +119,7 @@ describe("use-anchored", () => {
     render(html`
       <button id="anchor-target">Anchor</button>
       <use-anchored target="anchor-target">
-        <dialog id="thing">Content</dialog>
+        <dialog id="thing" class="appearance-native">Content</dialog>
       </use-anchored>
     `);
 
@@ -144,7 +144,7 @@ describe("use-anchored", () => {
       <use-theme-escape>
         <button id="anchor-target">Anchor</button>
         <use-anchored target="anchor-target">
-          <div id="thing" popover>Content</div>
+          <div id="thing" popover class="appearance-native">Content</div>
         </use-anchored>
       </use-theme-escape>
     `);
@@ -171,7 +171,7 @@ describe("use-anchored", () => {
     render(html`
       <button id="trigger" popovertarget="thing">Open</button>
       <use-anchored target="trigger">
-        <div id="thing" popover>
+        <div id="thing" popover class="appearance-native">
           <input id="field" type="text" />
         </div>
       </use-anchored>

@@ -1,0 +1,56 @@
+/* Dialog — a native `<dialog>` already provides the overlay mechanics (top-layer promotion,
+   `::backdrop`, focus trapping, Esc-to-close) for free once shown with `.showModal()`. Themed by
+   default, like the rest of this family's native elements — `:not(.appearance-native)` is the
+   escape hatch, not an opt-in class. The default look centers (the UA default for `<dialog>`, so
+   no extra positioning is needed) and constrains its size; `.drawer` is the one variant that
+   needs an opt-in class, since it pins to a block-size-100dvh edge panel instead — the positioning
+   itself, not just the chrome, changes. That's what makes `use-shell-fill` (see `shell.css`)
+   matter for a drawer specifically — the body scrolls while header/footer stay put. */
+@layer use-theme.dialog {
+  dialog:not(.appearance-native) {
+    padding: 0;
+    overflow: hidden;
+    border: var(--usewc-layout-surface-border) solid var(--usewc-color-surface-border);
+    border-radius: var(--usewc-effect-surface-border-radius);
+    background: var(--usewc-color-surface-background);
+    box-shadow: var(--usewc-effect-surface-shadow);
+    color: var(--usewc-color-document-text);
+    inline-size: min(32rem, 100% - var(--usewc-space-surface-padding) * 2);
+    max-block-size: min(80dvh, 100% - var(--usewc-space-surface-padding) * 2);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  dialog:not(.appearance-native)::backdrop {
+    background: var(--usewc-color-surface-backdrop);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* inset-inline-start: auto resets the UA stylesheet's own `dialog:modal { inset: 0 }` (all
+     four sides, not just block) — without it, left/start stays pinned at 0 alongside our
+     inset-inline-end: 0 and an explicit inline-size, which is over-constrained: the browser
+     drops the property that conflicts with the direction-implied one (inset-inline-start in
+     LTR), pinning the drawer to the start edge instead of the end edge it's meant to sit on. */
+  dialog.drawer:not(.appearance-native) {
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: auto;
+    inset-inline-end: 0;
+    margin: 0;
+    max-block-size: none;
+    block-size: 100dvh;
+    inline-size: min(24rem, 100%);
+    border-radius: 0;
+    border-block: none;
+    border-inline-end: none;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
