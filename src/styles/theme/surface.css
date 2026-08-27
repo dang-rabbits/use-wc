@@ -1,0 +1,106 @@
+/* Surface regions — header/poster/footer styling shared by the three surface hosts (`dialog`,
+   `use-card`, `[popover]`), scoped to them specifically rather than to bare `use-shell`: this is
+   a surface-family visual convention (avatar sizing, trailing-action pinning, a footer rule),
+   not something every generic `use-shell` consumer elsewhere in the app should inherit.
+   Everything here rides on top of `shell.css`'s flex mechanic — this only adds padding, gaps,
+   and per-region treatment. */
+@layer use-theme.surface {
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > figure {
+    margin: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > figure > img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+    object-fit: cover;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > header {
+    display: flex;
+    align-items: center;
+    gap: var(--usewc-space-surface-gap);
+    padding: var(--usewc-space-surface-padding);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > header > img.avatar {
+    flex: none;
+    inline-size: var(--usewc-layout-surface-avatar-size);
+    block-size: var(--usewc-layout-surface-avatar-size);
+    border-radius: var(--usewc-effect-surface-avatar-border-radius);
+    object-fit: cover;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > header > hgroup {
+    flex: 1;
+    min-inline-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
+    > header
+    > *:last-child:not(:first-child) {
+    margin-inline-start: auto;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > use-shell-fill {
+    padding: var(--usewc-space-surface-padding);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > header + use-shell-fill {
+    padding-block-start: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > footer {
+    display: flex;
+    align-items: center;
+    gap: var(--usewc-space-surface-gap);
+    padding: var(--usewc-space-surface-padding);
+    border-block-start: var(--usewc-layout-surface-border) solid var(--usewc-color-surface-footer-border);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
+    > footer
+    > *:last-child:not(:first-child) {
+    margin-inline-start: auto;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

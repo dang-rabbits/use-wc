@@ -1,0 +1,57 @@
+/* Shell — `use-shell` is a theme-only tag (no registration, styled by tag name like
+   `use-field`/`use-selector`/`use-card`) providing a generic flex-column-with-one-growing-region
+   mechanic, usable anywhere in an app that wants it — not specific to card/dialog/popover
+   surfaces. Every direct child defaults to `flex: 0 0 auto` (fixed, doesn't grow or shrink) and
+   `min-block-size: 0`; `use-shell-fill` is the one region that grows to fill the remaining
+   space and scrolls its own overflow, wherever it appears.
+
+   The three surface hosts (`dialog`, `use-card`, `[popover]`) participate in the same mechanic
+   directly — no `use-shell` wrapper needed inside them — since they're already the flex
+   container an author nests header/use-shell-fill/footer straight into. This layer is declared
+   after `card.css`/`dialog.css`/`popover.css`, so its `display: flex` wins over their own
+   `display: block` for `use-card` (dialog/popover don't set `display` themselves, so there's
+   nothing to override there).
+
+   `dialog` and `[popover]` are scoped to `:modal`/`:popover-open` here, unlike the chrome rules
+   in `dialog.css`/`popover.css` — a closed `<dialog>`/`[popover]` is `display: none` by the UA
+   stylesheet, and normal-importance author CSS always beats normal-importance UA CSS regardless
+   of layers, so an unconditional `display: flex` here would un-hide a closed one. Chrome
+   properties (background/border/shadow/sizing) don't have this problem — they're inert on a
+   `display: none` element either way — only `display` itself does. */
+@layer use-theme.shell {
+  use-shell,
+  dialog:modal:not(.appearance-native),
+  use-card,
+  [popover]:popover-open:not(use-menu, .appearance-native) {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-shell > :not(use-shell-fill),
+  dialog:modal:not(.appearance-native) > :not(use-shell-fill),
+  use-card > :not(use-shell-fill),
+  [popover]:popover-open:not(use-menu, .appearance-native) > :not(use-shell-fill) {
+    flex: 0 0 auto;
+    min-block-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-shell-fill {
+    display: block;
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
