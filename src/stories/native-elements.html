@@ -11,16 +11,6 @@
     <input type="email" placeholder="Enter your email" />
     <button type="button">Submit</button>
   </fieldset>
-  <use-field>
-    <label for="text-field">Text Field</label>
-    <input type="text" id="text-field" placeholder="Enter your name" />
-    <p>This is a text field description</p>
-  </use-field>
-  <use-field>
-    <label for="text-field-2">Required</label>
-    <input type="text" id="text-field-2" placeholder="Enter your name" required />
-    <p>* Required | Shows error state when value is removed</p>
-  </use-field>
 
   <h3>File</h3>
   <input type="file" />
@@ -30,11 +20,6 @@
   <input type="file" class="clear" />
   <input type="file" disabled />
   <input type="file" class="appearance-native" />
-  <use-field>
-    <label for="file-field">File Field</label>
-    <input type="file" id="file-field" placeholder="Enter your file" />
-    <p>This is a file field description</p>
-  </use-field>
 
   <h4>Unstyled</h4>
   <p>You can escape from the theme styles by adding the <code>class="appearance-native"</code> class.</p>
@@ -56,48 +41,12 @@
   <input type="email" placeholder="Read only with placeholder" readonly />
   <input type="email" value="Read only with value" readonly />
   <input type="email" placeholder="Enter your email" value="Disabled with value" disabled />
-  <use-field>
-    <label for="email-field">Email Field</label>
-    <input type="email" id="email-field" placeholder="Enter your email" value="invalid@invalid@invalid.com" />
-    <p>This is a email field description</p>
-  </use-field>
-
-  <h3>As input</h3>
-  <use-field>
-    <label for="as-input-field">As input field</label>
-    <div class="appearance-input">
-      <span>Prefix</span>
-      <input id="as-input-field" placeholder="embedded input" />
-      <span>Suffix</span>
-    </div>
-  </use-field>
-  <use-field>
-    <label for="as-input-field-2">As input field 2</label>
-    <div class="appearance-input">
-      <span>Prefix</span>
-      <input id="as-input-field-2" placeholder="embedded input" disabled />
-      <span>Suffix</span>
-    </div>
-  </use-field>
-  <use-field>
-    <label for="as-input-field-3">As input field 3</label>
-    <div class="appearance-input">
-      <button type="button" class="small">Button</button>
-      <input id="as-input-field-3" placeholder="embedded input" />
-      <button type="button" class="small">Button</button>
-    </div>
-  </use-field>
 </div>
 
 <h3>Textarea</h3>
 <textarea placeholder="Enter your message"></textarea>
 <textarea placeholder="Read only with placeholder" readonly></textarea>
 <textarea placeholder="Enter your message" value="Disabled with value" disabled></textarea>
-<use-field>
-  <label for="textarea-field">Textarea Field</label>
-  <textarea id="textarea-field" placeholder="Enter your message"></textarea>
-  <p>This is a textarea field description</p>
-</use-field>
 
 <h3>Select</h3>
 <select>
@@ -112,24 +61,6 @@
 <h3>Range</h3>
 <input type="range" />
 <input type="range" disabled />
-<use-field>
-  <label for="range-field">Range Field</label>
-  <input type="range" id="range-field" />
-  <p>This is a range field description</p>
-</use-field>
-<use-field>
-  <label for="range-field-2">Range with ticks</label>
-  <input type="range" id="range-field-2" list="range-field-2-options" />
-  <datalist id="range-field-2-options">
-    <option value="0">Option 1</option>
-    <option value="50">Option 2</option>
-    <option value="100">Option 3</option>
-  </datalist>
-</use-field>
-<use-field>
-  <label for="range-native">Native</label>
-  <input type="range" id="range-native" class="appearance-native" />
-</use-field>
 
 <h3>Checkbox</h3>
 <div style="display: flex; flex-direction: column; gap: 1rem">
