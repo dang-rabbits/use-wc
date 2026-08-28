@@ -373,12 +373,12 @@
   --usewc-font-button-extra-large-size: var(--usewc-font-size-20);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-32);
 
-  /* Badge */
-  --usewc-color-badge-background-static: var(--usewc-color-brand-accent);
-  /* Scaled rather than a fixed white/black: the accent is light enough (2.99:1 with white text,
-     vs. 7.03:1 with black) that a static color would misjudge it, and would silently stop
-     matching if the accent itself is ever overridden. */
-  --usewc-color-badge-text-static: contrast-color(var(--usewc-color-badge-background-static));
+  /* Badge — a rose fill with white text: a warm pink-red that stays clear of the danger red's
+     hue and the primary blue, so a count badge doesn't read as an error or a button. The fill
+     is a fixed shade in both themes (like the primary/danger fills), so no dark-mode override
+     is needed. */
+  --usewc-color-badge-background-static: oklch(0.62 0.2 12);
+  --usewc-color-badge-text-static: var(--usewc-color-white);
   --usewc-color-badge-border: var(--usewc-color-document-background);
   --usewc-layout-badge-padding-inline: var(--usewc-space-4-relative);
   --usewc-layout-badge-dot-size: var(--usewc-space-12);
