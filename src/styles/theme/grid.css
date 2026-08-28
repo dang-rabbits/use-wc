@@ -1,5 +1,10 @@
-/* Grid — a cell holding a use-intl-number reads as tabular data, so it defaults to end-aligned
-   text with tabular-nums, which locks every digit to the same width so values stack and compare
+/* Grid — `.table` is the default treatment a bare `use-grid` gets (bordered surface, a muted
+   header, rounded per-row hover/selected bands, roomy cells); `.chips` and `.list` opt out of it
+   into their own layouts. `use-gridhead`/`use-gridbody`/`use-gridcell` all render into light DOM,
+   so this layer styles them directly; `use-gridrow` has a shadow root but its host is styleable.
+
+   A cell holding a use-intl-number reads as tabular data, so it defaults to end-aligned text
+   with tabular-nums, which locks every digit to the same width so values stack and compare
    cleanly down a column. text-align and font-variant-numeric are both inherited, so setting them
    on use-gridcell reaches the formatted text inside use-intl-number's shadow root without needing
    a rule scoped to use-intl-number itself. */
@@ -10,6 +15,446 @@
 
     use-theme-escape & {
       all: revert-layer;
+    }
+  }
+
+  use-grid:not(.chips, .list, .appearance-native) {
+    display: block;
+    overflow: clip;
+    border: var(--usewc-layout-grid-border) solid var(--usewc-color-grid-border);
+    border-radius: var(--usewc-effect-grid-border-radius);
+    background: var(--usewc-color-grid-background);
+    color: var(--usewc-color-document-text);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    /* `.compact` just re-points the cell/gap tokens every rule below already reads — the box
+       model is unchanged, the rows are simply shorter. */
+    &.compact {
+      --usewc-layout-grid-cell-line-height: var(--usewc-layout-grid-compact-cell-line-height);
+      --usewc-layout-grid-cell-padding-block: var(--usewc-layout-grid-compact-cell-padding-block);
+      --usewc-layout-grid-cell-padding-inline: var(--usewc-layout-grid-compact-cell-padding-inline);
+      --usewc-layout-grid-row-gap: var(--usewc-layout-grid-compact-row-gap);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* The body insets its rows from the grid edge (`--grid-body-inset`) and spaces them with a real
+       `gap`; the row edge is where the hover/selected band aligns, so no extra ::before layer. */
+    use-gridbody {
+      display: flex;
+      flex-direction: column;
+      gap: var(--usewc-layout-grid-row-gap);
+      padding-block: var(--usewc-layout-grid-body-padding-block);
+      padding-inline: var(--usewc-layout-grid-body-inset);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* Inline padding is the breathing room between the row edge (band edge) and the text. Header
+       rows take the same inline padding, plus the head's own `--grid-body-inset`, so a header cell
+       lines up with the body cell below it. No block padding — cell padding sets the row height. */
+    use-gridrow {
+      padding-inline: var(--usewc-layout-grid-row-padding-inline);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* The hover/selected band is painted straight onto the body row now (no ::before layer). This
+       rule owns every `background` / `border-radius` declaration; the hover/selected/consecutive
+       rules below only re-point the `--usewc-grid-row-*` variables it reads, so inside
+       `use-theme-escape` the `all: revert-layer` here drops the paint and those variable writes
+       have nothing to feed. Corner variables default to the full radius; the consecutive-selected
+       rules square off just the shared edge. */
+    use-gridbody use-gridrow {
+      border-start-start-radius: var(--usewc-grid-row-corner-start-start, var(--usewc-effect-grid-row-border-radius));
+      border-start-end-radius: var(--usewc-grid-row-corner-start-end, var(--usewc-effect-grid-row-border-radius));
+      border-end-start-radius: var(--usewc-grid-row-corner-end-start, var(--usewc-effect-grid-row-border-radius));
+      border-end-end-radius: var(--usewc-grid-row-corner-end-end, var(--usewc-effect-grid-row-border-radius));
+      background: var(--usewc-color-grid-row-background, transparent);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    use-gridhead {
+      display: block;
+      background: var(--usewc-color-grid-header-background);
+      border-block-end: var(--usewc-layout-grid-border) solid var(--usewc-color-grid-border);
+      color: var(--usewc-color-grid-header-text);
+      font-weight: var(--usewc-font-grid-header-weight);
+      /* Same block padding as the body — clears the grid's `overflow: clip` edge so a focused
+         header cell's outline isn't sheared off at the top. */
+      padding-block: var(--usewc-layout-grid-body-padding-block);
+      padding-inline: var(--usewc-layout-grid-body-inset);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A short vertical rule between column headers — a centred ::before rather than a
+       border-inline-start so it can sit shorter than the cell rather than spanning it. */
+    use-gridhead use-gridcell[role="columnheader"] {
+      position: relative;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+
+      & + use-gridcell[role="columnheader"]::before {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        inset-block-start: 50%;
+        transform: translateY(-50%);
+        block-size: var(--usewc-layout-grid-header-divider-height);
+        inline-size: var(--usewc-layout-grid-border);
+        background: var(--usewc-color-grid-border);
+      }
+
+      use-theme-escape & + use-gridcell[role="columnheader"]::before {
+        all: revert-layer;
+      }
+    }
+
+    /* ...but not right after a selection header cell — a select column reads as separate from the
+       data columns without a rule between it and the first one. `use-grid` injects the leading
+       cell with `data-usewc-selection-cell` (a real select-all checkbox, or an inert hidden radio
+       spacer in single-select mode); a dev driving selection by hand uses a bare checkbox/radio. */
+    use-gridhead
+      use-gridcell:is([data-usewc-selection-cell], :has(> input:is([type="checkbox"], [type="radio"])))
+      + use-gridcell[role="columnheader"]::before {
+      content: none;
+    }
+
+    use-theme-escape
+      use-gridhead
+      use-gridcell:is([data-usewc-selection-cell], :has(> input:is([type="checkbox"], [type="radio"])))
+      + use-gridcell[role="columnheader"]::before {
+      all: revert-layer;
+    }
+
+    use-gridcell {
+      line-height: var(--usewc-layout-grid-cell-line-height);
+      padding: var(--usewc-layout-grid-cell-padding-block) var(--usewc-layout-grid-cell-padding-inline);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A cell whose only content is a selection control sizes to that control instead of taking
+       an equal flex share like a data column (use-gridrow's shadow makes every cell `flex: 1 1 0`
+       by default), and tightens its inline padding so the checkbox doesn't sit in a wide gutter.
+       This hits both the body checkbox/radio and a "select all" box in the matching header cell,
+       so the column lines up. */
+    use-gridcell[data-usewc-selection-cell],
+    use-gridcell:has(> input:is([type="checkbox"], [type="radio"]):only-child),
+    use-gridcell:has(> label:only-child > input:is([type="checkbox"], [type="radio"])) {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-inline-start: var(--usewc-layout-grid-selector-cell-padding-inline);
+      padding-inline-end: 0;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* The row lays its indicator slots and cells out as flex items; the slots carry a fixed
+       1lh size, so `align-self` centres the slot in the row, and flexing whichever slot is
+       showing centres the masked glyph inside it (no inline-block `vertical-align` guesswork).
+       The `[selected]` / `:not([selected])` split keeps the hidden slot on the shadow's
+       `display: none`; the `:not([selectmode="none"])` guard keeps a selection-less grid blank, and
+       `use-gridrow:not([data-usewc-selection-column])` (an attribute use-grid sets on every row it
+       injects a checkbox/radio cell into) keeps it blank when that control is the indicator —
+       otherwise the empty 1lh slot renders as a ghost column left of the control.
+
+       The leading gutter matches the injected checkbox/radio cell's inline padding, so the ✔ glyph
+       and a native selection control land in the same column position across grids. */
+    use-gridrow::part(selected-indicator),
+    use-gridrow::part(deselected-indicator) {
+      align-self: center;
+      margin-inline-start: var(--usewc-layout-grid-selector-cell-padding-inline);
+    }
+
+    &:not([selectmode="none"]) use-gridrow:not([data-usewc-selection-column])[selected]::part(selected-indicator),
+    &:not([selectmode="none"])
+      use-gridrow:not([data-usewc-selection-column]):not([selected])::part(deselected-indicator) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Swap the built-in ✔ / blank glyphs for the same masked checkmark shape use-option and
+       use-treeitem render, so a theme recolours or reshapes every selection indicator from one
+       set of tokens. use-grid clones its default indicator spans into each body row as light-DOM
+       children carrying `part="selected-indicator-default"` / `-deselected-indicator-default`;
+       a custom indicator slotted by the author has no such part, so this never clobbers it. */
+    use-gridrow > [part~="selected-indicator-default"],
+    use-gridrow > [part~="deselected-indicator-default"] {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-indent: 100%;
+      inline-size: var(--usewc-layout-selected-indicator-size);
+      block-size: var(--usewc-layout-selected-indicator-size);
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    use-gridrow > [part~="selected-indicator-default"] {
+      background-color: var(--usewc-effect-selected-indicator-color, currentColor);
+      mask-image: var(--usewc-effect-selected-indicator-mask-image, none);
+    }
+
+    use-gridrow > [part~="deselected-indicator-default"] {
+      background-color: var(--usewc-effect-deselected-indicator-color, transparent);
+      mask-image: var(--usewc-effect-deselected-indicator-mask-image, none);
+    }
+  }
+
+  /* A row counts as selected when use-grid's own `selectmode` marked it `[selected]`, or when the
+     dev drove selection themselves with a native checkbox/radio in a cell (`selectmode="none"`,
+     the row's `:checked` box is the only selection control). Both light the same band. These
+     rules only move `--usewc-color-grid-row-background` — the body-row rule above reads it into
+     `background` and carries the `use-theme-escape` revert. */
+  use-grid:not(.chips, .list) use-gridbody use-gridrow:is([selected], :has(> use-gridcell input:checked)) {
+    --usewc-color-grid-row-background: var(--usewc-color-grid-row-background-selected);
+  }
+
+  /* Within a run of consecutive selected rows the bands keep their gap but nearly square off the
+     shared edge, so the run reads as grouped without merging into one shape. The "followed by a
+     selected row" test is spelled out as two `:has()` alternatives rather than
+     `:has(+ :is([selected], :has(…)))` because `:has()` can't be nested inside `:has()`. */
+  use-grid:not(.chips, .list)
+    use-gridbody
+    use-gridrow:is([selected], :has(> use-gridcell input:checked)):is(
+      :has(+ use-gridrow[selected]),
+      :has(+ use-gridrow > use-gridcell input:checked)
+    ) {
+    --usewc-grid-row-corner-end-start: var(--usewc-effect-grid-row-border-radius-sequential);
+    --usewc-grid-row-corner-end-end: var(--usewc-effect-grid-row-border-radius-sequential);
+  }
+
+  use-grid:not(.chips, .list)
+    use-gridbody
+    use-gridrow:is([selected], :has(> use-gridcell input:checked))
+    + use-gridrow:is([selected], :has(> use-gridcell input:checked)) {
+    --usewc-grid-row-corner-start-start: var(--usewc-effect-grid-row-border-radius-sequential);
+    --usewc-grid-row-corner-start-end: var(--usewc-effect-grid-row-border-radius-sequential);
+  }
+
+  /* Whole-row hover band applies where a row click actually selects — `selectmode` is on and
+     `selectwith` still includes the row gesture (absent attribute means the default, `row`). A
+     disabled row (the `disabled` prop, or a bare `aria-disabled="true"`) never gets it. */
+  use-grid:not(.chips, .list):not([selectmode="none"]):is(:not([selectwith]), [selectwith~="row"])
+    use-gridbody
+    use-gridrow:not([disabled], [aria-disabled="true"]):hover,
+  /* ...and also where the row carries a selection control (injected column or a hand-placed
+     checkbox/radio), so hovering the row surfaces the control even when the row isn't clickable. */
+  use-grid:not(.chips, .list)
+    use-gridbody
+    use-gridrow:not([disabled], [aria-disabled="true"]):has(
+      > use-gridcell input:is([type="checkbox"], [type="radio"])
+    ):hover {
+    --usewc-color-grid-row-background: var(--usewc-color-grid-row-background-hover);
+  }
+
+  use-grid:not(.chips, .list)
+    use-gridbody
+    use-gridrow:not([disabled], [aria-disabled="true"]):is([selected], :has(> use-gridcell input:checked)):hover {
+    --usewc-color-grid-row-background: var(--usewc-color-grid-row-background-selected-hover);
+  }
+
+  /* Cursor for a selectable, non-disabled row body. */
+  use-grid:not(.chips, .list):not([selectmode="none"]):is(:not([selectwith]), [selectwith~="row"])
+    use-gridbody
+    use-gridrow:not([disabled], [aria-disabled="true"]) {
+    cursor: default;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* A disabled row — the `disabled` prop (which the component also reflects to `aria-disabled`),
+     or a bare `aria-disabled="true"` a dev sets directly. The component shadow already dims it;
+     this aligns that with the form-control disabled opacity token. It stays keyboard-navigable
+     and AT-perceivable — the component only blocks the selection gestures. An injected
+     checkbox/radio in the row carries `disabled`, so selector.css fades and inerts it too. */
+  use-grid:not(.chips, .list) use-gridbody use-gridrow:is([disabled], [aria-disabled="true"]) {
+    opacity: var(--usewc-effect-form-opacity-disabled);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* The themed focus ring on the cells of the table and list variants; chips ring the whole pill
+     (its row) instead, in its own block below. */
+  use-grid:not(.appearance-native, .chips) use-gridcell {
+    --usewc-effect-outline-width: 0;
+
+    outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+    outline-offset: var(--usewc-effect-outline-offset-flush);
+    transition: var(--usewc-effect-outline-transition);
+
+    &:focus-visible {
+      --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* The data column right after a selection checkbox/radio sits flush against it, so inset that
+     cell's ring by the ring width — otherwise it paints over the control. */
+  use-grid:not(.chips, .list)
+    use-gridcell:is([data-usewc-selection-cell], :has(> input:is([type="checkbox"], [type="radio"])))
+    + use-gridcell {
+    outline-offset: calc(-1 * var(--usewc-effect-outline-size));
+  }
+
+  /* Chips — rows flow as inline pills; the select/deselect indicators are hidden since a chip
+     conveys membership by simply existing (and usually carrying its own remove control). */
+  use-grid.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--usewc-layout-grid-chip-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    use-gridrow {
+      display: inline-flex;
+      align-items: center;
+      border: var(--usewc-layout-grid-border) solid var(--usewc-color-grid-chip-border);
+      border-radius: var(--usewc-effect-grid-chip-border-radius);
+      background: var(--usewc-color-grid-chip-background);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    use-gridcell {
+      /* Content-sized, not an equal flex share — otherwise a multi-cell chip (label + a remove
+         button) splits the pill and wraps the label. */
+      flex: 0 0 auto;
+      padding: var(--usewc-layout-grid-chip-padding-block) var(--usewc-layout-grid-chip-padding-inline);
+      /* The pill (its row) carries the focus ring instead, so drop the cell's own — otherwise the
+         browser's default outline stacks on top of it. */
+      outline: none;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A leading cell followed by another (the label before a remove button) drops its trailing
+       padding to a hair, and the trailing cell drops its leading padding to nothing and keeps only
+       a hair from the pill's end — so the label and the compact button sit close together. */
+    use-gridcell:has(+ use-gridcell) {
+      padding-inline-end: var(--usewc-layout-grid-chip-padding-block);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    use-gridcell + use-gridcell {
+      padding-inline: 0 var(--usewc-layout-grid-chip-padding-block);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A themed button in a chip (the remove control) is a square, dropped to zero inline padding
+       and rounded to the pill's radius, so it reads as part of the chip rather than a stray
+       button. `1lh` (its own line-height) drives a clean square that scales with the text. */
+    use-gridcell button {
+      --usewc-layout-button-padding-inline: 0;
+      --usewc-layout-button-padding-block: 0;
+      --usewc-effect-button-radius: var(--usewc-effect-grid-chip-border-radius);
+
+      inline-size: 1lh;
+      block-size: 1lh;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* Focusing a cell rings the whole pill — the pill is the unit, and its border-radius rounds
+       the outline for free. */
+    use-gridrow:has(> use-gridcell:focus-visible) {
+      outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      outline-offset: var(--usewc-effect-outline-offset);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    use-gridrow::part(selected-indicator),
+    use-gridrow::part(deselected-indicator) {
+      display: none;
+    }
+  }
+
+  /* List — the master/detail layout (a stacked row with its own internal grid-template). The
+     row-internal template still lives in author CSS; this block only supplies the shared chrome
+     (row padding, hover, and a selected-row marker). WIP: the `.list` class is still being
+     defined, so expect this to grow. */
+  use-grid.list {
+    display: flex;
+    flex-direction: column;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+
+    use-gridrow {
+      padding: var(--usewc-layout-grid-list-row-padding);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+
+      &:is(:hover, :focus-within) {
+        background: var(--usewc-color-grid-list-row-background-hover);
+      }
+
+      &[selected] {
+        box-shadow: inset var(--usewc-layout-grid-list-row-selected-marker) 0 0 0
+          var(--usewc-color-grid-list-row-selected-marker);
+      }
+    }
+
+    use-gridrow::part(selected-indicator),
+    use-gridrow::part(deselected-indicator) {
+      display: none;
     }
   }
 }

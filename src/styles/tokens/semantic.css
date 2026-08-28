@@ -388,6 +388,63 @@
   --usewc-font-badge-weight: var(--usewc-font-weight-medium);
   --usewc-effect-badge-border-radius: var(--usewc-effect-border-radius-pill);
 
+  /* Grid — `.table` is the default treatment a bare `use-grid` gets; `.chips` and `.list`
+     (the latter still being defined) opt into their own layouts instead. */
+  --usewc-color-grid-border: var(--usewc-color-button-base-border-static);
+  /* The table itself and its header paint no fill — only the hover and selected row bands do. */
+  --usewc-color-grid-background: transparent;
+  --usewc-color-grid-header-background: transparent;
+  --usewc-color-grid-header-text: var(--usewc-color-gray-600);
+  --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-gray-300) l c h / 0.55);
+  /* A super-light tint of the primary — its hue and a whisper of its chroma, floated up to
+     near-white — so it tracks the primary even if that's overridden. */
+  --usewc-color-grid-row-background-selected: oklch(from var(--usewc-color-brand-primary) 0.96 0.03 h);
+  /* Same tint, a touch deeper, for a hover landing on an already-selected row. */
+  --usewc-color-grid-row-background-selected-hover: oklch(from var(--usewc-color-brand-primary) 0.93 0.045 h);
+  --usewc-layout-grid-border: var(--usewc-space-1);
+  --usewc-layout-grid-header-divider-height: 60%;
+  --usewc-layout-grid-body-inset: var(--usewc-space-4);
+  /* Clear space between the header divider (and the grid's bottom edge) and the first/last row
+     band. Matches the row gap so the body's inset reads as uniform with the space between rows. */
+  --usewc-layout-grid-body-padding-block: var(--usewc-space-4);
+  --usewc-layout-grid-row-padding-inline: var(--usewc-space-4);
+  /* The visible gap between two body rows' bands, applied as a real `gap` on the body flex column. */
+  --usewc-layout-grid-row-gap: var(--usewc-space-4);
+  --usewc-effect-grid-row-border-radius: var(--usewc-effect-border-radius-6);
+  /* The edge a selected-row band shares with an adjacent selected row: nearly square, but a hair
+     of rounding rather than a hard corner. */
+  --usewc-effect-grid-row-border-radius-sequential: var(--usewc-effect-border-radius-2);
+  /* Cells follow the same box model as input/button: a fixed line-height plus symmetric block
+     padding sets a predictable control-height per row, and the header cells take the identical
+     values so the header row is exactly as tall as a body row. */
+  --usewc-layout-grid-cell-line-height: var(--usewc-line-height-24);
+  --usewc-layout-grid-cell-padding-block: var(--usewc-space-6);
+  --usewc-layout-grid-cell-padding-inline: var(--usewc-space-12);
+  /* A cell holding only a selection checkbox/radio — no data column padding, just enough to keep
+     the control off the row edge. The column divider that would sit between it and the first data
+     column is dropped, so its trailing edge doesn't need extra room. */
+  --usewc-layout-grid-selector-cell-padding-inline: var(--usewc-space-4);
+  --usewc-font-grid-header-weight: var(--usewc-font-weight-medium);
+  --usewc-effect-grid-border-radius: var(--usewc-effect-border-radius-8);
+  /* -- Compact variant (`.compact`): a shorter line-height and tighter block padding / row gap,
+     the same way button's small size steps down from its base. */
+  --usewc-layout-grid-compact-cell-line-height: var(--usewc-line-height-20);
+  --usewc-layout-grid-compact-cell-padding-block: var(--usewc-space-4);
+  --usewc-layout-grid-compact-cell-padding-inline: var(--usewc-space-8);
+  --usewc-layout-grid-compact-row-gap: var(--usewc-space-2);
+  /* -- Chips variant */
+  --usewc-layout-grid-chip-gap: var(--usewc-space-8);
+  --usewc-layout-grid-chip-padding-block: var(--usewc-space-2);
+  --usewc-layout-grid-chip-padding-inline: var(--usewc-space-8);
+  --usewc-color-grid-chip-border: var(--usewc-color-grid-border);
+  --usewc-color-grid-chip-background: var(--usewc-color-canvas-background);
+  --usewc-effect-grid-chip-border-radius: var(--usewc-effect-border-radius-pill);
+  /* -- List variant (WIP) */
+  --usewc-layout-grid-list-row-padding: var(--usewc-space-8);
+  --usewc-color-grid-list-row-background-hover: var(--usewc-color-grid-row-background-hover);
+  --usewc-color-grid-list-row-selected-marker: var(--usewc-color-brand-accent);
+  --usewc-layout-grid-list-row-selected-marker: var(--usewc-space-2);
+
   /* Menu */
   --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-4);
   --usewc-layout-popover-menu-item-padding-block: var(--usewc-space-2);
@@ -523,5 +580,11 @@
     --usewc-effect-select-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgb(229,231,235)' /%3E%3C/svg%3E");
     --usewc-effect-menu-item-checkmark-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='rgb(229,231,235)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
     --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.6);
+    /* "Super light" can't float up on a near-black page — hold the primary's hue and chroma
+       but drop the lightness so the tint reads as a dark primary wash instead. */
+    --usewc-color-grid-row-background-selected: oklch(from var(--usewc-color-brand-primary) 0.3 0.05 h);
+    --usewc-color-grid-row-background-selected-hover: oklch(from var(--usewc-color-brand-primary) 0.36 0.06 h);
+    --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-gray-800) l c h / 0.6);
+    --usewc-color-grid-header-text: var(--usewc-color-gray-200);
   }
 }

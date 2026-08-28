@@ -30,12 +30,13 @@
       all: revert-layer;
     }
 
-    &:hover:not(:disabled):not(:checked) {
+    &:hover:not(:disabled, [aria-disabled="true"], [aria-readonly="true"], :checked) {
       --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
       --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
     }
 
-    &:checked {
+    &:checked,
+    &:indeterminate {
       --usewc-color-selector-border: var(--usewc-color-selector-border-checked);
       --usewc-color-selector-background: var(--usewc-color-selector-background-checked);
     }
@@ -47,6 +48,12 @@
     &:disabled,
     &[aria-disabled="true"] {
       --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
+      --usewc-effect-pointer-events: none;
+    }
+
+    /* Readonly reads at full strength but can't be toggled by pointer (keyboard is caught by the
+       host). Kept focusable so its state is still announced. */
+    &[aria-readonly="true"] {
       --usewc-effect-pointer-events: none;
     }
 
@@ -74,6 +81,18 @@
         height: 60%;
         transform: rotate(45deg);
       }
+    }
+
+    &[type="checkbox"]:indeterminate::after {
+      display: block;
+      position: absolute;
+      inset-block-start: 50%;
+      inset-inline-start: 20%;
+      width: 60%;
+      height: 0;
+      transform: translateY(-50%);
+      border-block-start: var(--usewc-layout-selector-checkbox-icon-border-size) solid
+        var(--usewc-color-selector-icon-fill);
     }
 
     &[type="radio"] {
