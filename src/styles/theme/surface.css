@@ -1,10 +1,24 @@
 /* Surface regions — header/poster/footer styling shared by the three surface hosts (`dialog`,
    `use-card`, `[popover]`), scoped to them specifically rather than to bare `use-shell`: this is
-   a surface-family visual convention (avatar sizing, trailing-action pinning, a footer rule),
-   not something every generic `use-shell` consumer elsewhere in the app should inherit.
+   a surface-family visual convention (the anchored-gap offset, avatar sizing, trailing-action
+   pinning, a footer rule), not something every generic `use-shell` consumer should inherit.
    Everything here rides on top of `shell.css`'s flex mechanic — this only adds padding, gaps,
    and per-region treatment. */
 @layer use-theme.surface {
+  /* An anchored surface keeps a small gap from its anchor, the same convention `use-menu`
+     follows in `menu.css`. Scoped to `use-anchored`'s direct child — the one reliable "this is
+     anchored" signal — so a standalone `[popover]` or modal `<dialog>` elsewhere keeps its UA
+     centering. `margin-block` (both edges) so the gap survives a `position-try` flip to the
+     other side. The open-state check mirrors the positioning util: `:popover-open` for a
+     popover, `[open]` for a `<dialog>`. */
+  use-anchored > :is(dialog, [popover]):not(use-menu, .appearance-native):is([open], :popover-open) {
+    margin-block: var(--usewc-layout-surface-anchor-offset);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
   :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > figure {
     margin: 0;
 

@@ -134,6 +134,63 @@ describe("use-anchored", () => {
     thing.close();
   });
 
+  // A themed anchored surface keeps a small gap from its anchor (surface.css), the same
+  // convention use-menu follows. The gap is theme-only: `.appearance-native` and
+  // use-theme-escape both opt out, which the two cases below and the escape test that follows
+  // cover together.
+  it("holds a gap between a themed [popover] and its anchor", async () => {
+    render(html`
+      <button id="anchor-target">Anchor</button>
+      <use-anchored target="anchor-target">
+        <div id="thing" popover>Content</div>
+      </use-anchored>
+    `);
+
+    const trigger = document.getElementById("anchor-target") as HTMLElement;
+    const thing = document.getElementById("thing") as HTMLElement;
+    const anchored = document.querySelector("use-anchored") as UseAnchored;
+    await anchored.updateComplete;
+
+    thing.showPopover();
+    await waitForOpenState(thing, true);
+
+    const offset = Number.parseFloat(
+      getComputedStyle(thing).getPropertyValue("margin-block-start"),
+    );
+    expect(offset).toBeGreaterThan(0);
+    expect(thing.getBoundingClientRect().top).toBeCloseTo(
+      trigger.getBoundingClientRect().bottom + offset,
+      0,
+    );
+  });
+
+  it("holds a gap between a themed <dialog> and its anchor", async () => {
+    render(html`
+      <button id="anchor-target">Anchor</button>
+      <use-anchored target="anchor-target">
+        <dialog id="thing">Content</dialog>
+      </use-anchored>
+    `);
+
+    const trigger = document.getElementById("anchor-target") as HTMLElement;
+    const thing = document.getElementById("thing") as HTMLDialogElement;
+    const anchored = document.querySelector("use-anchored") as UseAnchored;
+    await anchored.updateComplete;
+
+    thing.show();
+
+    const offset = Number.parseFloat(
+      getComputedStyle(thing).getPropertyValue("margin-block-start"),
+    );
+    expect(offset).toBeGreaterThan(0);
+    expect(thing.getBoundingClientRect().top).toBeCloseTo(
+      trigger.getBoundingClientRect().bottom + offset,
+      0,
+    );
+
+    thing.close();
+  });
+
   // theme.css wraps non-`allowTheme` story content in <use-theme-escape>, which sweeps `all:
   // revert` across its light-DOM descendants to render them unstyled. use-anchored's
   // ::slotted() positioning rules are functional, not decorative, so they need to survive that

@@ -1,5 +1,5 @@
 /* Popover — a native `[popover]` element already provides the overlay mechanics (top-layer
-   promotion, light-dismiss, `::backdrop`) for free. Themed by default, like the rest of this
+   promotion, light-dismiss) for free. Themed by default, like the rest of this
    family's native elements — `:not(.appearance-native)` is the escape hatch, matching
    `input.css`/`select.css`'s convention, not an opt-in class like `dialog.drawer` (a `<dialog>`
    needs a class for that one variant since plain and drawer dialogs share one tag; `[popover]`
@@ -7,6 +7,11 @@
    `position-anchor`) is left to the author, the same way plain `[popover]` elements work
    otherwise — this only replaces the UA default chrome with the shared `surface` tokens,
    matching `dialog`/`use-card`.
+
+   The `::backdrop` is deliberately left at its transparent UA default: a `[popover]` at
+   `popover="auto"` is non-modal — the page stays interactive and an outside click dismisses it
+   — so a tint would misrepresent it as modal. That backdrop tint lives in `dialog.css`, where
+   `showModal()` makes it real.
 
    `:not(use-menu)` excludes the one component that self-applies `popover="auto"` and ships its
    own distinct chrome in `menu.css`: cascade layers always beat specificity, so without this
@@ -24,14 +29,6 @@
     color: var(--usewc-color-document-text);
     max-inline-size: min(24rem, 100% - var(--usewc-space-surface-padding) * 2);
     max-block-size: min(80dvh, 100% - var(--usewc-space-surface-padding) * 2);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  [popover]:not(use-menu, .appearance-native)::backdrop {
-    background: var(--usewc-color-surface-backdrop);
 
     use-theme-escape & {
       all: revert-layer;
