@@ -209,21 +209,22 @@ export class UseBadge extends LitElement {
       align-items: center;
       justify-content: center;
       box-sizing: border-box;
-      min-inline-size: 1rem;
-      min-block-size: 1rem;
-      padding-inline: 0.375rem;
+      padding-inline: 0.25em;
       border-radius: 9999px;
       background: CanvasText;
       border: 1px solid currentColor;
       color: Canvas;
       font-size: 0.75rem;
       font-weight: 500;
-      line-height: 1;
+      line-height: 1.5;
+      font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
 
     :host(:not([dot])) {
       --usewc-badge-offset: 0.5lh;
+      block-size: 1lh;
+      min-inline-size: 1lh;
     }
 
     :host(:state(anchored)) {
