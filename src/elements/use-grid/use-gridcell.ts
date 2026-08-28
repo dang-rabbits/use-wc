@@ -1,6 +1,6 @@
 import { customElement, property } from "lit/decorators.js";
 import { UseWidget } from "../use-widget/use-widget";
-import { tabbable } from "tabbable";
+import { focusable } from "tabbable";
 
 @customElement("use-gridcell")
 export class UseGridCell extends UseWidget {
@@ -35,7 +35,10 @@ export class UseGridCell extends UseWidget {
 
   #handleFocusIn = () => {
     if (!this.#actionsInitialized) {
-      tabbable(this).forEach((el) => {
+      // `focusable` rather than `tabbable` so a control that has already been pulled out of the
+      // tab sequence (`tabindex="-1"` — e.g. a selection checkbox the grid injects) still counts
+      // as this cell's action target.
+      focusable(this).forEach((el) => {
         el.tabIndex = -1;
         if (!this.#action) {
           this.#action = el as HTMLElement;

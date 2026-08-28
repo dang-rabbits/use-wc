@@ -128,9 +128,10 @@
     }
 
     /* ...but not right after a selection header cell — a select column reads as separate from the
-       data columns without a rule between it and the first one. `use-grid` injects the leading
-       cell with `data-usewc-selection-cell` (a real select-all checkbox, or an inert hidden radio
-       spacer in single-select mode); a dev driving selection by hand uses a bare checkbox/radio. */
+       data columns without a rule between it and the first one. `use-gridrow` provisions the
+       leading cell with `data-usewc-selection-cell` (a real select-all checkbox, or an inert hidden
+       radio spacer in single-select mode); a dev driving selection by hand uses a bare
+       checkbox/radio. */
     use-gridhead
       use-gridcell:is([data-usewc-selection-cell], :has(> input:is([type="checkbox"], [type="radio"])))
       + use-gridcell[role="columnheader"]::before {
@@ -178,8 +179,8 @@
        showing centres the masked glyph inside it (no inline-block `vertical-align` guesswork).
        The `[selected]` / `:not([selected])` split keeps the hidden slot on the shadow's
        `display: none`; the `:not([selectmode="none"])` guard keeps a selection-less grid blank, and
-       `use-gridrow:not([data-usewc-selection-column])` (an attribute use-grid sets on every row it
-       injects a checkbox/radio cell into) keeps it blank when that control is the indicator —
+       `use-gridrow:not([data-usewc-selection-column])` (an attribute the row sets on itself while
+       it holds a checkbox/radio cell) keeps it blank when that control is the indicator —
        otherwise the empty 1lh slot renders as a ghost column left of the control.
 
        The leading gutter matches the injected checkbox/radio cell's inline padding, so the ✔ glyph

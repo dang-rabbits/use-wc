@@ -13,6 +13,19 @@ const meta: Meta<UseGrid> = {
   title: "Web Components/use-grid",
   component: "use-grid",
   tags: ["autodocs", "!dev", "input", "utility"],
+  argTypes: {
+    selectmode: {
+      control: "inline-radio",
+      options: ["none", "single", "multiple"],
+      description: "How many rows can be selected.",
+    },
+    selectwith: {
+      control: "inline-radio",
+      options: ["row", "control", "row control", "none"],
+      description:
+        "How selection is triggered: `row` click, an injected checkbox/radio `control` column, both, or `none` (keyboard/programmatic only).",
+    },
+  },
 };
 export default meta;
 
@@ -26,6 +39,7 @@ export const Default: Story = {
       .name=${args.name}
       .role=${args.role}
       .selectmode=${args.selectmode}
+      .selectwith=${args.selectwith ?? "row"}
     >
       <use-gridhead>
         <use-gridrow>
@@ -80,7 +94,7 @@ const themeGridContent = html`
         ></use-intl-number>
       </use-gridcell>
     </use-gridrow>
-    <use-gridrow value="monitor">
+    <use-gridrow value="monitor" disabled>
       <use-gridcell>Monitor</use-gridcell>
       <use-gridcell>Backordered</use-gridcell>
       <use-gridcell>
@@ -93,36 +107,6 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
   </use-gridbody>
-`;
-
-const checkboxRow = (
-  value: string,
-  name: string,
-  status: string,
-  price: string,
-  checked = false,
-) => html`
-  <use-gridrow>
-    <use-gridcell mode="action">
-      <input
-        type="checkbox"
-        name="products[]"
-        value=${value}
-        aria-label=${`Select ${name}`}
-        ?checked=${checked}
-      />
-    </use-gridcell>
-    <use-gridcell>${name}</use-gridcell>
-    <use-gridcell>${status}</use-gridcell>
-    <use-gridcell>
-      <use-intl-number
-        numberstyle="currency"
-        currency="USD"
-        value=${price}
-        lang="en-US"
-      ></use-intl-number>
-    </use-gridcell>
-  </use-gridrow>
 `;
 
 // Each chip is a label cell plus an `action`-mode cell holding a small `.clear` themed button
@@ -166,22 +150,12 @@ export const Theme: Story = {
     <div style="display: grid; gap: 1.5rem">
       <use-grid selectmode="single">${themeGridContent}</use-grid>
       <use-grid class="compact" selectmode="single">${themeGridContent}</use-grid>
-      <use-grid aria-label="Products, checkbox selection" selectmode="none">
-        <use-gridhead>
-          <use-gridrow>
-            <use-gridcell mode="action">
-              <input type="checkbox" aria-label="Select all" />
-            </use-gridcell>
-            <use-gridcell>Product</use-gridcell>
-            <use-gridcell>Status</use-gridcell>
-            <use-gridcell>Price</use-gridcell>
-          </use-gridrow>
-        </use-gridhead>
-        <use-gridbody>
-          ${checkboxRow("keyboard", "Keyboard", "In stock", "1234.5", true)}
-          ${checkboxRow("mouse", "Mouse", "In stock", "76.2", true)}
-          ${checkboxRow("monitor", "Monitor", "Backordered", "429")}
-        </use-gridbody>
+      <use-grid
+        aria-label="Products, checkbox selection"
+        selectmode="multiple"
+        selectwith="control"
+      >
+        ${themeGridContent}
       </use-grid>
 
       <use-grid class="chips" aria-label="Active filters">
@@ -212,27 +186,21 @@ export const Theme: Story = {
 };
 
 /**
- * When rows should only be selectable by clicking a checkbox (not by clicking anywhere in the
- * row), keep `use-grid` out of selection entirely: set `selectmode="none"` and put a native
- * `<input type="checkbox">` in the first cell with `mode="action"` so the grid's roving focus
- * lands on it directly. Selection state, form serialization, and screen-reader announcements are
- * all native. The themed selected/hover band still applies via `:has(:checked)` — see the Theme
- * story.
+ * `selectmode="multiple"` with `selectwith="control"` makes `use-grid` inject a leading checkbox
+ * column plus a header "select all" (with an indeterminate state) — no hand-placed inputs, no
+ * select-all JS. Clicking a row does nothing; only the checkboxes toggle selection. Give the grid
+ * a `name` and it serializes the checked rows' `value`s into the enclosing form.
  */
-export const CheckboxRowSelection: Story = {
+export const CheckboxControlSelection: Story = {
   parameters: {
     docs: {
       description: {
         story:
-          "`selectmode` is `none` — clicking a row does nothing, only the checkbox toggles selection. Each checkbox carries a `name`/`value`, so the form submits the checked rows with no extra wiring.",
+          '`selectmode="multiple" selectwith="control"` — the grid owns a checkbox column and its header select-all. The `name` attribute serializes the checked rows into the form on submit.',
       },
     },
   },
   render: () => {
-    function rowBoxes(form: HTMLFormElement) {
-      return Array.from(form.querySelectorAll<HTMLInputElement>('input[name="products[]"]'));
-    }
-
     function handleSubmit(event: Event) {
       event.preventDefault();
       const formData = new FormData(event.target as HTMLFormElement);
@@ -242,44 +210,23 @@ export const CheckboxRowSelection: Story = {
       }
     }
 
-    function handleSelectAll(event: Event) {
-      const source = event.target as HTMLInputElement;
-      const form = source.closest("form") as HTMLFormElement;
-      rowBoxes(form).forEach((box) => {
-        box.checked = source.checked;
-      });
-    }
-
-    function handleRowToggle(event: Event) {
-      const target = event.target as HTMLInputElement;
-      if (target.name !== "products[]") return;
-      const form = target.closest("form") as HTMLFormElement;
-      const boxes = rowBoxes(form);
-      const selectAll = form.querySelector<HTMLInputElement>('input[aria-label="Select all"]');
-      if (!selectAll) return;
-      const checkedCount = boxes.filter((box) => box.checked).length;
-      selectAll.checked = checkedCount === boxes.length;
-      selectAll.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
-    }
-
     const row = (value: string, name: string, stock: string) => html`
-      <use-gridrow>
-        <use-gridcell mode="action">
-          <input type="checkbox" name="products[]" value=${value} aria-label=${`Select ${name}`} />
-        </use-gridcell>
+      <use-gridrow value=${value}>
         <use-gridcell>${name}</use-gridcell>
         <use-gridcell>${stock}</use-gridcell>
       </use-gridrow>
     `;
 
     return html`
-      <form @submit=${handleSubmit} @change=${handleRowToggle}>
-        <use-grid aria-label="Products" selectmode="none">
+      <form @submit=${handleSubmit}>
+        <use-grid
+          aria-label="Products"
+          name="products[]"
+          selectmode="multiple"
+          selectwith="control"
+        >
           <use-gridhead>
             <use-gridrow>
-              <use-gridcell mode="action">
-                <input type="checkbox" aria-label="Select all" @change=${handleSelectAll} />
-              </use-gridcell>
               <use-gridcell>Product</use-gridcell>
               <use-gridcell>Availability</use-gridcell>
             </use-gridrow>
@@ -294,6 +241,79 @@ export const CheckboxRowSelection: Story = {
       </form>
     `;
   },
+};
+
+/**
+ * Add the `row` token — `selectwith="row control"` — and a click anywhere in the row toggles its
+ * checkbox too. Clicks that land on a control inside the row (a button in a `mode="widget"` cell,
+ * a link) are left alone, so row actions keep working.
+ */
+export const RowClickSelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`selectwith="row control"` — the checkbox column is present *and* clicking the row body toggles it. The click guard skips buttons, links, and other in-row controls.',
+      },
+    },
+  },
+  render: () => html`
+    <use-grid aria-label="Team" selectmode="multiple" selectwith="row control">
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Name</use-gridcell>
+          <use-gridcell>Actions</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="alice">
+          <use-gridcell>Alice</use-gridcell>
+          <use-gridcell mode="widget">
+            <button type="button">Edit</button>
+            <button type="button">Remove</button>
+          </use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="bob">
+          <use-gridcell>Bob</use-gridcell>
+          <use-gridcell mode="widget">
+            <button type="button">Edit</button>
+            <button type="button">Remove</button>
+          </use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
+};
+
+/**
+ * `selectmode="single"` with `selectwith="control"` injects a radio column instead; the header
+ * selection cell is an empty spacer (there is no "select all" for single selection).
+ */
+export const RadioRowSelection: Story = {
+  render: () => html`
+    <use-grid aria-label="Plan" name="plan" selectmode="single" selectwith="row control">
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Plan</use-gridcell>
+          <use-gridcell>Price</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="basic">
+          <use-gridcell>Basic</use-gridcell>
+          <use-gridcell>$0</use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="pro" selected>
+          <use-gridcell>Pro</use-gridcell>
+          <use-gridcell>$12</use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="team">
+          <use-gridcell>Team</use-gridcell>
+          <use-gridcell>$40</use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
 };
 
 export const SingleSelect: Story = {
