@@ -423,8 +423,9 @@
   --usewc-font-code-size: var(--usewc-font-size-14);
 
   /* Surface — shared by every surface host (dialog, use-card, [popover]): the visible chrome
-     (background/border/radius/shadow), the backdrop behind an overlaid one, and the internal
-     header/poster/footer region layout they all apply the same way. */
+     (background/border/radius/shadow), the backdrop behind a modal `<dialog>` (non-modal
+     `[popover]` keeps its transparent UA backdrop), and the internal header/poster/footer
+     region layout they all apply the same way. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
   --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);
