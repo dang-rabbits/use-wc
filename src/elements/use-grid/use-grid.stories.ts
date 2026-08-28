@@ -47,50 +47,253 @@ export const Default: Story = {
   `,
 };
 
+const themeGridContent = html`
+  <use-gridhead>
+    <use-gridrow>
+      <use-gridcell>Product</use-gridcell>
+      <use-gridcell>Status</use-gridcell>
+      <use-gridcell>Price</use-gridcell>
+    </use-gridrow>
+  </use-gridhead>
+  <use-gridbody>
+    <use-gridrow value="keyboard">
+      <use-gridcell>Keyboard</use-gridcell>
+      <use-gridcell>In stock</use-gridcell>
+      <use-gridcell>
+        <use-intl-number
+          numberstyle="currency"
+          currency="USD"
+          value="1234.5"
+          lang="en-US"
+        ></use-intl-number>
+      </use-gridcell>
+    </use-gridrow>
+    <use-gridrow value="mouse" selected>
+      <use-gridcell>Mouse</use-gridcell>
+      <use-gridcell>In stock</use-gridcell>
+      <use-gridcell>
+        <use-intl-number
+          numberstyle="currency"
+          currency="USD"
+          value="76.2"
+          lang="en-US"
+        ></use-intl-number>
+      </use-gridcell>
+    </use-gridrow>
+    <use-gridrow value="monitor">
+      <use-gridcell>Monitor</use-gridcell>
+      <use-gridcell>Backordered</use-gridcell>
+      <use-gridcell>
+        <use-intl-number
+          numberstyle="currency"
+          currency="USD"
+          value="429"
+          lang="en-US"
+        ></use-intl-number>
+      </use-gridcell>
+    </use-gridrow>
+  </use-gridbody>
+`;
+
+const checkboxRow = (
+  value: string,
+  name: string,
+  status: string,
+  price: string,
+  checked = false,
+) => html`
+  <use-gridrow>
+    <use-gridcell mode="action">
+      <input
+        type="checkbox"
+        name="products[]"
+        value=${value}
+        aria-label=${`Select ${name}`}
+        ?checked=${checked}
+      />
+    </use-gridcell>
+    <use-gridcell>${name}</use-gridcell>
+    <use-gridcell>${status}</use-gridcell>
+    <use-gridcell>
+      <use-intl-number
+        numberstyle="currency"
+        currency="USD"
+        value=${price}
+        lang="en-US"
+      ></use-intl-number>
+    </use-gridcell>
+  </use-gridrow>
+`;
+
+// Each chip is a label cell plus an `action`-mode cell holding a small `.clear` themed button
+// (the quiet, borderless variant) as the remove control.
+const chipRow = (label: string) => html`
+  <use-gridrow>
+    <use-gridcell>${label}</use-gridcell>
+    <use-gridcell mode="action">
+      <button type="button" class="clear small" aria-label=${`Remove ${label}`}>&times;</button>
+    </use-gridcell>
+  </use-gridrow>
+`;
+
 export const Theme: Story = {
-  render: (args) => html`
-    <use-grid
-      ?disabled=${args.disabled}
-      .name=${args.name}
-      .role=${args.role}
-      .selectmode=${args.selectmode}
-    >
-      <use-gridhead>
-        <use-gridrow>
-          <use-gridcell>Header 1</use-gridcell>
-          <use-gridcell>Header 2</use-gridcell>
-          <use-gridcell>Price</use-gridcell>
-        </use-gridrow>
-      </use-gridhead>
-      <use-gridbody>
-        <use-gridrow>
-          <use-gridcell>Row 1, Cell 1</use-gridcell>
-          <use-gridcell>Row 1, Cell 2</use-gridcell>
-          <use-gridcell>
-            <use-intl-number
-              numberstyle="currency"
-              currency="USD"
-              value="1234.5"
-              lang="en-US"
-            ></use-intl-number>
-          </use-gridcell>
-        </use-gridrow>
-        <use-gridrow>
-          <use-gridcell>Row 2, Cell 1</use-gridcell>
-          <use-gridcell>Row 2, Cell 2</use-gridcell>
-          <use-gridcell>
-            <use-intl-number
-              numberstyle="currency"
-              currency="USD"
-              value="76.2"
-              lang="en-US"
-            ></use-intl-number>
-          </use-gridcell>
-        </use-gridrow>
-      </use-gridbody>
-    </use-grid>
+  render: () => html`
+    <style>
+      /* .list only supplies the row chrome (padding, hover, selected marker); the row's internal
+         layout is the author's, the same as the MasterDetail story. */
+      .theme-list use-gridrow {
+        display: grid;
+        grid-template:
+          "name when"
+          "note note" / 1fr auto;
+        gap: 0.1rem 1rem;
+        align-items: baseline;
+      }
+      .theme-list .name {
+        grid-area: name;
+        font-weight: 600;
+      }
+      .theme-list .when {
+        grid-area: when;
+        color: gray;
+        font-size: 0.85em;
+      }
+      .theme-list .note {
+        grid-area: note;
+        color: gray;
+      }
+    </style>
+    <div style="display: grid; gap: 1.5rem">
+      <use-grid selectmode="single">${themeGridContent}</use-grid>
+      <use-grid class="compact" selectmode="single">${themeGridContent}</use-grid>
+      <use-grid aria-label="Products, checkbox selection" selectmode="none">
+        <use-gridhead>
+          <use-gridrow>
+            <use-gridcell mode="action">
+              <input type="checkbox" aria-label="Select all" />
+            </use-gridcell>
+            <use-gridcell>Product</use-gridcell>
+            <use-gridcell>Status</use-gridcell>
+            <use-gridcell>Price</use-gridcell>
+          </use-gridrow>
+        </use-gridhead>
+        <use-gridbody>
+          ${checkboxRow("keyboard", "Keyboard", "In stock", "1234.5", true)}
+          ${checkboxRow("mouse", "Mouse", "In stock", "76.2", true)}
+          ${checkboxRow("monitor", "Monitor", "Backordered", "429")}
+        </use-gridbody>
+      </use-grid>
+
+      <use-grid class="chips" aria-label="Active filters">
+        <use-gridbody>
+          ${["In stock", "Under $100", "Peripherals", "Free shipping"].map(chipRow)}
+        </use-gridbody>
+      </use-grid>
+
+      <use-grid class="list theme-list" selectmode="single" aria-label="Messages">
+        <use-gridbody>
+          <use-gridrow value="gnomes" selected>
+            <use-gridcell class="name">RE: Garden gnome limit</use-gridcell>
+            <use-gridcell class="when">Oct 1</use-gridcell>
+            <use-gridcell class="note">
+              HOA rules cap a publicly visible garden at 113 garden gnomes.
+            </use-gridcell>
+          </use-gridrow>
+          <use-gridrow value="fence">
+            <use-gridcell class="name">Fence height variance</use-gridcell>
+            <use-gridcell class="when">Sep 28</use-gridcell>
+            <use-gridcell class="note">The board approved the 7ft request, 4 to 1.</use-gridcell>
+          </use-gridrow>
+        </use-gridbody>
+      </use-grid>
+    </div>
   `,
   parameters: { allowTheme: true },
+};
+
+/**
+ * When rows should only be selectable by clicking a checkbox (not by clicking anywhere in the
+ * row), keep `use-grid` out of selection entirely: set `selectmode="none"` and put a native
+ * `<input type="checkbox">` in the first cell with `mode="action"` so the grid's roving focus
+ * lands on it directly. Selection state, form serialization, and screen-reader announcements are
+ * all native. The themed selected/hover band still applies via `:has(:checked)` — see the Theme
+ * story.
+ */
+export const CheckboxRowSelection: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "`selectmode` is `none` — clicking a row does nothing, only the checkbox toggles selection. Each checkbox carries a `name`/`value`, so the form submits the checked rows with no extra wiring.",
+      },
+    },
+  },
+  render: () => {
+    function rowBoxes(form: HTMLFormElement) {
+      return Array.from(form.querySelectorAll<HTMLInputElement>('input[name="products[]"]'));
+    }
+
+    function handleSubmit(event: Event) {
+      event.preventDefault();
+      const formData = new FormData(event.target as HTMLFormElement);
+      const output = document.querySelector("#checkbox-selection-output");
+      if (output) {
+        output.textContent = formData.getAll("products[]").join(", ") || "(none)";
+      }
+    }
+
+    function handleSelectAll(event: Event) {
+      const source = event.target as HTMLInputElement;
+      const form = source.closest("form") as HTMLFormElement;
+      rowBoxes(form).forEach((box) => {
+        box.checked = source.checked;
+      });
+    }
+
+    function handleRowToggle(event: Event) {
+      const target = event.target as HTMLInputElement;
+      if (target.name !== "products[]") return;
+      const form = target.closest("form") as HTMLFormElement;
+      const boxes = rowBoxes(form);
+      const selectAll = form.querySelector<HTMLInputElement>('input[aria-label="Select all"]');
+      if (!selectAll) return;
+      const checkedCount = boxes.filter((box) => box.checked).length;
+      selectAll.checked = checkedCount === boxes.length;
+      selectAll.indeterminate = checkedCount > 0 && checkedCount < boxes.length;
+    }
+
+    const row = (value: string, name: string, stock: string) => html`
+      <use-gridrow>
+        <use-gridcell mode="action">
+          <input type="checkbox" name="products[]" value=${value} aria-label=${`Select ${name}`} />
+        </use-gridcell>
+        <use-gridcell>${name}</use-gridcell>
+        <use-gridcell>${stock}</use-gridcell>
+      </use-gridrow>
+    `;
+
+    return html`
+      <form @submit=${handleSubmit} @change=${handleRowToggle}>
+        <use-grid aria-label="Products" selectmode="none">
+          <use-gridhead>
+            <use-gridrow>
+              <use-gridcell mode="action">
+                <input type="checkbox" aria-label="Select all" @change=${handleSelectAll} />
+              </use-gridcell>
+              <use-gridcell>Product</use-gridcell>
+              <use-gridcell>Availability</use-gridcell>
+            </use-gridrow>
+          </use-gridhead>
+          <use-gridbody>
+            ${row("keyboard", "Keyboard", "In stock")} ${row("mouse", "Mouse", "In stock")}
+            ${row("monitor", "Monitor", "Backordered")}
+          </use-gridbody>
+        </use-grid>
+        <button type="submit">Submit</button>
+        <p>Selected: <span id="checkbox-selection-output">(none)</span></p>
+      </form>
+    `;
+  },
 };
 
 export const SingleSelect: Story = {
