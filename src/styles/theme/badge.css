@@ -11,13 +11,16 @@
 @layer use-theme.badge {
   use-badge {
     --usewc-layout-badge-offset: calc(var(--usewc-layout-badge-dot-size) / 3);
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     line-height: 1.5;
     border-radius: var(--usewc-effect-badge-border-radius);
     background: var(--usewc-color-badge-background-static);
     color: var(--usewc-color-badge-text-static);
     font-size: var(--usewc-font-badge-size);
     font-weight: var(--usewc-font-badge-weight);
+    font-variant-numeric: tabular-nums;
     border: var(--usewc-layout-badge-border) solid var(--usewc-color-badge-border);
 
     use-theme-escape & {
@@ -25,8 +28,16 @@
     }
   }
 
+  /* A content badge is at least as wide as it is tall — `block-size: 1lh` fixes the height to
+     one line so a longer count can't grow it, `min-inline-size: 1lh` makes a single-glyph badge
+     a circle, and a longer count grows the width out into a pill while the height holds.
+     `tabular-nums` above keeps every digit the same advance width, so `1` and `8`, or `11` and
+     `88`, are identical in size. The inline padding is `em`-relative and small enough that a
+     one-digit count still clears the `1lh` floor rather than widening past it. */
   use-badge:not([dot]) {
     --usewc-layout-badge-offset: 0.5lh;
+    block-size: 1lh;
+    min-inline-size: 1lh;
     padding-inline: var(--usewc-layout-badge-padding-inline);
 
     use-theme-escape & {

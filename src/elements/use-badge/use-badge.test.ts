@@ -339,6 +339,52 @@ describe("use-badge", () => {
     });
   });
 
+  describe("size", () => {
+    // badge.css fixes a content badge's height to one line (min-block-size: 1lh) and gives it
+    // aspect-ratio: 1, so a single-glyph count is a square and a longer one grows into a pill
+    // of the same height. tabular-nums keeps every digit the same advance width. tokens.css and
+    // theme.css are loaded globally in this file, so these exercise the themed sizing.
+    it("renders a single-character count as a square and a longer one as a wider pill", async () => {
+      render(html`
+        <button id="short-anchor" type="button">Inbox</button>
+        <use-badge anchortarget="short-anchor">3</use-badge>
+        <button id="long-anchor" type="button">Inbox</button>
+        <use-badge anchortarget="long-anchor">99+</use-badge>
+      `);
+      const [shortBadge, longBadge] = Array.from(
+        document.querySelectorAll("use-badge"),
+      ) as UseBadge[];
+      await shortBadge.updateComplete;
+      await longBadge.updateComplete;
+
+      const shortRect = shortBadge.getBoundingClientRect();
+      const longRect = longBadge.getBoundingClientRect();
+
+      expect(shortRect.width).toBeCloseTo(shortRect.height, 0);
+      expect(longRect.height).toBeCloseTo(shortRect.height, 0);
+      expect(longRect.width).toBeGreaterThan(shortRect.width);
+    });
+
+    it("keeps the same width for two counts with the same digit count", async () => {
+      render(html`
+        <button id="eleven-anchor" type="button">Inbox</button>
+        <use-badge anchortarget="eleven-anchor">11</use-badge>
+        <button id="eighty-anchor" type="button">Inbox</button>
+        <use-badge anchortarget="eighty-anchor">88</use-badge>
+      `);
+      const [elevenBadge, eightyBadge] = Array.from(
+        document.querySelectorAll("use-badge"),
+      ) as UseBadge[];
+      await elevenBadge.updateComplete;
+      await eightyBadge.updateComplete;
+
+      expect(elevenBadge.getBoundingClientRect().width).toBeCloseTo(
+        eightyBadge.getBoundingClientRect().width,
+        1,
+      );
+    });
+  });
+
   describe("alignment attributes", () => {
     it("reflects blockalign and inlinealign", async () => {
       render(html`

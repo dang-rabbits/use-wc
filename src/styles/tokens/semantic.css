@@ -380,8 +380,7 @@
      matching if the accent itself is ever overridden. */
   --usewc-color-badge-text-static: contrast-color(var(--usewc-color-badge-background-static));
   --usewc-color-badge-border: var(--usewc-color-document-background);
-  --usewc-layout-badge-padding-inline: var(--usewc-space-6);
-  --usewc-layout-badge-min-size: var(--usewc-space-16);
+  --usewc-layout-badge-padding-inline: var(--usewc-space-4-relative);
   --usewc-layout-badge-dot-size: var(--usewc-space-12);
   --usewc-layout-badge-border: var(--usewc-space-1);
   --usewc-font-badge-size: var(--usewc-font-size-12);
