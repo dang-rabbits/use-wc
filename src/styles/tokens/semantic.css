@@ -396,7 +396,7 @@
   --usewc-color-popover-menu-item-background-hover: var(--usewc-color-selector-background-hover);
   --usewc-color-popover-menu-item-background-active: var(--usewc-color-selector-background-hover);
   --usewc-effect-popover-menu-item-border-radius: var(--usewc-effect-border-radius-4);
-  --usewc-layout-popover-menu-anchor-offset: var(--usewc-space-4);
+  --usewc-layout-popover-menu-anchor-offset: var(--usewc-layout-surface-anchor-offset);
   --usewc-layout-popover-menu-padding: var(--usewc-space-4);
   --usewc-layout-popover-menu-border: var(--usewc-space-1-relative);
   --usewc-effect-popover-menu-border-style: var(--usewc-effect-border-solid);
@@ -424,11 +424,12 @@
 
   /* Surface — shared by every surface host (dialog, use-card, [popover]): the visible chrome
      (background/border/radius/shadow), the backdrop behind a modal `<dialog>` (non-modal
-     `[popover]` keeps its transparent UA backdrop), and the internal header/poster/footer
-     region layout they all apply the same way. */
+     `[popover]` keeps its transparent UA backdrop), the gap an anchored surface keeps from its
+     anchor, and the internal header/poster/footer region layout they all apply the same way. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
   --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);
+  --usewc-layout-surface-anchor-offset: var(--usewc-space-4);
   --usewc-layout-surface-border: var(--usewc-space-1);
   --usewc-effect-surface-border-radius: var(--usewc-effect-border-radius-8);
   --usewc-effect-surface-shadow: var(--usewc-effect-shadow-raised);

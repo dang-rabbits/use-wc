@@ -28,8 +28,18 @@ export const Default: Story = {
 };
 
 export const Theme: Story = {
-  ...Default,
-  parameters: { ...Default.parameters, allowTheme: true },
+  parameters: { showPanel: false, allowTheme: true },
+  render: () => html`
+    <div style="min-block-size: 20rem;">
+      <button id="use-anchored-theme-trigger" popovertarget="use-anchored-theme">Open</button>
+      <use-anchored target="use-anchored-theme-trigger">
+        <div id="use-anchored-theme" popover style="padding: 1rem;">
+          The theme keeps a small gap between the anchored surface and its trigger, the same as
+          <code>use-menu</code>.
+        </div>
+      </use-anchored>
+    </div>
+  `,
 };
 
 /**
