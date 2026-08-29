@@ -11,6 +11,7 @@
     padding: var(--usewc-layout-popover-menu-padding);
     background: var(--usewc-color-popover-menu-background);
     border-radius: var(--usewc-effect-popover-menu-border-radius);
+    box-shadow: var(--usewc-effect-popover-menu-shadow);
 
     @supports (min-block-size: calc-size(fit-content, min(size, 1px))) {
       min-block-size: calc-size(fit-content, min(size, var(--min-size)));
@@ -93,9 +94,19 @@
 
   /* use-option's own checkmark now renders in-flow (a slot, not a background-image), so it
    already reserves its own leading space via the shared gap/padding above — no extra reservation
-   needed here. This block only concerns the native [role="menuitemcheckbox"/"menuitemradio"]
-   items, whose checkmark is still theme.css's own background-image on the host. */
-  use-menu :is([role="menuitemcheckbox"], [role="menuitemradio"]),
+   needed here. This block only concerns the native [role="menuitemcheckbox"/"menuitemradio"] and
+   [aria-selected] items, whose checkmark is theme.css's own ::before on the host. */
+  use-menu :is([role="menuitemcheckbox"], [role="menuitemradio"], [aria-selected]) {
+    &:has(+ :where([role="menuitemcheckbox"], [role="menuitemradio"], [aria-selected])),
+    & + :where([role="menuitemcheckbox"], [role="menuitemradio"], [aria-selected]) {
+      padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+  }
+
   use-listbox-input {
     &:has(+ :where([role="menuitemcheckbox"], [role="menuitemradio"])),
     & + :where([role="menuitemcheckbox"], [role="menuitemradio"]) {
@@ -164,17 +175,44 @@
   }
 
   /* use-option's own checkmark is themed separately, in icon.css, as a mask on its
-   selected-indicator part rather than a background-image on the host — this rule only concerns
-   the native [aria-checked] menu items, which have no shadow part to target. */
-  use-menu [aria-checked="true"] {
-    background-image: var(--usewc-effect-menu-item-checkmark-background-image, none);
-    /* TODO use logical position */
-    background-position: left var(--usewc-layout-input-padding-inline) center;
-    background-repeat: no-repeat;
-    background-size: var(--usewc-effect-menu-item-checkmark-background-size, 1em);
+   selected-indicator part rather than a ::before on the host — this rule only concerns the
+   native [aria-checked] / [aria-selected] menu items, which have no shadow part to target. The
+   mark is the shared checkmark SVG masked and painted with its own color token (currentColor by
+   default, so it adapts to light/dark on its own), sitting in the leading gutter the
+   padding-reservation block above already carves out. */
+  use-menu :is([aria-checked="true"], [aria-selected="true"]) {
+    position: relative;
+    /* Reserve the gutter unconditionally so the mark never lands on the label, even for a lone
+     marked item with no marked sibling to trigger the adjacency reservation above. */
+    padding-inline-start: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
 
-    use-theme-escape & {
+    &::before {
+      content: "";
+      position: absolute;
+      inset-block: 0;
+      inset-inline-start: var(--usewc-layout-input-padding-inline);
+      margin-block: auto;
+      inline-size: var(--usewc-layout-menu-item-checkmark-size);
+      block-size: var(--usewc-layout-menu-item-checkmark-size);
+      background-color: var(--usewc-effect-menu-item-checkmark-color, currentColor);
+      mask-image: var(--usewc-effect-menu-item-checkmark-mask-image, var(--usewc-icon-checkmark));
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+
+    use-theme-escape &,
+    use-theme-escape &::before {
       all: revert-layer;
     }
+  }
+
+  /* Before it upgrades, a popover-bound use-menu has no [popover] attribute yet — the element
+   injects it in connectedCallback — and isn't :defined, so its slotted items would flash as
+   block content on load. Hide it until then. Once upgraded it's :defined (this rule stops
+   matching) and the injected [popover] keeps it hidden while closed. A standalone always-visible
+   use-menu is hidden only for the few milliseconds until it upgrades. */
+  use-menu:not([popover]):not(:defined) {
+    display: none;
   }
 }

@@ -79,8 +79,9 @@
   --usewc-layout-dropdown-trigger-icon-size: 1em;
   --usewc-effect-select-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgb(55,65,81)' /%3E%3C/svg%3E");
   --usewc-effect-select-trigger-background-size: 1em;
-  --usewc-effect-menu-item-checkmark-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='rgb(55,65,81)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
-  --usewc-effect-menu-item-checkmark-background-size: 1em;
+  --usewc-effect-menu-item-checkmark-mask-image: var(--usewc-icon-checkmark);
+  --usewc-effect-menu-item-checkmark-color: currentColor;
+  --usewc-layout-menu-item-checkmark-size: var(--usewc-layout-selected-indicator-size);
   --usewc-effect-tree-item-expanded-indicator-mask-image: var(--usewc-icon-caret-block-end);
   --usewc-effect-tree-item-expanded-indicator-color: currentColor;
   --usewc-effect-tree-item-collapsed-indicator-mask-image: var(--usewc-icon-caret-inline-end);
@@ -459,6 +460,7 @@
   --usewc-color-popover-menu-background: var(--usewc-color-canvas-background);
   --usewc-color-popover-menu-border: var(--usewc-color-button-base-border-static);
   --usewc-effect-popover-menu-border-radius: var(--usewc-effect-border-radius-8);
+  --usewc-effect-popover-menu-shadow: var(--usewc-effect-surface-shadow);
   --usewc-font-popover-menu-header-size: var(--usewc-font-size-14);
   --usewc-font-popover-menu-header-weight: var(--usewc-font-weight-medium);
   --usewc-color-popover-menu-header-text: var(--usewc-color-gray-400);
@@ -579,7 +581,6 @@
     --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);
     --usewc-color-selector-background-hover: oklch(from var(--usewc-color-gray-700) l c h / 0.5);
     --usewc-effect-select-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgb(229,231,235)' /%3E%3C/svg%3E");
-    --usewc-effect-menu-item-checkmark-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13L10 18L19 7' stroke='rgb(229,231,235)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C%2Fsvg%3E");
     --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.6);
     /* "Super light" can't float up on a near-black page — hold the primary's hue and chroma
        but drop the lightness so the tint reads as a dark primary wash instead. */
