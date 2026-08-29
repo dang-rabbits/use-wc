@@ -240,7 +240,7 @@
   <div>
     <button id="web-components-anchored-note-trigger" popovertarget="web-components-anchored-note">Show note</button>
     <use-anchored target="web-components-anchored-note-trigger">
-      <div id="web-components-anchored-note" popover style="margin: 0">
+      <div id="web-components-anchored-note" popover>
         Positioned relative to the button, no matter what opens or closes it.
       </div>
     </use-anchored>
@@ -248,15 +248,11 @@
 
   <h3>Anchored dialogs</h3>
   <div>
-    <button
-      id="web-components-anchored-dialog-trigger"
-      command="show-modal"
-      commandfor="web-components-anchored-dialog"
-    >
+    <button id="web-components-anchored-dialog-trigger" popovertarget="web-components-anchored-dialog">
       Edit profile
     </button>
     <use-anchored target="web-components-anchored-dialog-trigger">
-      <dialog id="web-components-anchored-dialog" aria-label="Edit profile" style="padding: 1rem; margin: 0">
+      <div id="web-components-anchored-dialog" popover role="dialog" aria-label="Edit profile" style="padding: 1rem">
         <form style="display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 20rem">
           <h2 style="margin: 0">Edit profile</h2>
           <label style="display: flex; flex-direction: column; gap: 0.25rem">
@@ -268,33 +264,15 @@
             <input type="email" name="email" value="ada@example.com" />
           </label>
           <div style="display: flex; gap: 0.5rem; justify-content: end">
-            <button type="button" command="close" commandfor="web-components-anchored-dialog">Cancel</button>
-            <button type="button" command="close" commandfor="web-components-anchored-dialog">Save</button>
+            <button type="button" popovertarget="web-components-anchored-dialog" popovertargetaction="hide">
+              Cancel
+            </button>
+            <button type="button" popovertarget="web-components-anchored-dialog" popovertargetaction="hide">
+              Save
+            </button>
           </div>
         </form>
-      </dialog>
-    </use-anchored>
-  </div>
-
-  <h4>Manual dismiss</h4>
-  <div>
-    <button
-      id="web-components-anchored-confirm-trigger"
-      command="show-modal"
-      commandfor="web-components-anchored-confirm"
-    >
-      Delete account
-    </button>
-    <use-anchored target="web-components-anchored-confirm-trigger">
-      <dialog id="web-components-anchored-confirm" aria-label="Confirm deletion" style="padding: 1rem; margin: 0">
-        <p style="margin-block-start: 0">This can&rsquo;t be undone. Are you sure?</p>
-        <div style="display: flex; gap: 0.5rem; justify-content: end">
-          <button type="button" command="close" commandfor="web-components-anchored-confirm">Cancel</button>
-          <button type="button" class="danger" command="close" commandfor="web-components-anchored-confirm">
-            Delete
-          </button>
-        </div>
-      </dialog>
+      </div>
     </use-anchored>
   </div>
 
@@ -305,7 +283,7 @@
       <button id="web-components-anchored-hint-trigger" popovertarget="web-components-anchored-hint">Explain</button>
     </div>
     <use-anchored target="web-components-anchored-field">
-      <div id="web-components-anchored-hint" popover style="margin: 0">
+      <div id="web-components-anchored-hint" popover>
         The button opens this popover, but <code>target</code> points at the field &mdash; so it tracks the field, not
         whatever invoked it.
       </div>
