@@ -158,6 +158,14 @@ export const Theme: Story = {
         ${themeGridContent}
       </use-grid>
 
+      <use-grid
+        aria-label="Products, row and checkbox selection"
+        selectmode="multiple"
+        selectwith="row control"
+      >
+        ${themeGridContent}
+      </use-grid>
+
       <use-grid class="chips" aria-label="Active filters">
         <use-gridbody>
           ${["In stock", "Under $100", "Peripherals", "Free shipping"].map(chipRow)}

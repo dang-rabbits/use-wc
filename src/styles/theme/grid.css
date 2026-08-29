@@ -285,6 +285,25 @@
     --usewc-color-grid-row-background: var(--usewc-color-grid-row-background-selected-hover);
   }
 
+  /* In the `row control` combo mode a whole-row hover both lights the row band (above) and
+     previews the selection control, so the injected checkbox/radio picks up its own hover
+     treatment even though the pointer is over the row rather than the control itself. Mirrors the
+     `:not(...)` guards in selector.css — a disabled/readonly/checked control keeps its resting
+     state — and wins over that rule because `use-theme.grid` imports after `use-theme.selector`. */
+  use-grid:not(.chips, .list)[selectwith~="row"][selectwith~="control"]
+    use-gridbody
+    use-gridrow:not([disabled], [aria-disabled="true"]):hover
+    use-gridcell[data-usewc-selection-cell]
+    input:is([type="checkbox"], [type="radio"]):not(
+      :disabled,
+      [aria-disabled="true"],
+      [aria-readonly="true"],
+      :checked
+    ) {
+    --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
+    --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
+  }
+
   /* Cursor for a selectable, non-disabled row body. */
   use-grid:not(.chips, .list):not([selectmode="none"]):is(:not([selectwith]), [selectwith~="row"])
     use-gridbody
