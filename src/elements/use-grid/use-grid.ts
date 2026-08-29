@@ -1,11 +1,36 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { isFocusable } from "tabbable";
 import { UseGridRow } from "./use-gridrow";
 import { UseGridCell } from "./use-gridcell";
+import { SELECTION_CELL_ATTRIBUTE } from "./constants";
+import createId from "../../utils/create-id";
 
 const FORM_DATA_KEY = "__value";
 const indicators = ["selected", "deselected"] as const;
 type Indicator = (typeof indicators)[number];
+
+const selectWithTokens = ["row", "control", "none"] as const;
+type SelectWithToken = (typeof selectWithTokens)[number];
+
+/** Accepted `selectwith` values — `"none"` alone, or `"row"` and/or `"control"` (canonical order). */
+type SelectWith = "none" | "row" | "control" | "row control";
+
+export { SELECTION_CELL_ATTRIBUTE };
+
+// A row click that reached an interactive element was meant for that element, not for selecting
+// the row. `isFocusable` (from `tabbable`, already used by use-gridcell) covers buttons, links,
+// form controls, contenteditable, media controls, etc. — plus `<label>`, which activates its
+// control without being focusable itself. `use-gridcell` is excluded: it's focusable for grid
+// navigation, not because it's interactive content, so clicking a cell's padding still selects.
+function isInteractiveContent(node: HTMLElement) {
+  if (node.localName === "use-gridcell") return false;
+  return (
+    node.getAttribute("part") === "toggle-indicator" ||
+    node.localName === "label" ||
+    isFocusable(node)
+  );
+}
 
 /**
  * Accessible grid component following [WAI-ARIA grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/grid/).
@@ -35,6 +60,9 @@ export class UseGrid extends LitElement {
   selectmode: "multiple" | "single" | "none" = "none";
 
   @property({ type: String, reflect: true })
+  selectwith: SelectWith = "row";
+
+  @property({ type: String, reflect: true })
   name = "";
 
   @property({ type: String, reflect: true })
@@ -48,9 +76,70 @@ export class UseGrid extends LitElement {
 
   #value: string[] | string | null = null;
 
+  #radioGroupName = "";
+
   constructor() {
     super();
     this.#internals = this.attachInternals();
+  }
+
+  get #selectWithTokens(): Set<SelectWithToken> {
+    const requested = new Set(
+      this.selectwith
+        .trim()
+        .split(/\s+/)
+        .filter((token): token is SelectWithToken =>
+          (selectWithTokens as readonly string[]).includes(token),
+        ),
+    );
+
+    if (requested.has("none")) {
+      return new Set(["none"]);
+    }
+
+    // Emit in the canonical `selectWithTokens` order so the reflected attribute is stable
+    // regardless of the order the author wrote the tokens in.
+    const ordered = selectWithTokens.filter((token) => token !== "none" && requested.has(token));
+    return new Set(ordered.length > 0 ? ordered : ["row"]);
+  }
+
+  get #selectionEnabled() {
+    return this.selectmode !== "none";
+  }
+
+  /** `true` when `selectmode="multiple"`. Read by `use-gridcell` selection cells. */
+  get isMultiSelect() {
+    return this.selectmode === "multiple";
+  }
+
+  get #selectsOnRowClick() {
+    return this.#selectionEnabled && this.#selectWithTokens.has("row");
+  }
+
+  /**
+   * `true` when a checkbox/radio selection column should exist (`selectmode` on and `selectwith`
+   * includes `control`). Read by `use-gridrow.reconcileSelectorCell`.
+   */
+  get injectsSelectionColumn() {
+    return this.#selectionEnabled && this.#selectWithTokens.has("control");
+  }
+
+  /**
+   * The shared `name` for injected radio controls — the grid's `name` when set, otherwise a stable
+   * generated id. Lazily created so single-select grids without a `name` still group correctly.
+   */
+  get selectionGroupName() {
+    if (!this.#radioGroupName) {
+      this.#radioGroupName = this.name || `use-grid-selection-${createId().replace(/:/g, "")}`;
+    }
+    return this.#radioGroupName;
+  }
+
+  // A row is "disabled" for selection whether the author used the `disabled` prop or set
+  // `aria-disabled="true"` directly. Disabled rows stay keyboard-navigable and AT-perceivable —
+  // only the selection gestures are inert.
+  isRowDisabled(row: Element | null | undefined) {
+    return !!row && (row.hasAttribute("disabled") || row.getAttribute("aria-disabled") === "true");
   }
 
   #observer: MutationObserver | null = null;
@@ -97,9 +186,9 @@ export class UseGrid extends LitElement {
 
   #getCellCache(): { cells: HTMLElement[]; colCount: number } {
     if (!this.#cellCache) {
-      const cells = Array.from(
-        this.querySelectorAll<HTMLElement>("use-gridrow:not([disabled]) use-gridcell"),
-      );
+      // Disabled rows are still navigable — a keyboard/AT user must be able to read them — so the
+      // roving-tabindex cell list includes them; the selection guards keep them un-selectable.
+      const cells = Array.from(this.querySelectorAll<HTMLElement>("use-gridrow use-gridcell"));
       const firstRow = this.querySelector("use-gridrow");
       const colCount = firstRow ? firstRow.querySelectorAll("use-gridcell").length || 1 : 1;
       this.#cellCache = { cells, colCount };
@@ -112,7 +201,7 @@ export class UseGrid extends LitElement {
   set value(value: string[] | string) {
     const newValue = new FormData();
 
-    if (this.selectmode === "multiple") {
+    if (this.isMultiSelect) {
       if (Array.isArray(value)) {
         value.forEach((v) => {
           newValue.append(this.#dataKey, v);
@@ -130,19 +219,24 @@ export class UseGrid extends LitElement {
     const rows = Array.from(this.querySelectorAll("use-gridrow")) as Array<UseGridRow>;
 
     rows.forEach((row) => {
+      if (row.closest("use-gridhead")) {
+        return;
+      }
       row.selected = values.includes(row.getAttribute("value") ?? row.textContent ?? "");
     });
 
     this.#internals.setFormValue(newValue);
 
     // @ts-expect-error - we're not using File
-    this.#value = this.selectmode === "multiple" ? values : values[0];
+    this.#value = this.isMultiSelect ? values : values[0];
+
+    this.#syncSelectAll();
 
     if (!this.#initializing) {
       this.dispatchEvent(
         new CustomEvent("use-change", {
           detail: {
-            value: this.selectmode === "multiple" ? values : newValue.get(this.#dataKey),
+            value: this.isMultiSelect ? values : newValue.get(this.#dataKey),
           },
           bubbles: true,
           composed: true,
@@ -157,28 +251,65 @@ export class UseGrid extends LitElement {
 
   updated(changedProps: Map<string, unknown>) {
     if (changedProps.has("selectmode")) {
-      if (this.selectmode === "multiple") {
+      if (this.isMultiSelect) {
         this.setAttribute("aria-multiselectable", "true");
       } else {
         this.removeAttribute("aria-multiselectable");
       }
     }
+
+    if (changedProps.has("selectwith")) {
+      const normalized = Array.from(this.#selectWithTokens).join(" ") as SelectWith;
+      if (normalized !== this.selectwith) {
+        this.selectwith = normalized;
+      }
+    }
+
+    if (this.#skipReinitAfterFirstUpdate) {
+      this.#skipReinitAfterFirstUpdate = false;
+      return;
+    }
+
+    if (
+      this.#hasInitializedRows &&
+      (changedProps.has("selectmode") || changedProps.has("selectwith")) &&
+      !this.#initializing
+    ) {
+      this.#initializeGridRows();
+    }
   }
+
+  #hasInitializedRows = false;
+  #skipReinitAfterFirstUpdate = false;
 
   // Keyboard navigation and selection logic
   connectedCallback() {
     super.connectedCallback();
     this.addEventListener("keydown", this.#onKeyDown);
     this.addEventListener("click", this.#handleClick);
+    this.addEventListener("change", this.#onChange);
   }
   disconnectedCallback() {
     this.removeEventListener("keydown", this.#onKeyDown);
     this.removeEventListener("click", this.#handleClick);
+    this.removeEventListener("change", this.#onChange);
     this.#unwatchMutations();
     super.disconnectedCallback();
   }
 
+  // Move the roving tabindex to `cell` and focus it. A selection cell is `mode="action"`, so
+  // focusing it forwards focus to its checkbox/radio and drops the cell back out of the tab
+  // sequence — Tab / Shift+Tab then move in and out of the grid natively.
+  #focusGridCell(cell: HTMLElement) {
+    this.#getCellCache().cells.forEach((candidate) => {
+      candidate.tabIndex = -1;
+    });
+    cell.tabIndex = 0;
+    cell.focus();
+  }
+
   firstUpdated() {
+    this.#skipReinitAfterFirstUpdate = true;
     this.#initializeGridRows();
   }
 
@@ -189,11 +320,20 @@ export class UseGrid extends LitElement {
     const currentIndex = cells.indexOf(active);
     if (currentIndex === -1) return;
 
+    // A focused radio in the injected column would arrow-navigate its own group; the grid owns
+    // Arrow keys, so cancel that even when the grid itself doesn't move (edge of the grid).
+    if (
+      active.hasAttribute(SELECTION_CELL_ATTRIBUTE) &&
+      ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(event.key)
+    ) {
+      event.preventDefault();
+    }
+
     if (event.key === " " && event.shiftKey) {
-      if (this.selectmode === "none" || this.readonly || this.disabled) return;
+      if (!this.#selectionEnabled || this.readonly || this.disabled) return;
 
       const row = active.closest("use-gridrow");
-      if (row && !row.hasAttribute("disabled") && !row.closest("use-gridhead")) {
+      if (row && !this.isRowDisabled(row) && !row.closest("use-gridhead")) {
         this.#toggleRowSelection(row);
         event.preventDefault();
         return;
@@ -262,21 +402,16 @@ export class UseGrid extends LitElement {
         return;
     }
     event.preventDefault();
-    cells.forEach((cell) => {
-      cell.tabIndex = -1;
-    });
-    const nextCell = cells[nextIndex];
-    nextCell.tabIndex = 0;
-    nextCell.focus();
+    this.#focusGridCell(cells[nextIndex]);
   };
 
   #toggleRowSelection(target: UseGridRow) {
-    if (this.selectmode === "none") return;
+    if (!this.#selectionEnabled) return;
     const selectRow = target?.closest("use-gridrow");
 
     if (
       selectRow &&
-      !selectRow.hasAttribute("disabled") &&
+      !this.isRowDisabled(selectRow) &&
       !selectRow.closest("use-gridhead") &&
       selectRow.getAttribute("value") != null
     ) {
@@ -288,7 +423,7 @@ export class UseGrid extends LitElement {
           : [];
       if (selectRow.hasAttribute("selected")) {
         newValue = newValue.filter((v) => v !== rowValue);
-      } else if (this.selectmode === "multiple") {
+      } else if (this.isMultiSelect) {
         newValue.push(rowValue);
       } else {
         newValue = [rowValue];
@@ -298,30 +433,118 @@ export class UseGrid extends LitElement {
     }
   }
 
-  #handleClick(event: HTMLElementEventMap["click"]) {
-    if (this.disabled || this.readonly) {
+  #handleClick = (event: HTMLElementEventMap["click"]) => {
+    if (this.disabled || this.readonly || !this.#selectsOnRowClick) {
       return;
     }
 
     const target = event.target as HTMLElement;
     const selectRow = target?.closest<UseGridRow>("use-gridrow");
 
-    if (selectRow?.disabled || selectRow?.readonly) {
+    if (
+      !selectRow ||
+      this.isRowDisabled(selectRow) ||
+      selectRow.readonly ||
+      selectRow.closest("use-gridhead")
+    ) {
       return;
     }
 
-    if (selectRow?.value && selectRow?.value != "" && selectRow?.value != null) {
-      event.preventDefault();
-      const isToggleIndicator = event
-        .composedPath()
-        .some((el) =>
-          el instanceof HTMLElement ? el.getAttribute("part") === "toggle-indicator" : false,
-        );
-
-      if (!isToggleIndicator) {
-        this.#toggleRowSelection(selectRow);
-      }
+    if (!selectRow.value) {
+      return;
     }
+
+    const path = event.composedPath();
+    const rowIndex = path.indexOf(selectRow);
+    const landedOnInteractiveContent = path.some((node, index) => {
+      if (rowIndex !== -1 && index >= rowIndex) {
+        return false;
+      }
+      return node instanceof HTMLElement && isInteractiveContent(node);
+    });
+
+    if (landedOnInteractiveContent) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    if (
+      selection &&
+      !selection.isCollapsed &&
+      selection.anchorNode &&
+      selectRow.contains(selection.anchorNode)
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    this.#toggleRowSelection(selectRow);
+  };
+
+  #onChange = (event: Event) => {
+    const target = event.target as HTMLElement | null;
+    if (!(target instanceof HTMLInputElement)) {
+      return;
+    }
+
+    const selectionCell = target.closest(`use-gridcell[${SELECTION_CELL_ATTRIBUTE}]`);
+    if (!selectionCell || !this.contains(selectionCell)) {
+      return;
+    }
+
+    const row = selectionCell.closest<UseGridRow>("use-gridrow");
+    if (!row) {
+      return;
+    }
+
+    if (this.disabled || this.readonly) {
+      target.checked = row.selected;
+      this.#syncSelectAll();
+      return;
+    }
+
+    if (row.closest("use-gridhead")) {
+      this.#toggleSelectAll(target.checked);
+      return;
+    }
+
+    if (this.isRowDisabled(row) || row.readonly) {
+      target.checked = row.selected;
+      return;
+    }
+
+    this.#toggleRowSelection(row);
+  };
+
+  #selectableBodyRows() {
+    return this.#lazyQueryGridBodyRows().filter(
+      (row) => !this.isRowDisabled(row) && row.getAttribute("value") != null,
+    );
+  }
+
+  #toggleSelectAll(checked: boolean) {
+    const selectable = this.#selectableBodyRows();
+    this.value = checked
+      ? selectable.map((row) => row.getAttribute("value") ?? row.textContent ?? "")
+      : [];
+  }
+
+  #syncSelectAll() {
+    if (!this.injectsSelectionColumn || !this.isMultiSelect) {
+      return;
+    }
+
+    const headerInput = this.querySelector<HTMLInputElement>(
+      `use-gridhead use-gridcell[${SELECTION_CELL_ATTRIBUTE}] input`,
+    );
+    if (!headerInput) {
+      return;
+    }
+
+    const selectable = this.#selectableBodyRows();
+    const selectedCount = selectable.filter((row) => row.selected).length;
+    headerInput.checked = selectable.length > 0 && selectedCount === selectable.length;
+    headerInput.indeterminate = selectedCount > 0 && selectedCount < selectable.length;
   }
 
   render() {
@@ -358,12 +581,16 @@ export class UseGrid extends LitElement {
     this.#initializing = true;
     const selectedValues: string[] = [];
 
+    this.#invalidateCellCache();
+
     const allRows = Array.from(this.querySelectorAll("use-gridrow")) as Array<UseGridRow>;
-    const { colCount } = this.#getCellCache();
-    this.setAttribute("aria-rowcount", String(allRows.length));
-    this.setAttribute("aria-colcount", String(colCount));
 
     allRows.forEach((row, rowIndex) => {
+      // Add, remove, or re-sync the row's leading selection cell for the current
+      // `selectmode` / `selectwith` before any column count is read — the row owns the cell's
+      // existence and the cell owns its own control (`use-gridrow.reconcileSelectorCell`,
+      // `use-gridcell`).
+      row.reconcileSelectorCell();
       row.setAttribute("aria-rowindex", String(rowIndex + 1));
       const cells = Array.from(row.querySelectorAll<HTMLElement>("use-gridcell"));
       cells.forEach((cell, colIndex) => {
@@ -371,9 +598,24 @@ export class UseGrid extends LitElement {
       });
     });
 
+    const { colCount } = this.#getCellCache();
+    this.setAttribute("aria-rowcount", String(allRows.length));
+    this.setAttribute("aria-colcount", String(colCount));
+
+    const cloneIndicators = !this.injectsSelectionColumn;
+
     this.#lazyQueryGridBodyRows().forEach((row) => {
       if (row.selected && row.value) {
         selectedValues.push(row.value);
+      }
+
+      if (!cloneIndicators) {
+        row
+          .querySelectorAll(
+            ':scope > [part~="selected-indicator-default"], :scope > [part~="deselected-indicator-default"]',
+          )
+          .forEach((clone) => clone.remove());
+        return;
       }
 
       indicators.forEach((indicator) => {
@@ -392,10 +634,14 @@ export class UseGrid extends LitElement {
 
     this.value = selectedValues;
     this.#initializing = false;
+    this.#hasInitializedRows = true;
+    this.#syncSelectAll();
 
-    const firstCell = this.querySelector(
-      "use-gridrow:not([disabled]) use-gridcell",
-    ) as UseGridCell | null;
+    // Tab into the grid lands on the first cell of the first row that isn't disabled, falling
+    // back to the very first cell so nothing is ever unreachable when every row is disabled.
+    const firstCell = (this.querySelector(
+      'use-gridrow:not([disabled]):not([aria-disabled="true"]) use-gridcell',
+    ) ?? this.querySelector("use-gridrow use-gridcell")) as UseGridCell | null;
     if (firstCell) {
       firstCell.tabIndex = 0;
     }

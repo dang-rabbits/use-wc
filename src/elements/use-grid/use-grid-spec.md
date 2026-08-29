@@ -24,9 +24,41 @@ Shadow DOM will not be used for the following reasons:
 
 ## Selection
 
-The `use-grid` web component should hold a `FormData` state as a `value` property for row selection. Row selection will be enabled with a custom `selectmode?: 'multiple' | 'single' | 'none'` attribute, with a default of `'none'`. The `value` property should be a custom getter function that scans the nested `use-gridrow` for a `selected` state.
+The `use-grid` web component holds a `FormData` state as a `value` property for row selection. Two
+attributes configure it, on independent axes:
 
-Similar to the `use-listbox` and `use-tree` components, we will provide a default checkmark indicator for when a row is selected.
+- `selectmode?: 'multiple' | 'single' | 'none'` (default `'none'`) — **how many** rows can be
+  selected. `'none'` disables selection entirely and makes `selectwith` inert.
+- `selectwith?: 'row' | 'control' | 'row control' | 'none'` (default `'row'`, a space-separated
+  token set) — **how** selection is triggered and shown:
+  - `row` — clicking anywhere in a row toggles it (the historical behavior).
+  - `control` — a leading selection column appears: each `use-gridrow` provisions its own leading
+    `use-gridcell[data-usewc-selection-cell]` (`use-gridrow.reconcileSelectorCell`) with a native
+    control inside — an `<input type="checkbox">` when `selectmode="multiple"` or
+    `<input type="radio">` when `selectmode="single"`, kept in sync with `row.selected`
+    (`use-gridrow.#syncSelectorCell`). The cell is `mode="action"`, so the grid's roving navigation
+    lands on the cell and the cell forwards focus to the control; the control itself stays out of
+    the tab sequence. For `multiple`, the header row's cell holds a matching "select all" checkbox
+    that reflects an indeterminate state when only some selectable rows are selected (the grid
+    drives that state via `#syncSelectAll`); for `single` the header cell holds an inert,
+    `visibility: hidden` radio that only exists to size the header column to match the body (no
+    theme required). The grid itself only decides whether the column should exist and how many rows
+    may be selected — it never constructs the cells.
+  - `row control` — both: the column renders and a row click toggles it.
+  - `none` — neither; only `Shift+Space` and programmatic `value` / `row.selected`.
+
+A row click (`selectwith` includes `row`) is ignored only when it lands on an actual interactive
+element inside the row — a `<button>`, `<a href>`, form control, `<label>`, `<summary>`,
+`contenteditable`, or an ARIA widget role — or while the user is drag-selecting text. Clicking the
+empty space of a cell (including a `mode="action"` / `mode="widget"` cell or the injected control
+cell) or the gap between cells still selects the row. This guard applies in every `selectmode`.
+
+The injected column is counted in `aria-colcount` / `aria-colindex` and is reachable by keyboard
+arrow navigation like any other cell.
+
+The `value` property is a custom getter that scans the nested `use-gridrow`s for a `selected` state.
+When `selectwith` does not include `control`, a default checkmark indicator (as in `use-listbox` and
+`use-tree`) marks the selected row; with a `control` column the checkbox/radio is the indicator.
 
 ## States
 
@@ -37,7 +69,11 @@ Similar to the `use-listbox` and `use-tree` components, we will provide a defaul
 ### `use-gridrow`
 
 - **Selected** — a custom state needs to be implemented for when a row is selected and part of the `use-grid`'s form value
-- **Disabled** — this will utilize the HTML standard `disabled` prop and will prevent selection
+- **Disabled** — the `disabled` prop (reflected to `aria-disabled="true"`), or a bare
+  `aria-disabled="true"` set by the author, prevents every selection gesture (click, `Shift+Space`,
+  the injected control). A disabled row stays **keyboard-navigable and screen-reader perceivable** —
+  its cells remain in the roving-tabindex order so the content can still be read; it just can't be
+  selected. The theme dims it (`--usewc-effect-form-opacity-disabled`).
 
 ## Accessibility
 
@@ -84,6 +120,9 @@ The showcase the flexibility of `use-grid` we will provide the following example
 
 - Single select mode
 - Multiple select mode
+- Checkbox selection column (`selectwith="control"`) with header select-all
+- Radio selection column (`selectmode="single" selectwith="control"`)
+- Click-row-to-toggle-checkbox (`selectwith="row control"`)
 - Widget cell mode
 - Sticky header
 - Docked columns
