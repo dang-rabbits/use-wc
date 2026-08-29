@@ -34,6 +34,18 @@ export const Default: Story = {
 export const Theme: Story = {
   ...Default,
   parameters: { ...Default.parameters, allowTheme: true },
+  render: () => html`
+    <use-menu aria-label="Menu">
+      <button role="menuitem">menu item 1</button>
+      <button role="menuitem" aria-selected="true">selected menu item</button>
+      <hr />
+      <button role="menuitemcheckbox" aria-checked="true" type="button">checked option</button>
+      <button role="menuitemcheckbox" aria-checked="false" type="button">unchecked option</button>
+      <hr />
+      <button role="menuitemradio" aria-checked="true" type="button">selected radio</button>
+      <button role="menuitemradio" aria-checked="false" type="button">unselected radio</button>
+    </use-menu>
+  `,
 };
 
 export const Inert: Story = {
@@ -129,9 +141,19 @@ export const CheckboxSelect: Story = {
   },
   render: () => html`
     <use-menu aria-label="Checkbox options">
-      <button role="menuitemcheckbox" aria-checked="true" type="button">✅ option 1</button>
+      <button role="menuitemcheckbox" aria-checked="true" type="button">option 1</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 2</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 3</button>
+    </use-menu>
+  `,
+};
+
+export const SelectedItem: Story = {
+  render: () => html`
+    <use-menu aria-label="Selectable options">
+      <button role="menuitem" aria-selected="false" type="button">option 1</button>
+      <button role="menuitem" aria-selected="true" type="button">option 2</button>
+      <button role="menuitem" aria-selected="false" type="button">option 3</button>
     </use-menu>
   `,
 };
@@ -144,7 +166,7 @@ export const RadioSelect: Story = {
   },
   render: () => html`
     <use-menu aria-label="Radio options">
-      <button role="menuitemradio" aria-checked="true" type="button">✅ option 1</button>
+      <button role="menuitemradio" aria-checked="true" type="button">option 1</button>
       <button role="menuitemradio" aria-checked="false" type="button">option 2</button>
       <button role="menuitemradio" aria-checked="false" type="button">option 3</button>
     </use-menu>
@@ -404,7 +426,7 @@ export const AnchoredCheckboxSelect: Story = {
       <use-caret>Checkbox options</use-caret>
     </button>
     <use-menu id="anchored-checkbox-menu" aria-label="Checkbox options">
-      <button role="menuitemcheckbox" aria-checked="true" type="button">✅ option 1</button>
+      <button role="menuitemcheckbox" aria-checked="true" type="button">option 1</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 2</button>
       <button role="menuitemcheckbox" aria-checked="false" type="button">option 3</button>
     </use-menu>

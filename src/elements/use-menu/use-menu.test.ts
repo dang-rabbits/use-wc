@@ -441,4 +441,71 @@ describe("use-menu", () => {
       expect(document.activeElement).toBe(items[1]);
     });
   });
+
+  describe("checked and selected item marks", () => {
+    function markImage(element: Element) {
+      return getComputedStyle(element, "::before").maskImage;
+    }
+
+    it("renders a checkmark on aria-checked and aria-selected items, but not their unmarked siblings", async () => {
+      render(html`
+        <use-menu aria-label="Menu">
+          <button role="menuitemcheckbox" aria-checked="true" type="button">checked</button>
+          <button role="menuitemcheckbox" aria-checked="false" type="button">unchecked</button>
+          <button role="menuitemradio" aria-checked="true" type="button">radio selected</button>
+          <button role="menuitem" aria-selected="true" type="button">selected</button>
+          <button role="menuitem" aria-selected="false" type="button">unselected</button>
+        </use-menu>
+      `);
+
+      const menu = document.querySelector("use-menu") as UseMenu;
+      await menu.updateComplete;
+
+      const [checked, unchecked, radioSelected, selected, unselected] =
+        menu.querySelectorAll('[role^="menuitem"]');
+
+      expect(markImage(checked)).not.toBe("none");
+      expect(markImage(radioSelected)).not.toBe("none");
+      expect(markImage(selected)).not.toBe("none");
+      expect(markImage(unchecked)).toBe("none");
+      expect(markImage(unselected)).toBe("none");
+    });
+
+    it("follows aria-checked as it changes", async () => {
+      render(html`
+        <use-menu aria-label="Menu">
+          <button role="menuitemcheckbox" aria-checked="false" type="button">option</button>
+        </use-menu>
+      `);
+
+      const menu = document.querySelector("use-menu") as UseMenu;
+      await menu.updateComplete;
+      const option = menu.querySelector('[role="menuitemcheckbox"]') as HTMLElement;
+
+      expect(markImage(option)).toBe("none");
+
+      option.setAttribute("aria-checked", "true");
+      expect(markImage(option)).not.toBe("none");
+    });
+  });
+
+  describe("open popover surface", () => {
+    it("carries a drop shadow while open", async () => {
+      render(html`
+        <button id="shadow-trigger" popovertarget="shadow-menu">Menu</button>
+        <use-menu id="shadow-menu" aria-label="Menu">
+          <button role="menuitem">menu item 1</button>
+        </use-menu>
+      `);
+
+      const trigger = document.getElementById("shadow-trigger") as HTMLButtonElement;
+      const menu = document.getElementById("shadow-menu") as UseMenu;
+      await menu.updateComplete;
+
+      await userEvent.click(trigger);
+      await waitForOpenState(menu, true);
+
+      expect(getComputedStyle(menu).boxShadow).not.toBe("none");
+    });
+  });
 });
