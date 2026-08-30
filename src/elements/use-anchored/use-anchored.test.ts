@@ -191,6 +191,92 @@ describe("use-anchored", () => {
     thing.close();
   });
 
+  // surface.css reworks an anchored themed surface's `max-block-size` cap to hold a 45dvh
+  // floor. A side smaller than that overflows and triggers a `position-try` flip instead of
+  // letting the surface shrink to fit — and, because the floor doesn't track the current
+  // side, that flip also re-runs on scroll (flip and flip back), which the original
+  // `min(80dvh, 100% - <pad>)` cap suppressed. The default `position-try-order` is kept, so
+  // it stays below the anchor whenever the content fits there.
+  const flipMarkup = html`
+    <div style="block-size: 92vh;"></div>
+    <button id="anchor-target">Anchor</button>
+    <div style="block-size: 150vh;"></div>
+    <use-anchored target="anchor-target">
+      <div id="thing" popover>
+        <div style="block-size: 150vh;">Tall content</div>
+      </div>
+    </use-anchored>
+  `;
+
+  it("flips a themed popover above the anchor when it can't fit below", async () => {
+    render(flipMarkup);
+
+    const trigger = document.getElementById("anchor-target") as HTMLElement;
+    const thing = document.getElementById("thing") as HTMLElement;
+    const anchored = document.querySelector("use-anchored") as UseAnchored;
+    await anchored.updateComplete;
+
+    trigger.scrollIntoView({ block: "end" });
+    thing.showPopover();
+    await waitForOpenState(thing, true);
+
+    const popover = thing.getBoundingClientRect();
+    const anchor = trigger.getBoundingClientRect();
+    expect(popover.bottom).toBeLessThanOrEqual(anchor.top);
+    expect(popover.top).toBeGreaterThanOrEqual(0);
+    expect(thing.scrollHeight).toBeGreaterThan(thing.clientHeight);
+  });
+
+  it("keeps a themed popover below the anchor when the content fits there", async () => {
+    render(html`
+      <div id="spacer-before" style="block-size: 60vh;"></div>
+      <button id="anchor-target">Anchor</button>
+      <div style="block-size: 200vh;"></div>
+      <use-anchored target="anchor-target">
+        <div id="thing" popover><div style="block-size: 6rem;">Short content</div></div>
+      </use-anchored>
+    `);
+
+    const trigger = document.getElementById("anchor-target") as HTMLElement;
+    const thing = document.getElementById("thing") as HTMLElement;
+    const anchored = document.querySelector("use-anchored") as UseAnchored;
+    await anchored.updateComplete;
+
+    // Park the anchor a little below centre: more room above than below, but the short
+    // content still fits below. Default order keeps it below; `most-block-size` would flip it
+    // up to the roomier side.
+    const trigger_top = trigger.offsetTop;
+    window.scrollTo(0, trigger_top - window.innerHeight * 0.55);
+    thing.showPopover();
+    await waitForOpenState(thing, true);
+
+    const anchor = trigger.getBoundingClientRect();
+    expect(window.innerHeight - anchor.bottom).toBeLessThan(anchor.top);
+    expect(thing.getBoundingClientRect().top).toBeGreaterThanOrEqual(anchor.bottom - 1);
+  });
+
+  it("re-flips a themed popover when scrolling changes which side has room", async () => {
+    render(flipMarkup);
+
+    const trigger = document.getElementById("anchor-target") as HTMLElement;
+    const thing = document.getElementById("thing") as HTMLElement;
+    const anchored = document.querySelector("use-anchored") as UseAnchored;
+    await anchored.updateComplete;
+
+    trigger.scrollIntoView({ block: "start" });
+    thing.showPopover();
+    await waitForOpenState(thing, true);
+    expect(thing.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+      trigger.getBoundingClientRect().bottom - 1,
+    );
+
+    trigger.scrollIntoView({ block: "end" });
+    await new Promise((resolve) => requestAnimationFrame(() => resolve(null)));
+    expect(thing.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      trigger.getBoundingClientRect().top + 1,
+    );
+  });
+
   // theme.css wraps non-`allowTheme` story content in <use-theme-escape>, which sweeps `all:
   // revert` across its light-DOM descendants to render them unstyled. use-anchored's
   // ::slotted() positioning rules are functional, not decorative, so they need to survive that
