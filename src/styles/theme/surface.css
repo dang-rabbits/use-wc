@@ -1,9 +1,14 @@
 /* Surface regions — header/poster/footer styling shared by the three surface hosts (`dialog`,
    `use-card`, `[popover]`), scoped to them specifically rather than to every `.shell`: this is
-   a surface-family visual convention (the anchored-gap offset, avatar sizing, trailing-action
-   pinning, a footer rule), not something every generic `.shell` consumer should inherit.
+   a surface-family visual convention (the anchored-gap offset, avatar sizing, header/footer
+   justification, a footer rule), not something every generic `.shell` consumer should inherit.
    Everything here rides on top of `layout.css`'s flex mechanic — this only adds padding, gaps,
-   and per-region treatment. */
+   and per-region treatment.
+
+   Header and footer justify their contents by default (`flex-start` / `flex-end`), so a lone
+   trailing action in the footer sits at the inline-end edge with no per-child margin hack. Wrap
+   groups of items in `<section>`s to take over: two or more `<section>` children switch the
+   region to `space-between`, landing the groups at opposite ends. */
 @layer use-theme.surface {
   /* An anchored surface keeps a small gap from its anchor, the same convention `use-menu`
      follows in `menu.css`. Scoped to `use-anchored`'s direct child — the one reliable "this is
@@ -59,6 +64,7 @@
   :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > header {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: var(--usewc-space-surface-gap);
     padding: var(--usewc-space-surface-padding);
 
@@ -88,16 +94,6 @@
     }
   }
 
-  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
-    > header
-    > *:last-child:not(:first-child) {
-    margin-inline-start: auto;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
   :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > [fill] {
     padding: var(--usewc-space-surface-padding);
 
@@ -117,6 +113,7 @@
   :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native)) > footer {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: var(--usewc-space-surface-gap);
     padding: var(--usewc-space-surface-padding);
     border-block-start: var(--usewc-layout-surface-border) solid var(--usewc-color-surface-footer-border);
@@ -126,10 +123,24 @@
     }
   }
 
+  /* A `<section>` groups items within a header or footer. Two or more of them switch the region
+     to `space-between` so the groups sit at opposite ends; one or none leaves the region's
+     default justification (`flex-start` for a header, `flex-end` for a footer) in place. */
   :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
-    > footer
-    > *:last-child:not(:first-child) {
-    margin-inline-start: auto;
+    > :is(header, footer)
+    > section {
+    display: flex;
+    align-items: center;
+    gap: var(--usewc-space-surface-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :is(dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
+    > :is(header, footer):has(> section ~ section) {
+    justify-content: space-between;
 
     use-theme-escape & {
       all: revert-layer;

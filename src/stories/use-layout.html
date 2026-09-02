@@ -114,12 +114,17 @@
 <p>
   <code>dialog</code>, <code>use-card</code>, and <code>[popover]</code> are the shell layout applied directly &mdash;
   no wrapper needed, since they're already the flex container an author nests header / <code>[fill]</code> / footer
-  into. They also share a header/footer/figure region treatment (avatar sizing, trailing-action pinning, a footer rule)
-  that a bare <code>.shell</code> doesn't get. <code>use-card</code> is a theme-only tag with no registration &mdash; an
-  author can still add <code>role</code>/ARIA to it directly, just not for free the way <code>article</code>/<code
-    >section</code
-  >
-  give an implicit landmark.
+  into. They also share a header/footer/figure region treatment (avatar sizing, header/footer justification, a footer
+  rule) that a bare <code>.shell</code> doesn't get. <code>use-card</code> is a theme-only tag with no registration
+  &mdash; an author can still add <code>role</code>/ARIA to it directly, just not for free the way
+  <code>article</code>/<code>section</code> give an implicit landmark.
+</p>
+<p>
+  A <code>header</code> aligns its contents to the inline-start edge, a <code>footer</code> to the inline-end edge
+  &mdash; so a lone trailing action in a footer, or a title plus a trailing action in a header (via
+  <code>hgroup</code>), lands where you'd expect with no per-child margin. Wrap groups of items in
+  <code>&lt;section&gt;</code>s to take over: two or more <code>&lt;section&gt;</code> children switch the region to
+  <code>space-between</code>, dropping one group at each edge.
 </p>
 
 <h3>Card</h3>
@@ -146,8 +151,8 @@
     <p>A cabin at the edge of the valley, five minutes from the trailhead. Sleeps four.</p>
   </div>
   <footer>
-    <button type="button">Share</button>
-    <button type="button">Book now</button>
+    <section><button type="button">Share</button></section>
+    <section><button type="button">Book now</button></section>
   </footer>
 </use-card>
 
@@ -191,8 +196,8 @@
     <p>Filter option 12</p>
   </div>
   <footer>
-    <button type="button">Reset</button>
-    <button type="button">Apply</button>
+    <section><button type="button">Reset</button></section>
+    <section><button type="button">Apply</button></section>
   </footer>
 </dialog>
 
@@ -206,3 +211,31 @@
     <p>You're all caught up.</p>
   </div>
 </div>
+
+<h3>Header &amp; footer sections</h3>
+<p>
+  Two <code>&lt;section&gt;</code>s in a region push apart; each groups its own items. A region with one section (or
+  none) keeps its default edge alignment.
+</p>
+<use-card style="max-inline-size: 24rem">
+  <header>
+    <section>
+      <button type="button" aria-label="Back">&#8592;</button>
+      <hgroup><h4>Invoice #1042</h4></hgroup>
+    </section>
+    <section>
+      <button type="button" aria-label="Print">&#128424;</button>
+      <button type="button" aria-label="More options">&#8942;</button>
+    </section>
+  </header>
+  <div fill>
+    <p>Issued March 3. Due in 30 days.</p>
+  </div>
+  <footer>
+    <section><button type="button">Delete</button></section>
+    <section>
+      <button type="button">Save draft</button>
+      <button type="button">Send</button>
+    </section>
+  </footer>
+</use-card>
