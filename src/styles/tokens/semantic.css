@@ -388,6 +388,15 @@
   --usewc-font-badge-weight: var(--usewc-font-weight-medium);
   --usewc-effect-badge-border-radius: var(--usewc-effect-border-radius-pill);
 
+  /* Avatar — `use-avatar`'s initials fallback and shape (see `theme/avatar.css`). Size and
+     aspect ratio are consumer-set custom properties (`--usewc-avatar-size`,
+     `--usewc-avatar-ratio`), not tokens. */
+  --usewc-color-avatar-background: var(--usewc-color-gray-100);
+  --usewc-color-avatar-text: var(--usewc-color-gray-600);
+  --usewc-font-avatar-weight: var(--usewc-font-weight-medium);
+  --usewc-effect-avatar-border-radius: var(--usewc-effect-border-radius-full);
+  --usewc-effect-avatar-border-radius-square: var(--usewc-effect-border-radius-6);
+
   /* Grid — `.table` is the default treatment a bare `use-grid` gets; `.chips` and `.list`
      (the latter still being defined) opt into their own layouts instead. */
   --usewc-color-grid-border: var(--usewc-color-button-base-border-static);
@@ -598,5 +607,7 @@
     --usewc-color-grid-row-background-selected-hover: oklch(from var(--usewc-color-brand-primary) 0.36 0.06 h);
     --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-gray-800) l c h / 0.6);
     --usewc-color-grid-header-text: var(--usewc-color-gray-200);
+    --usewc-color-avatar-background: var(--usewc-color-gray-800);
+    --usewc-color-avatar-text: var(--usewc-color-gray-200);
   }
 }

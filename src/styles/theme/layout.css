@@ -288,8 +288,9 @@
 
   :is(.shell, dialog:not(.appearance-native), use-card, [popover]:not(use-menu, .appearance-native))
     > header
-    > img.avatar {
+    > :is(img.avatar, use-avatar) {
     flex: none;
+    --usewc-avatar-size: var(--usewc-layout-surface-avatar-size);
     inline-size: var(--usewc-layout-surface-avatar-size);
     block-size: var(--usewc-layout-surface-avatar-size);
     border-radius: var(--usewc-effect-surface-avatar-border-radius);

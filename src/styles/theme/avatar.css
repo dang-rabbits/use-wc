@@ -1,0 +1,25 @@
+/* Avatar — `use-avatar.ts` ships literal fallback styles (a `currentColor` tint background,
+   medium weight, a full-round shape) so an unthemed avatar renders on its own; this layer
+   swaps them for the design system's tokens. An outer rule targeting the tag beats the
+   element's own `:host` rules, so matching `use-avatar` directly is enough. Size stays a
+   consumer-set custom property (`--usewc-avatar-size`), not a token. */
+@layer use-theme.avatar {
+  use-avatar {
+    background: var(--usewc-color-avatar-background);
+    color: var(--usewc-color-avatar-text);
+    font-weight: var(--usewc-font-avatar-weight);
+    border-radius: var(--usewc-effect-avatar-border-radius);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-avatar[shape="square"] {
+    border-radius: var(--usewc-effect-avatar-border-radius-square);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
