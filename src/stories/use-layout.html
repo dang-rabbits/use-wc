@@ -1,0 +1,85 @@
+<p>
+  <code>use-layout</code> is a configurable flex-container primitive &mdash; like
+  <code>use-shell</code>/<code>use-card</code>, it's styled by tag name but isn't a registered custom element, and needs
+  the design-system stylesheet loaded. Attributes drive the flex container: <code>direction</code> (<code>row</code>
+  default, or <code>column</code>), <code>align</code>, <code>justify</code>, <code>gap</code> (a named scale,
+  <code>xsmall</code>&hellip;<code>super</code>), <code>wrap</code>, and <code>inline</code>.
+</p>
+<p>
+  By default <code>use-layout</code> doesn't touch its children. Give one direct child the <code>fill</code> attribute
+  and it borrows <code>use-shell</code>'s structure: the <code>fill</code> child grows to consume the remaining space
+  and every other child is pinned to a fixed size. <code>use-layout</code> takes <code>fill</code>
+  itself, so a nested growing (and scrolling) region needs no separate tag.
+</p>
+
+<h3>Row and column</h3>
+<use-layout gap="small" style="margin-block-end: 1rem">
+  <button type="button">One</button>
+  <button type="button">Two</button>
+  <button type="button">Three</button>
+</use-layout>
+<use-layout direction="column" gap="small" style="max-inline-size: 12rem">
+  <button type="button">One</button>
+  <button type="button">Two</button>
+  <button type="button">Three</button>
+</use-layout>
+
+<h3>Align and justify</h3>
+<use-layout
+  align="center"
+  justify="space-between"
+  gap="small"
+  style="block-size: 6rem; border: 1px dashed #d1d5db; border-radius: 8px; padding: 0.5rem"
+>
+  <span>Leading</span>
+  <button type="button">Trailing action</button>
+</use-layout>
+
+<h3>Fill</h3>
+<use-layout
+  direction="column"
+  style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 20rem"
+>
+  <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Header</div>
+  <use-layout fill direction="column" style="padding: 0.5rem; overflow: auto">
+    <p>Row 1</p>
+    <p>Row 2</p>
+    <p>Row 3</p>
+    <p>Row 4</p>
+    <p>Row 5</p>
+    <p>Row 6</p>
+    <p>Row 7</p>
+    <p>Row 8</p>
+  </use-layout>
+  <div style="padding: 0.5rem; border-block-start: 1px solid #d1d5db">Footer</div>
+</use-layout>
+
+<h3>Nested fill</h3>
+<use-layout style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 28rem">
+  <div style="padding: 0.5rem; border-inline-end: 1px solid #d1d5db">Sidebar</div>
+  <use-layout fill direction="column">
+    <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Toolbar</div>
+    <use-layout fill direction="column" style="padding: 0.5rem; overflow: auto">
+      <p>Item 1</p>
+      <p>Item 2</p>
+      <p>Item 3</p>
+      <p>Item 4</p>
+      <p>Item 5</p>
+      <p>Item 6</p>
+      <p>Item 7</p>
+      <p>Item 8</p>
+      <p>Item 9</p>
+      <p>Item 10</p>
+    </use-layout>
+  </use-layout>
+</use-layout>
+
+<h3>Wrap</h3>
+<use-layout wrap gap="small" style="max-inline-size: 14rem">
+  <button type="button">Chip 1</button>
+  <button type="button">Chip 2</button>
+  <button type="button">Chip 3</button>
+  <button type="button">Chip 4</button>
+  <button type="button">Chip 5</button>
+  <button type="button">Chip 6</button>
+</use-layout>

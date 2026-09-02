@@ -1,0 +1,12 @@
+import { Meta, Unstyled } from "@storybook/addon-docs/blocks";
+import "../styles/tokens.css";
+import "../styles/theme.css";
+import "./theming-docs.css";
+import useLayout from "./use-layout.html?raw";
+
+<Meta title="Design System/use-layout" />
+
+<Unstyled>
+  # use-layout
+  <div dangerouslySetInnerHTML={{ __html: useLayout }} />
+</Unstyled>

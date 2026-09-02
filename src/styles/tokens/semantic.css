@@ -480,6 +480,14 @@
   --usewc-color-code-border: var(--usewc-color-transparent);
   --usewc-font-code-size: var(--usewc-font-size-14);
 
+  /* Flex layout — `use-layout`'s named gap scale (see `theme/layout.css`). */
+  --usewc-layout-flex-gap-xsmall: var(--usewc-space-2);
+  --usewc-layout-flex-gap-small: var(--usewc-space-4);
+  --usewc-layout-flex-gap-medium: var(--usewc-space-8);
+  --usewc-layout-flex-gap-large: var(--usewc-space-16);
+  --usewc-layout-flex-gap-xlarge: var(--usewc-space-24);
+  --usewc-layout-flex-gap-super: var(--usewc-space-32);
+
   /* Surface — shared by every surface host (dialog, use-card, [popover]): the visible chrome
      (background/border/radius/shadow), the backdrop behind a modal `<dialog>` (non-modal
      `[popover]` keeps its transparent UA backdrop), the gap an anchored surface keeps from its

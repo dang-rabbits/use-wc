@@ -1,0 +1,189 @@
+/* Flex layout — `use-layout` is a theme-only tag (no custom element registration, styled by
+   tag name like `use-shell`/`use-card`/`use-field`/`use-selector`), providing a configurable
+   flex container: direction, alignment, justification, a named gap scale, wrapping, and inline
+   vs block display, all driven by attributes.
+
+   Its children stay in the light DOM, so the `fill` mechanic is a plain `:has()` + child
+   selector rather than the `flex: 0 0 auto` treatment `use-shell` bakes into every child.
+   When a direct child carries `fill`, that child grows to consume the remaining space and the
+   other children are pinned to a fixed size; with no `fill` child, `use-layout` is a bare
+   flex container that leaves its children alone. `use-layout` itself takes `fill` too, so
+   nested growing regions compose without a separate fill tag.
+
+   Every rule carries the `use-theme-escape` revert so an escaped subtree drops back to
+   unstyled markup, the same as the rest of this family. */
+@layer use-theme.layout {
+  use-layout {
+    display: flex;
+    flex-direction: row;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[inline] {
+    display: inline-flex;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[direction="column"] {
+    flex-direction: column;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[wrap] {
+    flex-wrap: wrap;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[align="start"] {
+    align-items: start;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[align="center"] {
+    align-items: center;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[align="end"] {
+    align-items: end;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[align="stretch"] {
+    align-items: stretch;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[justify="start"] {
+    justify-content: start;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[justify="center"] {
+    justify-content: center;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[justify="end"] {
+    justify-content: end;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[justify="space-between"] {
+    justify-content: space-between;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[justify="space-around"] {
+    justify-content: space-around;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="xsmall"] {
+    gap: var(--usewc-layout-flex-gap-xsmall);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="small"] {
+    gap: var(--usewc-layout-flex-gap-small);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="medium"] {
+    gap: var(--usewc-layout-flex-gap-medium);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="large"] {
+    gap: var(--usewc-layout-flex-gap-large);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="xlarge"] {
+    gap: var(--usewc-layout-flex-gap-xlarge);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[gap="super"] {
+    gap: var(--usewc-layout-flex-gap-super);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout[fill],
+  use-layout > [fill] {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    min-inline-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout:has(> [fill]) > :not([fill]) {
+    flex: 0 0 auto;
+    min-block-size: 0;
+    min-inline-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
