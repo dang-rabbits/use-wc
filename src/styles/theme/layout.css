@@ -1,21 +1,40 @@
 /* Flex layout — `use-layout` is a theme-only tag (no custom element registration, styled by
-   tag name like `use-shell`/`use-card`/`use-field`/`use-selector`), providing a configurable
-   flex container: direction, alignment, justification, a named gap scale, wrapping, and inline
-   vs block display, all driven by attributes.
+   tag name like `use-card`/`use-field`/`use-selector`), providing a configurable flex
+   container: direction, alignment, justification, a named gap scale, wrapping, and inline vs
+   block display, all driven by attributes. It defaults to a column, since stacking is the
+   common case for the page/panel structure it's used for; set `direction="row"` for a row.
 
-   Its children stay in the light DOM, so the `fill` mechanic is a plain `:has()` + child
-   selector rather than the `flex: 0 0 auto` treatment `use-shell` bakes into every child.
    When a direct child carries `fill`, that child grows to consume the remaining space and the
    other children are pinned to a fixed size; with no `fill` child, `use-layout` is a bare
    flex container that leaves its children alone. `use-layout` itself takes `fill` too, so
    nested growing regions compose without a separate fill tag.
+
+   `.shell` is the full shell convention — the flex-column-with-one-growing-region layout that
+   `use-shell` used to be a dedicated tag for: every direct child is fixed (`flex: 0 0 auto`)
+   except the one carrying `[fill]`, which grows and scrolls its own overflow. Unlike a bare
+   `use-layout` it pins children even when no `[fill]` is present. `<use-layout class="shell">`
+   composes it; `direction="row"` still overrides the column default (`[direction="row"]`
+   out-specifies `.shell`).
+
+   The three surface hosts (`dialog`, `use-card`, `[popover]`) get the same shell layout
+   directly — no class needed — since they're already the flex container an author nests
+   header / `[fill]` / footer into. These rules live here rather than in
+   `card.css`/`dialog.css`/`popover.css` so the layout mechanic stays in one place; this layer
+   is imported after those three, so its `display: flex` wins over `card.css`'s
+   `display: block`. `dialog`/`[popover]` are scoped to `:modal`/`:popover-open` — a closed one
+   is `display: none` by the UA stylesheet, which normal-importance author CSS beats regardless
+   of layers, so an unconditional `display: flex` would un-hide it.
+
+   `[fill]` is only ever matched as a *direct child* of one of these containers, never
+   globally, so an `<svg fill="…">` elsewhere is untouched — a raw `<svg fill>` dropped
+   straight in as a direct child should be wrapped.
 
    Every rule carries the `use-theme-escape` revert so an escaped subtree drops back to
    unstyled markup, the same as the rest of this family. */
 @layer use-theme.layout {
   use-layout {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
     use-theme-escape & {
       all: revert-layer;
@@ -30,8 +49,8 @@
     }
   }
 
-  use-layout[direction="column"] {
-    flex-direction: column;
+  use-layout[direction="row"] {
+    flex-direction: row;
 
     use-theme-escape & {
       all: revert-layer;
@@ -181,6 +200,44 @@
     flex: 0 0 auto;
     min-block-size: 0;
     min-inline-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  .shell,
+  dialog:modal:not(.appearance-native),
+  use-card,
+  [popover]:popover-open:not(use-menu, .appearance-native) {
+    display: flex;
+    flex-direction: column;
+    min-block-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  .shell > :not([fill]),
+  dialog:modal:not(.appearance-native) > :not([fill]),
+  use-card > :not([fill]),
+  [popover]:popover-open:not(use-menu, .appearance-native) > :not([fill]) {
+    flex: 0 0 auto;
+    min-block-size: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  .shell > [fill],
+  dialog:modal:not(.appearance-native) > [fill],
+  use-card > [fill],
+  [popover]:popover-open:not(use-menu, .appearance-native) > [fill] {
+    flex: 1 1 auto;
+    min-block-size: 0;
+    overflow: auto;
 
     use-theme-escape & {
       all: revert-layer;

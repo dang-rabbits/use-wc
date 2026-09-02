@@ -2,7 +2,7 @@
    registration behind it: an author can still add `role`/ARIA directly on `<use-card>` for real
    semantics, the same as any other element, just not for free the way `<article>`/`<section>`
    give an implicit landmark. It supplies the surface chrome (background/border/radius/shadow);
-   `shell.css` (declared later, so it wins on `display`) makes it a flex column, and
+   `layout.css` (declared later, so it wins on `display`) makes it a flex column, and
    `surface.css` styles its header/footer/figure regions. `.outlined` drops the shadow and keeps
    the border, for a flatter, less "floating" card. */
 @layer use-theme.card {

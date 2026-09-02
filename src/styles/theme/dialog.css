@@ -4,7 +4,7 @@
    escape hatch, not an opt-in class. The default look centers (the UA default for `<dialog>`, so
    no extra positioning is needed) and constrains its size; `.drawer` is the one variant that
    needs an opt-in class, since it pins to a block-size-100dvh edge panel instead — the positioning
-   itself, not just the chrome, changes. That's what makes `use-shell-fill` (see `shell.css`)
+   itself, not just the chrome, changes. That's what makes a `[fill]` body region (see `layout.css`)
    matter for a drawer specifically — the body scrolls while header/footer stay put. */
 @layer use-theme.dialog {
   dialog:not(.appearance-native) {
