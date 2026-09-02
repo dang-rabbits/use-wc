@@ -389,12 +389,38 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > :is(img.avatar, figure) {
+  /* A header's leading likeness is a `use-avatar` or a `<figure>` — no `img.avatar` convention,
+     since a bare `<img>` in a header is as likely to be a logo as a face, and a class would have
+     to be remembered where the element already says it. Both are squared to the variant's avatar
+     size; a `<figure>` centres whatever it holds, the same way the message rail does. */
+  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > :is(use-avatar, figure) {
     flex: none;
     inline-size: var(--usewc-layout-region-avatar-size);
     block-size: var(--usewc-layout-region-avatar-size);
     border-radius: var(--usewc-effect-surface-avatar-border-radius);
     overflow: hidden;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-inline: 0;
+    font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+    line-height: 1;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > figure > img {
+    inline-size: 100%;
+    block-size: 100%;
     object-fit: cover;
 
     use-theme-escape & {
@@ -505,19 +531,27 @@
     }
   }
 
-  /* The rail is a fixed square that centres whatever it's given — a photo, an `<svg>` glyph, a
-     date badge, a `<div>` of initials — rather than assuming an `<img>`. A photo fills it and
-     crops; anything else keeps its own size and sits in the middle. */
-  :where(use-layout.message) > figure {
-    display: flex;
+  /* The rail is a fixed square holding the likeness. `use-avatar` is the element for it — it
+     brings its own initials fallback and shape — and a bare `<figure>` works too, for a date
+     badge or an icon that isn't a person. A `<figure>` centres whatever it's given rather than
+     assuming an `<img>`; a photo inside one fills the square and crops. */
+  :where(use-layout.message) > :is(use-avatar, figure) {
     grid-column: 1;
     grid-row: 1 / -1;
-    align-items: center;
-    justify-content: center;
     inline-size: var(--usewc-layout-message-rail);
     block-size: var(--usewc-layout-message-rail);
     overflow: hidden;
     border-radius: var(--usewc-effect-surface-avatar-border-radius);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout.message) > figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-size: calc(var(--usewc-layout-message-rail) * 0.4);
     line-height: 1;
 
@@ -527,7 +561,9 @@
   }
 
   :where(use-layout.message) > figure > img {
+    inline-size: 100%;
     block-size: 100%;
+    object-fit: cover;
 
     use-theme-escape & {
       all: revert-layer;

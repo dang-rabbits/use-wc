@@ -1,0 +1,50 @@
+/* Avatar — `use-avatar.ts` ships literal fallback styles (a `currentColor` tint background,
+   medium weight, a full-round shape, and the `corner-shape` a squircle needs) so an unthemed
+   avatar renders on its own; this layer swaps them for the design system's tokens. An outer rule
+   targeting the tag beats the element's own `:host` rules, so matching `use-avatar` directly is
+   enough.
+
+   The element itself references no `--usewc-` token — those belong to the theme, which reaches
+   the component through its tag and its affordance classes (`.circle`, `.square`, `.squircle`)
+   rather than through a custom-property contract. Size is plain `inline-size`/`aspect-ratio` set
+   from outside; the element is a query container, so its initials scale from whatever box it is
+   given. */
+@layer use-theme.avatar {
+  use-avatar {
+    background: var(--usewc-color-avatar-background);
+    color: var(--usewc-color-avatar-text);
+    font-weight: var(--usewc-font-avatar-weight);
+    border-radius: var(--usewc-effect-avatar-border-radius);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-avatar.circle {
+    border-radius: var(--usewc-effect-avatar-border-radius);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-avatar.square {
+    border-radius: var(--usewc-effect-avatar-border-radius-square);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* A superellipse — rounder than a rounded rectangle, flatter than a circle. Degrades to the
+     plain radius wherever `corner-shape` isn't supported. */
+  use-avatar.squircle {
+    border-radius: var(--usewc-effect-avatar-border-radius-squircle);
+    corner-shape: squircle;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
