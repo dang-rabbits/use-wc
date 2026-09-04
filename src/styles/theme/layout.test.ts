@@ -10,7 +10,7 @@ function styleOf(element: Element, property: string) {
 }
 
 describe("use-layout", () => {
-  it("is a flex row by default and leaves standalone children alone", async () => {
+  it("is a flex column by default and leaves standalone children alone", async () => {
     render(html`
       <use-layout>
         <div id="child">item</div>
@@ -19,19 +19,19 @@ describe("use-layout", () => {
     const layout = document.querySelector("use-layout") as HTMLElement;
 
     expect(styleOf(layout, "display")).toBe("flex");
-    expect(styleOf(layout, "flex-direction")).toBe("row");
+    expect(styleOf(layout, "flex-direction")).toBe("column");
     expect(styleOf(document.getElementById("child")!, "flex-shrink")).toBe("1");
   });
 
   it("maps direction, wrap, align, and justify attributes", async () => {
     render(html`
-      <use-layout direction="column" wrap align="center" justify="space-between">
+      <use-layout direction="row" wrap align="center" justify="space-between">
         <div>item</div>
       </use-layout>
     `);
     const layout = document.querySelector("use-layout") as HTMLElement;
 
-    expect(styleOf(layout, "flex-direction")).toBe("column");
+    expect(styleOf(layout, "flex-direction")).toBe("row");
     expect(styleOf(layout, "flex-wrap")).toBe("wrap");
     expect(styleOf(layout, "align-items")).toBe("center");
     expect(styleOf(layout, "justify-content")).toBe("space-between");
@@ -84,11 +84,11 @@ describe("use-layout", () => {
 
     it("keeps fixed siblings from shrinking when the fill content overflows", async () => {
       render(html`
-        <use-layout direction="column" style="height: 200px">
+        <use-layout style="height: 200px">
           <div id="header" style="height: 40px">header</div>
-          <use-layout fill id="body" style="overflow: auto">
+          <div fill id="body" style="overflow: auto">
             <div style="height: 600px">tall content</div>
-          </use-layout>
+          </div>
         </use-layout>
       `);
       const body = document.getElementById("body") as HTMLElement;
@@ -122,6 +122,49 @@ describe("use-layout", () => {
       expect(styleOf(document.getElementById("fixed")!, "flex-shrink")).toBe("0");
       expect(styleOf(document.getElementById("grow")!, "flex-grow")).toBe("1");
       expect(Math.round(document.getElementById("grow")!.getBoundingClientRect().height)).toBe(100);
+    });
+  });
+
+  describe("shell composition", () => {
+    it("class=shell pins every child and grows the [fill] region", async () => {
+      render(html`
+        <use-layout class="shell" direction="column" style="height: 300px">
+          <div id="header">header</div>
+          <div fill id="body">body</div>
+          <div id="footer">footer</div>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("header")!, "flex")).toBe("0 0 auto");
+      expect(styleOf(document.getElementById("footer")!, "flex")).toBe("0 0 auto");
+      expect(styleOf(document.getElementById("body")!, "flex-grow")).toBe("1");
+      expect(styleOf(document.getElementById("body")!, "overflow-y")).toBe("auto");
+    });
+
+    it("pins children even with no [fill] present, unlike a bare use-layout", async () => {
+      render(html`
+        <div>
+          <use-layout id="bare" direction="column"><div id="bare-child">x</div></use-layout>
+          <use-layout id="shell" class="shell" direction="column">
+            <div id="shell-child">x</div>
+          </use-layout>
+        </div>
+      `);
+
+      expect(styleOf(document.getElementById("bare-child")!, "flex-shrink")).toBe("1");
+      expect(styleOf(document.getElementById("shell-child")!, "flex-shrink")).toBe("0");
+    });
+
+    it("defaults .shell to a column, with direction=row overriding", async () => {
+      render(html`
+        <div>
+          <use-layout id="bare-shell" class="shell"><div>a</div></use-layout>
+          <use-layout id="row-shell" class="shell" direction="row"><div>a</div></use-layout>
+        </div>
+      `);
+
+      expect(styleOf(document.getElementById("bare-shell")!, "flex-direction")).toBe("column");
+      expect(styleOf(document.getElementById("row-shell")!, "flex-direction")).toBe("row");
     });
   });
 });

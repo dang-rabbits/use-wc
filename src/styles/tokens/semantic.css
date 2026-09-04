@@ -488,10 +488,12 @@
   --usewc-layout-flex-gap-xlarge: var(--usewc-space-24);
   --usewc-layout-flex-gap-super: var(--usewc-space-32);
 
-  /* Surface — shared by every surface host (dialog, use-card, [popover]): the visible chrome
-     (background/border/radius/shadow), the backdrop behind a modal `<dialog>` (non-modal
-     `[popover]` keeps its transparent UA backdrop), the gap an anchored surface keeps from its
-     anchor, and the internal header/poster/footer region layout they all apply the same way. */
+  /* Surface — the visible chrome for a surface host (background/border/radius/shadow), the
+     backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA
+     backdrop), and the gap an anchored surface keeps from its anchor. The region-layout
+     values (`-padding`, `-gap`, `-avatar-size`, `-border`, `-footer-border`) are also read by
+     `.shell` in `layout.css` — a surface is `.shell` plus this chrome, so the names are shared
+     rather than duplicated under a `shell` prefix. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
   --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);
