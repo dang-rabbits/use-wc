@@ -1,24 +1,33 @@
 <p>
-  <code>use-layout</code> is a configurable flex-container primitive &mdash; like
-  <code>use-shell</code>/<code>use-card</code>, it's styled by tag name but isn't a registered custom element, and needs
-  the design-system stylesheet loaded. Attributes drive the flex container: <code>direction</code> (<code>row</code>
-  default, or <code>column</code>), <code>align</code>, <code>justify</code>, <code>gap</code> (a named scale,
-  <code>xsmall</code>&hellip;<code>super</code>), <code>wrap</code>, and <code>inline</code>.
+  <code>use-layout</code> is a configurable flex-container primitive &mdash; like <code>use-field</code>, it's styled by
+  tag name but isn't a registered custom element, and needs the design-system stylesheet loaded. Attributes drive the
+  flex container: <code>direction</code> (<code>column</code> default, or <code>row</code>), <code>align</code>,
+  <code>justify</code>, <code>gap</code> (a named scale, <code>xsmall</code>&hellip;<code>super</code>),
+  <code>wrap</code>, and <code>inline</code>.
 </p>
 <p>
-  By default <code>use-layout</code> doesn't touch its children. Give one direct child the <code>fill</code> attribute
-  and it borrows <code>use-shell</code>'s structure: the <code>fill</code> child grows to consume the remaining space
-  and every other child is pinned to a fixed size. <code>use-layout</code> takes <code>fill</code>
-  itself, so a nested growing (and scrolling) region needs no separate tag.
+  By default <code>use-layout</code> doesn't touch its children. Give a direct child <code>use-layout</code> the
+  <code>fill</code> attribute and that child grows to consume the remaining space while every other child is pinned so
+  it can't shrink. <code>fill</code> is read only on a <code>use-layout</code>, and only as a direct child, so an
+  <code>&lt;svg fill="&hellip;"&gt;</code> or an author's own <code>fill</code> attribute is never picked up by
+  accident.
+</p>
+<p>
+  Four variant classes name what the container <em>is</em>, and style its semantic
+  <code>&lt;header&gt;</code>/<code>&lt;main&gt;</code>/<code>&lt;footer&gt;</code> regions to match:
+  <code>page</code> for an app frame, <code>prose</code> for a document, <code>message</code> for a chat or comment, and
+  <code>card</code> for a panel. Each selector is compound (<code>use-layout.page</code>, never a bare
+  <code>.page</code>) so these common words can't collide with an author's own classes. <code>direction="row"</code>
+  still overrides the column default on all of them.
 </p>
 
-<h3>Row and column</h3>
-<use-layout gap="small" style="margin-block-end: 1rem">
+<h3>Column and row</h3>
+<use-layout gap="small" style="max-inline-size: 12rem; margin-block-end: 1rem">
   <button type="button">One</button>
   <button type="button">Two</button>
   <button type="button">Three</button>
 </use-layout>
-<use-layout direction="column" gap="small" style="max-inline-size: 12rem">
+<use-layout direction="row" gap="small">
   <button type="button">One</button>
   <button type="button">Two</button>
   <button type="button">Three</button>
@@ -26,6 +35,7 @@
 
 <h3>Align and justify</h3>
 <use-layout
+  direction="row"
   align="center"
   justify="space-between"
   gap="small"
@@ -36,12 +46,9 @@
 </use-layout>
 
 <h3>Fill</h3>
-<use-layout
-  direction="column"
-  style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 20rem"
->
+<use-layout style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 20rem">
   <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Header</div>
-  <use-layout fill direction="column" style="padding: 0.5rem; overflow: auto">
+  <use-layout fill style="padding: 0.5rem; overflow: auto">
     <p>Row 1</p>
     <p>Row 2</p>
     <p>Row 3</p>
@@ -55,11 +62,14 @@
 </use-layout>
 
 <h3>Nested fill</h3>
-<use-layout style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 28rem">
+<use-layout
+  direction="row"
+  style="block-size: 12rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 28rem"
+>
   <div style="padding: 0.5rem; border-inline-end: 1px solid #d1d5db">Sidebar</div>
-  <use-layout fill direction="column">
+  <use-layout fill>
     <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Toolbar</div>
-    <use-layout fill direction="column" style="padding: 0.5rem; overflow: auto">
+    <use-layout fill style="padding: 0.5rem; overflow: auto">
       <p>Item 1</p>
       <p>Item 2</p>
       <p>Item 3</p>
@@ -75,11 +85,367 @@
 </use-layout>
 
 <h3>Wrap</h3>
-<use-layout wrap gap="small" style="max-inline-size: 14rem">
+<use-layout direction="row" wrap gap="small" style="max-inline-size: 14rem">
   <button type="button">Chip 1</button>
   <button type="button">Chip 2</button>
   <button type="button">Chip 3</button>
   <button type="button">Chip 4</button>
   <button type="button">Chip 5</button>
   <button type="button">Chip 6</button>
+</use-layout>
+
+<h2>Variants</h2>
+<p>
+  All four regions are optional and any combination lays out correctly &mdash;
+  <code>&lt;header&gt;</code> + <code>&lt;footer&gt;</code> is a confirm dialog, <code>&lt;header&gt;</code> +
+  <code>&lt;main&gt;</code> a bare card, <code>&lt;main&gt;</code> alone a grouped chat message. Source order is
+  canonical (<code>figure</code>, <code>header</code>, <code>main</code>, <code>footer</code>); a variant may
+  re-position regions visually but never asks you to reorder markup.
+</p>
+<p>
+  A variant class sets only a density scale on itself &mdash; padding, gap, avatar size, which edges carry a hairline
+  rule, and where the footer aligns. One generic set of region rules reads those properties, scoped in
+  <code>:where()</code> so it adds no specificity: a <code>header.tabbed</code> of your own overrides it without a
+  fight. The four densities are deliberately far apart, since a document and a card in a feed can't share one padding
+  step and still read as themselves.
+</p>
+<p>
+  Wrap groups of items in <code>&lt;section&gt;</code>s to control the ends of a region: two or more
+  <code>&lt;section&gt;</code> children switch it to <code>space-between</code>, dropping one group at each edge. A
+  region with one section, or none, keeps its variant's default alignment.
+</p>
+
+<h3>Page</h3>
+<p>
+  An app frame, at a roomy density. The header is a topbar and the footer a status bar, both ruled off from the body.
+  The footer splits by default, so status text sits opposite its actions.
+</p>
+<use-layout
+  class="page"
+  style="block-size: 14rem; border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 28rem"
+>
+  <header>
+    <section>
+      <hgroup><h4>Fieldbook</h4></hgroup>
+    </section>
+    <section>
+      <button type="button">Search</button>
+      <button type="button" aria-label="Account">&#9679;</button>
+    </section>
+  </header>
+  <use-layout fill>
+    <p>Row 1</p>
+    <p>Row 2</p>
+    <p>Row 3</p>
+    <p>Row 4</p>
+    <p>Row 5</p>
+    <p>Row 6</p>
+    <p>Row 7</p>
+    <p>Row 8</p>
+  </use-layout>
+  <footer>
+    <span>12 entries</span>
+    <button type="button">New entry</button>
+  </footer>
+</use-layout>
+
+<h3>Prose</h3>
+<p>
+  A document, and the loosest density in the set. The header stacks an eyebrow, a title free to wrap, and a byline
+  rather than spreading them across a row, and it shares <code>&lt;main&gt;</code>'s reading measure so the two align
+  down the left edge. A <code>&lt;figure&gt;</code> above stays full-bleed to the container.
+</p>
+<use-layout class="prose" style="border: 1px solid #d1d5db; border-radius: 8px">
+  <figure>
+    <img
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='960' height='200'%3E%3Crect width='960' height='200' fill='%2394a3b8'/%3E%3C/svg%3E"
+      alt=""
+    />
+  </figure>
+  <header>
+    <p>Practice</p>
+    <h4>On keeping a field notebook</h4>
+    <p>Staff writer &middot; March 3</p>
+  </header>
+  <main>
+    <p>
+      The point of a field notebook is not to be complete. It is to be honest about what you saw, in the order you saw
+      it, before the shape of the thing you expected has a chance to rearrange your memory of it.
+    </p>
+    <p>Write down the weather. You will never think it matters, and it always does.</p>
+  </main>
+  <footer>
+    <span>Filed under: practice, notebooks</span>
+  </footer>
+</use-layout>
+
+<h3>Message</h3>
+<p>
+  A chat or comment entry in a list &mdash; the one variant that isn't a column. The <code>&lt;figure&gt;</code> is an
+  avatar rail on the inline-start edge, and the header, body and reactions stack beside it. The footer aligns with the
+  body rather than the far edge, and no rules divide the regions: it reads as one block, not a panel.
+</p>
+<p>
+  When the same author posts again, omit the <code>&lt;header&gt;</code> and the <code>&lt;figure&gt;</code>. The rail
+  holds its width regardless, so bodies stay aligned down the feed &mdash; that's why the rail and the avatar are one
+  token.
+</p>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <figure>
+    <img
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%2364748b'/%3E%3C/svg%3E"
+      alt=""
+    />
+  </figure>
+  <header>
+    <hgroup>
+      <h4>Teammate</h4>
+      <p>10:24 AM</p>
+    </hgroup>
+    <button type="button" aria-label="More options">&#8942;</button>
+  </header>
+  <main>
+    <p>Pushed the rebase &mdash; the drawer scrolls properly now.</p>
+  </main>
+  <footer>
+    <button type="button">Reply</button>
+    <button type="button">React</button>
+  </footer>
+</use-layout>
+
+<p>
+  The rail centres whatever the <code>&lt;figure&gt;</code> holds, so an avatar doesn't have to be a photo &mdash; an
+  <code>&lt;svg&gt;</code> glyph, a date badge, or a <code>&lt;div&gt;</code> of initials all sit in the same square. A
+  photo is the exception: it fills the rail and crops.
+</p>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <figure style="background: #e2e8f0">
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#475569" stroke-width="2" aria-hidden="true">
+      <path d="M12 2 2 22h20L12 2Z" />
+    </svg>
+  </figure>
+  <header>
+    <hgroup>
+      <h4>Build</h4>
+      <p>10:31 AM</p>
+    </hgroup>
+  </header>
+  <main>
+    <p>Storybook build failed on <code>pre</code>.</p>
+  </main>
+</use-layout>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <figure style="background: #cbd5e1; color: #1e293b; font-weight: 600">TM</figure>
+  <header>
+    <hgroup>
+      <h4>Teammate</h4>
+      <p>10:36 AM</p>
+    </hgroup>
+  </header>
+  <main>
+    <p>Initials stand in when there's no photo on file.</p>
+  </main>
+</use-layout>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <figure
+    style="
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      overflow: hidden;
+      line-height: 1.1;
+    "
+  >
+    <span style="background: #dc2626; color: #fff; font-size: 0.5rem; inline-size: 100%; text-align: center">MAR</span>
+    <span style="font-size: 0.875rem; font-weight: 600; color: #1e293b">3</span>
+  </figure>
+  <header>
+    <hgroup>
+      <h4>Calendar</h4>
+      <p>All day</p>
+    </hgroup>
+  </header>
+  <main>
+    <p>A date badge works as well as a face &mdash; the rail only cares about the square.</p>
+  </main>
+</use-layout>
+
+<p>
+  A media attachment goes inside <code>&lt;main&gt;</code>, not in the rail's <code>&lt;figure&gt;</code>. It keeps the
+  flow of the body and loses its default margins, so the region's own spacing is the only spacing.
+</p>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <figure>
+    <img
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%2364748b'/%3E%3C/svg%3E"
+      alt=""
+    />
+  </figure>
+  <header>
+    <hgroup>
+      <h4>Teammate</h4>
+      <p>10:42 AM</p>
+    </hgroup>
+  </header>
+  <main>
+    <p>Here's the screenshot:</p>
+    <figure>
+      <img
+        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='200'%3E%3Crect width='480' height='200' fill='%23cbd5e1'/%3E%3C/svg%3E"
+        alt=""
+        style="border-radius: 6px"
+      />
+      <figcaption style="font-size: 0.75rem; color: #64748b">drawer-scroll.png</figcaption>
+    </figure>
+  </main>
+  <footer>
+    <button type="button">Reply</button>
+    <button type="button">React</button>
+  </footer>
+</use-layout>
+
+<p>When the same author posts again, omit both the header and the rail's figure:</p>
+<use-layout class="message" style="border: 1px solid #d1d5db; border-radius: 8px; max-inline-size: 24rem">
+  <main>
+    <p>Grouped message &mdash; no header, no avatar, still aligned.</p>
+  </main>
+</use-layout>
+
+<h3>Card</h3>
+<p>
+  A unit in a grid or feed, at a compact density, and the only variant that paints chrome of its own (background,
+  border, shadow); <code>.outlined</code> keeps the border and drops the shadow. Its header leads with an avatar and
+  title group, and its footer collects actions at the inline-end edge. Add <code>role</code>/ARIA to the
+  <code>&lt;use-layout&gt;</code> directly for real semantics &mdash; the tag carries none on purpose.
+</p>
+<use-layout class="card" style="max-inline-size: 24rem">
+  <figure>
+    <img
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='160'%3E%3Crect width='480' height='160' fill='%2394a3b8'/%3E%3C/svg%3E"
+      alt=""
+    />
+  </figure>
+  <header>
+    <img
+      class="avatar"
+      src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%2364748b'/%3E%3C/svg%3E"
+      alt=""
+    />
+    <hgroup>
+      <h4>Trailhead Lodge</h4>
+      <p>Yosemite Valley, CA</p>
+    </hgroup>
+    <button type="button" aria-label="More options">&#8942;</button>
+  </header>
+  <main>
+    <p>A cabin at the edge of the valley, five minutes from the trailhead. Sleeps four.</p>
+  </main>
+  <footer>
+    <section><button type="button">Share</button></section>
+    <section><button type="button">Book now</button></section>
+  </footer>
+</use-layout>
+<h2>Inside a dialog or popover</h2>
+<p>
+  A <code>&lt;dialog&gt;</code> and a <code>[popover]</code> are chrome only &mdash; background, border, shadow,
+  backdrop, sizing. They carry no layout of their own, so nest a <code>use-layout</code> variant inside to arrange them.
+  That keeps the overlay element's UA-controlled <code>display</code> alone and lets one dialog host any variant. Use a
+  plain variant rather than <code>.card</code> there, since the overlay already paints its own surface.
+</p>
+
+<h3>Modal</h3>
+<button type="button" onclick="this.nextElementSibling.showModal()">Open modal</button>
+<dialog>
+  <use-layout class="card">
+    <header>
+      <hgroup>
+        <h4>Delete project?</h4>
+        <p>This can't be undone.</p>
+      </hgroup>
+    </header>
+    <use-layout fill>
+      <p>All boards, cards, and history for this project will be permanently removed.</p>
+    </use-layout>
+    <footer>
+      <button type="button" onclick="this.closest('dialog').close()">Cancel</button>
+      <button type="button" onclick="this.closest('dialog').close()">Delete</button>
+    </footer>
+  </use-layout>
+</dialog>
+
+<h3>Drawer</h3>
+<button type="button" onclick="this.nextElementSibling.showModal()">Open drawer</button>
+<dialog class="drawer">
+  <use-layout class="card" style="block-size: 100%">
+    <header>
+      <section>
+        <hgroup><h4>Filters</h4></hgroup>
+      </section>
+      <section>
+        <button type="button" aria-label="Close" onclick="this.closest('dialog').close()">&#10005;</button>
+      </section>
+    </header>
+    <use-layout fill>
+      <p>Filter option 1</p>
+      <p>Filter option 2</p>
+      <p>Filter option 3</p>
+      <p>Filter option 4</p>
+      <p>Filter option 5</p>
+      <p>Filter option 6</p>
+      <p>Filter option 7</p>
+      <p>Filter option 8</p>
+      <p>Filter option 9</p>
+      <p>Filter option 10</p>
+      <p>Filter option 11</p>
+      <p>Filter option 12</p>
+    </use-layout>
+    <footer>
+      <section><button type="button">Reset</button></section>
+      <section><button type="button">Apply</button></section>
+    </footer>
+  </use-layout>
+</dialog>
+
+<h3>Popover</h3>
+<button type="button" popovertarget="use-layout-popover-demo">Open popover</button>
+<div popover id="use-layout-popover-demo" style="max-inline-size: 20rem">
+  <use-layout class="card">
+    <header>
+      <hgroup><h4>Notifications</h4></hgroup>
+    </header>
+    <main>
+      <p>You're all caught up.</p>
+    </main>
+  </use-layout>
+</div>
+
+<h3>Header &amp; footer sections</h3>
+<p>
+  Two <code>&lt;section&gt;</code>s in a region push apart; each groups its own items. A region with one section, or
+  none, keeps its variant's default edge alignment.
+</p>
+<use-layout class="card" style="max-inline-size: 24rem">
+  <header>
+    <section>
+      <button type="button" aria-label="Back">&#8592;</button>
+      <hgroup><h4>Invoice #1042</h4></hgroup>
+    </section>
+    <section>
+      <button type="button" aria-label="Print">&#128424;</button>
+      <button type="button" aria-label="More options">&#8942;</button>
+    </section>
+  </header>
+  <main>
+    <p>Issued March 3. Due in 30 days.</p>
+  </main>
+  <footer>
+    <section><button type="button">Delete</button></section>
+    <section>
+      <button type="button">Save draft</button>
+      <button type="button">Send</button>
+    </section>
+  </footer>
 </use-layout>

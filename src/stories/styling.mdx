@@ -16,7 +16,7 @@ body.light-theme {
   --usewc-color-success: #f00;
   --usewc-color-info: #f00;
   --usewc-color-warning: #f00;
-  --usewc-color-focus-ring: #00f;
+  --usewc-color-outline: #00f;
 
   --usewc-color-input-background-static: #eaeaea;
   --usewc-color-input-background-focus: #fff;
@@ -42,24 +42,19 @@ body.light-theme {
   --usewc-color-selector-border-hover: #ccc;
   --usewc-color-selector-border-focus: #ccc;
 
-  --usewc-size-input-border: 1px;
-  --usewc-size-button-border: 1px;
-  --usewc-size-selector-border: 1px;
-  --usewc-size-focus-ring: 2px;
+  --usewc-layout-input-border: 1px;
+  --usewc-layout-button-border: 1px;
+  --usewc-layout-input-padding-inline: 1rem;
+  --usewc-layout-input-padding-block: 0.5rem;
+  --usewc-layout-input-gap-inline: 1rem;
 
-  --usewc-space-input-padding-inline: 1rem;
-  --usewc-space-input-padding-block: 0.5rem;
-  --usewc-space-input-gap: 1rem;
-  --usewc-space-input-focus-ring: 2px;
-  --usewc-space-action-focus-ring: -1px;
-  --usewc-space-selector-focus-ring: -1px;
-
-  --usewc-effect-focus-ring-style: solid;
+  --usewc-effect-outline-size: 2px;
+  --usewc-effect-outline-offset: 2px;
+  --usewc-effect-outline-offset-flush: -1px;
+  --usewc-effect-outline-style: solid;
   --usewc-effect-input-border-radius: 0.25rem;
-  --usewc-effect-action-button-border-radius: 0.25rem;
-  --usewc-effect-selector-checkbox-border-radius: 0.25rem;
-  --usewc-effect-selector-radio-border-radius: 0.25rem;
-  --usewc-effect-selector-switch-border-radius: 0.25rem;
+  --usewc-effect-button-border-radius: 0.25rem;
+  --usewc-effect-selector-border-radius: 0.25rem;
 }
 
 /* imported use-wc.css */
@@ -67,9 +62,9 @@ button {
   all: unset;
   display: inline-flex;
   align-items: center;
-  border: var(--usewc-size-input-border) solid var(--usewc-color-input-border-static);
-  padding: var(--usewc-space-input-padding-block) var(--usewc-space-input-padding-inline);
-  gap: var(--usewc-space-input-gap);
+  border: var(--usewc-layout-input-border) solid var(--usewc-color-input-border-static);
+  padding: var(--usewc-layout-input-padding-block) var(--usewc-layout-input-padding-inline);
+  gap: var(--usewc-layout-input-gap-inline);
 
   /* A resolved slot, not a state name — the one property assignment below
      reads this, and every state rule below only ever remaps it. */
@@ -81,8 +76,8 @@ button:hover {
 }
 
 button:focus-visible {
-  outline: var(--usewc-size-focus-ring) var(--usewc-effect-focus-ring-style) var(--usewc-color-focus-ring);
-  outline-offset: var(--usewc-space-input-focus-ring);
+  outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+  outline-offset: var(--usewc-effect-outline-offset);
 }
 
 use-caret::part(icon-default) {
@@ -95,11 +90,13 @@ Because `:hover` only ever reassigns the `--usewc-color-input-background` slot i
 ##### Token Categories
 
 - `color`
-- `size`
-- `space`
 - `font`
-- `effect`
+- `layout` — sizes, spacing and other geometry a component reads
+- `effect` — radii, shadows, outlines, masks
 - `transition`
+- `space` — the atomic step scale (`--usewc-space-8`, `--usewc-space-16`, …) that the semantic
+  `layout` tokens are built from. Only atomic tokens use this category; a semantic token names
+  what it spaces, so it belongs under `layout`.
 
 ##### Component Categories
 
@@ -124,7 +121,7 @@ Because `:hover` only ever reassigns the `--usewc-color-input-background` slot i
 - `background`
 - `border`
 - `text`
-- `focus-ring`
+- `outline`
 - `padding`
 - `gap`
 - `shadow`

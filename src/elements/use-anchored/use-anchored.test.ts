@@ -134,7 +134,7 @@ describe("use-anchored", () => {
     thing.close();
   });
 
-  // A themed anchored surface keeps a small gap from its anchor (surface.css), the same
+  // A themed anchored surface keeps a small gap from its anchor (anchored.css), the same
   // convention use-menu follows. The gap is theme-only: `.appearance-native` and
   // use-theme-escape both opt out, which the two cases below and the escape test that follows
   // cover together.
@@ -191,7 +191,7 @@ describe("use-anchored", () => {
     thing.close();
   });
 
-  // surface.css reworks an anchored themed surface's `max-block-size` cap to hold a 45dvh
+  // anchored.css reworks an anchored themed surface's `max-block-size` cap to hold a 45dvh
   // floor. A side smaller than that overflows and triggers a `position-try` flip instead of
   // letting the surface shrink to fit — and, because the floor doesn't track the current
   // side, that flip also re-runs on scroll (flip and flip back), which the original

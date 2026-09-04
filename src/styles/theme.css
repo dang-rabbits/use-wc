@@ -28,9 +28,7 @@
 @import "./theme/menu.css";
 @import "./theme/badge.css";
 @import "./theme/grid.css";
-@import "./theme/card.css";
 @import "./theme/dialog.css";
 @import "./theme/popover.css";
-@import "./theme/shell.css";
+@import "./theme/anchored.css";
 @import "./theme/layout.css";
-@import "./theme/surface.css";

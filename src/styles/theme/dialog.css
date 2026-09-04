@@ -4,8 +4,13 @@
    escape hatch, not an opt-in class. The default look centers (the UA default for `<dialog>`, so
    no extra positioning is needed) and constrains its size; `.drawer` is the one variant that
    needs an opt-in class, since it pins to a block-size-100dvh edge panel instead — the positioning
-   itself, not just the chrome, changes. That's what makes `use-shell-fill` (see `shell.css`)
-   matter for a drawer specifically — the body scrolls while header/footer stay put. */
+   itself, not just the chrome, changes.
+
+   Chrome only — a `<dialog>` gets no layout from this family. Nest a `use-layout` variant
+   inside it (`layout.css`) to arrange a header / body / footer, which leaves the element's
+   UA-controlled `display` alone and lets one dialog host any variant. That nested layout is
+   what makes a drawer work: its `use-layout[fill]` body scrolls while header and footer stay
+   put over the full 100dvh. */
 @layer use-theme.dialog {
   dialog:not(.appearance-native) {
     padding: 0;
@@ -15,8 +20,8 @@
     background: var(--usewc-color-surface-background);
     box-shadow: var(--usewc-effect-surface-shadow);
     color: var(--usewc-color-document-text);
-    inline-size: min(32rem, 100% - var(--usewc-space-surface-padding) * 2);
-    max-block-size: min(80dvh, 100% - var(--usewc-space-surface-padding) * 2);
+    inline-size: min(32rem, 100% - var(--usewc-layout-surface-padding) * 2);
+    max-block-size: min(80dvh, 100% - var(--usewc-layout-surface-padding) * 2);
 
     use-theme-escape & {
       all: revert-layer;

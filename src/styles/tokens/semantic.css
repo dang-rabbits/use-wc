@@ -488,10 +488,40 @@
   --usewc-layout-flex-gap-xlarge: var(--usewc-space-24);
   --usewc-layout-flex-gap-super: var(--usewc-space-32);
 
-  /* Surface — shared by every surface host (dialog, use-card, [popover]): the visible chrome
-     (background/border/radius/shadow), the backdrop behind a modal `<dialog>` (non-modal
-     `[popover]` keeps its transparent UA backdrop), the gap an anchored surface keeps from its
-     anchor, and the internal header/poster/footer region layout they all apply the same way. */
+  /* Layout regions — the density scale each `use-layout` variant sets on itself, which the one
+     generic set of header / main / footer rules in `theme/layout.css` then reads. The four
+     variants are deliberately far apart: a document and a card in a feed can't share one
+     padding step and still read as themselves, so each gets its own rather than overriding a
+     shared base. The hairline colour is shared, since a rule is a rule wherever it lands. */
+  --usewc-color-region-border: var(--usewc-color-surface-border);
+  --usewc-layout-region-title-gap: var(--usewc-space-2);
+
+  --usewc-layout-prose-padding: var(--usewc-space-32);
+  --usewc-layout-prose-gap: var(--usewc-space-16);
+  --usewc-layout-prose-measure: 68ch;
+  --usewc-layout-prose-avatar-size: var(--usewc-space-24);
+
+  --usewc-layout-page-padding: var(--usewc-space-20);
+  --usewc-layout-page-padding-block: var(--usewc-space-12);
+  --usewc-layout-page-gap: var(--usewc-space-12);
+  --usewc-layout-page-avatar-size: var(--usewc-space-32);
+
+  --usewc-layout-card-padding: var(--usewc-space-12);
+  --usewc-layout-card-gap: var(--usewc-space-8);
+  --usewc-layout-card-avatar-size: var(--usewc-space-24);
+
+  /* The message rail width and its avatar are one value on purpose: a grouped message omits its
+     header and leaves the rail empty, and the bodies only stay aligned down a feed if the empty
+     rail is exactly as wide as the avatar it replaces. */
+  --usewc-layout-message-padding: var(--usewc-space-12);
+  --usewc-layout-message-gap: var(--usewc-space-12);
+  --usewc-layout-message-rail: var(--usewc-space-32);
+
+  /* Surface — the visible chrome for a surface host (background/border/radius/shadow), the
+     backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA
+     backdrop), and the gap an anchored surface keeps from its anchor. `-padding` is the inset a
+     `dialog`/`[popover]` keeps from the viewport edge when sizing itself, not region padding —
+     the regions inside one come from whichever `use-layout` variant is nested there. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
   --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);
@@ -500,11 +530,8 @@
   --usewc-effect-surface-border-radius: var(--usewc-effect-border-radius-8);
   --usewc-effect-surface-shadow: var(--usewc-effect-shadow-raised);
   --usewc-effect-surface-transition-duration: 200ms;
-  --usewc-space-surface-padding: var(--usewc-space-16);
-  --usewc-space-surface-gap: var(--usewc-space-12);
-  --usewc-layout-surface-avatar-size: var(--usewc-space-32);
+  --usewc-layout-surface-padding: var(--usewc-space-16);
   --usewc-effect-surface-avatar-border-radius: var(--usewc-effect-border-radius-full);
-  --usewc-color-surface-footer-border: var(--usewc-color-surface-border);
 }
 
 @media (prefers-color-scheme: dark) {
