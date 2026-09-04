@@ -1,0 +1,37 @@
+/* Anchored surface positioning — a modal `<dialog>` or `[popover]` positioned against an
+   invoker (wrapped in `use-anchored`) keeps a small gap from it and stays willing to flip to
+   the other side on scroll. An anchored surface carries no region layout of its own — nest a
+   `use-layout` variant inside it, the same as any other `dialog`/`[popover]` (`layout.css`). */
+@layer use-theme.anchored {
+  /* An anchored surface keeps a small gap from its anchor, the same convention `use-menu`
+     follows in `menu.css`. Scoped to `use-anchored`'s direct child — the one reliable "this is
+     anchored" signal — so a standalone `[popover]` or modal `<dialog>` elsewhere keeps its UA
+     centering. `margin-block` (both edges) so the gap survives a `position-try` flip to the
+     other side. The open-state check mirrors the positioning util: `:popover-open` for a
+     popover, `[open]` for a `<dialog>`.
+
+     The `max-block-size` override is what lets it flip on scroll instead of shrinking.
+     `popover.css` / `dialog.css` cap the surface at `min(80dvh, 100% - <pad>)`, where `100%`
+     is the free space on the anchor's *current* side — so as the anchor nears a viewport edge
+     that cap shrinks with it, the surface never overflows, and `position-try` never sees the
+     overflow it needs to flip (or to flip back). Reworking the cap to
+     `min(80dvh, max(45dvh, 100% - <pad>))` keeps the surface willing to be at least 45dvh: a
+     side smaller than that overflows and triggers a flip, and since sibling sides sum to nearly
+     the full viewport a 45dvh surface always fits the other one, so the flip lands on-screen.
+     Where a side has more than 45dvh the `100%` term still tracks it, up to 80dvh. Left at the
+     default `position-try-order` (not `most-block-size`) so the surface stays on the block-end
+     (below) side whenever the content fits there, only flipping above when it doesn't — rather
+     than jumping to whichever side merely has more room. `overflow` (otherwise `hidden`)
+     scrolls the content once the cap bites; a surface with a `[fill]` region already scrolls
+     that region (`layout.css`), so the surface itself never overflows there and this `overflow`
+     is inert. */
+  use-anchored > :is(dialog, [popover]):not(use-menu, .appearance-native):is([open], :popover-open) {
+    margin-block: var(--usewc-layout-surface-anchor-offset);
+    max-block-size: min(80dvh, max(45dvh, 100% - var(--usewc-layout-surface-padding) * 2));
+    overflow: auto;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

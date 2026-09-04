@@ -6,7 +6,8 @@
    is already a specific enough signal on its own). Anchor positioning (`anchor-name`/
    `position-anchor`) is left to the author, the same way plain `[popover]` elements work
    otherwise — this only replaces the UA default chrome with the shared `surface` tokens,
-   matching `dialog`/`use-card`.
+   matching `dialog` / `use-layout.card`. Chrome only, like `dialog`: nest a `use-layout`
+   variant inside to arrange a header / body / footer (`layout.css`).
 
    The `::backdrop` is deliberately left at its transparent UA default: a `[popover]` at
    `popover="auto"` is non-modal — the page stays interactive and an outside click dismisses it
@@ -27,8 +28,8 @@
     background: var(--usewc-color-surface-background);
     box-shadow: var(--usewc-effect-surface-shadow);
     color: var(--usewc-color-document-text);
-    max-inline-size: min(24rem, 100% - var(--usewc-space-surface-padding) * 2);
-    max-block-size: min(80dvh, 100% - var(--usewc-space-surface-padding) * 2);
+    max-inline-size: min(24rem, 100% - var(--usewc-layout-surface-padding) * 2);
+    max-block-size: min(80dvh, 100% - var(--usewc-layout-surface-padding) * 2);
 
     use-theme-escape & {
       all: revert-layer;

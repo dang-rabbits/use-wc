@@ -15,7 +15,7 @@ function tokensMatching(...prefixes: string[]) {
 
 const tokenLists = {
   color: tokensMatching("--usewc-color-"),
-  size: tokensMatching("--usewc-size-", "--usewc-space-"),
+  size: tokensMatching("--usewc-space-", "--usewc-layout-"),
   font: tokensMatching("--usewc-font-", "--usewc-line-height-"),
   effect: tokensMatching("--usewc-effect-", "--usewc-transition-"),
   all: allTokens,
