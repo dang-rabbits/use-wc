@@ -4,6 +4,7 @@ import { html } from "lit";
 
 import "../tokens.css";
 import "../theme.css";
+import "../../elements/use-avatar/use-avatar";
 
 function styleOf(element: Element, property: string) {
   return getComputedStyle(element).getPropertyValue(property);
@@ -191,18 +192,46 @@ describe("layout region treatment", () => {
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("space-between");
     });
 
-    it("sizes an avatar and grows the title group", async () => {
+    it("squares a figure avatar and grows the title group", async () => {
       render(html`
         <use-layout class="page">
           <header>
-            <img id="avatar" class="avatar" alt="" src=${imageSource} />
+            <figure id="avatar"><img id="portrait" alt="" src=${imageSource} /></figure>
             <hgroup id="hgroup"><h4>Title</h4></hgroup>
           </header>
         </use-layout>
       `);
+      const avatar = document.getElementById("avatar")!;
 
-      expect(styleOf(document.getElementById("avatar")!, "width")).toBe("32px");
+      expect(styleOf(avatar, "width")).toBe("32px");
+      expect(styleOf(avatar, "height")).toBe("32px");
+      expect(styleOf(avatar, "margin-left")).toBe("0px");
+      expect(styleOf(document.getElementById("portrait")!, "object-fit")).toBe("cover");
       expect(styleOf(document.getElementById("hgroup")!, "flex-grow")).toBe("1");
+    });
+
+    it("sizes a use-avatar in a header to the variant's avatar size", async () => {
+      render(html`
+        <use-layout class="page">
+          <header><use-avatar id="avatar" name="Riley Quinn"></use-avatar></header>
+        </use-layout>
+      `);
+      const avatar = document.getElementById("avatar")!;
+
+      expect(styleOf(avatar, "width")).toBe("32px");
+      expect(styleOf(avatar, "height")).toBe("32px");
+    });
+
+    it("leaves a bare img in a header alone, with no avatar class convention", async () => {
+      render(html`
+        <use-layout class="page">
+          <header>
+            <img id="logo" alt="" src=${imageSource} />
+          </header>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("logo")!, "border-radius")).toBe("0px");
     });
   });
 
@@ -276,6 +305,22 @@ describe("layout region treatment", () => {
           railRight,
         );
       }
+    });
+
+    it("puts a use-avatar in the rail, sized to it", async () => {
+      render(html`
+        <use-layout class="message">
+          <use-avatar id="avatar" name="Riley Quinn"></use-avatar>
+          <main id="body">body</main>
+        </use-layout>
+      `);
+      const avatar = document.getElementById("avatar")!;
+
+      expect(styleOf(avatar, "width")).toBe("32px");
+      expect(styleOf(avatar, "height")).toBe("32px");
+      expect(document.getElementById("body")!.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+        avatar.getBoundingClientRect().right,
+      );
     });
 
     it("centres a rail figure that isn't a photo", async () => {
