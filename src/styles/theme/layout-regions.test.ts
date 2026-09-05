@@ -13,7 +13,7 @@ function styleOf(element: Element, property: string) {
 const imageSource =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3C/svg%3E";
 
-const variants = ["page", "prose", "message", "card"];
+const variants = ["page", "entry", "message", "card"];
 
 describe("layout region treatment", () => {
   describe("shared across variants", () => {
@@ -99,30 +99,86 @@ describe("layout region treatment", () => {
       });
     }
 
+    it("gives a title group explicit line boxes and steps the subtitle down", async () => {
+      render(html`
+        <use-layout class="entry">
+          <header>
+            <hgroup>
+              <h4 id="title">Riley Quinn</h4>
+              <p id="subtitle">Opened 3 days ago</p>
+            </hgroup>
+          </header>
+        </use-layout>
+      `);
+      const title = document.getElementById("title")!;
+      const subtitle = document.getElementById("subtitle")!;
+
+      expect(styleOf(title, "line-height")).toBe("20px");
+      expect(styleOf(subtitle, "line-height")).toBe("14px");
+      expect(parseFloat(styleOf(subtitle, "font-size"))).toBeLessThan(
+        parseFloat(styleOf(title, "font-size")),
+      );
+      expect(styleOf(subtitle, "color")).not.toBe(styleOf(title, "color"));
+    });
+
     it("gives each variant its own density rather than one shared padding", async () => {
       render(html`
         <div>
           ${variants.map(
             (variant) => html`
-              <use-layout class=${variant}>
-                <header id="header-${variant}">Title</header>
+              <use-layout class=${variant} id=${`layout-${variant}`}>
+                <header id=${`header-${variant}`}>Title</header>
               </use-layout>
             `,
           )}
         </div>
       `);
 
+      // The rail variants pad the container and zero their regions; the others pad each region.
+      // Read whichever one owns it, so an unset density token can't hide behind a 0.
       const padding = Object.fromEntries(
         variants.map((variant) => [
           variant,
-          styleOf(document.getElementById(`header-${variant}`)!, "padding-left"),
+          styleOf(
+            document.getElementById(
+              variant === "entry" || variant === "message"
+                ? `layout-${variant}`
+                : `header-${variant}`,
+            )!,
+            "padding-left",
+          ),
         ]),
       );
 
-      expect(padding.prose).toBe("32px");
       expect(padding.page).toBe("20px");
       expect(padding.card).toBe("12px");
-      expect(padding.message).toBe("0px");
+      expect(padding.entry).toBe("16px");
+      expect(padding.message).toBe("12px");
+    });
+
+    it("resolves every density token each variant declares", async () => {
+      render(html`
+        <div>
+          ${variants.map(
+            (variant) => html`
+              <use-layout class=${variant} id=${`v-${variant}`}>
+                <header>Title</header>
+              </use-layout>
+            `,
+          )}
+        </div>
+      `);
+
+      for (const variant of variants) {
+        const element = document.getElementById(`v-${variant}`)!;
+        for (const property of [
+          "--usewc-layout-region-padding",
+          "--usewc-layout-region-gap",
+          "--usewc-layout-region-avatar-size",
+        ]) {
+          expect(styleOf(element, property).trim(), `${variant} ${property}`).not.toBe("");
+        }
+      }
     });
 
     it("keeps region rules overridable by a plain class, since the container adds no specificity", async () => {
@@ -203,8 +259,8 @@ describe("layout region treatment", () => {
       `);
       const avatar = document.getElementById("avatar")!;
 
-      expect(styleOf(avatar, "width")).toBe("32px");
-      expect(styleOf(avatar, "height")).toBe("32px");
+      expect(styleOf(avatar, "width")).toBe("36px");
+      expect(styleOf(avatar, "height")).toBe("36px");
       expect(styleOf(avatar, "margin-left")).toBe("0px");
       expect(styleOf(document.getElementById("portrait")!, "object-fit")).toBe("cover");
       expect(styleOf(document.getElementById("hgroup")!, "flex-grow")).toBe("1");
@@ -218,8 +274,8 @@ describe("layout region treatment", () => {
       `);
       const avatar = document.getElementById("avatar")!;
 
-      expect(styleOf(avatar, "width")).toBe("32px");
-      expect(styleOf(avatar, "height")).toBe("32px");
+      expect(styleOf(avatar, "width")).toBe("36px");
+      expect(styleOf(avatar, "height")).toBe("36px");
     });
 
     it("leaves a bare img in a header alone, with no avatar class convention", async () => {
@@ -232,51 +288,6 @@ describe("layout region treatment", () => {
       `);
 
       expect(styleOf(document.getElementById("logo")!, "border-radius")).toBe("0px");
-    });
-  });
-
-  describe("prose", () => {
-    it("stacks the header and shares the body's measure", async () => {
-      render(html`
-        <use-layout class="prose" style="inline-size: 2000px">
-          <header id="header">
-            <h1>Title</h1>
-            <p>A byline</p>
-          </header>
-          <main id="body">body</main>
-        </use-layout>
-      `);
-      const header = document.getElementById("header")!;
-      const body = document.getElementById("body")!;
-
-      expect(styleOf(header, "flex-direction")).toBe("column");
-      expect(styleOf(header, "align-items")).toBe("start");
-      expect(styleOf(header, "max-inline-size")).toBe(styleOf(body, "max-inline-size"));
-      expect(styleOf(body, "max-inline-size")).not.toBe("none");
-    });
-
-    it("keeps a figure full-bleed while the header stays inside the measure", async () => {
-      render(html`
-        <use-layout class="prose" style="inline-size: 2000px">
-          <figure id="figure"><img alt="" src=${imageSource} /></figure>
-          <header id="header"><h1>Title</h1></header>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("figure")!, "max-inline-size")).toBe("none");
-      expect(styleOf(document.getElementById("header")!, "max-inline-size")).not.toBe("none");
-    });
-
-    it("leaves an hgroup alone, since the header is a column", async () => {
-      render(html`
-        <use-layout class="prose">
-          <header>
-            <hgroup id="hgroup"><h1>Title</h1></hgroup>
-          </header>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("hgroup")!, "flex-grow")).toBe("0");
     });
   });
 
@@ -297,7 +308,7 @@ describe("layout region treatment", () => {
       `);
 
       expect(styleOf(document.getElementById("message")!, "display")).toBe("grid");
-      expect(styleOf(document.getElementById("rail")!, "width")).toBe("32px");
+      expect(styleOf(document.getElementById("rail")!, "width")).toBe("36px");
 
       const railRight = document.getElementById("rail")!.getBoundingClientRect().right;
       for (const id of ["header", "body", "footer"]) {
@@ -316,8 +327,8 @@ describe("layout region treatment", () => {
       `);
       const avatar = document.getElementById("avatar")!;
 
-      expect(styleOf(avatar, "width")).toBe("32px");
-      expect(styleOf(avatar, "height")).toBe("32px");
+      expect(styleOf(avatar, "width")).toBe("36px");
+      expect(styleOf(avatar, "height")).toBe("36px");
       expect(document.getElementById("body")!.getBoundingClientRect().left).toBeGreaterThanOrEqual(
         avatar.getBoundingClientRect().right,
       );
@@ -335,8 +346,8 @@ describe("layout region treatment", () => {
       expect(styleOf(rail, "display")).toBe("flex");
       expect(styleOf(rail, "align-items")).toBe("center");
       expect(styleOf(rail, "justify-content")).toBe("center");
-      expect(styleOf(rail, "width")).toBe("32px");
-      expect(styleOf(rail, "height")).toBe("32px");
+      expect(styleOf(rail, "width")).toBe("36px");
+      expect(styleOf(rail, "height")).toBe("36px");
     });
 
     it("treats a figure in the body as an attachment, not the rail", async () => {
@@ -399,9 +410,7 @@ describe("layout region treatment", () => {
         </use-layout>
       `);
 
-      expect(styleOf(document.getElementById("header")!, "border-bottom-color")).toBe(
-        "rgba(0, 0, 0, 0)",
-      );
+      expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("flex-start");
     });
   });
