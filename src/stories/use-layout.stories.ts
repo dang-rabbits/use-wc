@@ -373,14 +373,10 @@ export const HeaderAndFooterSections: Story = {
  */
 export const InsideADialog: Story = {
   render: () => html`
-    <button
-      type="button"
-      @click=${(event: Event) =>
-        ((event.currentTarget as HTMLElement).nextElementSibling as HTMLDialogElement).showModal()}
-    >
+    <button type="button" command="show-modal" commandfor="use-layout-dialog-demo">
       Open modal
     </button>
-    <dialog>
+    <dialog id="use-layout-dialog-demo">
       <use-layout class="card">
         <header>
           <hgroup>
@@ -392,20 +388,16 @@ export const InsideADialog: Story = {
           <p>All boards, cards, and history for this project will be permanently removed.</p>
         </use-layout>
         <footer>
-          <button
-            type="button"
-            @click=${(event: Event) =>
-              (event.currentTarget as HTMLElement).closest("dialog")?.close()}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            @click=${(event: Event) =>
-              (event.currentTarget as HTMLElement).closest("dialog")?.close()}
-          >
-            Delete
-          </button>
+          <section>
+            <button type="button" command="close" commandfor="use-layout-dialog-demo">
+              Cancel
+            </button>
+          </section>
+          <section>
+            <form method="dialog">
+              <button value="delete" class="danger">Delete</button>
+            </form>
+          </section>
         </footer>
       </use-layout>
     </dialog>
@@ -417,14 +409,10 @@ export const InsideADialog: Story = {
  */
 export const Drawer: Story = {
   render: () => html`
-    <button
-      type="button"
-      @click=${(event: Event) =>
-        ((event.currentTarget as HTMLElement).nextElementSibling as HTMLDialogElement).showModal()}
-    >
+    <button type="button" command="show-modal" commandfor="use-layout-drawer-demo">
       Open drawer
     </button>
-    <dialog class="drawer">
+    <dialog class="drawer" id="use-layout-drawer-demo">
       <use-layout class="card" style="block-size: 100%">
         <header>
           <section>
@@ -434,8 +422,8 @@ export const Drawer: Story = {
             <button
               type="button"
               aria-label="Close"
-              @click=${(event: Event) =>
-                (event.currentTarget as HTMLElement).closest("dialog")?.close()}
+              command="close"
+              commandfor="use-layout-drawer-demo"
             >
               &#10005;
             </button>
@@ -445,8 +433,14 @@ export const Drawer: Story = {
           ${Array.from({ length: 12 }, (_, index) => html`<p>Filter option ${index + 1}</p>`)}
         </use-layout>
         <footer>
-          <section><button type="button">Reset</button></section>
-          <section><button type="button">Apply</button></section>
+          <section>
+            <button type="button" command="close" commandfor="use-layout-drawer-demo">Reset</button>
+          </section>
+          <section>
+            <form method="dialog">
+              <button value="apply">Apply</button>
+            </form>
+          </section>
         </footer>
       </use-layout>
     </dialog>
