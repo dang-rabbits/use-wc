@@ -100,6 +100,10 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - do not add inline comments
 - Code should be easily readable by humans, use full names instead of shorthand or abbreviations for variables. Things like "buttons" instead of "btns" or "value" instead of "v"
 
+## Storybook
+
+- story descriptions are JSDoc docblocks above the story declaration, never `parameters.docs.description.story`
+
 ## Git Workflow
 
 - use conventional commits for commit messages with lowercase types and scopes
