@@ -1,0 +1,232 @@
+/* Prose — `use-prose` is a theme-only tag (no custom element registration, styled by tag name
+   like `use-layout`/`use-field`), giving a block of authored text a typographic scale: a heading
+   ramp, the rhythm between blocks, list indentation, quotes, code blocks, rules and tables.
+
+   This is the only place the system sets any of that. Outside a `use-prose`, `h1`-`h6`, `p` and
+   `ul` keep the browser's own defaults, so adopting the design system never silently restyles an
+   app's existing copy — you opt a region of text in.
+
+       <use-prose>
+         <article>
+           <h1>On keeping a field notebook</h1>
+           <p>The point of a field notebook is not to be complete…</p>
+         </article>
+       </use-prose>
+
+   Everything is matched by descent, not as direct children, so `<article>`, `<section>`,
+   `<div>`, `<li>` and `<blockquote>` are transparent at any depth — markdown output nests freely
+   and still reads as prose.
+
+   The rhythm is the space *between* blocks (`+` on siblings) rather than a margin on each, so a
+   heading's spacing above it is stated once instead of emerging from two margins colliding. That
+   also means the first block in any container has no leading margin, and prose drops into a
+   layout region without fighting its padding.
+
+   Prose reaches every descendant, which includes the slotted content of a nested component — a
+   `<p>` inside a `use-layout.card` picks up prose's margins today. That is deliberate for a first
+   pass: the alternative was a hand-maintained list of every `use-` tag to revert inside, which is
+   a lot of upkeep for a problem nobody has hit yet. Wrap the exception in `use-theme-escape` if
+   it bites, and revisit once there's a real case to design against.
+
+   Every rule here is held at the weight of `use-prose` plus one type selector, with `:where()`
+   absorbing the rest, so an author's own selector out-ranks prose without a fight — and a
+   boundary rule can be reintroduced later at equal specificity if it's wanted. */
+@layer use-theme.prose {
+  use-prose {
+    display: block;
+    max-inline-size: var(--usewc-layout-prose-measure);
+    line-height: var(--usewc-layout-prose-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* The blocks prose owns. Their own margins are cleared so the rhythm below is the only source
+     of spacing between them. */
+  use-prose :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, figure, hr) {
+    margin-block: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose
+    :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, figure, hr)
+    + :is(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, figure, hr) {
+    margin-block-start: var(--usewc-layout-prose-flow-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* A heading opens a new section, so it takes more room above it than a paragraph does — but
+     only when something precedes it. */
+  use-prose
+    :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, pre, table, figure, hr)
+    + :is(h1, h2, h3, h4, h5, h6) {
+    margin-block-start: var(--usewc-layout-prose-heading-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose :is(h1, h2, h3, h4, h5, h6) {
+    font-weight: var(--usewc-font-prose-heading-weight);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h1 {
+    font-size: var(--usewc-font-prose-h1-size);
+    line-height: var(--usewc-layout-prose-h1-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h2 {
+    font-size: var(--usewc-font-prose-h2-size);
+    line-height: var(--usewc-layout-prose-h2-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h3 {
+    font-size: var(--usewc-font-prose-h3-size);
+    line-height: var(--usewc-layout-prose-h3-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h4 {
+    font-size: var(--usewc-font-prose-h4-size);
+    line-height: var(--usewc-layout-prose-h4-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h5 {
+    font-size: var(--usewc-font-prose-h5-size);
+    line-height: var(--usewc-layout-prose-h5-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose h6 {
+    font-size: var(--usewc-font-prose-h6-size);
+    line-height: var(--usewc-layout-prose-h6-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose :is(ul, ol) {
+    padding-inline-start: var(--usewc-layout-prose-list-indent);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose blockquote {
+    border-inline-start: var(--usewc-layout-prose-quote-border) solid var(--usewc-color-prose-quote-border);
+    padding-inline-start: var(--usewc-layout-prose-quote-gap);
+    color: var(--usewc-color-prose-quote-text);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose pre {
+    padding: var(--usewc-layout-prose-block-padding);
+    overflow-x: auto;
+    background: var(--usewc-color-prose-code-background);
+    border: var(--usewc-layout-prose-rule-size) solid var(--usewc-color-prose-code-border);
+    border-radius: var(--usewc-effect-prose-code-border-radius);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* `code.css` paints an inline pill — a tinted, padded, rounded inline-block. Inside a `<pre>`
+     that reads as a badge floating in a slab, so the pill is undone and the code fills the block
+     instead. The monospace family and size stay; only the inline chrome goes. */
+  use-prose :where(pre) > code {
+    display: block;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: none;
+    color: inherit;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose hr {
+    border: none;
+    border-block-start: var(--usewc-layout-prose-rule-size) solid var(--usewc-color-prose-rule);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose table {
+    inline-size: 100%;
+    border-collapse: collapse;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose :is(th, td) {
+    padding-block: var(--usewc-layout-prose-cell-padding-block);
+    padding-inline: var(--usewc-layout-prose-cell-padding-inline);
+    border-block-end: var(--usewc-layout-prose-rule-size) solid var(--usewc-color-prose-cell-border);
+    text-align: start;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose figcaption {
+    font-size: var(--usewc-font-prose-caption-size);
+    color: var(--usewc-color-prose-caption-text);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-prose :where(figure) > :is(img, picture, video) {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

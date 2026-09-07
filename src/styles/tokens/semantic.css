@@ -498,34 +498,100 @@
   --usewc-layout-flex-gap-xlarge: var(--usewc-space-24);
   --usewc-layout-flex-gap-super: var(--usewc-space-32);
 
+  /* Prose — the typographic scale for a block of authored text (see `theme/prose.css`). It is
+     the only place this system sets heading sizes, paragraph rhythm or list indentation: outside
+     a `use-prose`, flow content keeps the browser's own defaults, so adopting the design system
+     never silently restyles an app's existing copy.
+
+     The rhythm is expressed as the space *between* blocks rather than a margin on each, so the
+     scale reads as one ramp instead of a set of colliding margins. */
+  --usewc-layout-prose-measure: 68ch;
+  --usewc-layout-prose-flow-gap: var(--usewc-space-16);
+  --usewc-layout-prose-heading-gap: var(--usewc-space-32);
+  --usewc-layout-prose-list-indent: var(--usewc-space-24);
+  --usewc-layout-prose-quote-border: var(--usewc-space-2);
+  --usewc-layout-prose-quote-gap: var(--usewc-space-16);
+  --usewc-layout-prose-rule-size: var(--usewc-space-1);
+  --usewc-layout-prose-block-padding: var(--usewc-space-16);
+  --usewc-layout-prose-cell-padding-block: var(--usewc-space-8);
+  --usewc-layout-prose-cell-padding-inline: var(--usewc-space-12);
+
+  --usewc-font-prose-h1-size: var(--usewc-font-size-24);
+  --usewc-font-prose-h2-size: var(--usewc-font-size-20);
+  --usewc-font-prose-h3-size: var(--usewc-font-size-18);
+  --usewc-font-prose-h4-size: var(--usewc-font-size-16);
+  --usewc-font-prose-h5-size: var(--usewc-font-size-14);
+  --usewc-font-prose-h6-size: var(--usewc-font-size-14);
+  --usewc-font-prose-heading-weight: 600;
+  --usewc-font-prose-caption-size: var(--usewc-font-size-14);
+
+  --usewc-layout-prose-h1-line-height: var(--usewc-line-height-32);
+  --usewc-layout-prose-h2-line-height: var(--usewc-line-height-28);
+  --usewc-layout-prose-h3-line-height: var(--usewc-line-height-24);
+  --usewc-layout-prose-h4-line-height: var(--usewc-line-height-24);
+  --usewc-layout-prose-h5-line-height: var(--usewc-line-height-20);
+  --usewc-layout-prose-h6-line-height: var(--usewc-line-height-20);
+  /* The body line box every flow block inherits — paragraphs, list items, table cells, quotes.
+     Headings declare their own below, so this is the one value that sets reading rhythm. */
+  --usewc-layout-prose-line-height: var(--usewc-line-height-24);
+
+  --usewc-color-prose-quote-border: var(--usewc-color-surface-border);
+  --usewc-color-prose-quote-text: var(--usewc-color-document-text-muted);
+  --usewc-color-prose-caption-text: var(--usewc-color-document-text-muted);
+  --usewc-color-prose-rule: var(--usewc-color-surface-border);
+  --usewc-color-prose-cell-border: var(--usewc-color-surface-border);
+  /* A code block is a slab, not the inline pill `code.css` paints — it gets a neutral ground of
+     its own so the page's own background can sit behind it. */
+  --usewc-color-prose-code-background: var(--usewc-color-gray-50);
+  --usewc-color-prose-code-border: var(--usewc-color-surface-border);
+  --usewc-effect-prose-code-border-radius: var(--usewc-effect-border-radius-6);
+
   /* Layout regions — the density scale each `use-layout` variant sets on itself, which the one
      generic set of header / main / footer rules in `theme/layout.css` then reads. The four
      variants are deliberately far apart: a document and a card in a feed can't share one
      padding step and still read as themselves, so each gets its own rather than overriding a
      shared base. The hairline colour is shared, since a rule is a rule wherever it lands. */
   --usewc-color-region-border: var(--usewc-color-surface-border);
+  --usewc-layout-region-rule: var(--usewc-layout-surface-border) solid var(--usewc-color-region-border);
   --usewc-layout-region-title-gap: var(--usewc-space-2);
-
-  --usewc-layout-prose-padding: var(--usewc-space-32);
-  --usewc-layout-prose-gap: var(--usewc-space-16);
-  --usewc-layout-prose-measure: 68ch;
-  --usewc-layout-prose-avatar-size: var(--usewc-space-24);
+  /* A title group sits beside a fixed-size avatar, so its lines are given explicit line boxes
+     rather than the document's ratio — a stacked title and subtitle then add up to a known
+     height instead of drifting with the inherited leading. The subtitle steps down a size, since
+     a timestamp or a byline is secondary to the thing it belongs to. */
+  --usewc-layout-region-title-line-height: var(--usewc-line-height-20);
+  --usewc-font-region-subtitle-size: var(--usewc-font-size-14);
+  --usewc-layout-region-subtitle-line-height: var(--usewc-line-height-14);
+  /* A stacked title and subtitle add up to this, and it's what an avatar beside them is sized
+     to — so the two always agree, and both land on a base button's 36px height rather than
+     being pinned there by a magic number. */
+  --usewc-layout-region-title-block-size: calc(
+    var(--usewc-layout-region-title-line-height) + var(--usewc-layout-region-title-gap) +
+      var(--usewc-layout-region-subtitle-line-height)
+  );
 
   --usewc-layout-page-padding: var(--usewc-space-20);
   --usewc-layout-page-padding-block: var(--usewc-space-12);
   --usewc-layout-page-gap: var(--usewc-space-12);
-  --usewc-layout-page-avatar-size: var(--usewc-space-32);
+  --usewc-layout-page-avatar-size: var(--usewc-layout-region-title-block-size);
 
   --usewc-layout-card-padding: var(--usewc-space-12);
   --usewc-layout-card-gap: var(--usewc-space-8);
   --usewc-layout-card-avatar-size: var(--usewc-space-24);
 
-  /* The message rail width and its avatar are one value on purpose: a grouped message omits its
-     header and leaves the rail empty, and the bodies only stay aligned down a feed if the empty
-     rail is exactly as wide as the avatar it replaces. */
+  /* Avatar sizes match a base button's 36px height, so a likeness and the controls beside it in
+     a header line up on both edges rather than one floating inside the other.
+
+     An entry's avatar size doubles as the width of the rail its regions sit beside — a grouped
+     entry omits the avatar entirely, and the bodies only stay aligned down a list if the
+     reserved strip is exactly as wide as the avatar it replaces. `.message` is the same layout
+     at chat density, since it repeats far more often in a feed. */
+  --usewc-layout-entry-padding: var(--usewc-space-16);
+  --usewc-layout-entry-gap: var(--usewc-space-12);
+  --usewc-layout-entry-avatar-size: var(--usewc-layout-region-title-block-size);
+
   --usewc-layout-message-padding: var(--usewc-space-12);
   --usewc-layout-message-gap: var(--usewc-space-12);
-  --usewc-layout-message-rail: var(--usewc-space-32);
+  --usewc-layout-message-rail: var(--usewc-layout-region-title-block-size);
 
   /* Surface — the visible chrome for a surface host (background/border/radius/shadow), the
      backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA
@@ -553,6 +619,7 @@
     /* The primary/danger fill stays the same shade in both themes — only the
        focus ring lightens in the dark. */
     --usewc-color-outline: var(--usewc-color-blue-400);
+    --usewc-color-prose-code-background: var(--usewc-color-gray-900);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
     --usewc-color-input-border-static: var(--usewc-color-gray-600);
     --usewc-color-input-text-static: var(--usewc-color-gray-200);

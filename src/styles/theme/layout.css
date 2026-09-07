@@ -14,8 +14,8 @@
    `<main>` / `<footer>` regions are arranged to match:
 
      use-layout.page      an app frame      — ruled topbar and footer, roomy
-     use-layout.prose     a document        — stacked title/byline header, measure-capped, loose
-     use-layout.message   a chat or comment — an avatar rail with the regions beside it, compact
+     use-layout.entry     a row in a list   — a leading avatar rail with the regions beside it
+     use-layout.message   a chat or comment — `.entry`'s layout at chat density
      use-layout.card      a panel           — avatar + hgroup + actions, end-aligned ruled
                                               footer, compact, plus the chrome at end of file
 
@@ -26,10 +26,9 @@
 
    Rather than four arrangements, a variant class sets *only* a density scale on itself
    (`--usewc-layout-region-padding`, `-gap`, `-avatar-size`, `--usewc-layout-header-rule`,
-   `-footer-rule`, `--usewc-layout-footer-justify`, `--usewc-layout-measure`) and one generic set
-   of region rules reads them. Just three arrangements can't be said in a property — prose's
-   column header, message's rail, message's inline hgroup — and those follow as structural
-   overrides. The mechanic isn't repeated per variant either: a `use-layout.page` is a
+   `-footer-rule`, `--usewc-layout-footer-justify`, `-row-gap`) and one generic set of region
+   rules reads them. Only a couple of arrangements can't be said in a property — the entry and
+   message rail, and message's inline hgroup — and those follow as structural overrides. The mechanic isn't repeated per variant either: a `use-layout.page` is a
    `use-layout`, so the base pin/grow rules above already cover it.
 
    Every selector stays compound (`use-layout.page`, never a bare `.page`) so none of these
@@ -231,8 +230,8 @@
     --usewc-layout-region-padding-block: var(--usewc-layout-page-padding-block);
     --usewc-layout-region-gap: var(--usewc-layout-page-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-page-avatar-size);
-    --usewc-layout-header-rule: var(--usewc-color-region-border);
-    --usewc-layout-footer-rule: var(--usewc-color-region-border);
+    --usewc-layout-header-rule: var(--usewc-layout-region-rule);
+    --usewc-layout-footer-rule: var(--usewc-layout-region-rule);
     --usewc-layout-footer-justify: space-between;
 
     use-theme-escape & {
@@ -240,12 +239,11 @@
     }
   }
 
-  use-layout.prose {
-    --usewc-layout-region-padding: var(--usewc-layout-prose-padding);
-    --usewc-layout-region-gap: var(--usewc-layout-prose-gap);
-    --usewc-layout-region-avatar-size: var(--usewc-layout-prose-avatar-size);
-    --usewc-layout-measure: var(--usewc-layout-prose-measure);
-    --usewc-layout-footer-rule: var(--usewc-color-region-border);
+  use-layout.entry {
+    --usewc-layout-region-padding: var(--usewc-layout-entry-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-entry-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-entry-avatar-size);
+    --usewc-layout-region-row-gap: var(--usewc-layout-entry-gap);
     --usewc-layout-footer-justify: flex-start;
 
     use-theme-escape & {
@@ -253,10 +251,12 @@
     }
   }
 
+  /* Chat density on top of `.entry`'s layout — tighter, since a message repeats down a feed. */
   use-layout.message {
     --usewc-layout-region-padding: var(--usewc-layout-message-padding);
     --usewc-layout-region-gap: var(--usewc-layout-message-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-message-rail);
+    --usewc-layout-region-row-gap: var(--usewc-layout-region-title-gap);
     --usewc-layout-footer-justify: flex-start;
 
     use-theme-escape & {
@@ -268,7 +268,7 @@
     --usewc-layout-region-padding: var(--usewc-layout-card-padding);
     --usewc-layout-region-gap: var(--usewc-layout-card-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-card-avatar-size);
-    --usewc-layout-footer-rule: var(--usewc-color-region-border);
+    --usewc-layout-footer-rule: var(--usewc-layout-region-rule);
     --usewc-layout-footer-justify: flex-end;
 
     use-theme-escape & {
@@ -276,11 +276,15 @@
     }
   }
 
+  /* A rule token carries the whole border value, not just its colour, so a variant that never
+     names one gets `0 solid transparent` — no width. Declaring only a colour and leaving the
+     width at 1px would give every ruleless header and footer an invisible pixel of border, which
+     is enough to push a 36px control into a 37px region. */
   /* ── Generic regions ────────────────────────────────────────────────────────────────────────
-     One ruleset for all four variants, reading the properties above. A rule colour left unset
+     One ruleset for every variant, reading the properties above. A rule colour left unset
      falls back to `transparent`, so a variant opts into a hairline by naming one rather than by
      having a rule of its own. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) {
+  :where(use-layout:is(.page, .entry, .message, .card)) {
     min-block-size: 0;
 
     use-theme-escape & {
@@ -288,7 +292,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > use-layout[fill] {
+  :where(use-layout:is(.page, .entry, .message, .card)) > use-layout[fill] {
     overflow: auto;
     padding: var(--usewc-layout-region-padding);
 
@@ -297,9 +301,8 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > main {
+  :where(use-layout:is(.page, .entry, .message, .card)) > main {
     padding: var(--usewc-layout-region-padding);
-    max-inline-size: var(--usewc-layout-measure, none);
 
     use-theme-escape & {
       all: revert-layer;
@@ -310,9 +313,7 @@
      they'd otherwise stack on top of the padding — a leading `<p>`, `<ul>`, `<ol>` or heading
      would otherwise push itself away from an edge that's already spaced. Matched by position
      rather than by tag so it holds for whatever flow content lands there. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > :is(main, use-layout[fill])
-    > :first-child {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) > :first-child {
     margin-block-start: 0;
 
     use-theme-escape & {
@@ -320,9 +321,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > :is(main, use-layout[fill])
-    > :last-child {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) > :last-child {
     margin-block-end: 0;
 
     use-theme-escape & {
@@ -332,9 +331,7 @@
 
   /* A header already supplies the block-start padding, so the body region drops its own and the
      two read as one padded column rather than a double gap under the header. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > header
-    + :is(main, use-layout[fill]) {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header + :is(main, use-layout[fill]) {
     padding-block-start: 0;
 
     use-theme-escape & {
@@ -342,7 +339,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > figure {
+  :where(use-layout:is(.page, .entry, .message, .card)) > figure {
     margin: 0;
 
     use-theme-escape & {
@@ -350,7 +347,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > figure > img {
+  :where(use-layout:is(.page, .entry, .message, .card)) > figure > img {
     display: block;
     inline-size: 100%;
     block-size: auto;
@@ -361,28 +358,28 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: var(--usewc-layout-region-gap);
     padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
     padding-inline: var(--usewc-layout-region-padding);
-    border-block-end: var(--usewc-layout-surface-border) solid var(--usewc-layout-header-rule, transparent);
+    border-block-end: var(--usewc-layout-header-rule, 0 solid transparent);
 
     use-theme-escape & {
       all: revert-layer;
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > footer {
+  :where(use-layout:is(.page, .entry, .message, .card)) > footer {
     display: flex;
     align-items: center;
     justify-content: var(--usewc-layout-footer-justify, flex-end);
     gap: var(--usewc-layout-region-gap);
     padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
     padding-inline: var(--usewc-layout-region-padding);
-    border-block-start: var(--usewc-layout-surface-border) solid var(--usewc-layout-footer-rule, transparent);
+    border-block-start: var(--usewc-layout-footer-rule, 0 solid transparent);
 
     use-theme-escape & {
       all: revert-layer;
@@ -393,7 +390,7 @@
      since a bare `<img>` in a header is as likely to be a logo as a face, and a class would have
      to be remembered where the element already says it. Both are squared to the variant's avatar
      size; a `<figure>` centres whatever it holds, the same way the message rail does. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > :is(use-avatar, figure) {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header > :is(use-avatar, figure) {
     flex: none;
     inline-size: var(--usewc-layout-region-avatar-size);
     block-size: var(--usewc-layout-region-avatar-size);
@@ -405,7 +402,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > figure {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header > figure {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -418,7 +415,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > figure > img {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header > figure > img {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
@@ -432,7 +429,7 @@
      `<section>` in a topbar — so it's matched by descent rather than as a direct child. Only the
      one sitting directly in a header grows, since that's what pushes trailing actions to the
      far end. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > :is(header, footer) hgroup {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup {
     display: flex;
     flex-direction: column;
     gap: var(--usewc-layout-region-title-gap);
@@ -443,8 +440,29 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > header > hgroup {
+  :where(use-layout:is(.page, .entry, .message, .card)) > header > hgroup {
     flex: 1;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* An `hgroup`'s lines get explicit line boxes so a stacked title and subtitle add up to a
+     predictable height beside a fixed-size avatar, and everything after the first steps down a
+     size — a timestamp, a byline, a location is secondary to the title it hangs off. */
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > * {
+    line-height: var(--usewc-layout-region-title-line-height);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > * + * {
+    font-size: var(--usewc-font-region-subtitle-size);
+    line-height: var(--usewc-layout-region-subtitle-line-height);
+    color: var(--usewc-color-document-text-muted);
 
     use-theme-escape & {
       all: revert-layer;
@@ -456,11 +474,9 @@
      matched at any depth, since a topbar routinely nests them a `<section>` and an `<hgroup>`
      down; `<p>` and friends only need it where they sit directly in the flex flow. Body copy in
      `<main>` keeps its margins, which is the whole point of a paragraph there. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > :is(header, footer) > *,
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > :is(header, footer) hgroup > *,
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > :is(header, footer)
-    :is(h1, h2, h3, h4, h5, h6) {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) > *,
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > *,
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
     margin-block: 0;
 
     use-theme-escape & {
@@ -471,7 +487,7 @@
   /* A `<section>` inside a header or footer is one cluster of related controls. Two or more of
      them means the region has distinct ends, so it splits them apart regardless of the variant's
      default justification. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > :is(header, footer) > section {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) > section {
     display: flex;
     align-items: center;
     gap: var(--usewc-layout-region-gap);
@@ -481,8 +497,7 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > :is(header, footer):has(> section ~ section) {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer):has(> section ~ section) {
     justify-content: space-between;
 
     use-theme-escape & {
@@ -491,40 +506,47 @@
   }
 
   /* ── Structural overrides ───────────────────────────────────────────────────────────────────
-     The three arrangements a density property can't express. Same `:where()` weight as the
-     generic rules, winning on source order. */
+     The arrangements a density property can't express. Same `:where()` weight as the generic
+     rules, winning on source order. */
 
-  /* Prose stacks its header instead of spreading it across a row: an eyebrow, then a title free
-     to wrap, then a byline. It shares `main`'s measure so the two align down the left edge,
-     while a `<figure>` above stays full-bleed to the container. A growing `hgroup` would stretch
-     vertically in a column, so it sizes to content here. */
-  :where(use-layout.prose) > header {
-    flex-direction: column;
-    align-items: start;
-    max-inline-size: var(--usewc-layout-measure);
+  /* `.entry` is the one variant that isn't a column: a leading avatar rail with every other
+     region stacked beside it — a comment, a notification, a search result, a row in a people
+     list. `.message` is the same layout at chat density, so both are matched here.
 
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
+     `align-self: start` on the rail is what keeps it honest. Left to stretch, a rail spanning
+     every row forces the rows to add up to at least its own height, which pads out a short
+     header and drops an awkward gap between the name and the body. Held at the start it sizes
+     to itself, the rows keep their content heights, and spanning still guarantees the entry is
+     never shorter than the rail.
 
-  :where(use-layout.prose) > header > hgroup {
-    flex: 0 1 auto;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  /* A message is the one variant that isn't a column: a fixed avatar rail, then header, body and
-     reactions stacked beside it. It's a grid rather than nested flex so the rail keeps its width
-     when a grouped message omits its header and leaves the rail empty — bodies stay aligned down
-     the feed either way. The container owns the padding, so the regions drop theirs. */
-  use-layout.message {
+     Each variant sets its own row gap. `.entry` spaces its regions evenly, since a title, a body
+     and a row of actions are three separate things. `.message` keeps them tight — a name and the
+     message under it read as one unit — and buys the footer's separation back with a margin, so
+     reactions still sit apart from the text. The rail's column is reserved by `grid-template-columns` whether or not
+     a rail is present, so a grouped entry that omits it still lines its body up with the rest. */
+  use-layout:is(.entry, .message) {
     display: grid;
-    grid-template-columns: var(--usewc-layout-message-rail) 1fr;
-    gap: var(--usewc-layout-region-gap);
+    grid-template-columns: var(--usewc-layout-region-avatar-size) 1fr;
+    column-gap: var(--usewc-layout-region-gap);
+    row-gap: var(--usewc-layout-region-row-gap);
     padding: var(--usewc-layout-region-padding);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout:is(.entry, .message)) > :is(header, main, footer) {
+    grid-column: 2;
+    padding: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout.message) > footer {
+    margin-block-start: var(--usewc-layout-region-gap);
 
     use-theme-escape & {
       all: revert-layer;
@@ -535,11 +557,12 @@
      brings its own initials fallback and shape — and a bare `<figure>` works too, for a date
      badge or an icon that isn't a person. A `<figure>` centres whatever it's given rather than
      assuming an `<img>`; a photo inside one fills the square and crops. */
-  :where(use-layout.message) > :is(use-avatar, figure) {
+  :where(use-layout:is(.entry, .message)) > :is(use-avatar, figure) {
     grid-column: 1;
-    grid-row: 1 / -1;
-    inline-size: var(--usewc-layout-message-rail);
-    block-size: var(--usewc-layout-message-rail);
+    grid-row: 1;
+    align-self: start;
+    inline-size: var(--usewc-layout-region-avatar-size);
+    block-size: var(--usewc-layout-region-avatar-size);
     overflow: hidden;
     border-radius: var(--usewc-effect-surface-avatar-border-radius);
 
@@ -548,11 +571,26 @@
     }
   }
 
-  :where(use-layout.message) > figure {
+  /* The rail shares a centre with the title block rather than being pinned to the top of it, so
+     a stacked title over a subtitle and a single line each sit level with the avatar without
+     either being measured against the other. The rail's own row grows to hold it, so it can
+     never overhang, and everything after the header falls below both.
+
+     With no header the rail has no title to centre against — the body starts at the top of the
+     column and the rail starts with it. */
+  :where(use-layout:is(.entry, .message):has(> header)) > :is(use-avatar, figure) {
+    align-self: center;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout:is(.entry, .message)) > figure {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(var(--usewc-layout-message-rail) * 0.4);
+    font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
     line-height: 1;
 
     use-theme-escape & {
@@ -560,7 +598,7 @@
     }
   }
 
-  :where(use-layout.message) > figure > img {
+  :where(use-layout:is(.entry, .message)) > figure > img {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
@@ -572,7 +610,7 @@
 
   /* A `<figure>` inside the body is an attachment, not the rail — it keeps the flow but sheds the
      UA margin so the region's own spacing is the only spacing. */
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card) > :is(main, use-layout[fill]) figure {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) figure {
     margin-inline: 0;
 
     use-theme-escape & {
@@ -580,23 +618,10 @@
     }
   }
 
-  :where(use-layout.page, use-layout.prose, use-layout.message, use-layout.card)
-    > :is(main, use-layout[fill])
-    figure
-    > img {
+  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) figure > img {
     display: block;
     inline-size: 100%;
     block-size: auto;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  :where(use-layout.message) > :is(header, main, footer) {
-    grid-column: 2;
-    padding: 0;
-    max-inline-size: none;
 
     use-theme-escape & {
       all: revert-layer;

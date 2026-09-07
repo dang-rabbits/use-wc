@@ -52,6 +52,7 @@
   --usewc-font-family-monospace: monospace;
 
   /** Line height */
+  --usewc-line-height-14: 0.875rem;
   --usewc-line-height-18: 1.125rem;
   --usewc-line-height-20: 1.25rem;
   --usewc-line-height-24: 1.5rem;

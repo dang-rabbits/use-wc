@@ -125,7 +125,7 @@ describe("use-layout", () => {
   });
 
   describe("variants", () => {
-    for (const variant of ["page", "prose", "message", "card"]) {
+    for (const variant of ["page", "entry", "message", "card"]) {
       it(`${variant} grows and scrolls its fill region while pinning siblings`, async () => {
         render(html`
           <use-layout class=${variant} style="height: 300px">
@@ -151,17 +151,23 @@ describe("use-layout", () => {
         expect(styleOf(document.getElementById("child")!, "flex-shrink")).toBe("1");
       });
 
-      it(`${variant} defaults to a column, with direction=row overriding`, async () => {
-        render(html`
-          <div>
-            <use-layout id="stacked" class=${variant}><div>a</div></use-layout>
-            <use-layout id="row" class=${variant} direction="row"><div>a</div></use-layout>
-          </div>
-        `);
+      // `.entry` and `.message` fix their own arrangement — a rail with the regions stacked
+      // beside it — so `direction` is not theirs to honour.
+      const honoursDirection = variant !== "entry" && variant !== "message";
+      it.skipIf(!honoursDirection)(
+        `${variant} defaults to a column, with direction=row overriding`,
+        async () => {
+          render(html`
+            <div>
+              <use-layout id="stacked" class=${variant}><div>a</div></use-layout>
+              <use-layout id="row" class=${variant} direction="row"><div>a</div></use-layout>
+            </div>
+          `);
 
-        expect(styleOf(document.getElementById("stacked")!, "flex-direction")).toBe("column");
-        expect(styleOf(document.getElementById("row")!, "flex-direction")).toBe("row");
-      });
+          expect(styleOf(document.getElementById("stacked")!, "flex-direction")).toBe("column");
+          expect(styleOf(document.getElementById("row")!, "flex-direction")).toBe("row");
+        },
+      );
     }
   });
 });
