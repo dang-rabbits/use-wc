@@ -1,6 +1,16 @@
 import type { Preview } from "@storybook/web-components-vite";
 import { setCustomElementsManifest } from "@storybook/web-components-vite";
-import { themes } from "storybook/theming";
+import { create } from "storybook/theming";
+import { createElement } from "react";
+import { fontBase, fontCode } from "./theme-fonts";
+import {
+  Controls,
+  Description,
+  Primary,
+  Stories,
+  Subtitle,
+  Title,
+} from "@storybook/addon-docs/blocks";
 import { addons } from "storybook/preview-api";
 import { html } from "lit";
 
@@ -47,9 +57,25 @@ const preview: Preview = {
   },
   parameters: {
     docs: {
-      theme: window.matchMedia?.("(prefers-color-scheme: dark)").matches
-        ? themes.dark
-        : themes.normal,
+      // The stock autodocs template renders `<Primary/>` and then `<Stories/>`, and `Stories`
+      // defaults to `includePrimary: true` — so the first story of every page is shown twice.
+      // Same template, with that turned off.
+      page: () =>
+        createElement(
+          "div",
+          null,
+          createElement(Title, null),
+          createElement(Subtitle, null),
+          createElement(Description, { of: "meta" }),
+          createElement(Primary, null),
+          createElement(Controls, null),
+          createElement(Stories, { includePrimary: false }),
+        ),
+      theme: create({
+        base: window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+        fontBase,
+        fontCode,
+      }),
       // Keeps the `<use-theme-escape>` wrapper the preview decorator below adds (see its own
       // comment) out of "Show code" — that wrapper is preview-only scaffolding, not something a
       // consumer would ever write themselves.
