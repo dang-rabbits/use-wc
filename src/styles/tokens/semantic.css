@@ -550,7 +550,9 @@
      generic set of header / main / footer rules in `theme/layout.css` then reads. The four
      variants are deliberately far apart: a document and a card in a feed can't share one
      padding step and still read as themselves, so each gets its own rather than overriding a
-     shared base. The hairline colour is shared, since a rule is a rule wherever it lands. */
+     shared base. The hairline colour is shared, since a rule is a rule wherever it lands.
+     `.media` is the exception that proves it — a compact object with one step for its inset and
+     every gap inside it. */
   --usewc-color-region-border: var(--usewc-color-surface-border);
   --usewc-layout-region-rule: var(--usewc-layout-surface-border) solid var(--usewc-color-region-border);
   --usewc-layout-region-title-gap: var(--usewc-space-2);
@@ -576,7 +578,7 @@
 
   --usewc-layout-card-padding: var(--usewc-space-12);
   --usewc-layout-card-gap: var(--usewc-space-8);
-  --usewc-layout-card-avatar-size: var(--usewc-space-24);
+  --usewc-layout-card-avatar-size: var(--usewc-layout-region-title-block-size);
 
   /* Avatar sizes match a base button's 36px height, so a likeness and the controls beside it in
      a header line up on both edges rather than one floating inside the other.
@@ -592,6 +594,12 @@
   --usewc-layout-message-padding: var(--usewc-space-12);
   --usewc-layout-message-gap: var(--usewc-space-12);
   --usewc-layout-message-rail: var(--usewc-layout-region-title-block-size);
+
+  /* A media object is compact — one step drives the container inset, the gap between the rail
+     cell and the body, and the row gap stacking the regions in the body. The rail sizes to its
+     own content, so there's no rail-width token here. */
+  --usewc-layout-media-padding: var(--usewc-space-12);
+  --usewc-layout-media-gap: var(--usewc-space-12);
 
   /* Surface — the visible chrome for a surface host (background/border/radius/shadow), the
      backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA

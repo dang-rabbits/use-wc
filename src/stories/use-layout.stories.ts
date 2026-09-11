@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 import "../elements/use-avatar/use-avatar";
+import "../elements/use-anchored/use-anchored";
 
 const poster =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='160'%3E%3Crect width='480' height='160' fill='%2394a3b8'/%3E%3C/svg%3E";
@@ -25,7 +26,7 @@ const meta: Meta = {
           "",
           "By default `use-layout` doesn't touch its children. Give a direct child `use-layout` the `fill` attribute and it grows to consume the remaining space while every other child is pinned so it can't shrink. `fill` is read **only** on a `use-layout`, and only as a direct child, so an `<svg fill=\"…\">` or an author's own `fill` attribute is never picked up by accident.",
           "",
-          "Four variant classes name what the container *is*, and arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions to match: `page` for an app frame, `entry` for a row in a list, `message` for a chat or comment, and `card` for a panel. Each selector is compound (`use-layout.page`, never a bare `.page`) so these common words can't collide with your own classes.",
+          "Five variant classes name what the container *is*, and arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions to match: `page` for an app frame, `entry` for a row in a list, `message` for a chat or comment, `card` for a panel, and `media` for a media object — a rail that fits its content beside a wider body column. Each selector is compound (`use-layout.page`, never a bare `.page`) so these common words can't collide with your own classes.",
           "",
           "For a block of authored text, reach for `use-prose` instead — typography is its own concern, not a layout.",
         ].join("\n"),
@@ -367,6 +368,33 @@ export const HeaderAndFooterSections: Story = {
 };
 
 /**
+ * A media object, like Bootstrap's `.media` — a rail on the inline-start edge that fits the width of whatever it holds, with the header, body and footer in one column beside it. Unlike `entry`, the rail isn't squared or cropped: a thumbnail keeps its own aspect. The body is one column, so the rail's height doesn't push it around — `main` always sits directly under `header`, one region gap apart.
+ *
+ * The rail is always the first child — `use-avatar`, `figure`, a bare `img` or `svg` all work. Unlike `entry`/`message`, `.media` has no grouped form: the first child is always treated as the rail, so it isn't optional here.
+ */
+export const Media: Story = {
+  render: () => html`
+    <use-layout class="media" style="max-inline-size: 28rem">
+      <figure><img src=${portrait} alt="" style="inline-size: 4rem; border-radius: 6px" /></figure>
+      <header>
+        <hgroup>
+          <h4>Trailhead Lodge</h4>
+          <p>Updated yesterday</p>
+        </hgroup>
+        <button type="button" aria-label="More options">&#8942;</button>
+      </header>
+      <main>
+        <p>A cabin at the edge of the valley, five minutes from the trailhead. Sleeps four.</p>
+      </main>
+      <footer>
+        <button type="button">Share</button>
+        <button type="button">Book now</button>
+      </footer>
+    </use-layout>
+  `,
+};
+
+/**
  * A `<dialog>` and a `[popover]` are chrome only — background, border, shadow, backdrop, sizing. They carry no layout of their own, so nest a `use-layout` variant inside to arrange them. That keeps the overlay element's UA-controlled `display` alone and lets one dialog host any variant.
  *
  * `.card` is usually the one you want, and a card nested directly in an overlay drops its own background, border and shadow rather than stacking a second surface inside one.
@@ -448,18 +476,22 @@ export const Drawer: Story = {
 };
 
 /**
- * An open `[popover]` takes a nested layout the same way a dialog does.
+ * An open `[popover]` takes a nested layout the same way a dialog does. Wrap it in `use-anchored` to pin it to its trigger.
  */
 export const Popover: Story = {
   render: () => html`
-    <button type="button" popovertarget="use-layout-popover-demo">Open popover</button>
-    <div popover id="use-layout-popover-demo" style="max-inline-size: 20rem">
-      <use-layout class="card">
-        <header>
-          <hgroup><h4>Notifications</h4></hgroup>
-        </header>
-        <main><p>You're all caught up.</p></main>
-      </use-layout>
-    </div>
+    <button type="button" id="use-layout-popover-trigger" popovertarget="use-layout-popover-demo">
+      Open popover
+    </button>
+    <use-anchored target="use-layout-popover-trigger">
+      <div popover id="use-layout-popover-demo" style="max-inline-size: 20rem">
+        <use-layout class="card">
+          <header>
+            <hgroup><h4>Notifications</h4></hgroup>
+          </header>
+          <main><p>You're all caught up.</p></main>
+        </use-layout>
+      </div>
+    </use-anchored>
   `,
 };

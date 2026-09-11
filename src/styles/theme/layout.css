@@ -10,7 +10,7 @@
    on a `use-layout`, and only as a direct child, so an `<svg fill="…">` or an author's own
    `fill` attribute anywhere in the tree is untouched — no exclusion list needed.
 
-   Four variant classes name what the container *is*, and its semantic `<figure>` / `<header>` /
+   Five variant classes name what the container *is*, and its semantic `<figure>` / `<header>` /
    `<main>` / `<footer>` regions are arranged to match:
 
      use-layout.page      an app frame      — ruled topbar and footer, roomy
@@ -18,17 +18,20 @@
      use-layout.message   a chat or comment — `.entry`'s layout at chat density
      use-layout.card      a panel           — avatar + hgroup + actions, end-aligned ruled
                                               footer, compact, plus the chrome at end of file
+     use-layout.media     a media object    — a rail cell beside an anonymous body cell holding
+                                              the stacked regions (à la Bootstrap 3's .media)
 
    All four regions are optional and any combination lays out correctly: `header` + `footer` is a
    confirm dialog, `header` + `main` a bare card, `main` alone a grouped chat message. Source
    order is canonical — figure, header, main, footer — and a variant may re-position regions
    visually but never asks an author to reorder markup.
 
-   Rather than four arrangements, a variant class sets *only* a density scale on itself
+   Rather than five arrangements, a variant class sets *only* a density scale on itself
    (`--usewc-layout-region-padding`, `-gap`, `-avatar-size`, `--usewc-layout-header-rule`,
    `-footer-rule`, `--usewc-layout-footer-justify`, `-row-gap`) and one generic set of region
    rules reads them. Only a couple of arrangements can't be said in a property — the entry and
-   message rail, and message's inline hgroup — and those follow as structural overrides. The mechanic isn't repeated per variant either: a `use-layout.page` is a
+   message rail, the media object's table cells, and message's inline hgroup — and those follow
+   as structural overrides. The mechanic isn't repeated per variant either: a `use-layout.page` is a
    `use-layout`, so the base pin/grow rules above already cover it.
 
    Every selector stays compound (`use-layout.page`, never a bare `.page`) so none of these
@@ -276,232 +279,253 @@
     }
   }
 
+  /* `.media` is a media object — a rail beside a wider body column, at one compact density for
+     both the container inset and the gaps within it. The row gap is the standard region gap, so
+     the header, body and footer stack the same distance apart as the rail sits from the body. */
+  use-layout.media {
+    --usewc-layout-region-padding: var(--usewc-layout-media-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-media-gap);
+    --usewc-layout-region-row-gap: var(--usewc-layout-media-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-region-title-block-size);
+    --usewc-layout-footer-justify: flex-start;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
   /* A rule token carries the whole border value, not just its colour, so a variant that never
      names one gets `0 solid transparent` — no width. Declaring only a colour and leaving the
      width at 1px would give every ruleless header and footer an invisible pixel of border, which
      is enough to push a 36px control into a 37px region. */
   /* ── Generic regions ────────────────────────────────────────────────────────────────────────
-     One ruleset for every variant, reading the properties above. A rule colour left unset
-     falls back to `transparent`, so a variant opts into a hairline by naming one rather than by
-     having a rule of its own. */
-  :where(use-layout:is(.page, .entry, .message, .card)) {
+     One ruleset for every variant, reading the properties above. Nested under the shared variant
+     list rather than repeating it on every selector, so it stays in one place as variants are
+     added. A rule colour left unset falls back to `transparent`, so a variant opts into a
+     hairline by naming one rather than by having a rule of its own. */
+  :where(use-layout:is(.page, .entry, .message, .card, .media)) {
     min-block-size: 0;
 
     use-theme-escape & {
       all: revert-layer;
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > use-layout[fill] {
-    overflow: auto;
-    padding: var(--usewc-layout-region-padding);
+    & > use-layout[fill] {
+      overflow: auto;
+      padding: var(--usewc-layout-region-padding);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > main {
-    padding: var(--usewc-layout-region-padding);
+    & > main {
+      padding: var(--usewc-layout-region-padding);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* The region owns its outer spacing, so the first and last things in it shed the block margins
-     they'd otherwise stack on top of the padding — a leading `<p>`, `<ul>`, `<ol>` or heading
-     would otherwise push itself away from an edge that's already spaced. Matched by position
-     rather than by tag so it holds for whatever flow content lands there. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) > :first-child {
-    margin-block-start: 0;
+    /* The region owns its outer spacing, so the first and last things in it shed the block
+       margins they'd otherwise stack on top of the padding — a leading `<p>`, `<ul>`, `<ol>` or
+       heading would otherwise push itself away from an edge that's already spaced. Matched by
+       position rather than by tag so it holds for whatever flow content lands there. */
+    & > :is(main, use-layout[fill]) > :first-child {
+      margin-block-start: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) > :last-child {
-    margin-block-end: 0;
+    & > :is(main, use-layout[fill]) > :last-child {
+      margin-block-end: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* A header already supplies the block-start padding, so the body region drops its own and the
-     two read as one padded column rather than a double gap under the header. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > header + :is(main, use-layout[fill]) {
-    padding-block-start: 0;
+    /* A header already supplies the block-start padding, so the body region drops its own and
+       the two read as one padded column rather than a double gap under the header. A scrolling
+       `use-layout[fill]` keeps its padding, though — with `overflow: auto` a zeroed start edge
+       clips the focus ring of whatever sits at the top of the scroll. */
+    & > header + main {
+      padding-block-start: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > figure {
-    margin: 0;
+    & > figure {
+      margin: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > figure > img {
-    display: block;
-    inline-size: 100%;
-    block-size: auto;
-    object-fit: cover;
+    & > figure > img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      object-fit: cover;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > header {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: var(--usewc-layout-region-gap);
-    padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
-    padding-inline: var(--usewc-layout-region-padding);
-    border-block-end: var(--usewc-layout-header-rule, 0 solid transparent);
+    & > header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--usewc-layout-region-gap);
+      padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
+      padding-inline: var(--usewc-layout-region-padding);
+      border-block-end: var(--usewc-layout-header-rule, 0 solid transparent);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > footer {
-    display: flex;
-    align-items: center;
-    justify-content: var(--usewc-layout-footer-justify, flex-end);
-    gap: var(--usewc-layout-region-gap);
-    padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
-    padding-inline: var(--usewc-layout-region-padding);
-    border-block-start: var(--usewc-layout-footer-rule, 0 solid transparent);
+    & > footer {
+      display: flex;
+      align-items: center;
+      justify-content: var(--usewc-layout-footer-justify, flex-end);
+      gap: var(--usewc-layout-region-gap);
+      padding-block: var(--usewc-layout-region-padding-block, var(--usewc-layout-region-padding));
+      padding-inline: var(--usewc-layout-region-padding);
+      border-block-start: var(--usewc-layout-footer-rule, 0 solid transparent);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* A header's leading likeness is a `use-avatar` or a `<figure>` — no `img.avatar` convention,
-     since a bare `<img>` in a header is as likely to be a logo as a face, and a class would have
-     to be remembered where the element already says it. Both are squared to the variant's avatar
-     size; a `<figure>` centres whatever it holds, the same way the message rail does. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > header > :is(use-avatar, figure) {
-    flex: none;
-    inline-size: var(--usewc-layout-region-avatar-size);
-    block-size: var(--usewc-layout-region-avatar-size);
-    border-radius: var(--usewc-effect-surface-avatar-border-radius);
-    overflow: hidden;
+    /* A header's leading likeness is a `use-avatar` or a `<figure>` — no `img.avatar`
+       convention, since a bare `<img>` in a header is as likely to be a logo as a face, and a
+       class would have to be remembered where the element already says it. Both are squared to
+       the variant's avatar size; a `<figure>` centres whatever it holds, the same way the
+       message rail does. */
+    & > header > :is(use-avatar, figure) {
+      flex: none;
+      inline-size: var(--usewc-layout-region-avatar-size);
+      block-size: var(--usewc-layout-region-avatar-size);
+      border-radius: var(--usewc-effect-surface-avatar-border-radius);
+      overflow: hidden;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > header > figure {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-inline: 0;
-    font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
-    line-height: 1;
+    & > header > figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: 0;
+      font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+      line-height: 1;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > header > figure > img {
-    inline-size: 100%;
-    block-size: 100%;
-    object-fit: cover;
+    & > header > figure > img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* An `hgroup` is a title stack wherever it turns up in a region — often wrapped in a
-     `<section>` in a topbar — so it's matched by descent rather than as a direct child. Only the
-     one sitting directly in a header grows, since that's what pushes trailing actions to the
-     far end. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup {
-    display: flex;
-    flex-direction: column;
-    gap: var(--usewc-layout-region-title-gap);
-    min-inline-size: 0;
+    /* An `hgroup` is a title stack wherever it turns up in a region — often wrapped in a
+       `<section>` in a topbar — so it's matched by descent rather than as a direct child. Only
+       the one sitting directly in a header grows, since that's what pushes trailing actions to
+       the far end. */
+    & > :is(header, footer) hgroup {
+      display: flex;
+      flex-direction: column;
+      gap: var(--usewc-layout-region-title-gap);
+      min-inline-size: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > header > hgroup {
-    flex: 1;
+    & > header > hgroup {
+      flex: 1;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* An `hgroup`'s lines get explicit line boxes so a stacked title and subtitle add up to a
-     predictable height beside a fixed-size avatar, and everything after the first steps down a
-     size — a timestamp, a byline, a location is secondary to the title it hangs off. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > * {
-    line-height: var(--usewc-layout-region-title-line-height);
+    /* An `hgroup`'s lines get explicit line boxes so a stacked title and subtitle add up to a
+       predictable height beside a fixed-size avatar, and everything after the first steps down a
+       size — a timestamp, a byline, a location is secondary to the title it hangs off. The title
+       line box is a floor rather than a fixed value, so a headline larger than an `h4` grows its
+       leading with its font size instead of overlapping the line above. */
+    & > :is(header, footer) hgroup > * {
+      line-height: max(var(--usewc-layout-region-title-line-height), 1.25em);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > * + * {
-    font-size: var(--usewc-font-region-subtitle-size);
-    line-height: var(--usewc-layout-region-subtitle-line-height);
-    color: var(--usewc-color-document-text-muted);
+    & > :is(header, footer) hgroup > * + * {
+      font-size: var(--usewc-font-region-subtitle-size);
+      line-height: var(--usewc-layout-region-subtitle-line-height);
+      color: var(--usewc-color-document-text-muted);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* A header and footer are flex containers and an `hgroup` is a flex column, so `gap` is the
-     spacing — a default block margin stacks on top of it and blows the region apart. Headings are
-     matched at any depth, since a topbar routinely nests them a `<section>` and an `<hgroup>`
-     down; `<p>` and friends only need it where they sit directly in the flex flow. Body copy in
-     `<main>` keeps its margins, which is the whole point of a paragraph there. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) > *,
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) hgroup > *,
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
-    margin-block: 0;
+    /* A header and footer are flex containers and an `hgroup` is a flex column, so `gap` is the
+       spacing — a default block margin stacks on top of it and blows the region apart. Headings
+       are matched at any depth, since a topbar routinely nests them a `<section>` and an
+       `<hgroup>` down; `<p>` and friends only need it where they sit directly in the flex flow.
+       Body copy in `<main>` keeps its margins, which is the whole point of a paragraph there. */
+    & > :is(header, footer) > *,
+    & > :is(header, footer) hgroup > *,
+    & > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
+      margin-block: 0;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  /* A `<section>` inside a header or footer is one cluster of related controls. Two or more of
-     them means the region has distinct ends, so it splits them apart regardless of the variant's
-     default justification. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer) > section {
-    display: flex;
-    align-items: center;
-    gap: var(--usewc-layout-region-gap);
+    /* A `<section>` inside a header or footer is one cluster of related controls. Two or more of
+       them means the region has distinct ends, so it splits them apart regardless of the
+       variant's default justification. */
+    & > :is(header, footer) > section {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-region-gap);
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
-  }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(header, footer):has(> section ~ section) {
-    justify-content: space-between;
+    & > :is(header, footer):has(> section ~ section) {
+      justify-content: space-between;
 
-    use-theme-escape & {
-      all: revert-layer;
+      use-theme-escape & {
+        all: revert-layer;
+      }
     }
   }
 
@@ -610,7 +634,7 @@
 
   /* A `<figure>` inside the body is an attachment, not the rail — it keeps the flow but sheds the
      UA margin so the region's own spacing is the only spacing. */
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) figure {
+  :where(use-layout:is(.page, .entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure {
     margin-inline: 0;
 
     use-theme-escape & {
@@ -618,7 +642,7 @@
     }
   }
 
-  :where(use-layout:is(.page, .entry, .message, .card)) > :is(main, use-layout[fill]) figure > img {
+  :where(use-layout:is(.page, .entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure > img {
     display: block;
     inline-size: 100%;
     block-size: auto;
@@ -635,6 +659,67 @@
     align-items: baseline;
     gap: var(--usewc-layout-region-gap);
     white-space: nowrap;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* `.media` is a media object — a rail that shrink-wraps whatever it holds — an avatar, a
+     figure, a thumbnail, an inline icon — with the header, body and footer stacked beside it as
+     one column, the way Bootstrap's `.media` + `.media-body` reads. `use-layout` has no body
+     wrapper, so this leans on anonymous table boxes to make one: the container is `display:
+     table`, the rail is a `table-cell`, and CSS wraps the run of regions after it in a single
+     anonymous `table-cell` — that cell *is* the body column.
+
+     Because the body column is one box, the regions inside it are plain block flow: `main` sits
+     exactly one row gap under `header` no matter how tall the rail is, and the container is only
+     ever as tall as its taller cell. The rail cell is `vertical-align: top`, so a rail and the
+     header start level; it sizes to its content, with a `padding-inline-end` standing in for the
+     column gap so no border-spacing leaks onto the outer edges.
+
+     The first child is always the rail — `use-avatar`, `figure`, a bare `img` or `svg` all
+     work — with no tag check, since the anonymous-cell trick only works when something is
+     actually sitting in that first table-cell. A `.media` with no rail isn't a supported shape:
+     `header` would become the cell instead and split away from the rest of the body. */
+  use-layout.media {
+    display: table;
+    inline-size: 100%;
+    border-spacing: 0;
+    padding: var(--usewc-layout-region-padding);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  :where(use-layout.media) > :first-child {
+    display: table-cell;
+    inline-size: 0;
+    vertical-align: top;
+    padding-inline-end: var(--usewc-layout-region-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* Every region's own padding lives on the container instead. The rail is always the first
+     child, so everything after it is a region — no need to name `header`/`main`/`footer`
+     explicitly. */
+  :where(use-layout.media) > :not(:first-child) {
+    padding: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* The row gap separates the regions from each other, not the rail from the first region — that
+     gap is the rail cell's own `padding-inline-end`. Since the rail is always child 1 and the
+     first region is always child 2, the row gap only starts from the third child on. */
+  :where(use-layout.media) > :nth-child(n + 3) {
+    margin-block-start: var(--usewc-layout-region-row-gap);
 
     use-theme-escape & {
       all: revert-layer;
