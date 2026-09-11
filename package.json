@@ -65,7 +65,7 @@
     "typescript-eslint": "^8.29.1",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6",
     "vite-plus": "0.2.6",
-    "vitest": "4.1.10",
+    "vitest": "4.1.11",
     "vitest-browser-lit": "^1.0.1"
   },
   "overrides": {
@@ -81,7 +81,7 @@
     "postcss": "^8.5.10",
     "storybook": "$storybook",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.2.6",
-    "vitest": "4.1.10"
+    "vitest": "4.1.11"
   },
   "packageManager": "npm@11.12.1",
   "customElements": "custom-elements.json",
