@@ -13,14 +13,21 @@ function styleOf(element: Element, property: string) {
 const imageSource =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3C/svg%3E";
 
-const variants = ["page", "entry", "message", "card"];
+const variants = ["page", "entry", "message", "card", "media"];
 
 describe("layout region treatment", () => {
   describe("shared across variants", () => {
+    // `.media` always needs a rail as its first child — with no tag-based guard, whatever lands
+    // there is treated as the rail, so a bare header/main/footer first is an unsupported shape
+    // for it. These shared tests otherwise share one markup shape across every variant, so they
+    // give `.media` a plain rail to stay a valid configuration.
+    const rail = (variant: string) => (variant === "media" ? html`<figure></figure>` : "");
+
     for (const variant of variants) {
       it(`${variant} clusters sections and splits a region holding two of them`, async () => {
         render(html`
           <use-layout class=${variant}>
+            ${rail(variant)}
             <footer id="footer">
               <section id="section"><button type="button">Delete</button></section>
               <section><button type="button">Send</button></section>
@@ -48,6 +55,7 @@ describe("layout region treatment", () => {
       it(`${variant} sheds the outer block margins of its body content`, async () => {
         render(html`
           <use-layout class=${variant}>
+            ${rail(variant)}
             <main>
               <p id="first">first</p>
               <ul>
@@ -69,6 +77,7 @@ describe("layout region treatment", () => {
       it(`${variant} lets the gap own the spacing in a header, margins and all`, async () => {
         render(html`
           <use-layout class=${variant}>
+            ${rail(variant)}
             <header>
               <hgroup id="hgroup">
                 <h4 id="title">Title</h4>
@@ -89,6 +98,7 @@ describe("layout region treatment", () => {
       it(`${variant} lays out with only a header and a footer`, async () => {
         render(html`
           <use-layout class=${variant}>
+            ${rail(variant)}
             <header id="header">Title</header>
             <footer id="footer"><button type="button">OK</button></footer>
           </use-layout>
@@ -136,14 +146,13 @@ describe("layout region treatment", () => {
 
       // The rail variants pad the container and zero their regions; the others pad each region.
       // Read whichever one owns it, so an unset density token can't hide behind a 0.
+      const containerPadded = ["entry", "message", "media"];
       const padding = Object.fromEntries(
         variants.map((variant) => [
           variant,
           styleOf(
             document.getElementById(
-              variant === "entry" || variant === "message"
-                ? `layout-${variant}`
-                : `header-${variant}`,
+              containerPadded.includes(variant) ? `layout-${variant}` : `header-${variant}`,
             )!,
             "padding-left",
           ),
@@ -154,6 +163,7 @@ describe("layout region treatment", () => {
       expect(padding.card).toBe("12px");
       expect(padding.entry).toBe("16px");
       expect(padding.message).toBe("12px");
+      expect(padding.media).toBe("12px");
     });
 
     it("resolves every density token each variant declares", async () => {
@@ -456,6 +466,145 @@ describe("layout region treatment", () => {
       render(html`<use-layout class="card outlined" id="card">body</use-layout>`);
 
       expect(styleOf(document.getElementById("card")!, "box-shadow")).toBe("none");
+    });
+  });
+
+  describe("media", () => {
+    it("sizes the rail to its content and puts the regions in one column beside it", async () => {
+      render(html`
+        <use-layout class="media" id="media" style="inline-size: 400px">
+          <figure id="rail"><img alt="" src=${imageSource} style="inline-size: 48px" /></figure>
+          <header id="header">
+            <hgroup><h4>Title</h4></hgroup>
+          </header>
+          <main id="body">body</main>
+          <footer id="footer"><button type="button">Share</button></footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("media")!, "display")).toBe("table");
+      expect(styleOf(document.getElementById("rail")!, "display")).toBe("table-cell");
+
+      const media = document.getElementById("media")!.getBoundingClientRect();
+      const rail = document.getElementById("rail")!.getBoundingClientRect();
+      const header = document.getElementById("header")!.getBoundingClientRect();
+      const body = document.getElementById("body")!.getBoundingClientRect();
+      const footer = document.getElementById("footer")!.getBoundingClientRect();
+
+      // rail cell = 48px content + the 12px inline-end gap
+      expect(Math.round(rail.width)).toBe(60);
+      for (const region of [header, body, footer]) {
+        expect(Math.round(region.left)).toBe(Math.round(rail.right));
+        expect(Math.round(region.left)).toBe(Math.round(header.left));
+        expect(Math.round(region.right)).toBe(Math.round(media.right - 12));
+      }
+    });
+
+    it("keeps the rail its content's own width rather than the avatar rail size", async () => {
+      render(html`
+        <use-layout class="media">
+          <figure id="rail">
+            <img id="railImage" alt="" src=${imageSource} style="inline-size: 90px" />
+          </figure>
+          <main>body</main>
+        </use-layout>
+      `);
+
+      expect(Math.round(document.getElementById("railImage")!.getBoundingClientRect().width)).toBe(
+        90,
+      );
+    });
+
+    it("aligns the rail and the header to the top", async () => {
+      render(html`
+        <use-layout class="media" id="media">
+          <figure id="rail" style="block-size: 120px; inline-size: 48px"></figure>
+          <header id="header">
+            <hgroup><h4>Title</h4></hgroup>
+          </header>
+          <main>body</main>
+        </use-layout>
+      `);
+      const top = document.getElementById("media")!.getBoundingClientRect().top;
+
+      expect(Math.round(document.getElementById("rail")!.getBoundingClientRect().top)).toBe(
+        Math.round(top + 12),
+      );
+      expect(Math.round(document.getElementById("header")!.getBoundingClientRect().top)).toBe(
+        Math.round(top + 12),
+      );
+    });
+
+    it("keeps main directly under header regardless of the rail height", async () => {
+      render(html`
+        <use-layout class="media" id="shortRail">
+          <figure style="inline-size: 48px; block-size: 24px"></figure>
+          <header id="shortHeader">Title</header>
+          <main id="shortBody">body</main>
+        </use-layout>
+        <use-layout class="media" id="tallRail">
+          <figure style="inline-size: 48px; block-size: 400px"></figure>
+          <header id="tallHeader">Title</header>
+          <main id="tallBody">body</main>
+        </use-layout>
+      `);
+
+      const gap = (headerId: string, bodyId: string) =>
+        document.getElementById(bodyId)!.getBoundingClientRect().top -
+        document.getElementById(headerId)!.getBoundingClientRect().bottom;
+
+      expect(Math.round(gap("shortHeader", "shortBody"))).toBe(12);
+      expect(Math.round(gap("tallHeader", "tallBody"))).toBe(12);
+
+      // the body column is one box, so a short rail leaves the container the height of the body
+      expect(document.getElementById("shortRail")!.getBoundingClientRect().height).toBeLessThan(
+        120,
+      );
+    });
+
+    it("works with a use-avatar rail, not just a figure", async () => {
+      render(html`
+        <use-layout class="media">
+          <use-avatar id="rail" name="Riley Quinn"></use-avatar>
+          <header id="header">Title</header>
+          <main id="body">body</main>
+        </use-layout>
+      `);
+
+      // the rail keeps its own layout untouched by the region reset...
+      expect(styleOf(document.getElementById("rail")!, "display")).not.toBe("none");
+      // ...and the header still gets its region padding zeroed
+      expect(styleOf(document.getElementById("header")!, "padding")).toBe("0px");
+      // ...without picking up a margin meant only for region-to-region gaps
+      expect(styleOf(document.getElementById("header")!, "margin-top")).toBe("0px");
+    });
+
+    it("stacks the regions one region gap apart", async () => {
+      render(html`
+        <use-layout class="media">
+          <figure></figure>
+          <header id="header">Title</header>
+          <main id="body">body</main>
+        </use-layout>
+      `);
+      const gap =
+        document.getElementById("body")!.getBoundingClientRect().top -
+        document.getElementById("header")!.getBoundingClientRect().bottom;
+
+      expect(Math.round(gap)).toBe(12);
+    });
+
+    it("draws no rules between its regions", async () => {
+      render(html`
+        <use-layout class="media">
+          <figure></figure>
+          <header id="header">Title</header>
+          <footer id="footer"><button type="button">Share</button></footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
+      expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("flex-start");
     });
   });
 
