@@ -20,3 +20,4 @@ export * from "./elements/use-intl-datetime/use-intl-datetime";
 export * from "./elements/use-intl-number/use-intl-number";
 export * from "./elements/use-badge/use-badge";
 export * from "./elements/use-avatar/use-avatar";
+export * from "./elements/use-grid";
