@@ -28,6 +28,8 @@ const meta: Meta = {
           "",
           "Five variant classes name what the container *is*, and arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions to match: `page` for an app frame, `entry` for a row in a list, `message` for a chat or comment, `card` for a panel, and `media` for a media object — a rail that fits its content beside a wider body column. Each selector is compound (`use-layout.page`, never a bare `.page`) so these common words can't collide with your own classes.",
           "",
+          "Add `.divided` alongside a variant class to rule a header or footer off from the body. It's opt-in rather than a variant default, since the rule and the gap already separating regions would otherwise both be marking the same boundary.",
+          "",
           "For a block of authored text, reach for `use-prose` instead — typography is its own concern, not a layout.",
         ].join("\n"),
       },
@@ -121,13 +123,41 @@ export const Wrap: Story = {
 };
 
 /**
- * An app frame, at a roomy density. The header is a topbar and the footer a status bar, both ruled off from the body.
+ * An app frame, at a roomy density. The header is a topbar and the footer a status bar, and the container's own stacking gap is what separates them from the body — there's no rule between them by default.
  *
  * The footer splits by default, so status text sits opposite its actions. Wrap groups of items in `<section>`s to control the ends of any region: two or more `<section>` children switch it to `space-between`.
  */
 export const Page: Story = {
   render: () => html`
     <use-layout class="page" style="block-size: 14rem; max-inline-size: 28rem;">
+      <header>
+        <section>
+          <hgroup><h4>Fieldbook</h4></hgroup>
+        </section>
+        <section>
+          <button type="button">Search</button>
+          <button type="button" aria-label="Account">&#9679;</button>
+        </section>
+      </header>
+      <use-layout fill>
+        ${Array.from({ length: 8 }, (_, index) => html`<p>Row ${index + 1}</p>`)}
+      </use-layout>
+      <footer>
+        <span>12 entries</span>
+        <button type="button">New entry</button>
+      </footer>
+    </use-layout>
+  `,
+};
+
+/**
+ * Add `.divided` to rule a header/footer off from the body instead of relying on the stacking gap — it's opt-in rather than a variant default, since a rule and the gap would otherwise both be marking the same boundary. `.divided` turns the gap off, so each region's own padding is what holds the line clear of its neighbour.
+ *
+ * `.card` takes `.divided` too, for a ruled footer under its body.
+ */
+export const Divided: Story = {
+  render: () => html`
+    <use-layout class="page divided" style="block-size: 14rem; max-inline-size: 28rem;">
       <header>
         <section>
           <hgroup><h4>Fieldbook</h4></hgroup>

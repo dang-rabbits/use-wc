@@ -210,7 +210,7 @@ describe("layout region treatment", () => {
   });
 
   describe("page", () => {
-    it("rules the topbar and footer off from the body", async () => {
+    it("keeps the body's own padding regardless of the header/footer, and draws no rule by default", async () => {
       render(html`
         <use-layout class="page">
           <header id="header">
@@ -221,10 +221,40 @@ describe("layout region treatment", () => {
         </use-layout>
       `);
 
-      expect(styleOf(document.getElementById("header")!, "border-bottom-style")).toBe("solid");
-      expect(styleOf(document.getElementById("footer")!, "border-top-style")).toBe("solid");
+      expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
+      expect(styleOf(document.getElementById("footer")!, "border-top-width")).toBe("0px");
       expect(styleOf(document.getElementById("body")!, "padding-left")).toBe("20px");
-      expect(styleOf(document.getElementById("body")!, "padding-top")).toBe("0px");
+      expect(styleOf(document.getElementById("body")!, "padding-top")).toBe("12px");
+      expect(styleOf(document.getElementById("footer")!, "padding-top")).toBe("12px");
+    });
+
+    it("rules the topbar and footer off from the body when divided, without touching either region's padding", async () => {
+      render(html`
+        <use-layout class="page divided">
+          <header id="header">
+            <hgroup><h4>Brand</h4></hgroup>
+          </header>
+          <main id="body">body</main>
+          <footer id="footer">status</footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("header")!, "border-bottom-style")).toBe("none");
+      expect(styleOf(document.getElementById("body")!, "border-top-style")).toBe("solid");
+      expect(styleOf(document.getElementById("footer")!, "border-top-style")).toBe("solid");
+      expect(styleOf(document.getElementById("body")!, "padding-top")).toBe("12px");
+      expect(styleOf(document.getElementById("footer")!, "padding-top")).toBe("12px");
+    });
+
+    it("turns the stacking gap off when divided, so the rule and padding are the only spacing", async () => {
+      render(
+        html`<use-layout class="page divided" id="page"
+          ><header></header>
+          <main></main
+        ></use-layout>`,
+      );
+
+      expect(styleOf(document.getElementById("page")!, "gap")).toBe("0px");
     });
 
     it("keeps the topbar shallower than it is wide", async () => {
@@ -443,8 +473,19 @@ describe("layout region treatment", () => {
       expect(styleOf(card, "overflow")).toBe("hidden");
       expect(styleOf(document.getElementById("header")!, "justify-content")).toBe("flex-start");
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("flex-end");
-      expect(styleOf(document.getElementById("footer")!, "border-top-style")).toBe("solid");
+      expect(styleOf(document.getElementById("footer")!, "border-top-width")).toBe("0px");
       expect(styleOf(document.getElementById("body")!, "flex-grow")).toBe("1");
+    });
+
+    it("rules the footer off from the body when divided", async () => {
+      render(html`
+        <use-layout class="card divided">
+          <main></main>
+          <footer id="footer">Saved</footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("footer")!, "border-top-style")).toBe("solid");
     });
 
     it("drops its own chrome inside an overlay that already paints one", async () => {

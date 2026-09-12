@@ -572,7 +572,6 @@
   );
 
   --usewc-layout-page-padding: var(--usewc-space-20);
-  --usewc-layout-page-padding-block: var(--usewc-space-12);
   --usewc-layout-page-gap: var(--usewc-space-12);
   --usewc-layout-page-avatar-size: var(--usewc-layout-region-title-block-size);
 
