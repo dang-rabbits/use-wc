@@ -30,7 +30,7 @@
       all: revert-layer;
     }
 
-    &:hover:not(:disabled, [aria-disabled="true"], [aria-readonly="true"], :checked) {
+    &:hover:not(:disabled, [aria-disabled="true"], [aria-readonly="true"], :checked, :indeterminate) {
       --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
       --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
     }
