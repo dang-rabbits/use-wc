@@ -43,6 +43,18 @@
    isn't first instead, so the padding alone (never the gap) is what holds the line clear of its
    neighbour — the two mechanisms are never both in play at once.
 
+   `.entry` also takes `.compact`, which steps its own density down for a tighter repetition of
+   the same shape — a nav item rather than a list row. Each variant that supports it declares its
+   own smaller values rather than a shared multiplier, the same way `.message` sits on top of
+   `.entry`'s shape instead of moving `.entry` itself.
+
+   Every variant takes `.flush`, which drops a use-layout's own outer inset so it can sit
+   directly inside a container that already pads itself — an `<a>` in a nav, a dialog's own
+   padded surface — without doubling up. Inline padding goes everywhere it's set, since every
+   region shares one left/right inset; block padding only comes off the two true outer edges —
+   the first region's own top and the last region's own bottom — so the row-gap between regions,
+   and every other region's own padding, are untouched.
+
    Every selector stays compound (`use-layout.page`, never a bare `.page`) so none of these
    common words can collide with an author's own class of the same name.
 
@@ -261,6 +273,17 @@
     }
   }
 
+  use-layout.entry.compact {
+    --usewc-layout-region-padding: var(--usewc-layout-entry-compact-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-entry-compact-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-entry-compact-avatar-size);
+    --usewc-layout-region-row-gap: var(--usewc-layout-entry-compact-gap);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
   /* Chat density on top of `.entry`'s layout — tighter, since a message repeats down a feed. */
   use-layout.message {
     --usewc-layout-region-padding: var(--usewc-layout-message-padding);
@@ -331,6 +354,49 @@
       use-theme-escape & {
         all: revert-layer;
       }
+    }
+  }
+
+  /* `.flush` zeroes a use-layout's own outer inset. Inline padding is one token consumed
+     everywhere it's set (every region, and the container itself for `.entry`/`.message`/`.media`),
+     so overriding it here reaches all of them at once regardless of variant. Block padding is
+     narrower on purpose — only the true outer edges come off, not every region's own padding, so
+     the row-gap between regions and a middle region's spacing are untouched. `.page`/`.card` pad
+     each region individually, so that's a first-child/last-child position match; `.entry`,
+     `.message` and `.media` pad the container itself instead, so that's zeroed directly.
+
+     The selector matches the variant list rather than a bare `.flush` so this out-ranks a
+     two-class modifier like `.entry.compact` on specificity — `.entry.compact.flush` needs
+     `.flush` to win regardless of which order the three classes are combined in. */
+  use-layout:is(.page, .entry, .message, .card, .media).flush {
+    --usewc-layout-region-padding: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout:is(.entry, .message, .media).flush {
+    padding-block: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout.flush > :first-child {
+    padding-block-start: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  use-layout.flush > :last-child {
+    padding-block-end: 0;
+
+    use-theme-escape & {
+      all: revert-layer;
     }
   }
 

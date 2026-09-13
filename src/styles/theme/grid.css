@@ -59,8 +59,14 @@
 
     /* Inline padding is the breathing room between the row edge (band edge) and the text. Header
        rows take the same inline padding, plus the head's own `--grid-body-inset`, so a header cell
-       lines up with the body cell below it. No block padding — cell padding sets the row height. */
+       lines up with the body cell below it. No block padding — cell padding sets the row height.
+
+       `align-items: center` (unset in use-gridrow's own shadow styles, so there's nothing to
+       fight here) sizes each cell to its own content height instead of stretching it to the
+       row's — a cell shorter than its tallest sibling centers within the row rather than
+       stretching past its own content and centering internally. */
     use-gridrow {
+      align-items: center;
       padding-inline: var(--usewc-layout-grid-row-padding-inline);
 
       use-theme-escape & {
