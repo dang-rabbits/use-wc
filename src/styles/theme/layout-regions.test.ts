@@ -166,6 +166,27 @@ describe("layout region treatment", () => {
       expect(padding.media).toBe("12px");
     });
 
+    it("steps padding, gap, and avatar size down when an entry is compact", async () => {
+      render(html`
+        <div>
+          <use-layout class="entry" id="entry">
+            <figure></figure>
+            <header id="header">Title</header>
+          </use-layout>
+          <use-layout class="entry compact" id="compact">
+            <figure id="avatar"></figure>
+            <header id="compact-header">Title</header>
+          </use-layout>
+        </div>
+      `);
+
+      expect(styleOf(document.getElementById("entry")!, "padding-left")).toBe("16px");
+      expect(styleOf(document.getElementById("compact")!, "padding-left")).toBe("8px");
+      expect(styleOf(document.getElementById("header")!, "gap")).toBe("12px");
+      expect(styleOf(document.getElementById("compact-header")!, "gap")).toBe("8px");
+      expect(styleOf(document.getElementById("avatar")!, "width")).toBe("24px");
+    });
+
     it("resolves every density token each variant declares", async () => {
       render(html`
         <div>

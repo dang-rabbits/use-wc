@@ -43,6 +43,18 @@
   --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-600);
   --usewc-color-link-text-visited-active: var(--usewc-color-indigo-700);
   --usewc-effect-link-text-decoration: underline;
+  --usewc-effect-link-chrome-text-decoration: none;
+  /* - Sidebar nav item */
+  /* A sidebar item reads as chrome, not a hyperlink, so its text stays the document's own ink
+     rather than link blue — closer to how `use-menu` colors its items than to `link.css`'s own
+     defaults. */
+  --usewc-color-sidebar-item-text-static: var(--usewc-color-document-text);
+  --usewc-color-sidebar-item-text-hover: var(--usewc-color-document-text);
+  --usewc-color-sidebar-item-text-active: var(--usewc-color-brand-primary);
+  --usewc-color-sidebar-item-background-hover: var(--usewc-color-selector-background-hover);
+  --usewc-effect-sidebar-item-border-radius: var(--usewc-effect-border-radius-6);
+  --usewc-layout-sidebar-item-padding-block: var(--usewc-space-8);
+  --usewc-layout-sidebar-item-padding-inline: var(--usewc-space-12);
 
   /* Form */
   /* - Color */
@@ -589,6 +601,13 @@
   --usewc-layout-entry-padding: var(--usewc-space-16);
   --usewc-layout-entry-gap: var(--usewc-space-12);
   --usewc-layout-entry-avatar-size: var(--usewc-layout-region-title-block-size);
+
+  /* `.compact` steps an entry's own density down for a tighter repetition of the same shape —
+     a nav item, not a list row. The rail shrinks with it, since a nav icon reads smaller than a
+     person's likeness. */
+  --usewc-layout-entry-compact-padding: var(--usewc-space-8);
+  --usewc-layout-entry-compact-gap: var(--usewc-space-8);
+  --usewc-layout-entry-compact-avatar-size: var(--usewc-space-24);
 
   --usewc-layout-message-padding: var(--usewc-space-12);
   --usewc-layout-message-gap: var(--usewc-space-12);

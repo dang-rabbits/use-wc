@@ -197,4 +197,72 @@
   </div>
   <h4>Unstyled</h4>
   <a href="#" class="appearance-native">Native</a>
+  <h4>In prose</h4>
+  <p>
+    Body text keeps its underline, like this <a href="#">inline link</a>, so it stays distinguishable by more than
+    color.
+  </p>
+  <h4>In navigation</h4>
+  <nav>
+    <ul>
+      <li><a href="#">Overview</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+  <h4>In a tablist</h4>
+  <div role="tablist">
+    <a href="#" role="tab">One</a>
+    <a href="#" role="tab">Two</a>
+    <a href="#" role="tab">Three</a>
+  </div>
+  <p>
+    Underlines drop only inside navigation landmarks and widget roles (<code>nav</code>, <code>header</code>,
+    <code>footer</code>, <code>[role="navigation"]</code>, <code>[role="menubar"]</code>, <code>[role="tablist"]</code>,
+    <code>[role="toolbar"]</code>). Override <code>--usewc-effect-link-chrome-text-decoration</code> on a subtree to
+    bring underlines back there.
+  </p>
+  <h4>As a sidebar</h4>
+  <nav class="sidebar" style="max-inline-size: 16rem">
+    <a href="#">
+      <use-layout class="entry compact flush">
+        <figure><use-avatar name="Dashboard"></use-avatar></figure>
+        <header>
+          <hgroup>
+            <h4>Dashboard</h4>
+            <p>Overview</p>
+          </hgroup>
+          <use-badge>3</use-badge>
+        </header>
+      </use-layout>
+    </a>
+    <a href="#">
+      <use-layout class="entry compact flush">
+        <figure><use-avatar name="Settings"></use-avatar></figure>
+        <header>
+          <hgroup>
+            <h4>Settings</h4>
+            <p>Account, billing</p>
+          </hgroup>
+        </header>
+      </use-layout>
+    </a>
+  </nav>
+  <p>
+    <code>nav.sidebar</code> adds hover background, rounded corners, and its own padding to each <code>a</code>; the row
+    layout, avatar rail and trailing badge alignment come from the nested
+    <code>use-layout.entry.compact</code> unchanged — <code>.compact</code> just steps <code>.entry</code>'s own density
+    down for a nav-sized row instead of a list-sized one. <code>.flush</code> drops <code>use-layout</code>'s own outer
+    inset so it doesn't double up with the anchor's padding.
+  </p>
+  <h4>As a sidebar, without use-layout</h4>
+  <nav class="sidebar" style="max-inline-size: 16rem">
+    <a href="#">Dashboard</a>
+    <a href="#">Settings</a>
+    <a href="#">Help</a>
+  </nav>
+  <p>
+    <code>nav.sidebar</code> doesn't require <code>use-layout</code> — it only adds hover background and rounded corners
+    to each <code>a</code>, so a plain text link works the same as one with an icon/title/badge row inside it.
+  </p>
 </div>
