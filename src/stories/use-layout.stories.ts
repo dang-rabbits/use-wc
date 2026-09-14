@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 import "../elements/use-avatar/use-avatar";
 import "../elements/use-anchored/use-anchored";
+import "../elements/use-layout/use-layout";
 
 const poster =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='160'%3E%3Crect width='480' height='160' fill='%2394a3b8'/%3E%3C/svg%3E";
@@ -20,9 +21,9 @@ const meta: Meta = {
     docs: {
       description: {
         component: [
-          "`use-layout` is a configurable flex-container primitive. Like `use-field` and `use-prose` it is styled by tag name but is **not** a registered custom element, so it needs the design-system stylesheet loaded.",
+          "`use-layout` is a configurable flex-container primitive, styled entirely by the design-system stylesheet rather than any shadow DOM. It **is** a registered custom element, but only so its attributes are typed, reflected properties — an author gets autocomplete and a type checker gets something to check, instead of a bag of untyped strings. Every rule still targets the plain tag and its attributes, so nothing about the CSS depends on the element being upgraded.",
           "",
-          "Attributes drive the flex container: `direction` (`column` by default, or `row`), `align`, `justify`, `gap` (a named scale, `xsmall`…`super`), `wrap`, and `inline`.",
+          "Attributes drive the flex container: `direction` (`column` by default, or `row`), `align`, `justify`, `gap` (a named scale, `xsmall`…`super`), `padding`/`padding-block`/`padding-inline` (the same named scale, plus `none` for an explicit zero — set `padding-block`/`padding-inline` for different values per axis), `wrap`, and `inline`.",
           "",
           "By default `use-layout` doesn't touch its children. Give a direct child `use-layout` the `fill` attribute and it grows to consume the remaining space while every other child is pinned so it can't shrink. `fill` is read **only** on a `use-layout`, and only as a direct child, so an `<svg fill=\"…\">` or an author's own `fill` attribute is never picked up by accident.",
           "",
@@ -40,12 +41,124 @@ export default meta;
 
 type Story = StoryObj;
 
+const paddingScale = ["", "none", "xsmall", "small", "medium", "large", "xlarge", "super"];
+
+/**
+ * An interactive playground for `use-layout`'s base flex controls — `direction`, `align`,
+ * `justify`, `gap`, `padding` (plus its `padding-block`/`padding-inline` longhands), `wrap`, and
+ * `inline` — driving the real, registered element's own typed properties directly, so
+ * Storybook's Controls panel is manipulating the same properties an author would set from code,
+ * not a stand-in.
+ *
+ * `padding-block`/`padding-inline` win over `padding` when both are set, the same as a CSS
+ * longhand declared after its own shorthand would — set `padding` alone to see the shorthand
+ * apply to all four sides.
+ *
+ * Variant classes (`page`, `entry`, `message`, `card`, `media`) and their modifiers stay plain
+ * classes rather than properties — see the dedicated story for each — so this playground sticks
+ * to the flex container itself: a bare `use-layout` arranging a handful of chips.
+ */
+export const Default: Story = {
+  argTypes: {
+    direction: {
+      name: "Direction",
+      control: "radio",
+      options: ["column", "row"],
+    },
+    align: {
+      name: "Align",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: ["", "start", "center", "end", "stretch"],
+    },
+    justify: {
+      name: "Justify",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: ["", "start", "center", "end", "space-between", "space-around"],
+    },
+    gap: {
+      name: "Gap",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: ["", "xsmall", "small", "medium", "large", "xlarge", "super"],
+    },
+    padding: {
+      name: "Padding",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: paddingScale,
+    },
+    paddingBlock: {
+      name: "Padding block",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: paddingScale,
+    },
+    paddingInline: {
+      name: "Padding inline",
+      control: { type: "radio", labels: { "": "(none)" } },
+      options: paddingScale,
+    },
+    wrap: {
+      name: "Wrap",
+      control: "boolean",
+    },
+    inline: {
+      name: "Inline",
+      control: "boolean",
+    },
+  },
+  args: {
+    direction: "column",
+    align: "",
+    justify: "",
+    gap: "",
+    padding: "",
+    paddingBlock: "",
+    paddingInline: "",
+    wrap: false,
+    inline: false,
+  },
+  render: (args) => {
+    const { direction, align, justify, gap, padding, paddingBlock, paddingInline, wrap, inline } =
+      args as {
+        direction: "column" | "row";
+        align: "" | "start" | "center" | "end" | "stretch";
+        justify: "" | "start" | "center" | "end" | "space-between" | "space-around";
+        gap: "" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+        padding: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+        paddingBlock: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+        paddingInline: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+        wrap: boolean;
+        inline: boolean;
+      };
+
+    return html`
+      <use-layout
+        .direction=${direction}
+        .align=${align}
+        .justify=${justify}
+        .gap=${gap}
+        .padding=${padding}
+        .paddingBlock=${paddingBlock}
+        .paddingInline=${paddingInline}
+        .wrap=${wrap}
+        .inline=${inline}
+        style="max-inline-size: 24rem; outline: 1px dashed #d1d5db"
+      >
+        ${Array.from(
+          { length: 6 },
+          (_, index) => html`
+            <div style="block-size: 3rem; outline: 1px dashed #94a3b8">${index + 1}</div>
+          `,
+        )}
+      </use-layout>
+    `;
+  },
+};
+
 /**
  * `direction` is the only attribute that changes the axis. Column is the default.
  */
 export const ColumnAndRow: Story = {
   render: () => html`
-    <use-layout gap="small" style="max-inline-size: 12rem; margin-block-end: 1rem">
+    <use-layout gap="small">
       <button type="button">One</button>
       <button type="button">Two</button>
       <button type="button">Three</button>
@@ -68,7 +181,7 @@ export const AlignAndJustify: Story = {
       align="center"
       justify="space-between"
       gap="small"
-      style="block-size: 6rem; border: 1px dashed #d1d5db; border-radius: 8px; padding: 0.5rem"
+      style="block-size: 6rem"
     >
       <span>Leading</span>
       <button type="button">Trailing action</button>
@@ -81,12 +194,12 @@ export const AlignAndJustify: Story = {
  */
 export const Fill: Story = {
   render: () => html`
-    <use-layout style="block-size: 12rem; max-inline-size: 20rem;">
-      <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Header</div>
-      <use-layout fill style="padding: 0.5rem; overflow: auto">
+    <use-layout style="block-size: 12rem; outline: 1px dashed #d1d5db">
+      <div style="outline: 1px dashed #94a3b8">Header</div>
+      <use-layout fill style="outline: 1px dashed #94a3b8">
         ${Array.from({ length: 8 }, (_, index) => html`<p>Row ${index + 1}</p>`)}
       </use-layout>
-      <div style="padding: 0.5rem; border-block-start: 1px solid #d1d5db">Footer</div>
+      <div style="outline: 1px dashed #94a3b8">Footer</div>
     </use-layout>
   `,
 };
@@ -96,11 +209,11 @@ export const Fill: Story = {
  */
 export const NestedFill: Story = {
   render: () => html`
-    <use-layout direction="row" style="block-size: 12rem; max-inline-size: 28rem;">
-      <div style="padding: 0.5rem; border-inline-end: 1px solid #d1d5db">Sidebar</div>
-      <use-layout fill>
-        <div style="padding: 0.5rem; border-block-end: 1px solid #d1d5db">Toolbar</div>
-        <use-layout fill style="padding: 0.5rem; overflow: auto">
+    <use-layout direction="row" style="block-size: 12rem; outline: 1px dashed #d1d5db">
+      <div style="outline: 1px dashed #94a3b8">Sidebar</div>
+      <use-layout fill style="outline: 1px dashed #94a3b8">
+        <div style="outline: 1px dashed #94a3b8">Toolbar</div>
+        <use-layout fill style="outline: 1px dashed #94a3b8">
           ${Array.from({ length: 10 }, (_, index) => html`<p>Item ${index + 1}</p>`)}
         </use-layout>
       </use-layout>
