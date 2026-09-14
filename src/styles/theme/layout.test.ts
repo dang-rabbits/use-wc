@@ -77,12 +77,12 @@ describe("use-layout", () => {
       expect(styleOf(layout, "padding-left")).toBe("2px");
     });
 
-    it("leaves a two-token padding value unresolved without the registered element", async () => {
+    it("leaves a multi-token padding value unresolved, since only a single token is supported", async () => {
       render(html`<use-layout padding="medium small"><div>item</div></use-layout>`);
       const layout = document.querySelector("use-layout") as HTMLElement;
 
-      // No `[padding="medium small"]` rule exists — that compound form needs the real element's
-      // own JS to split it, so a plain tag falls through to the browser's own zero padding.
+      // No `[padding="medium small"]` rule exists — set padding-block/padding-inline instead for
+      // different values per axis.
       expect(styleOf(layout, "padding-top")).toBe("0px");
     });
   });

@@ -86,38 +86,4 @@ describe("use-layout", () => {
     expect(layout.align).toBe("center");
     expect(layout.gap).toBe("small");
   });
-
-  describe("padding", () => {
-    it("splits a two-token padding value into padding-block and padding-inline", async () => {
-      render(html`<use-layout padding="medium small"></use-layout>`);
-      const layout = document.querySelector("use-layout") as UseLayout;
-      await settle(layout);
-
-      expect(layout.paddingBlock).toBe("medium");
-      expect(layout.paddingInline).toBe("small");
-      expect(layout.getAttribute("padding-block")).toBe("medium");
-      expect(layout.getAttribute("padding-inline")).toBe("small");
-    });
-
-    it("leaves padding-block/padding-inline alone for a single-token padding value", async () => {
-      render(html`<use-layout padding="medium"></use-layout>`);
-      const layout = document.querySelector("use-layout") as UseLayout;
-      await settle(layout);
-
-      expect(layout.hasAttribute("padding-block")).toBe(false);
-      expect(layout.hasAttribute("padding-inline")).toBe(false);
-    });
-
-    it("re-splits when the compound value changes", async () => {
-      render(html`<use-layout padding="medium small"></use-layout>`);
-      const layout = document.querySelector("use-layout") as UseLayout;
-      await settle(layout);
-
-      layout.padding = "none large";
-      await settle(layout);
-
-      expect(layout.paddingBlock).toBe("none");
-      expect(layout.paddingInline).toBe("large");
-    });
-  });
 });

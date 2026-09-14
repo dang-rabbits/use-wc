@@ -5,13 +5,10 @@
 
    Unlike `use-field`/`use-selector` (theme-only tags styled by tag name with no matching class
    here), `use-layout` **is** a registered custom element (`elements/use-layout/use-layout.ts`) —
-   but mostly so its attributes are typed, reflected properties for an author's autocomplete and a
-   type checker's benefit. It renders no shadow DOM and no template of its own: almost every rule
-   below still targets the plain `use-layout` tag and its attributes exactly as if it were
-   unregistered. The one exception is `padding`'s two-token compound form (`padding="medium
-   small"`), which needs the element's own JS to split it into `padding-block`/`padding-inline` —
-   a plain CSS attribute selector can't tell one word in a value from another — so that one form
-   only resolves once the element upgrades; every single-token value works either way.
+   but only so its attributes are typed, reflected properties for an author's autocomplete and a
+   type checker's benefit. It renders no shadow DOM and no template of its own: every rule below
+   still targets the plain `use-layout` tag and its attributes exactly as if it were unregistered,
+   so nothing here depends on the element being upgraded.
 
    When a direct child `use-layout` carries `fill`, that child grows to consume the remaining
    space and the other children are pinned so they can't shrink; with no such child,
@@ -165,14 +162,11 @@
   /* `padding`/`padding-block`/`padding-inline` step through their own named scale
      (`--usewc-layout-flex-padding-*`), aliased in semantic.css to the same values as `gap`'s — the
      same "how far apart do things sit" size either way, just read through a padding-named token
-     rather than a borrowed gap one. Each is a plain attribute selector on a single token, so all
-     three work with no JS required. `padding`'s two-token compound form (`padding="medium small"`,
-     block then inline like CSS's own two-value `padding` shorthand) is the one exception: a CSS
-     attribute selector can't tell one word in a value from another, so that form is parsed by the
-     registered element instead and re-expressed as `padding-block`/`padding-inline` — see
-     `use-layout.ts`. `padding-block`/`padding-inline` are declared after `padding` here so they
-     win on source order when both happen to be set, the same as a CSS longhand declared after its
-     own shorthand would. */
+     rather than a borrowed gap one. Each is a plain attribute selector on a single token, so no JS
+     is required for any of them. `padding-block`/`padding-inline` are declared after `padding` here
+     so they win on source order when both happen to be set, the same as a CSS longhand declared
+     after its own shorthand would — set `padding` for all four sides, or `padding-block`/
+     `padding-inline` for different values per axis. */
   use-layout[padding="none"] {
     padding: var(--usewc-space-none);
   }

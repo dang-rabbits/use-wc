@@ -1,14 +1,11 @@
 import { LitElement } from "lit";
-import type { PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 type Direction = "column" | "row";
 type Align = "" | "start" | "center" | "end" | "stretch";
 type Justify = "" | "start" | "center" | "end" | "space-between" | "space-around";
 type Gap = "" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-type PaddingToken = "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-type NamedPaddingToken = Exclude<PaddingToken, "">;
-type Padding = PaddingToken | `${NamedPaddingToken} ${NamedPaddingToken}`;
+type Padding = "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
 
 function omitEmptyAttribute(value: string) {
   return value ? value : null;
@@ -51,13 +48,8 @@ function readStringAttribute(value: string | null) {
  * @attr gap - A named scale from `xsmall` to `super`. Left empty, no attribute is set and the
  *   container has no gap of its own.
  * @attr padding - A named scale from `xsmall` to `super`, or `none` for an explicit zero, applied
- *   to all four sides. Two space-separated tokens set `padding-block` and `padding-inline`
- *   separately instead — `padding="medium small"` reads the same as CSS's own two-value `padding`
- *   shorthand (block first, then inline) — but that compound form only resolves once this element
- *   is upgraded: it's parsed here and re-expressed as the `padding-block`/`padding-inline`
- *   attributes below, since a plain CSS attribute selector can't tell one word in a value from
- *   another. A single token needs no such parsing and works whether or not this element is
- *   registered, the same as every other attribute here.
+ *   to all four sides. Left empty, no attribute is set. Set `padding-block`/`padding-inline`
+ *   instead for different values per axis.
  * @attr padding-block - A named scale from `xsmall` to `super`, or `none`, applied to the block
  *   axis only. Left empty, no attribute is set.
  * @attr padding-inline - A named scale from `xsmall` to `super`, or `none`, applied to the inline
@@ -109,14 +101,14 @@ export class UseLayout extends LitElement {
     reflect: true,
     converter: { toAttribute: omitEmptyAttribute, fromAttribute: readStringAttribute },
   })
-  paddingBlock: PaddingToken = "";
+  paddingBlock: Padding = "";
 
   @property({
     attribute: "padding-inline",
     reflect: true,
     converter: { toAttribute: omitEmptyAttribute, fromAttribute: readStringAttribute },
   })
-  paddingInline: PaddingToken = "";
+  paddingInline: Padding = "";
 
   @property({ type: Boolean, reflect: true })
   wrap = false;
@@ -129,29 +121,6 @@ export class UseLayout extends LitElement {
 
   createRenderRoot() {
     return this;
-  }
-
-  // A two-token `padding` ("<block> <inline>") can't be resolved by a plain CSS attribute
-  // selector — `[padding="medium small"]` would need one exact-match rule per combination to
-  // stay pure CSS — so it's split here instead and re-expressed as the `padding-block`/
-  // `padding-inline` properties, reusing their own attribute-selector rules rather than adding
-  // any CSS of its own. A single-token `padding` needs no parsing and is left to the plain
-  // `[padding="…"]` rule, so it still works before this element ever upgrades. Done in
-  // `willUpdate`, before this pass renders/reflects, so deriving one property from another
-  // doesn't schedule a second update cycle the way doing it in `updated` would.
-  willUpdate(changedProperties: PropertyValues<this>) {
-    super.willUpdate(changedProperties);
-
-    if (!changedProperties.has("padding")) {
-      return;
-    }
-
-    const tokens = this.padding.trim().split(/\s+/).filter(Boolean);
-    if (tokens.length === 2) {
-      const [blockToken, inlineToken] = tokens as [NamedPaddingToken, NamedPaddingToken];
-      this.paddingBlock = blockToken;
-      this.paddingInline = inlineToken;
-    }
   }
 }
 
