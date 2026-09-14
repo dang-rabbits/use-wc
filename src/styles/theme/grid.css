@@ -9,7 +9,7 @@
    on use-gridcell reaches the formatted text inside use-intl-number's shadow root without needing
    a rule scoped to use-intl-number itself. */
 @layer use-theme.grid {
-  use-gridcell:has(use-intl-number) {
+  use-gridcell:has(use-intl-number, use-intl-datetime) {
     text-align: end;
     font-variant-numeric: tabular-nums;
 
