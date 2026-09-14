@@ -51,18 +51,40 @@ describe("use-layout", () => {
     expect(styleOf(layout, "column-gap")).toBe("8px");
   });
 
-  it("reverts to unstyled markup inside use-theme-escape", async () => {
-    render(html`
-      <use-theme-escape>
-        <use-layout gap="medium">
-          <div>item</div>
-        </use-layout>
-      </use-theme-escape>
-    `);
-    const layout = document.querySelector("use-layout") as HTMLElement;
+  describe("padding", () => {
+    it("resolves a single named token to all four sides, with no JS required", async () => {
+      render(html`<use-layout padding="medium"><div>item</div></use-layout>`);
+      const layout = document.querySelector("use-layout") as HTMLElement;
 
-    expect(styleOf(layout, "display")).toBe("inline");
-    expect(styleOf(layout, "column-gap")).toBe("normal");
+      expect(styleOf(layout, "padding-top")).toBe("8px");
+      expect(styleOf(layout, "padding-left")).toBe("8px");
+    });
+
+    it("resolves none to an explicit zero", async () => {
+      render(html`<use-layout padding="none"><div>item</div></use-layout>`);
+      const layout = document.querySelector("use-layout") as HTMLElement;
+
+      expect(styleOf(layout, "padding-top")).toBe("0px");
+    });
+
+    it("resolves padding-block and padding-inline independently", async () => {
+      render(html`
+        <use-layout padding-block="large" padding-inline="xsmall"><div>item</div></use-layout>
+      `);
+      const layout = document.querySelector("use-layout") as HTMLElement;
+
+      expect(styleOf(layout, "padding-top")).toBe("16px");
+      expect(styleOf(layout, "padding-left")).toBe("2px");
+    });
+
+    it("leaves a two-token padding value unresolved without the registered element", async () => {
+      render(html`<use-layout padding="medium small"><div>item</div></use-layout>`);
+      const layout = document.querySelector("use-layout") as HTMLElement;
+
+      // No `[padding="medium small"]` rule exists — that compound form needs the real element's
+      // own JS to split it, so a plain tag falls through to the browser's own zero padding.
+      expect(styleOf(layout, "padding-top")).toBe("0px");
+    });
   });
 
   describe("fill", () => {
@@ -82,11 +104,11 @@ describe("use-layout", () => {
       expect(Math.round(body.getBoundingClientRect().height)).toBe(220);
     });
 
-    it("keeps fixed siblings from shrinking when the fill content overflows", async () => {
+    it("keeps fixed siblings from shrinking when the fill content overflows, scrolling on its own without an explicit overflow style", async () => {
       render(html`
         <use-layout style="height: 200px">
           <div id="header" style="height: 40px">header</div>
-          <use-layout fill id="body" style="overflow: auto">
+          <use-layout fill id="body">
             <div style="height: 600px; flex: none">tall content</div>
           </use-layout>
         </use-layout>
@@ -96,6 +118,7 @@ describe("use-layout", () => {
       expect(Math.round(document.getElementById("header")!.getBoundingClientRect().height)).toBe(
         40,
       );
+      expect(styleOf(body, "overflow-y")).toBe("auto");
       expect(Math.round(body.getBoundingClientRect().height)).toBe(160);
       expect(body.scrollHeight).toBeGreaterThan(body.clientHeight);
     });

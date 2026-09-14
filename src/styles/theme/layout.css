@@ -1,8 +1,17 @@
-/* Flex layout — `use-layout` is a theme-only tag (no custom element registration, styled by
-   tag name like `use-field`/`use-selector`), providing a configurable flex container:
-   direction, alignment, justification, a named gap scale, wrapping, and inline vs block
-   display, all driven by attributes. It defaults to a column, since stacking is the common
-   case for the page/panel structure it's used for; set `direction="row"` for a row.
+/* Flex layout — `use-layout` is a configurable flex container: direction, alignment,
+   justification, named gap/padding scales, wrapping, and inline vs block display, all driven by
+   attributes. It defaults to a column, since stacking is the common case for the page/panel
+   structure it's used for; set `direction="row"` for a row.
+
+   Unlike `use-field`/`use-selector` (theme-only tags styled by tag name with no matching class
+   here), `use-layout` **is** a registered custom element (`elements/use-layout/use-layout.ts`) —
+   but mostly so its attributes are typed, reflected properties for an author's autocomplete and a
+   type checker's benefit. It renders no shadow DOM and no template of its own: almost every rule
+   below still targets the plain `use-layout` tag and its attributes exactly as if it were
+   unregistered. The one exception is `padding`'s two-token compound form (`padding="medium
+   small"`), which needs the element's own JS to split it into `padding-block`/`padding-inline` —
+   a plain CSS attribute selector can't tell one word in a value from another — so that one form
+   only resolves once the element upgrades; every single-token value works either way.
 
    When a direct child `use-layout` carries `fill`, that child grows to consume the remaining
    space and the other children are pinned so they can't shrink; with no such child,
@@ -21,27 +30,34 @@
      use-layout.media     a media object    — a rail cell beside an anonymous body cell holding
                                               the stacked regions (à la Bootstrap 3's .media)
 
-   All four regions are optional and any combination lays out correctly: `header` + `footer` is a
-   confirm dialog, `header` + `main` a bare card, `main` alone a grouped chat message. Source
-   order is canonical — figure, header, main, footer — and a variant may re-position regions
-   visually but never asks an author to reorder markup.
+   `header`/`main`/`footer` are style hooks, not required elements — none of these regions are
+   mandatory, any combination lays out correctly (`header` + `footer` is a confirm dialog, `header`
+   + `main` a bare card, `main` alone a grouped chat message), and on `.page`/`.card` any other
+   element is just as welcome: it gets the same inset as a named region, it just doesn't pick up
+   the flex/alignment treatment `header`/`footer` add on top. Source order is canonical — figure,
+   header, main, footer — and a variant may re-position regions visually but never asks an author
+   to reorder markup.
 
    A variant's own density sets *only* two axes on itself — `--usewc-layout-region-padding` (the
    inline inset) and `--usewc-layout-region-gap` (everything block: internal spacing within a
-   region, and the padding a region gets on its own block edges) — plus `-avatar-size`,
-   `--usewc-layout-footer-justify` and `-row-gap`. Reusing `-gap` as the block padding isn't a
-   shortcut: it's the same "how far apart do things stack" value either way, so a region's own
-   padding and the room it leaves around its neighbours always agree. One generic set of region
-   rules reads these; the arrangement itself (flex vs. grid vs. table, where the avatar sits,
-   which edge a footer aligns to) stays with each variant or, where a property can't say it, a
-   structural override. A `use-layout.page` is a `use-layout`, so the base pin/grow rules above
-   already cover it too.
+   region, and the padding a region gets on its own block edges) — plus `-avatar-size` and
+   `--usewc-layout-footer-justify`. Reusing `-gap` as the block padding isn't a shortcut: it's the
+   same "how far apart do things stack" value either way, so a region's own padding and the room
+   it leaves around its neighbours always agree. One generic set of region rules reads these; the
+   arrangement itself (flex vs. grid vs. table, where the avatar sits, which edge a footer aligns
+   to) stays with each variant or, where a property can't say it, a structural override. A
+   `use-layout.page` is a `use-layout`, so the base pin/grow rules above already cover it too.
+
+   No variant sets a container-level stacking gap: each region already pads its own block edges by
+   the density's own gap, so that alone puts one gap's worth of room between two regions — a
+   container `gap` on top would double-count it. `.page` and `.card` carry that same gap as a
+   `padding-block` on the host itself, so the true top/bottom edges get it too, and the first/last
+   child drop their own edge-facing half so it isn't doubled with the host's.
 
    `.page` and `.card` also take `.divided`, which rules a header/footer off from the body — opt-in,
-   not a variant default. Undivided, the container's stacking gap does the separating, on top of
-   each region's own padding. `.divided` turns that gap off and draws a border on whichever region
-   isn't first instead, so the padding alone (never the gap) is what holds the line clear of its
-   neighbour — the two mechanisms are never both in play at once.
+   not a variant default. Undivided, each region's own padding does the separating. `.divided`
+   draws a border on whichever region isn't first instead, so the padding alone — never a gap —
+   is what holds the line clear of its neighbour.
 
    `.entry` also takes `.compact`, which steps its own density down for a tighter repetition of
    the same shape — a nav item rather than a list row. Each variant that supports it declares its
@@ -51,9 +67,9 @@
    Every variant takes `.flush`, which drops a use-layout's own outer inset so it can sit
    directly inside a container that already pads itself — an `<a>` in a nav, a dialog's own
    padded surface — without doubling up. Inline padding goes everywhere it's set, since every
-   region shares one left/right inset; block padding only comes off the two true outer edges —
-   the first region's own top and the last region's own bottom — so the row-gap between regions,
-   and every other region's own padding, are untouched.
+   region shares one left/right inset; block padding only comes off the host's own edges — the
+   `padding-block` every variant now carries at the container level — so the space between
+   regions, and each region's own padding, are untouched.
 
    Every selector stays compound (`use-layout.page`, never a bare `.page`) so none of these
    common words can collide with an author's own class of the same name.
@@ -63,160 +79,182 @@
    overlay element's UA-controlled `display` alone and lets a dialog host any variant rather
    than being hard-wired to the card's arrangement.
 
-   Every rule carries the `use-theme-escape` revert so an escaped subtree drops back to
-   unstyled markup, the same as the rest of this family. */
+   Unlike the rest of this family, no rule here carries a `use-theme-escape` revert: escaping is
+   for opting a themed *component* back out to plain markup, and `use-layout` is already a bare,
+   general-purpose flex primitive rather than a specific component with a look to shed — reaching
+   for a plain `<div>` (with its own `display: flex` if needed) already gets the unstyled result an
+   escape would, with nothing to revert in the first place. */
 @layer use-theme.layout {
   use-layout {
     display: flex;
     flex-direction: column;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[inline] {
     display: inline-flex;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[direction="row"] {
     flex-direction: row;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[wrap] {
     flex-wrap: wrap;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[align="start"] {
     align-items: start;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[align="center"] {
     align-items: center;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[align="end"] {
     align-items: end;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[align="stretch"] {
     align-items: stretch;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[justify="start"] {
     justify-content: start;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[justify="center"] {
     justify-content: center;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[justify="end"] {
     justify-content: end;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[justify="space-between"] {
     justify-content: space-between;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[justify="space-around"] {
     justify-content: space-around;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="xsmall"] {
     gap: var(--usewc-layout-flex-gap-xsmall);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="small"] {
     gap: var(--usewc-layout-flex-gap-small);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="medium"] {
     gap: var(--usewc-layout-flex-gap-medium);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="large"] {
     gap: var(--usewc-layout-flex-gap-large);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="xlarge"] {
     gap: var(--usewc-layout-flex-gap-xlarge);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout[gap="super"] {
     gap: var(--usewc-layout-flex-gap-super);
+  }
 
-    use-theme-escape & {
-      all: revert-layer;
-    }
+  /* `padding`/`padding-block`/`padding-inline` step through their own named scale
+     (`--usewc-layout-flex-padding-*`), aliased in semantic.css to the same values as `gap`'s — the
+     same "how far apart do things sit" size either way, just read through a padding-named token
+     rather than a borrowed gap one. Each is a plain attribute selector on a single token, so all
+     three work with no JS required. `padding`'s two-token compound form (`padding="medium small"`,
+     block then inline like CSS's own two-value `padding` shorthand) is the one exception: a CSS
+     attribute selector can't tell one word in a value from another, so that form is parsed by the
+     registered element instead and re-expressed as `padding-block`/`padding-inline` — see
+     `use-layout.ts`. `padding-block`/`padding-inline` are declared after `padding` here so they
+     win on source order when both happen to be set, the same as a CSS longhand declared after its
+     own shorthand would. */
+  use-layout[padding="none"] {
+    padding: var(--usewc-space-none);
+  }
+
+  use-layout[padding="xsmall"] {
+    padding: var(--usewc-layout-flex-padding-xsmall);
+  }
+
+  use-layout[padding="small"] {
+    padding: var(--usewc-layout-flex-padding-small);
+  }
+
+  use-layout[padding="medium"] {
+    padding: var(--usewc-layout-flex-padding-medium);
+  }
+
+  use-layout[padding="large"] {
+    padding: var(--usewc-layout-flex-padding-large);
+  }
+
+  use-layout[padding="xlarge"] {
+    padding: var(--usewc-layout-flex-padding-xlarge);
+  }
+
+  use-layout[padding="super"] {
+    padding: var(--usewc-layout-flex-padding-super);
+  }
+
+  use-layout[padding-block="none"] {
+    padding-block: var(--usewc-space-none);
+  }
+
+  use-layout[padding-block="xsmall"] {
+    padding-block: var(--usewc-layout-flex-padding-xsmall);
+  }
+
+  use-layout[padding-block="small"] {
+    padding-block: var(--usewc-layout-flex-padding-small);
+  }
+
+  use-layout[padding-block="medium"] {
+    padding-block: var(--usewc-layout-flex-padding-medium);
+  }
+
+  use-layout[padding-block="large"] {
+    padding-block: var(--usewc-layout-flex-padding-large);
+  }
+
+  use-layout[padding-block="xlarge"] {
+    padding-block: var(--usewc-layout-flex-padding-xlarge);
+  }
+
+  use-layout[padding-block="super"] {
+    padding-block: var(--usewc-layout-flex-padding-super);
+  }
+
+  use-layout[padding-inline="none"] {
+    padding-inline: var(--usewc-space-none);
+  }
+
+  use-layout[padding-inline="xsmall"] {
+    padding-inline: var(--usewc-layout-flex-padding-xsmall);
+  }
+
+  use-layout[padding-inline="small"] {
+    padding-inline: var(--usewc-layout-flex-padding-small);
+  }
+
+  use-layout[padding-inline="medium"] {
+    padding-inline: var(--usewc-layout-flex-padding-medium);
+  }
+
+  use-layout[padding-inline="large"] {
+    padding-inline: var(--usewc-layout-flex-padding-large);
+  }
+
+  use-layout[padding-inline="xlarge"] {
+    padding-inline: var(--usewc-layout-flex-padding-xlarge);
+  }
+
+  use-layout[padding-inline="super"] {
+    padding-inline: var(--usewc-layout-flex-padding-super);
   }
 
   use-layout[fill],
@@ -224,20 +262,13 @@
     flex: 1 1 auto;
     min-block-size: 0;
     min-inline-size: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
+    overflow: auto;
   }
 
   use-layout:has(> use-layout[fill]) > :not(use-layout[fill]) {
     flex: 0 0 auto;
     min-block-size: 0;
     min-inline-size: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* ── Variant density ────────────────────────────────────────────────────────────────────────
@@ -252,13 +283,8 @@
   use-layout.page {
     --usewc-layout-region-padding: var(--usewc-layout-page-padding);
     --usewc-layout-region-gap: var(--usewc-layout-page-gap);
-    --usewc-layout-region-row-gap: var(--usewc-layout-page-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-page-avatar-size);
     --usewc-layout-footer-justify: space-between;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.entry {
@@ -267,10 +293,6 @@
     --usewc-layout-region-avatar-size: var(--usewc-layout-entry-avatar-size);
     --usewc-layout-region-row-gap: var(--usewc-layout-entry-gap);
     --usewc-layout-footer-justify: flex-start;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.entry.compact {
@@ -278,10 +300,6 @@
     --usewc-layout-region-gap: var(--usewc-layout-entry-compact-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-entry-compact-avatar-size);
     --usewc-layout-region-row-gap: var(--usewc-layout-entry-compact-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* Chat density on top of `.entry`'s layout — tighter, since a message repeats down a feed. */
@@ -291,22 +309,13 @@
     --usewc-layout-region-avatar-size: var(--usewc-layout-message-rail);
     --usewc-layout-region-row-gap: var(--usewc-layout-region-title-gap);
     --usewc-layout-footer-justify: flex-start;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.card {
     --usewc-layout-region-padding: var(--usewc-layout-card-padding);
     --usewc-layout-region-gap: var(--usewc-layout-card-gap);
-    --usewc-layout-region-row-gap: var(--usewc-layout-card-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-card-avatar-size);
     --usewc-layout-footer-justify: flex-end;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* `.media` is a media object — a rail beside a wider body column, at one compact density for
@@ -318,86 +327,106 @@
     --usewc-layout-region-row-gap: var(--usewc-layout-media-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-region-title-block-size);
     --usewc-layout-footer-justify: flex-start;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
-  /* `.divided` rules a region off from the one before it by position, not by tag — the border and
-     the padding that keeps it clear of its neighbour both land on "whichever child isn't first",
-     so a `<figure>`, an author's own `<section>`, or any other stand-in divides exactly like
-     `header`/`main`/`footer` do, with nothing to name per tag. It only makes sense for `.page` and
-     `.card`, the two plain-column variants where "the next region" is unambiguous; `.entry`,
-     `.message` and `.media` arrange their regions structurally instead, so a rule between them
-     isn't a single boundary to draw. Turning the stacking gap off is what makes this exclusive
-     with the undivided case — the border and the padding are the only spacing here, never the
-     gap too. */
+  /* `.divided` rules a region off from the one before it by position, not by tag — the border
+     lands on "whichever child isn't first", so a `<figure>`, an author's own `<section>`, or any
+     other stand-in divides exactly like `header`/`main`/`footer` do, with nothing to name per
+     tag. It only makes sense for `.page` and `.card`, the two plain-column variants where "the
+     next region" is unambiguous; `.entry`, `.message` and `.media` arrange their regions
+     structurally instead, so a rule between them isn't a single boundary to draw.
+
+     Every child already gets its own `padding-block` (below), figure included here, which is the
+     one thing that changes: undivided, a `<figure>` bleeds edge to edge; divided, it takes the
+     same padding as its neighbours so the rule between it and the next region doesn't run flush
+     against the image. */
   use-layout:is(.page, .card).divided {
-    --usewc-layout-region-row-gap: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-
     & > * {
       padding-block: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > :not(:first-child) {
       border-block-start: var(--usewc-layout-region-rule);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
+  }
+
+  /* `.page` and `.card` stack with no container-level gap between regions (see the removal of
+     `--usewc-layout-region-row-gap` from their density above): each region already pads its own
+     block edges by the density's own gap, so two adjacent regions naturally end up one gap's
+     worth of breathing room apart without a container gap doubling it. That padding is no longer
+     tag-gated — anything dropped directly into `.page`/`.card`, not only `header`/`main`/`footer`,
+     gets the same inset, which is what lets any content live there. `figure` is excluded, since it
+     bleeds to the container's own edge instead (see below).
+
+     The host itself carries the matching `padding-block`, so the true top/bottom edges get one
+     gap's worth of space; the first and last child then drop their own edge-facing half so it
+     isn't doubled with the host's. Both rules skip `:where()` so they reliably out-rank the
+     per-tag padding on `header`/`footer`/`use-layout[fill]` above regardless of source order — the
+     same trick `.flush` already relies on below. */
+  :where(use-layout:is(.page, .card)) > :not(figure) {
+    padding-inline: var(--usewc-layout-region-padding);
+    padding-block: var(--usewc-layout-region-gap);
+  }
+
+  /* Same reasoning as `main`'s own first/last-child margin reset further below, generalized to
+     match the padding rule just above: any non-`figure` child of `.page`/`.card` is a region now,
+     not only `main`/`use-layout[fill]`, so a plain `<div>` or `<ul>` dropped in directly gets the
+     same treatment — its own first/last child sheds the block margin that would otherwise stack
+     on top of the region's padding. */
+  :where(use-layout:is(.page, .card)) > :not(figure) > :first-child {
+    margin-block-start: 0;
+  }
+
+  :where(use-layout:is(.page, .card)) > :not(figure) > :last-child {
+    margin-block-end: 0;
+  }
+
+  use-layout:is(.page, .card) {
+    padding-block: var(--usewc-layout-region-gap);
+  }
+
+  use-layout:is(.page, .card) > :first-child {
+    padding-block-start: 0;
+  }
+
+  use-layout:is(.page, .card) > :last-child {
+    padding-block-end: 0;
+  }
+
+  /* A `<figure>` sitting at the very top or bottom edge bleeds through the host's own edge padding
+     with a matching negative margin, the same way it always has. `.divided` opts every region,
+     figure included, into the same padding as its neighbours instead (above), so it's excluded
+     here; `.flush` already zeroes the host's own padding, so there is nothing left to pull out of. */
+  :where(use-layout:is(.page, .card):not(.divided):not(.flush)) > figure:first-child {
+    margin-block-start: calc(var(--usewc-layout-region-gap) * -1);
+  }
+
+  :where(use-layout:is(.page, .card):not(.divided):not(.flush)) > figure:last-child {
+    margin-block-end: calc(var(--usewc-layout-region-gap) * -1);
   }
 
   /* `.flush` zeroes a use-layout's own outer inset. Inline padding is one token consumed
      everywhere it's set (every region, and the container itself for `.entry`/`.message`/`.media`),
-     so overriding it here reaches all of them at once regardless of variant. Block padding is
-     narrower on purpose — only the true outer edges come off, not every region's own padding, so
-     the row-gap between regions and a middle region's spacing are untouched. `.page`/`.card` pad
-     each region individually, so that's a first-child/last-child position match; `.entry`,
-     `.message` and `.media` pad the container itself instead, so that's zeroed directly.
+     so overriding it here reaches all of them at once regardless of variant. Block padding comes
+     off the host directly for every variant now — `.page`/`.card` carry their own
+     `padding-block` above, and `.entry`/`.message`/`.media` pad the container the same way — so
+     one rule zeroes it everywhere; a middle region's own padding and the space between regions
+     are untouched either way.
 
      The selector matches the variant list rather than a bare `.flush` so this out-ranks a
      two-class modifier like `.entry.compact` on specificity — `.entry.compact.flush` needs
      `.flush` to win regardless of which order the three classes are combined in. */
   use-layout:is(.page, .entry, .message, .card, .media).flush {
     --usewc-layout-region-padding: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  use-layout:is(.entry, .message, .media).flush {
     padding-block: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.flush > :first-child {
     padding-block-start: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.flush > :last-child {
     padding-block-end: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* ── Generic regions ────────────────────────────────────────────────────────────────────────
@@ -409,55 +438,33 @@
     min-block-size: 0;
     gap: var(--usewc-layout-region-row-gap);
 
-    use-theme-escape & {
-      all: revert-layer;
-    }
-
     & > use-layout[fill] {
-      overflow: auto;
       padding-inline: var(--usewc-layout-region-padding);
       padding-block: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > main {
       padding-inline: var(--usewc-layout-region-padding);
       padding-block: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* The region owns its outer spacing, so the first and last things in it shed the block
        margins they'd otherwise stack on top of the padding — a leading `<p>`, `<ul>`, `<ol>` or
        heading would otherwise push itself away from an edge that's already spaced. Matched by
-       position rather than by tag so it holds for whatever flow content lands there. */
+       position rather than by tag so it holds for whatever flow content lands there. Tag-gated to
+       `main`/`use-layout[fill]` here since `.entry`/`.message`/`.media` don't accept arbitrary
+       content as a region the way `.page`/`.card` do — those two get the same treatment
+       generalized to any non-`figure` child, above, alongside the padding it's paired with. */
     & > :is(main, use-layout[fill]) > :first-child {
       margin-block-start: 0;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > :is(main, use-layout[fill]) > :last-child {
       margin-block-end: 0;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > figure {
       margin: 0;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > figure > img {
@@ -465,10 +472,6 @@
       inline-size: 100%;
       block-size: auto;
       object-fit: cover;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > header {
@@ -478,10 +481,6 @@
       gap: var(--usewc-layout-region-gap);
       padding-inline: var(--usewc-layout-region-padding);
       padding-block: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > footer {
@@ -491,10 +490,6 @@
       gap: var(--usewc-layout-region-gap);
       padding-inline: var(--usewc-layout-region-padding);
       padding-block: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* A header's leading likeness is a `use-avatar` or a `<figure>` — no `img.avatar`
@@ -508,10 +503,6 @@
       block-size: var(--usewc-layout-region-avatar-size);
       border-radius: var(--usewc-effect-surface-avatar-border-radius);
       overflow: hidden;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > header > figure {
@@ -521,20 +512,12 @@
       margin-inline: 0;
       font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
       line-height: 1;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > header > figure > img {
       inline-size: 100%;
       block-size: 100%;
       object-fit: cover;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* An `hgroup` is a title stack wherever it turns up in a region — often wrapped in a
@@ -546,18 +529,10 @@
       flex-direction: column;
       gap: var(--usewc-layout-region-title-gap);
       min-inline-size: 0;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > header > hgroup {
       flex: 1;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* An `hgroup`'s lines get explicit line boxes so a stacked title and subtitle add up to a
@@ -567,20 +542,12 @@
        leading with its font size instead of overlapping the line above. */
     & > :is(header, footer) hgroup > * {
       line-height: max(var(--usewc-layout-region-title-line-height), 1.25em);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > :is(header, footer) hgroup > * + * {
       font-size: var(--usewc-font-region-subtitle-size);
       line-height: var(--usewc-layout-region-subtitle-line-height);
       color: var(--usewc-color-document-text-muted);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* A header and footer are flex containers and an `hgroup` is a flex column, so `gap` is the
@@ -592,10 +559,6 @@
     & > :is(header, footer) hgroup > *,
     & > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
       margin-block: 0;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     /* A `<section>` inside a header or footer is one cluster of related controls. Two or more of
@@ -605,18 +568,10 @@
       display: flex;
       align-items: center;
       gap: var(--usewc-layout-region-gap);
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
 
     & > :is(header, footer):has(> section ~ section) {
       justify-content: space-between;
-
-      use-theme-escape & {
-        all: revert-layer;
-      }
     }
   }
 
@@ -646,27 +601,15 @@
     row-gap: var(--usewc-layout-region-row-gap);
     padding-inline: var(--usewc-layout-region-padding);
     padding-block: var(--usewc-layout-region-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout:is(.entry, .message)) > :is(header, main, footer) {
     grid-column: 2;
     padding: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout.message) > footer {
     margin-block-start: var(--usewc-layout-region-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* The rail is a fixed square holding the likeness. `use-avatar` is the element for it — it
@@ -681,10 +624,6 @@
     block-size: var(--usewc-layout-region-avatar-size);
     overflow: hidden;
     border-radius: var(--usewc-effect-surface-avatar-border-radius);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* The rail shares a centre with the title block rather than being pinned to the top of it, so
@@ -696,10 +635,6 @@
      column and the rail starts with it. */
   :where(use-layout:is(.entry, .message):has(> header)) > :is(use-avatar, figure) {
     align-self: center;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout:is(.entry, .message)) > figure {
@@ -708,40 +643,24 @@
     justify-content: center;
     font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
     line-height: 1;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout:is(.entry, .message)) > figure > img {
     inline-size: 100%;
     block-size: 100%;
     object-fit: cover;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* A `<figure>` inside the body is an attachment, not the rail — it keeps the flow but sheds the
      UA margin so the region's own spacing is the only spacing. */
   :where(use-layout:is(.page, .entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure {
     margin-inline: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout:is(.page, .entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure > img {
     display: block;
     inline-size: 100%;
     block-size: auto;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* Name and timestamp sit on one line here rather than stacking, and the line never wraps —
@@ -751,10 +670,6 @@
     align-items: baseline;
     gap: var(--usewc-layout-region-gap);
     white-space: nowrap;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* `.media` is a media object — a rail that shrink-wraps whatever it holds — an avatar, a
@@ -780,10 +695,6 @@
     border-spacing: 0;
     padding-inline: var(--usewc-layout-region-padding);
     padding-block: var(--usewc-layout-region-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   :where(use-layout.media) > :first-child {
@@ -791,10 +702,6 @@
     inline-size: 0;
     vertical-align: top;
     padding-inline-end: var(--usewc-layout-region-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* Every region's own padding lives on the container instead. The rail is always the first
@@ -802,10 +709,6 @@
      explicitly. */
   :where(use-layout.media) > :not(:first-child) {
     padding: 0;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* The row gap separates the regions from each other, not the rail from the first region — that
@@ -813,10 +716,6 @@
      first region is always child 2, the row gap only starts from the third child on. */
   :where(use-layout.media) > :nth-child(n + 3) {
     margin-block-start: var(--usewc-layout-region-row-gap);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   /* Card chrome — the one bit of floating surface treatment that isn't layout, and the only
@@ -836,17 +735,9 @@
     border-radius: var(--usewc-effect-surface-border-radius);
     box-shadow: var(--usewc-effect-surface-shadow);
     color: var(--usewc-color-document-text);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 
   use-layout.card.outlined:not(:is(dialog, [popover]) > *) {
     box-shadow: none;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
   }
 }

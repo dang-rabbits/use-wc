@@ -509,6 +509,16 @@
   --usewc-layout-flex-gap-large: var(--usewc-space-16);
   --usewc-layout-flex-gap-xlarge: var(--usewc-space-24);
   --usewc-layout-flex-gap-super: var(--usewc-space-32);
+  /* `use-layout`'s named padding scale — the same steps as the gap scale above, aliased under
+     their own name rather than reused directly, so a `padding` rule reads as a padding token and
+     not a borrowed gap one. Keep the two aliased rather than letting either drift: a step here
+     should always mean the same physical size as the matching step of `gap`. */
+  --usewc-layout-flex-padding-xsmall: var(--usewc-layout-flex-gap-xsmall);
+  --usewc-layout-flex-padding-small: var(--usewc-layout-flex-gap-small);
+  --usewc-layout-flex-padding-medium: var(--usewc-layout-flex-gap-medium);
+  --usewc-layout-flex-padding-large: var(--usewc-layout-flex-gap-large);
+  --usewc-layout-flex-padding-xlarge: var(--usewc-layout-flex-gap-xlarge);
+  --usewc-layout-flex-padding-super: var(--usewc-layout-flex-gap-super);
 
   /* Prose — the typographic scale for a block of authored text (see `theme/prose.css`). It is
      the only place this system sets heading sizes, paragraph rhythm or list indentation: outside

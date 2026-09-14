@@ -48,7 +48,16 @@ describe("layout region treatment", () => {
           </use-layout>
         `);
 
-        expect(styleOf(document.getElementById("figure")!, "margin")).toBe("0px");
+        // `.page`/`.card` pad the host itself at the block edges, so a figure sitting there as
+        // both the first and last child pulls itself back out with a negative margin to keep
+        // bleeding edge to edge — everywhere else a figure just gets a plain zero margin.
+        const margin = styleOf(document.getElementById("figure")!, "margin");
+        if (variant === "page" || variant === "card") {
+          expect(margin.startsWith("-")).toBe(true);
+          expect(margin.endsWith("px 0px")).toBe(true);
+        } else {
+          expect(margin).toBe("0px");
+        }
         expect(styleOf(document.getElementById("poster")!, "object-fit")).toBe("cover");
       });
 
@@ -249,6 +258,24 @@ describe("layout region treatment", () => {
       expect(styleOf(document.getElementById("footer")!, "padding-top")).toBe("12px");
     });
 
+    it("pads and sheds the outer block margin of a plain child too, not only header/main/footer", async () => {
+      render(html`
+        <use-layout class="page">
+          <div id="section">
+            <p id="first">first</p>
+            <p id="last">last</p>
+          </div>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("section")!, "padding-left")).toBe("20px");
+      expect(styleOf(document.getElementById("section")!, "padding-top")).toBe("0px");
+      expect(styleOf(document.getElementById("first")!, "margin-top")).toBe("0px");
+      expect(styleOf(document.getElementById("first")!, "margin-bottom")).not.toBe("0px");
+      expect(styleOf(document.getElementById("last")!, "margin-bottom")).toBe("0px");
+      expect(styleOf(document.getElementById("last")!, "margin-top")).not.toBe("0px");
+    });
+
     it("rules the topbar and footer off from the body when divided, without touching either region's padding", async () => {
       render(html`
         <use-layout class="page divided">
@@ -267,7 +294,7 @@ describe("layout region treatment", () => {
       expect(styleOf(document.getElementById("footer")!, "padding-top")).toBe("12px");
     });
 
-    it("turns the stacking gap off when divided, so the rule and padding are the only spacing", async () => {
+    it("carries no stacking gap of its own, divided or not, so the rule and padding are the only spacing", async () => {
       render(
         html`<use-layout class="page divided" id="page"
           ><header></header>
@@ -275,12 +302,12 @@ describe("layout region treatment", () => {
         ></use-layout>`,
       );
 
-      expect(styleOf(document.getElementById("page")!, "gap")).toBe("0px");
+      expect(styleOf(document.getElementById("page")!, "gap")).toBe("normal");
     });
 
     it("keeps the topbar shallower than it is wide", async () => {
       render(html`
-        <use-layout class="page">
+        <use-layout class="page" id="page">
           <header id="header">
             <section>
               <hgroup id="hgroup"><h4 id="title">Brand</h4></hgroup>
@@ -290,10 +317,15 @@ describe("layout region treatment", () => {
         </use-layout>
       `);
 
-      for (const id of ["header", "footer"]) {
-        expect(styleOf(document.getElementById(id)!, "padding-top")).toBe("12px");
-        expect(styleOf(document.getElementById(id)!, "padding-left")).toBe("20px");
-      }
+      // The host itself carries the true top/bottom edge padding now, so the first region (the
+      // topbar) sheds its own top inset and the last region (the footer) sheds its own bottom
+      // inset — inline padding is untouched either way, since every region still carries its own.
+      expect(styleOf(document.getElementById("page")!, "padding-top")).toBe("12px");
+      expect(styleOf(document.getElementById("page")!, "padding-bottom")).toBe("12px");
+      expect(styleOf(document.getElementById("header")!, "padding-top")).toBe("0px");
+      expect(styleOf(document.getElementById("header")!, "padding-left")).toBe("20px");
+      expect(styleOf(document.getElementById("footer")!, "padding-bottom")).toBe("0px");
+      expect(styleOf(document.getElementById("footer")!, "padding-left")).toBe("20px");
       expect(styleOf(document.getElementById("hgroup")!, "display")).toBe("flex");
       expect(styleOf(document.getElementById("title")!, "margin-top")).toBe("0px");
       expect(styleOf(document.getElementById("title")!, "margin-bottom")).toBe("0px");
@@ -679,18 +711,5 @@ describe("layout region treatment", () => {
 
     expect(styleOf(document.getElementById("dialog")!, "display")).toBe("block");
     expect(styleOf(document.getElementById("header")!, "display")).toBe("block");
-  });
-
-  it("reverts inside use-theme-escape", async () => {
-    render(html`
-      <use-theme-escape>
-        <use-layout class="card">
-          <footer id="footer"><button type="button">Save</button></footer>
-        </use-layout>
-      </use-theme-escape>
-    `);
-
-    expect(styleOf(document.getElementById("footer")!, "padding")).toBe("0px");
-    expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("normal");
   });
 });
