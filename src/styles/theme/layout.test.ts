@@ -48,7 +48,7 @@ describe("use-layout", () => {
     render(html`<use-layout gap="medium"><div>item</div></use-layout>`);
     const layout = document.querySelector("use-layout") as HTMLElement;
 
-    expect(styleOf(layout, "column-gap")).toBe("8px");
+    expect(styleOf(layout, "column-gap")).toBe("12px");
   });
 
   describe("padding", () => {
@@ -56,8 +56,8 @@ describe("use-layout", () => {
       render(html`<use-layout padding="medium"><div>item</div></use-layout>`);
       const layout = document.querySelector("use-layout") as HTMLElement;
 
-      expect(styleOf(layout, "padding-top")).toBe("8px");
-      expect(styleOf(layout, "padding-left")).toBe("8px");
+      expect(styleOf(layout, "padding-top")).toBe("12px");
+      expect(styleOf(layout, "padding-left")).toBe("12px");
     });
 
     it("resolves none to an explicit zero", async () => {
