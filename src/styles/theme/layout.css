@@ -252,6 +252,17 @@
     min-inline-size: 0;
   }
 
+  /* `--usewc-layout-region-gap`/`-padding` are custom properties, which inherit by default — left
+     alone, a nested `use-layout` would pick up its ancestor's density instead of its own default
+     of "no gap/padding of its own." Resetting them here, at `:where()`'s zero specificity, stops
+     that inheritance at every `use-layout` boundary without affecting a variant class or a
+     `gap`/`padding` attribute below, both of which carry real specificity and still win on the
+     element they target. */
+  :where(use-layout) {
+    --usewc-layout-region-gap: initial;
+    --usewc-layout-region-padding: initial;
+  }
+
   /* ── Variant density ────────────────────────────────────────────────────────────────────────
      A variant class sets its own scale and nothing else; the generic region rules below read
      these properties. Keeping the arrangement in one ruleset rather than four means a future
