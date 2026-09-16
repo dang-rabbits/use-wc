@@ -596,6 +596,8 @@
   --usewc-layout-page-padding: var(--usewc-space-20);
   --usewc-layout-page-gap: var(--usewc-space-12);
   --usewc-layout-page-avatar-size: var(--usewc-layout-region-title-block-size);
+  --usewc-font-page-title-size: var(--usewc-font-size-28);
+  --usewc-font-page-title-weight: var(--usewc-font-weight-medium);
 
   --usewc-layout-card-padding: var(--usewc-space-16);
   --usewc-layout-card-gap: var(--usewc-space-10);

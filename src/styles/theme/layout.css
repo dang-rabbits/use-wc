@@ -279,6 +279,14 @@
     --usewc-layout-footer-justify: space-between;
   }
 
+  /* A page's own `h1` — its title, wherever it sits in the topbar — reads at the page's title
+     size and weight rather than the browser's default heading style. Matched at any depth, since
+     a topbar routinely nests it a `<section>` or an `<hgroup>` down. */
+  use-layout.page h1 {
+    font-size: var(--usewc-font-page-title-size);
+    font-weight: var(--usewc-font-page-title-weight);
+  }
+
   use-layout.entry {
     --usewc-layout-region-padding: var(--usewc-layout-entry-padding);
     --usewc-layout-region-gap: var(--usewc-layout-entry-gap);
