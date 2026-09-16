@@ -433,16 +433,18 @@ export class UseTimeInput extends UseLocaleElement {
           >`
         : html`<input
             type=${part.type === "dayPeriod" ? "text" : "number"}
-            value=${part.type === "dayPeriod"
-              ? this.#valueData.dayPeriod
-                ? this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels]
-                : ""
-              : this.#valueData[part.type]}
+            value=${
+              part.type === "dayPeriod"
+                ? this.#valueData.dayPeriod
+                  ? this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels]
+                  : ""
+                : this.#valueData[part.type]
+            }
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            aria-label=${this.#ariaLabels[
-              part.type === "fractionalSecond" ? "millisecond" : part.type
-            ]}
+            aria-label=${
+              this.#ariaLabels[part.type === "fractionalSecond" ? "millisecond" : part.type]
+            }
             min="0"
             max=${this.#getMaxValue(part.type)}
             part="segment-input segment-input-${part.type}"
