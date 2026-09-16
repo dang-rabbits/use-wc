@@ -1,5 +1,5 @@
 @layer use-theme.selector {
-  input:is([type="checkbox"], [type="radio"]) {
+  input:is([type="checkbox"], [type="radio"]):not([role="switch"]) {
     all: unset;
     appearance: none;
     box-sizing: border-box;

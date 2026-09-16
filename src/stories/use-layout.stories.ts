@@ -29,7 +29,7 @@ const meta: Meta = {
           "",
           "Five variant classes name what the container *is*, and arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions to match: `page` for an app frame, `entry` for a row in a list, `message` for a chat or comment, `card` for a panel, and `media` for a media object — a rail that fits its content beside a wider body column. Each selector is compound (`use-layout.page`, never a bare `.page`) so these common words can't collide with your own classes.",
           "",
-          "Add `.divided` alongside a variant class to rule a header or footer off from the body. It's opt-in rather than a variant default, since the rule and the gap already separating regions would otherwise both be marking the same boundary.",
+          "Add `.divided` to a bare `use-layout` or alongside `page`/`card` to rule a region off from the one before it — opt-in, not a default. `entry`/`message`/`media` don't take it, since they arrange their regions structurally rather than stacking them in one column.",
           "",
           "For a block of authored text, reach for `use-prose` instead — typography is its own concern, not a layout.",
         ].join("\n"),
@@ -56,7 +56,9 @@ const paddingScale = ["", "none", "xsmall", "small", "medium", "large", "xlarge"
  *
  * Variant classes (`page`, `entry`, `message`, `card`, `media`) and their modifiers stay plain
  * classes rather than properties — see the dedicated story for each — so this playground sticks
- * to the flex container itself: a bare `use-layout` arranging a handful of chips.
+ * to the flex container itself: a bare `use-layout` arranging a handful of chips. `Divided` is
+ * the one modifier exposed here too, since a bare `use-layout` takes it directly — it draws its
+ * rule into the stacking gap, so it has nothing to draw into with `Gap` set to none.
  */
 export const Default: Story = {
   argTypes: {
@@ -103,6 +105,10 @@ export const Default: Story = {
       name: "Inline",
       control: "boolean",
     },
+    divided: {
+      name: "Divided",
+      control: "boolean",
+    },
   },
   args: {
     direction: "column",
@@ -114,23 +120,36 @@ export const Default: Story = {
     paddingInline: "",
     wrap: false,
     inline: false,
+    divided: false,
   },
   render: (args) => {
-    const { direction, align, justify, gap, padding, paddingBlock, paddingInline, wrap, inline } =
-      args as {
-        direction: "column" | "row";
-        align: "" | "start" | "center" | "end" | "stretch";
-        justify: "" | "start" | "center" | "end" | "space-between" | "space-around";
-        gap: "" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-        padding: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-        paddingBlock: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-        paddingInline: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
-        wrap: boolean;
-        inline: boolean;
-      };
+    const {
+      direction,
+      align,
+      justify,
+      gap,
+      padding,
+      paddingBlock,
+      paddingInline,
+      wrap,
+      inline,
+      divided,
+    } = args as {
+      direction: "column" | "row";
+      align: "" | "start" | "center" | "end" | "stretch";
+      justify: "" | "start" | "center" | "end" | "space-between" | "space-around";
+      gap: "" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+      padding: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+      paddingBlock: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+      paddingInline: "" | "none" | "xsmall" | "small" | "medium" | "large" | "xlarge" | "super";
+      wrap: boolean;
+      inline: boolean;
+      divided: boolean;
+    };
 
     return html`
       <use-layout
+        class=${divided ? "divided" : ""}
         .direction=${direction}
         .align=${align}
         .justify=${justify}
@@ -264,9 +283,14 @@ export const Page: Story = {
 };
 
 /**
- * Add `.divided` to rule a header/footer off from the body instead of relying on the stacking gap — it's opt-in rather than a variant default, since a rule and the gap would otherwise both be marking the same boundary. `.divided` turns the gap off, so each region's own padding is what holds the line clear of its neighbour.
+ * Add `.divided` to rule a header/footer off from the body — opt-in rather than a variant
+ * default, since a rule and the gap already separating regions would otherwise both be marking
+ * the same boundary. `row-rule` (CSS Gap Decorations) draws it right into that gap on browsers
+ * that support it; everywhere else, each region gets its own padding back and a plain border
+ * does the dividing instead.
  *
- * `.card` takes `.divided` too, for a ruled footer under its body.
+ * `.card` and a bare `use-layout` take `.divided` too; `.entry`/`.message`/`.media` don't, since
+ * they arrange their regions structurally rather than stacking them in one column.
  */
 export const Divided: Story = {
   render: () => html`
