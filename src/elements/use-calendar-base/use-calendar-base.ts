@@ -909,79 +909,83 @@ export class UseCalendarBase extends UseLocaleElement {
           </button>
         </slot>
         <slot part="controls" name="controls">
-          ${this.controls
-            ? html`
-                <button
-                  type="button"
-                  part="control control-previous"
-                  aria-label=${this.#previousMonthLabel}
-                  @click=${this.previousMonth}
-                  ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
-                >
-                  ◄
-                </button>
-                <button
-                  type="button"
-                  part="control control-today"
-                  aria-label=${this.#todayLabel}
-                  @click=${this.today}
-                  ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
-                >
-                  ●
-                </button>
-                <button
-                  type="button"
-                  part="control control-next"
-                  aria-label=${this.#nextMonthLabel}
-                  @click=${this.nextMonth}
-                  ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
-                >
-                  ►
-                </button>
-              `
-            : ""}
+          ${
+            this.controls
+              ? html`
+                  <button
+                    type="button"
+                    part="control control-previous"
+                    aria-label=${this.#previousMonthLabel}
+                    @click=${this.previousMonth}
+                    ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
+                  >
+                    ◄
+                  </button>
+                  <button
+                    type="button"
+                    part="control control-today"
+                    aria-label=${this.#todayLabel}
+                    @click=${this.today}
+                    ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
+                  >
+                    ●
+                  </button>
+                  <button
+                    type="button"
+                    part="control control-next"
+                    aria-label=${this.#nextMonthLabel}
+                    @click=${this.nextMonth}
+                    ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
+                  >
+                    ►
+                  </button>
+                `
+              : ""
+          }
         </slot>
         <slot name="header-end"></slot>
       </div>
-      ${this.#pickerMode === "picker"
-        ? this.#renderPicker()
-        : html`
-            <div part="grid" role="grid" aria-labelledby="calendar-title">
-              <div part="grid-header" role="row" aria-rowindex="1">
-                ${weekdayNames.map(
-                  (name, index) =>
-                    html`<div
-                      part="grid-header-cell"
-                      role="columnheader"
-                      aria-colindex="${index + 1}"
-                    >
-                      ${name}
-                    </div>`,
-                )}
+      ${
+        this.#pickerMode === "picker"
+          ? this.#renderPicker()
+          : html`
+              <div part="grid" role="grid" aria-labelledby="calendar-title">
+                <div part="grid-header" role="row" aria-rowindex="1">
+                  ${weekdayNames.map(
+                    (name, index) =>
+                      html`<div
+                        part="grid-header-cell"
+                        role="columnheader"
+                        aria-colindex="${index + 1}"
+                      >
+                        ${name}
+                      </div>`,
+                  )}
+                </div>
+                <div
+                  part="grid-body"
+                  role="rowgroup"
+                  tabindex=${this.navigationEnabled ? "0" : undefined}
+                  @focusin=${this.navigationEnabled ? this.#handleFocusIn : undefined}
+                  @focusout=${this.navigationEnabled ? this.#handleFocusOut : undefined}
+                  @mousedown=${this.navigationEnabled ? this.#handleMouseDown : undefined}
+                  @click=${this.navigationEnabled ? this.#handleClick : undefined}
+                  @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
+                  @mouseover=${bodyListeners.mouseover}
+                  @mouseleave=${bodyListeners.mouseleave}
+                >
+                  ${keyed(
+                    `${this.year}-${this.month}`,
+                    map(
+                      neededRows,
+                      (row, index) =>
+                        html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`,
+                    ),
+                  )}
+                </div>
               </div>
-              <div
-                part="grid-body"
-                role="rowgroup"
-                tabindex=${this.navigationEnabled ? "0" : undefined}
-                @focusin=${this.navigationEnabled ? this.#handleFocusIn : undefined}
-                @focusout=${this.navigationEnabled ? this.#handleFocusOut : undefined}
-                @mousedown=${this.navigationEnabled ? this.#handleMouseDown : undefined}
-                @click=${this.navigationEnabled ? this.#handleClick : undefined}
-                @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
-                @mouseover=${bodyListeners.mouseover}
-                @mouseleave=${bodyListeners.mouseleave}
-              >
-                ${keyed(
-                  `${this.year}-${this.month}`,
-                  map(
-                    neededRows,
-                    (row, index) =>
-                      html`<div role="row" part="row" aria-rowindex=${index + 1}>${row}</div>`,
-                  ),
-                )}
-              </div>
-            </div>
-          `}
+            `
+      }
     `;
   }
 

@@ -242,9 +242,11 @@ export class UseDurationInput extends UseLocaleElement {
                   .value=${this.#valueData[ISO_DURATION_SEGMENTS[unit as keyof duration.Duration]]}
                   ?disabled=${this.disabled}
                   ?readonly=${this.readOnly}
-                  aria-label=${this.format === "digital" && part.type === "fraction"
-                    ? this.#ariaLabels.millisecond
-                    : this.#ariaLabels[unit as keyof DateTimeAriaLabels]}
+                  aria-label=${
+                    this.format === "digital" && part.type === "fraction"
+                      ? this.#ariaLabels.millisecond
+                      : this.#ariaLabels[unit as keyof DateTimeAriaLabels]
+                  }
                   min="0"
                   part="segment-input segment-input-${unit}"
                   id="${this.#segmentId(unit)}"

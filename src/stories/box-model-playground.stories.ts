@@ -588,14 +588,16 @@ function renderStateControls(state: State) {
           <option value="parent">parent (.parent .box)</option>
         </select>
       </label>
-      ${STATE_ATTRIBUTES[state]
-        ? html`
-            <label style="font-family: monospace;">
-              <input type="checkbox" name=${`__preview-${state}`} value="on" />
-              preview this state on the sample
-            </label>
-          `
-        : ""}
+      ${
+        STATE_ATTRIBUTES[state]
+          ? html`
+              <label style="font-family: monospace;">
+                <input type="checkbox" name=${`__preview-${state}`} value="on" />
+                preview this state on the sample
+              </label>
+            `
+          : ""
+      }
     </div>
   `;
 }
