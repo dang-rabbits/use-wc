@@ -424,6 +424,15 @@
   --usewc-color-grid-header-background: transparent;
   --usewc-color-grid-header-text: var(--usewc-color-gray-600);
   --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-gray-300) l c h / 0.55);
+  /* A link inside a cell inherits its resting color from the cell (`currentColor`), so hover/active
+     can't reach for a fixed color the way the default link does — they shift that same color's own
+     lightness instead. Light mode's cell text is usually dark, so darkening it further (moving
+     toward black) reads as pressed, the same direction the default link's blue-600/700/800
+     progression darkens on hover/active; the dark-mode block below flips both to lighten instead,
+     since a light-on-dark cell darkening toward the page background would lose contrast rather
+     than gain it — the same reason `button.css`'s own hover/active derivation carries a shift. */
+  --usewc-color-grid-cell-link-hover-lightness-shift: -0.08;
+  --usewc-color-grid-cell-link-active-lightness-shift: -0.16;
   /* A super-light tint of the primary — its hue and a whisper of its chroma, floated up to
      near-white — so it tracks the primary even if that's overridden. */
   --usewc-color-grid-row-background-selected: oklch(from var(--usewc-color-brand-primary) 0.96 0.03 h);
@@ -746,5 +755,10 @@
     --usewc-color-grid-header-text: var(--usewc-color-gray-200);
     --usewc-color-avatar-background: var(--usewc-color-gray-800);
     --usewc-color-avatar-text: var(--usewc-color-gray-200);
+    /* A cell's own text is usually light against a dark page, so hover/active need to lighten it
+       further instead of darkening it toward the background — the opposite direction from light
+       mode, same as the sign flip below. */
+    --usewc-color-grid-cell-link-hover-lightness-shift: 0.08;
+    --usewc-color-grid-cell-link-active-lightness-shift: 0.16;
   }
 }

@@ -71,7 +71,7 @@ const themeGridContent = html`
   </use-gridhead>
   <use-gridbody>
     <use-gridrow value="keyboard">
-      <use-gridcell>Keyboard</use-gridcell>
+      <use-gridcell mode="action"><a href="#keyboard">Keyboard</a></use-gridcell>
       <use-gridcell>In stock</use-gridcell>
       <use-gridcell>
         <use-intl-number
@@ -83,7 +83,7 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
     <use-gridrow value="mouse" selected>
-      <use-gridcell>Mouse</use-gridcell>
+      <use-gridcell mode="action"><a href="#mouse">Mouse</a></use-gridcell>
       <use-gridcell>In stock</use-gridcell>
       <use-gridcell>
         <use-intl-number
@@ -95,7 +95,7 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
     <use-gridrow value="monitor" disabled>
-      <use-gridcell>Monitor</use-gridcell>
+      <use-gridcell mode="action"><a href="#monitor">Monitor</a></use-gridcell>
       <use-gridcell>Backordered</use-gridcell>
       <use-gridcell>
         <use-intl-number
