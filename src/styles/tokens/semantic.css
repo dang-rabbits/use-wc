@@ -43,6 +43,12 @@
   --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-600);
   --usewc-color-link-text-visited-active: var(--usewc-color-indigo-700);
   --usewc-effect-link-text-decoration: underline;
+  /* The underline is always this much fainter than whatever the link's own text color resolves
+     to, in whichever state — a plain number rather than a full `oklch(from ...)` expression,
+     since relative-color syntax reading a `var()` only resolves reliably when the referenced
+     custom property lives on the same rule; `link.css` does the actual derivation locally,
+     alongside the (also local) `--usewc-local-link-text` it reads from. */
+  --usewc-effect-link-decoration-opacity: 0.5;
   --usewc-effect-link-chrome-text-decoration: none;
   /* - Sidebar nav item */
   /* A sidebar item reads as chrome, not a hyperlink, so its text stays the document's own ink
