@@ -28,24 +28,34 @@ export class UseGridCell extends UseWidget {
     this.tabIndex = -1;
 
     if (this.mode === "action") {
+      // Pulled out of the tab sequence up front, the same as a control the grid injects itself
+      // (`use-gridrow`'s own selection checkbox sets `tabindex="-1"` at creation time) — waiting
+      // for a first `focusin` to do it left every action cell's own control at its native
+      // tabindex until visited once, so a fresh page load could tab to all of them individually
+      // before the roving cell took over.
+      queueMicrotask(() => this.#initializeAction());
       this.addEventListener("focusin", this.#handleFocusIn);
       this.addEventListener("focusout", this.#handleFocusOut);
     }
   }
 
+  #initializeAction() {
+    if (this.#actionsInitialized) return;
+
+    // `focusable` rather than `tabbable` so a control that has already been pulled out of the
+    // tab sequence (`tabindex="-1"` — e.g. a selection checkbox the grid injects) still counts
+    // as this cell's action target.
+    focusable(this).forEach((el) => {
+      el.tabIndex = -1;
+      if (!this.#action) {
+        this.#action = el as HTMLElement;
+      }
+    });
+    this.#actionsInitialized = true;
+  }
+
   #handleFocusIn = () => {
-    if (!this.#actionsInitialized) {
-      // `focusable` rather than `tabbable` so a control that has already been pulled out of the
-      // tab sequence (`tabindex="-1"` — e.g. a selection checkbox the grid injects) still counts
-      // as this cell's action target.
-      focusable(this).forEach((el) => {
-        el.tabIndex = -1;
-        if (!this.#action) {
-          this.#action = el as HTMLElement;
-        }
-      });
-      this.#actionsInitialized = true;
-    }
+    this.#initializeAction();
 
     if (this.#action) {
       this.#action.focus();

@@ -18,6 +18,24 @@
     }
   }
 
+  /* A link inside a cell reads as the cell's own text rather than the document's default link
+     blue — the grid draws attention with its row/selection bands, not link-colored text, so a
+     link that broke from the cell's color would read as an anomaly instead of an affordance.
+     Hover/active still need to move, the same as the default link darkening through
+     blue-600/700/800 — `currentColor` alone can't step down like that, so each state is the
+     cell's own color with its lightness nudged instead. `link.css`'s own decoration-color rule
+     already derives from `--usewc-local-link-text`, so the underline follows every step here for
+     free, staying a lighter tint of whichever shade the text itself is in. */
+  use-gridcell :is(a:not([class*="appearance-"]), .appearance-a) {
+    --usewc-color-link-text-static: currentColor;
+    --usewc-color-link-text-hover: oklch(
+      from currentColor calc(l + var(--usewc-color-grid-cell-link-hover-lightness-shift)) c h
+    );
+    --usewc-color-link-text-active: oklch(
+      from currentColor calc(l + var(--usewc-color-grid-cell-link-active-lightness-shift)) c h
+    );
+  }
+
   use-grid:not(.chips, .list, .appearance-native) {
     display: block;
     overflow: clip;

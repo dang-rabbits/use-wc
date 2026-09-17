@@ -252,6 +252,17 @@
     min-inline-size: 0;
   }
 
+  /* `--usewc-layout-region-gap`/`-padding` are custom properties, which inherit by default — left
+     alone, a nested `use-layout` would pick up its ancestor's density instead of its own default
+     of "no gap/padding of its own." Resetting them here, at `:where()`'s zero specificity, stops
+     that inheritance at every `use-layout` boundary without affecting a variant class or a
+     `gap`/`padding` attribute below, both of which carry real specificity and still win on the
+     element they target. */
+  :where(use-layout) {
+    --usewc-layout-region-gap: initial;
+    --usewc-layout-region-padding: initial;
+  }
+
   /* ── Variant density ────────────────────────────────────────────────────────────────────────
      A variant class sets its own scale and nothing else; the generic region rules below read
      these properties. Keeping the arrangement in one ruleset rather than four means a future
@@ -266,6 +277,14 @@
     --usewc-layout-region-gap: var(--usewc-layout-page-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-page-avatar-size);
     --usewc-layout-footer-justify: space-between;
+  }
+
+  /* A page's own `h1` — its title, wherever it sits in the topbar — reads at the page's title
+     size and weight rather than the browser's default heading style. Matched at any depth, since
+     a topbar routinely nests it a `<section>` or an `<hgroup>` down. */
+  use-layout.page h1 {
+    font-size: var(--usewc-font-page-title-size);
+    font-weight: var(--usewc-font-page-title-weight);
   }
 
   use-layout.entry {

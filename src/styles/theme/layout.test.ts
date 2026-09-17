@@ -147,6 +147,45 @@ describe("use-layout", () => {
     });
   });
 
+  describe("nested use-layout", () => {
+    it("does not inherit an ancestor variant's gap into a plain nested use-layout", async () => {
+      render(html`
+        <use-layout class="page">
+          <main>
+            <use-layout id="nested"><div>item</div></use-layout>
+          </main>
+        </use-layout>
+      `);
+      const nested = document.getElementById("nested") as HTMLElement;
+
+      expect(styleOf(nested, "column-gap")).toBe("normal");
+    });
+
+    it("does not inherit an ancestor's gap attribute into a plain nested use-layout", async () => {
+      render(html`
+        <use-layout gap="large">
+          <use-layout id="nested"><div>item</div></use-layout>
+        </use-layout>
+      `);
+      const nested = document.getElementById("nested") as HTMLElement;
+
+      expect(styleOf(nested, "column-gap")).toBe("normal");
+    });
+
+    it("does not inherit an ancestor variant's region padding token into a plain nested use-layout", async () => {
+      render(html`
+        <use-layout class="page">
+          <main>
+            <use-layout id="nested"><div>item</div></use-layout>
+          </main>
+        </use-layout>
+      `);
+      const nested = document.getElementById("nested") as HTMLElement;
+
+      expect(styleOf(nested, "--usewc-layout-region-padding")).toBe("");
+    });
+  });
+
   describe("variants", () => {
     for (const variant of ["page", "entry", "message", "card"]) {
       it(`${variant} grows and scrolls its fill region while pinning siblings`, async () => {

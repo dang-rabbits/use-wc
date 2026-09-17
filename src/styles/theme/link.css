@@ -1,6 +1,6 @@
 @layer use-theme.link {
   :is(nav, header, footer, [role="navigation"], [role="menubar"], [role="tablist"], [role="toolbar"]) {
-    --usewc-effect-link-decoration: var(--usewc-effect-link-chrome-text-decoration);
+    --usewc-local-link-decoration-line: var(--usewc-effect-link-chrome-text-decoration);
   }
 
   :is(a:not([class*="appearance-"]), .appearance-a) {
@@ -8,11 +8,23 @@
       all: unset;
     }
 
-    --usewc-color-link-text: var(--usewc-color-link-text-static);
+    /* `--usewc-local-*` names the variables below as rule-scoped plumbing rather than themeable
+       tokens — set here to thread the current state (hover/active, chrome context, sidebar) into
+       the properties further down, as opposed to the real tokens in `semantic.css` they read
+       from. `--usewc-local-link-decoration-color` in particular has to be derived here rather
+       than hoisted into `semantic.css`: relative-color syntax reading a `var()` only resolves
+       once the referenced custom property is defined on the same element/rule, and
+       `--usewc-local-link-text` only ever exists on this one. */
+    --usewc-local-link-text: var(--usewc-color-link-text-static);
+    --usewc-local-link-decoration-opacity: var(--usewc-effect-link-decoration-opacity);
+    --usewc-local-link-decoration-color: oklch(
+      from var(--usewc-local-link-text) l c h / var(--usewc-local-link-decoration-opacity)
+    );
     --usewc-effect-outline-width: 0;
 
-    color: var(--usewc-color-link-text);
-    text-decoration: var(--usewc-effect-link-decoration, var(--usewc-effect-link-text-decoration));
+    color: var(--usewc-local-link-text);
+    text-decoration: var(--usewc-local-link-decoration-line, var(--usewc-effect-link-text-decoration));
+    text-decoration-color: var(--usewc-local-link-decoration-color);
     cursor: pointer;
     outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
     outline-offset: var(--usewc-effect-outline-offset);
@@ -23,7 +35,7 @@
     }
 
     &:is(:hover, :focus-visible) {
-      --usewc-color-link-text: var(--usewc-color-link-text-hover);
+      --usewc-local-link-text: var(--usewc-color-link-text-hover);
     }
 
     &:focus-visible {
@@ -31,12 +43,15 @@
     }
 
     &:active {
-      --usewc-color-link-text: var(--usewc-color-link-text-active);
+      --usewc-local-link-text: var(--usewc-color-link-text-active);
+      /* Pressed reads as committed rather than merely hinted at, so the underline matches the
+         text exactly here instead of staying a lighter tint of it. */
+      --usewc-local-link-decoration-opacity: 1;
     }
 
     nav.sidebar > & {
       display: block;
-      /* Swapping these source tokens, rather than the resolved `--usewc-color-link-text` slot
+      /* Swapping these source tokens, rather than the resolved `--usewc-local-link-text` slot
          itself, means the existing `:hover`/`:active` rules above keep working unmodified — they
          already read through `-hover`/`-active`, so overriding what those resolve to here is
          enough to recolor every state at once. */
