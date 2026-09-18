@@ -155,7 +155,7 @@
       border-radius: 0;
 
       &:focus {
-        outline: none;
+        --usewc-effect-outline-width: 0;
       }
     }
   }

@@ -23,7 +23,7 @@
       font-size: var(--usewc-font-form-label-size);
     }
 
-    > *:not(label) {
+    > p {
       margin: 0;
       grid-area: description;
       color: var(--usewc-color-form-helper-text);
@@ -47,7 +47,7 @@
       line-height: var(--usewc-layout-form-label-line-height);
     }
 
-    > *:not(label, input) {
+    > p {
       margin: 0;
       color: var(--usewc-color-form-helper-text);
       font-size: var(--usewc-font-form-helper-text-size);
@@ -55,7 +55,7 @@
     }
 
     &:has(input:is(:user-invalid, [aria-invalid="true"])) {
-      > *:not(label, input) {
+      > p {
         color: var(--usewc-color-form-helper-text-invalid);
       }
     }
