@@ -463,6 +463,29 @@
   --usewc-layout-grid-selector-cell-padding-inline: var(--usewc-space-4);
   --usewc-font-grid-header-weight: var(--usewc-font-weight-medium);
   --usewc-effect-grid-border-radius: var(--usewc-effect-border-radius-8);
+  /* A sortable/actionable header — a bare button or link filling the whole header cell — reads as
+     plain header text at rest and only reveals itself as interactive on hover, the same wash
+     `popover-menu-item` and the selector controls already share. */
+  --usewc-color-grid-header-control-background-hover: var(--usewc-color-selector-background-hover);
+  --usewc-effect-grid-header-control-border-radius: var(--usewc-effect-border-radius-4);
+  /* Shorter than a data cell's own block padding would produce — the hover band reads as a tight
+     label chip, not a second, taller row stacked under the divider. */
+  --usewc-layout-grid-header-control-height: var(--usewc-space-32);
+  /* Keeps the hover band's rounded corners clear of the column divider beside it, so the two
+     never visually merge. */
+  --usewc-layout-grid-header-control-gap: var(--usewc-space-4);
+  /* A sortable column's own direction glyph — reuses the same caret shapes `dropdown-trigger` and
+     `tree-item` already mask in, rather than rotating a single icon, so up/down stay crisp at any
+     angle. Only paints when the header cell carries a real `aria-sort="ascending"/"descending"`,
+     the same WAI-ARIA grid pattern a consumer's own sort handler would already be setting. */
+  --usewc-effect-grid-sort-indicator-ascending-mask-image: var(--usewc-icon-caret-block-start);
+  --usewc-effect-grid-sort-indicator-descending-mask-image: var(--usewc-icon-caret-block-end);
+  --usewc-effect-grid-sort-indicator-color: currentColor;
+  --usewc-layout-grid-sort-indicator-size: 1em;
+  --usewc-layout-grid-sort-indicator-gap: var(--usewc-space-4);
+  /* A cell marking the row's primary identifying column (a name, say, next to secondary detail
+     columns) — heavier than the surrounding body text without reading as a heading. */
+  --usewc-font-grid-cell-primary-weight: var(--usewc-font-weight-medium);
   /* -- Compact variant (`.compact`): a shorter line-height and tighter block padding / row gap,
      the same way button's small size steps down from its base. */
   --usewc-layout-grid-compact-cell-line-height: var(--usewc-line-height-20);

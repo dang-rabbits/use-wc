@@ -183,6 +183,106 @@
       }
     }
 
+    /* Marks the row's primary identifying column (a name, say, beside secondary detail columns)
+       so it reads heavier than the rest of the row without going all the way to a heading. */
+    use-gridcell.primary {
+      font-weight: var(--usewc-font-grid-cell-primary-weight);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A column header can host a sortable label alongside a further control (a trailing
+       filter/menu button, say) instead of just plain text — `.control` opts a native button or
+       link into reading as that label, in place of detecting one by DOM shape (a lone child),
+       which doesn't hold once a second control joins it. The cell becomes their flex row; its own
+       padding moves onto `.control` below so its hover band fills exactly its own clickable area,
+       and what's left on the cell becomes the gap held clear of the divider beside it. */
+    use-gridhead use-gridcell[role="columnheader"]:has(> .control) {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-grid-header-control-gap);
+      padding: 0;
+      padding-inline: var(--usewc-layout-grid-header-control-gap);
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* `all: unset` strips the control's native chrome (button chrome, link color/underline); only
+       what's needed to lay it out and read as header text is re-declared. It grows to fill the
+       row, the same as a plain text label would — a further control alongside it (a filter/menu
+       icon, say) is a plain themed button instead, not `.control`, so it keeps its own natural
+       size and chrome rather than stretching or reading as header text itself. */
+    use-gridhead use-gridcell[role="columnheader"] > .control {
+      all: unset;
+      box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
+      flex: 1 1 auto;
+      block-size: var(--usewc-layout-grid-header-control-height);
+      padding-inline: var(--usewc-layout-grid-cell-padding-inline);
+      border-radius: var(--usewc-effect-grid-header-control-border-radius);
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+      --usewc-effect-outline-width: 0;
+      outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      /* Flush rather than the default offset — the control already sits inset from the divider
+         by its own gap, and an outset ring would eat into that gap and paint under the divider,
+         the same reason the plain cell outline below stays flush against its own edge. */
+      outline-offset: var(--usewc-effect-outline-offset-flush);
+      transition: var(--usewc-transition-control), var(--usewc-effect-outline-transition);
+
+      &:is(:hover, :focus-visible) {
+        background-color: var(--usewc-color-grid-header-control-background-hover);
+      }
+
+      &:focus-visible {
+        --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+      }
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    /* A sort direction glyph after a `.control` label — only the WAI-ARIA grid pattern's own
+       `aria-sort="ascending"/"descending"` on the header cell paints one, so a plain sortable
+       column (no sort applied yet, or `aria-sort="none"`) stays glyph-free rather than reserving
+       dead space for it. */
+    use-gridhead
+      use-gridcell[role="columnheader"]:is([aria-sort="ascending"], [aria-sort="descending"])
+      > .control::after {
+      content: "";
+      display: inline-block;
+      flex: none;
+      inline-size: var(--usewc-layout-grid-sort-indicator-size);
+      block-size: var(--usewc-layout-grid-sort-indicator-size);
+      margin-inline-start: var(--usewc-layout-grid-sort-indicator-gap);
+      background-color: var(--usewc-effect-grid-sort-indicator-color);
+      mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+    }
+
+    use-theme-escape
+      use-gridhead
+      use-gridcell[role="columnheader"]:is([aria-sort="ascending"], [aria-sort="descending"])
+      > .control::after {
+      all: revert-layer;
+    }
+
+    use-gridhead use-gridcell[role="columnheader"][aria-sort="ascending"] > .control::after {
+      mask-image: var(--usewc-effect-grid-sort-indicator-ascending-mask-image);
+    }
+
+    use-gridhead use-gridcell[role="columnheader"][aria-sort="descending"] > .control::after {
+      mask-image: var(--usewc-effect-grid-sort-indicator-descending-mask-image);
+    }
+
     /* A cell whose only content is a selection control sizes to that control instead of taking
        an equal flex share like a data column (use-gridrow's shadow makes every cell `flex: 1 1 0`
        by default), and tightens its inline padding so the checkbox doesn't sit in a wide gutter.
