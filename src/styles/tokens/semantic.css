@@ -82,7 +82,7 @@
   /* - Color */
   --usewc-color-input-background-static: var(--usewc-color-white);
   --usewc-color-input-border-static: var(--usewc-color-gray-300);
-  --usewc-color-input-border-hover: var(--usewc-color-gray-500);
+  --usewc-color-input-border-hover: var(--usewc-color-gray-400);
   --usewc-color-input-border-focus: var(--usewc-color-blue-600);
   --usewc-color-input-text-static: var(--usewc-color-gray-700);
   --usewc-color-input-text-placeholder: var(--usewc-color-gray-400);

@@ -30,13 +30,13 @@
       all: revert-layer;
     }
 
-    &:hover:not(:disabled, [aria-disabled="true"], [aria-readonly="true"], :checked, :indeterminate) {
+    &:hover:not(:disabled, [aria-disabled="true"], [aria-readonly="true"], :checked, [type="checkbox"]:indeterminate) {
       --usewc-color-selector-border: var(--usewc-color-selector-border-hover);
       --usewc-color-selector-background: var(--usewc-color-selector-background-hover);
     }
 
     &:checked,
-    &:indeterminate {
+    &[type="checkbox"]:indeterminate {
       --usewc-color-selector-border: var(--usewc-color-selector-border-checked);
       --usewc-color-selector-background: var(--usewc-color-selector-background-checked);
     }
