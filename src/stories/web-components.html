@@ -23,6 +23,28 @@
     <button class="large" type="button">Large</button>
     <button class="extra-large" type="button">Extra large</button>
   </div>
+
+  <h3>Split button</h3>
+  <p>
+    <code>use-button-set</code> merges the shared border between adjacent buttons. The trigger button's empty
+    <code>use-caret</code> squares itself automatically and opens a <code>use-menu</code> of alternate actions.
+  </p>
+  <use-button-set>
+    <button type="button" class="primary">Save</button>
+    <button
+      type="button"
+      class="primary"
+      id="web-components-split-button-trigger"
+      popovertarget="web-components-split-button-menu"
+      aria-label="More save options"
+    >
+      <use-caret></use-caret>
+    </button>
+  </use-button-set>
+  <use-menu id="web-components-split-button-menu" aria-label="More save options">
+    <button role="menuitem">Save as&hellip;</button>
+    <button role="menuitem">Save a copy</button>
+  </use-menu>
 </div>
 
 <h2>Selection</h2>
