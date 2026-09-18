@@ -117,6 +117,38 @@
       }
     }
 
+    &:not([type="file"]):has(> use-caret:empty, > svg:only-child) {
+      /*
+       * :empty on use-caret checks for no text nodes at all, not just "no element siblings" —
+       * that's what makes it safe to key square sizing off of: a caret with a label
+       * (<use-caret>Menu</use-caret>) never matches. svg:only-child has no such guarantee (a text
+       * node beside the svg still passes), so icon-only buttons without a use-caret wrapper should
+       * carry no other content.
+       */
+      /* aspect-ratio doesn't reliably resolve here — as a flex item inside use-control-set (or
+       any flex/grid ancestor), its hypothetical main size can be computed from content before the
+       cross size the ratio needs is definite, leaving width and height mismatched. Computing the
+       square's side explicitly, from the same ingredients that already determine a normal
+       button's natural height, is a real square by construction — and it keeps this button the
+       same height as a text sibling in the same use-control-set, rather than shrinking to 1lh. */
+      padding-inline: 0;
+      --usewc-layout-button-icon-only-size: calc(
+        var(--usewc-layout-button-line-height) +
+          (var(--usewc-layout-button-padding-block) + var(--usewc-layout-button-border)) * 2
+      );
+      inline-size: var(--usewc-layout-button-icon-only-size);
+      block-size: var(--usewc-layout-button-icon-only-size);
+
+      /* The default caret glyph is a 50% tint of currentColor for a caret beside a label — as
+       the button's only content, it reads better at full strength, so this overrides the token
+       rather than the color directly; it inherits into use-caret's shadow tree from here. */
+      --usewc-effect-dropdown-trigger-icon-background-color: currentColor;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
     &::file-selector-button {
       margin-inline-end: var(--usewc-layout-input-gap-inline);
     }

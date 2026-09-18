@@ -108,7 +108,7 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 
 - use conventional commits for commit messages with lowercase types and scopes
 - PRs should go to the `pre` branch instead of `main` branch
-- before committing, these commands should pass successfully: `vp run build-storybook`, `vp test`, and `vp lint`
+- before committing, these commands should pass successfully: `vp run build`, `vp test`, and `vp lint`
 - run `vp check --fix` and `vp run analyze` at the end of each session
 - if the change is tied to an issue, include the issue ID in the branch name
 - an issue ID never goes in a commit title or in the body of a PR description — it always belongs in a footer, as `Resolves #XXX`, `Closes #XXX`, or `Fixes #XXX` (whichever fits the issue better), placed last in the commit message or PR description

@@ -1,0 +1,62 @@
+/* `use-control-set` groups adjacent controls into one visual unit — buttons, text-style inputs,
+   and anything else, custom elements included, that renders its own themed border-radius earlier
+   in the cascade. Rather than enumerating every control family (which would leave out any custom
+   input component this file doesn't know about) and reading each one's own radius token by name
+   (which would leave out any component using a token this file has never heard of), the rule
+   below matches every direct child indiscriminately and reads back each one's *already-computed*
+   radius with `revert-layer` — the value it would have had from an earlier layer if this layer
+   didn't exist. That's the exact radius button.css, input.css, select.css, or a future custom
+   element's own theme file already gave it, with no name to keep in sync here.
+
+   This still needs `[type="file"]` and `.appearance-native` excluded: a file input gets a
+   completely different treatment in input.css, and `.appearance-native` is this system's opt-out
+   of theming altogether — neither should be squared off as if it were a themed control.
+
+   This lives in its own layer, imported after `input.css`, `button.css`, and every other control
+   family's stylesheet in `theme.css`, specifically so the touching-side overrides below can use a
+   plain, ordinary-specificity selector: cascade layers are compared before specificity, so a
+   later layer wins over an earlier one regardless of how each rule's own selector weighs in — no
+   need to fight any control's own selector list for a specificity win the way an override nested
+   inside one of them would. `revert-layer` itself also depends on this layer ordering — it rolls
+   back to the *previous* layer's value, so it only reaches button.css/input.css's own radius
+   because this file's layer comes after theirs.
+
+   The container only sets `display` and `isolation` — `isolation: isolate` scopes the hover
+   `z-index` below to just this set's own children, so a lifted border can't bleed into stacking
+   elsewhere on the page. Touching sides merge by default (`--usewc-layout-control-set-gap` is a
+   negative overlap equal to the button border, and `--usewc-effect-control-set-border-radius-sequential`
+   is `0`), both themeable — see `tokens/semantic.css` for the defaults. The button border is the
+   one hardcoded assumption left: it and the input border round to the same rendered pixel at
+   ordinary font sizes even though one is `rem`-based and the other `em`-based, so a single gap
+   default reads as seamless for any mix of children without needing a per-child value. */
+@layer use-theme.control-set {
+  use-control-set {
+    display: inline-flex;
+    isolation: isolate;
+  }
+
+  use-control-set > *:not([type="file"], .appearance-native) {
+    margin-inline-start: var(--usewc-layout-control-set-gap);
+    border-radius: var(--usewc-effect-control-set-border-radius-sequential);
+
+    /* first-child and last-child both apply to a lone child, restoring its full radius. */
+    &:first-child {
+      margin-inline-start: 0;
+      border-start-start-radius: revert-layer;
+      border-end-start-radius: revert-layer;
+    }
+
+    &:last-child {
+      border-start-end-radius: revert-layer;
+      border-end-end-radius: revert-layer;
+    }
+
+    &:where(:hover, :focus-visible, :focus-within) {
+      z-index: 1;
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}
