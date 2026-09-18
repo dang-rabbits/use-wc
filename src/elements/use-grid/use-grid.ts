@@ -297,14 +297,23 @@ export class UseGrid extends LitElement {
     super.disconnectedCallback();
   }
 
+  // Single source of truth for which cell holds the grid's one roving tab stop: every other
+  // cached cell drops to -1 and `cell` becomes the sole 0. Arrow-key navigation (`#focusGridCell`
+  // below) is one caller; `use-gridcell` is the other — real DOM focus can land on a `mode="action"`
+  // cell's control via mouse or script without ever going through arrow-key navigation (a mousedown
+  // focuses a control directly, even one dragged off before mouseup), so that path has to claim the
+  // roving stop the same way or the previously-focused cell's own tab stop never gets released.
+  claimRovingTabStop(cell: HTMLElement) {
+    this.#getCellCache().cells.forEach((candidate) => {
+      candidate.tabIndex = candidate === cell ? 0 : -1;
+    });
+  }
+
   // Move the roving tabindex to `cell` and focus it. A selection cell is `mode="action"`, so
   // focusing it forwards focus to its checkbox/radio and drops the cell back out of the tab
   // sequence — Tab / Shift+Tab then move in and out of the grid natively.
   #focusGridCell(cell: HTMLElement) {
-    this.#getCellCache().cells.forEach((candidate) => {
-      candidate.tabIndex = -1;
-    });
-    cell.tabIndex = 0;
+    this.claimRovingTabStop(cell);
     cell.focus();
   }
 

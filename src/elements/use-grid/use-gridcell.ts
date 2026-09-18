@@ -58,6 +58,11 @@ export class UseGridCell extends UseWidget {
     this.#initializeAction();
 
     if (this.#action) {
+      // Real DOM focus can land here via mouse/script without going through the grid's own
+      // arrow-key navigation (a mousedown focuses the control directly, even if the mouse is
+      // dragged off before mouseup) — claim the roving tab stop here too, or whichever cell
+      // held it before keeps tabIndex 0 alongside this one once focus later leaves the grid.
+      this.closest("use-grid")?.claimRovingTabStop(this);
       this.#action.focus();
       this.tabIndex = -1;
     }

@@ -25,8 +25,10 @@
      blue-600/700/800 — `currentColor` alone can't step down like that, so each state is the
      cell's own color with its lightness nudged instead. `link.css`'s own decoration-color rule
      already derives from `--usewc-local-link-text`, so the underline follows every step here for
-     free, staying a lighter tint of whichever shade the text itself is in. */
-  use-gridcell :is(a:not([class*="appearance-"]), .appearance-a) {
+     free, staying a lighter tint of whichever shade the text itself is in. `.control` is excluded
+     the same as `appearance-*` — it's header chrome with its own complete treatment below, not
+     content that should read as a link. */
+  use-gridcell :is(a:not([class*="appearance-"], .control), .appearance-a) {
     --usewc-color-link-text-static: currentColor;
     --usewc-color-link-text-hover: oklch(
       from currentColor calc(l + var(--usewc-color-grid-cell-link-hover-lightness-shift)) c h

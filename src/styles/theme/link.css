@@ -3,7 +3,7 @@
     --usewc-local-link-decoration-line: var(--usewc-effect-link-chrome-text-decoration);
   }
 
-  :is(a:not([class*="appearance-"]), .appearance-a) {
+  :where(a:not([class*="appearance-"]), .appearance-a) {
     &:where(:not(a)) {
       all: unset;
     }
