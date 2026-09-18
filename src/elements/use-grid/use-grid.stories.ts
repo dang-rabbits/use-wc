@@ -127,9 +127,7 @@ const themeGridHeaderControlsContent = html`
       <use-gridcell mode="action" aria-sort="ascending"
         ><button type="button" class="control">Product</button></use-gridcell
       >
-      <use-gridcell mode="action"
-        ><button type="button" class="control">Status</button></use-gridcell
-      >
+      <use-gridcell mode="action"><a href="#" class="control">Status</a></use-gridcell>
       <use-gridcell mode="action"
         ><button type="button" class="control">Price</button></use-gridcell
       >
@@ -452,6 +450,37 @@ export const CellWithControls: Story = {
             <button type="button">Edit</button>
             <button type="button">Delete</button>
           </use-gridcell>
+        </use-gridrow>
+      </use-gridbody>
+    </use-grid>
+  `,
+};
+
+/**
+ * A `mode="action"` cell can hold a plain link instead of a button — Tab reaches it directly, the
+ * same as any other single-control action cell, without the cell itself needing focus first.
+ */
+export const CellWithLink: Story = {
+  render: () => html`
+    <use-grid aria-label="Team members">
+      <use-gridhead>
+        <use-gridrow>
+          <use-gridcell>Name</use-gridcell>
+          <use-gridcell>Profile</use-gridcell>
+        </use-gridrow>
+      </use-gridhead>
+      <use-gridbody>
+        <use-gridrow value="alice">
+          <use-gridcell>Alice Chen</use-gridcell>
+          <use-gridcell mode="action"><a href="#alice">View profile</a></use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="bob">
+          <use-gridcell>Bob Nguyen</use-gridcell>
+          <use-gridcell mode="action"><a href="#bob">View profile</a></use-gridcell>
+        </use-gridrow>
+        <use-gridrow value="carol">
+          <use-gridcell>Carol Ibarra</use-gridcell>
+          <use-gridcell mode="action"><a href="#carol">View profile</a></use-gridcell>
         </use-gridrow>
       </use-gridbody>
     </use-grid>
