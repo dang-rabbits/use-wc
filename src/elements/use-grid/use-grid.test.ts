@@ -691,6 +691,32 @@ describe("use-grid", () => {
       expect(document.activeElement).toBe(bodyInputs(grid)[0]);
     });
 
+    it("focusing a different action's control directly (as a mousedown would) releases the previous roving tab stop", async () => {
+      render(columnGrid("multiple"));
+      const grid = getGrid();
+      await settle(grid);
+
+      // Real DOM focus can land on an action's control directly — via mouse or script — without
+      // going through the grid's arrow-key navigation. A mousedown does this even when the mouse
+      // is then dragged off and released outside the control, so simulating it as a direct
+      // `.focus()` on the control (rather than the cell) is the faithful repro.
+      bodyInputs(grid)[1].focus();
+
+      const outside = document.createElement("button");
+      document.body.appendChild(outside);
+      outside.focus();
+
+      const tabStops = Array.from(
+        grid.querySelectorAll<HTMLElement>("use-gridcell[data-usewc-selection-cell]"),
+      ).filter((cell) => cell.tabIndex === 0);
+      expect(tabStops).toHaveLength(1);
+      expect(tabStops[0]).toBe(
+        getBodyRows(grid)[1].querySelector("use-gridcell[data-usewc-selection-cell]"),
+      );
+
+      outside.remove();
+    });
+
     it("a disabled row's control is still reachable by focus", async () => {
       render(columnGrid("multiple", "control", { disabledSecondRow: true }));
       const grid = getGrid();
