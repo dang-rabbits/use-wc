@@ -125,12 +125,12 @@
        * node beside the svg still passes), so icon-only buttons without a use-caret wrapper should
        * carry no other content.
        */
-      /* aspect-ratio doesn't reliably resolve here — as a flex item inside use-button-set (or any
-       flex/grid ancestor), its hypothetical main size can be computed from content before the
+      /* aspect-ratio doesn't reliably resolve here — as a flex item inside use-control-set (or
+       any flex/grid ancestor), its hypothetical main size can be computed from content before the
        cross size the ratio needs is definite, leaving width and height mismatched. Computing the
        square's side explicitly, from the same ingredients that already determine a normal
        button's natural height, is a real square by construction — and it keeps this button the
-       same height as a text sibling in the same use-button-set, rather than shrinking to 1lh. */
+       same height as a text sibling in the same use-control-set, rather than shrinking to 1lh. */
       padding-inline: 0;
       --usewc-layout-button-icon-only-size: calc(
         var(--usewc-layout-button-line-height) +

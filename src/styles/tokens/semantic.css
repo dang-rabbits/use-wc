@@ -392,14 +392,14 @@
   --usewc-font-button-extra-large-size: var(--usewc-font-size-20);
   --usewc-layout-button-extra-large-line-height: var(--usewc-line-height-32);
 
-  /* Button set — `use-button-set` (see `theme/button-set.css`). The gap is a negative overlap
-     equal to the button border by default, so touching borders merge into one seamless line; a
-     theme can widen it to a real positive gap between buttons instead. `-sequential` names the
-     radius the same way `grid.css`'s adjacent selected-row band does — the edge a child shares
-     with its neighbor, `0` by default (square) but able to take a small nonzero value instead of
-     a hard corner. */
-  --usewc-layout-button-set-gap: calc(-1 * var(--usewc-layout-button-border));
-  --usewc-effect-button-set-border-radius-sequential: 0;
+  /* Control set — `use-control-set` (see `theme/control-set.css`), grouping adjacent buttons
+     and/or text-style inputs into one visual unit. The gap is a negative overlap equal to the
+     button border by default, so touching borders merge into one seamless line; a theme can
+     widen it to a real positive gap instead. `-sequential` names the radius the same way
+     `grid.css`'s adjacent selected-row band does — the edge a child shares with its neighbor, `0`
+     by default (square) but able to take a small nonzero value instead of a hard corner. */
+  --usewc-layout-control-set-gap: calc(-1 * var(--usewc-layout-button-border));
+  --usewc-effect-control-set-border-radius-sequential: 0;
 
   /* Badge — a rose fill with white text: a warm pink-red that stays clear of the danger red's
      hue and the primary blue, so a count badge doesn't read as an error or a button. The fill

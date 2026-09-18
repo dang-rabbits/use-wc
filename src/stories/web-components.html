@@ -26,10 +26,10 @@
 
   <h3>Split button</h3>
   <p>
-    <code>use-button-set</code> merges the shared border between adjacent buttons. The trigger button's empty
+    <code>use-control-set</code> merges the shared border between adjacent controls. The trigger button's empty
     <code>use-caret</code> squares itself automatically and opens a <code>use-menu</code> of alternate actions.
   </p>
-  <use-button-set>
+  <use-control-set>
     <button type="button" class="primary">Save</button>
     <button
       type="button"
@@ -40,11 +40,18 @@
     >
       <use-caret></use-caret>
     </button>
-  </use-button-set>
+  </use-control-set>
   <use-menu id="web-components-split-button-menu" aria-label="More save options">
     <button role="menuitem">Save as&hellip;</button>
     <button role="menuitem">Save a copy</button>
   </use-menu>
+
+  <h3>Search box</h3>
+  <p><code>use-control-set</code> groups a button with a text input just as readily as with another button.</p>
+  <use-control-set>
+    <input type="search" placeholder="Search" aria-label="Search" />
+    <button type="submit">Go</button>
+  </use-control-set>
 </div>
 
 <h2>Selection</h2>
