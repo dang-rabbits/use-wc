@@ -130,6 +130,11 @@
        border-inline-start so it can sit shorter than the cell rather than spanning it. */
     use-gridhead use-gridcell[role="columnheader"] {
       position: relative;
+      /* A header with no label has no line box, so its own height (and the divider's `%`
+         height off it) would otherwise collapse to just the cell's own block padding —
+         reserve the same total height a labeled cell gets (padding plus a full line) so an
+         unlabeled column still gets a full-height divider next to its neighbors. */
+      min-block-size: calc(var(--usewc-layout-grid-cell-line-height) + var(--usewc-layout-grid-cell-padding-block) * 2);
 
       use-theme-escape & {
         all: revert-layer;
