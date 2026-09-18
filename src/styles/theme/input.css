@@ -36,7 +36,13 @@
       --usewc-color-input-border: var(--usewc-color-input-border-hover);
     }
 
-    &:where(:focus, :has(input:focus), :focus-within) {
+    /* Matches the hover rule's own specificity (a real pseudo-class, not `:where()`-zeroed) so
+       that when both apply at once — hovering a focused control — source order decides and this,
+       declared after, wins; wrapping this in `:where()` as before let hover's specificity beat
+       it regardless of order. */
+    &:focus,
+    &:focus-within,
+    &:has(input:focus) {
       --usewc-color-input-border: var(--usewc-color-input-border-focus);
       --usewc-effect-outline-width: var(--usewc-effect-outline-size);
     }

@@ -48,7 +48,7 @@
      since relative-color syntax reading a `var()` only resolves reliably when the referenced
      custom property lives on the same rule; `link.css` does the actual derivation locally,
      alongside the (also local) `--usewc-local-link-text` it reads from. */
-  --usewc-effect-link-decoration-opacity: 0.5;
+  --usewc-effect-link-decoration-opacity: 0.3;
   --usewc-effect-link-chrome-text-decoration: none;
   /* - Sidebar nav item */
   /* A sidebar item reads as chrome, not a hyperlink, so its text stays the document's own ink
@@ -674,7 +674,7 @@
     --usewc-color-outline: var(--usewc-color-blue-400);
     --usewc-color-prose-code-background: var(--usewc-color-gray-900);
     --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
-    --usewc-color-input-border-static: var(--usewc-color-gray-600);
+    --usewc-color-input-border-static: var(--usewc-color-gray-800);
     --usewc-color-input-text-static: var(--usewc-color-gray-200);
     --usewc-color-input-text-placeholder: var(--usewc-color-gray-500);
     --usewc-color-form-label-text: var(--usewc-color-gray-100);
@@ -732,8 +732,9 @@
     --usewc-color-link-text-static: var(--usewc-color-blue-400);
     --usewc-color-link-text-hover: var(--usewc-color-blue-500);
     --usewc-color-link-text-active: var(--usewc-color-blue-600);
+    --usewc-effect-link-decoration-opacity: 0.5;
     --usewc-color-code-text: var(--usewc-color-red-200);
-    --usewc-color-input-border-hover: var(--usewc-color-gray-500);
+    --usewc-color-input-border-hover: var(--usewc-color-gray-700);
     --usewc-color-input-border-focus: var(--usewc-color-blue-400);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
     --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
