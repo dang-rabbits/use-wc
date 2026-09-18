@@ -61,17 +61,12 @@ export const Default: Story = {
   `,
 };
 
-const themeGridContent = html`
-  <use-gridhead>
-    <use-gridrow>
-      <use-gridcell>Product</use-gridcell>
-      <use-gridcell>Status</use-gridcell>
-      <use-gridcell>Price</use-gridcell>
-    </use-gridrow>
-  </use-gridhead>
+// `.primary` marks the row's identifying column (the product name, here) so it reads heavier than
+// the rest of the row without going all the way to a heading.
+const themeGridBody = html`
   <use-gridbody>
     <use-gridrow value="keyboard">
-      <use-gridcell mode="action"><a href="#keyboard">Keyboard</a></use-gridcell>
+      <use-gridcell mode="action" class="primary"><a href="#keyboard">Keyboard</a></use-gridcell>
       <use-gridcell>In stock</use-gridcell>
       <use-gridcell>
         <use-intl-number
@@ -83,7 +78,7 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
     <use-gridrow value="mouse" selected>
-      <use-gridcell mode="action"><a href="#mouse">Mouse</a></use-gridcell>
+      <use-gridcell mode="action" class="primary"><a href="#mouse">Mouse</a></use-gridcell>
       <use-gridcell>In stock</use-gridcell>
       <use-gridcell>
         <use-intl-number
@@ -95,7 +90,7 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
     <use-gridrow value="monitor" disabled>
-      <use-gridcell mode="action"><a href="#monitor">Monitor</a></use-gridcell>
+      <use-gridcell mode="action" class="primary"><a href="#monitor">Monitor</a></use-gridcell>
       <use-gridcell>Backordered</use-gridcell>
       <use-gridcell>
         <use-intl-number
@@ -107,6 +102,40 @@ const themeGridContent = html`
       </use-gridcell>
     </use-gridrow>
   </use-gridbody>
+`;
+
+const themeGridContent = html`
+  <use-gridhead>
+    <use-gridrow>
+      <use-gridcell>Product</use-gridcell>
+      <use-gridcell>Status</use-gridcell>
+      <use-gridcell>Price</use-gridcell>
+    </use-gridrow>
+  </use-gridhead>
+  ${themeGridBody}
+`;
+
+// A header cell's `.control` class turns a plain button or link into header chrome — unstyled at
+// rest, a soft hover/focus band on interaction — and grows to fill the cell like a plain text
+// label would. `mode="action"` matches how a single-control data cell is marked elsewhere in
+// this story, so the button is tabbed to directly instead of needing the cell focused first.
+// `aria-sort` on Product is the WAI-ARIA grid pattern a real sort handler would set; the theme
+// only paints its direction glyph when that attribute says `ascending`/`descending`.
+const themeGridHeaderControlsContent = html`
+  <use-gridhead>
+    <use-gridrow>
+      <use-gridcell mode="action" aria-sort="ascending"
+        ><button type="button" class="control">Product</button></use-gridcell
+      >
+      <use-gridcell mode="action"
+        ><button type="button" class="control">Status</button></use-gridcell
+      >
+      <use-gridcell mode="action"
+        ><button type="button" class="control">Price</button></use-gridcell
+      >
+    </use-gridrow>
+  </use-gridhead>
+  ${themeGridBody}
 `;
 
 // Each chip is a label cell plus an `action`-mode cell holding a small `.clear` themed button
@@ -150,6 +179,9 @@ export const Theme: Story = {
     <div style="display: grid; gap: 1.5rem">
       <use-grid selectmode="single">${themeGridContent}</use-grid>
       <use-grid class="compact" selectmode="single">${themeGridContent}</use-grid>
+      <use-grid aria-label="Products, sortable headers" selectmode="single">
+        ${themeGridHeaderControlsContent}
+      </use-grid>
       <use-grid
         aria-label="Products, checkbox selection"
         selectmode="multiple"
