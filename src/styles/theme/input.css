@@ -31,15 +31,18 @@
     outline-offset: var(--usewc-effect-outline-offset);
     transition: var(--usewc-effect-outline-transition);
 
-    &:not(:where(:disabled, [aria-disabled="true"], .appearance-input)):hover,
-    &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover) {
+    /* `:not(:focus-within)` on both branches (rather than relying on source order alone) because
+       the two branches don't share one specificity: the `:has()` branch's `:not(:is(...))`
+       argument makes it more specific than the focus rule's own `:has(input:focus)`/
+       `:focus-within` below, so on a wrapper like `.appearance-input` — which can only match this
+       rule through `:has()`, since it's excluded from the plain `:hover` branch — hover would
+       otherwise out-specify focus regardless of which rule comes later. Excluding focus-within
+       outright sidesteps the specificity math entirely. */
+    &:not(:where(:disabled, [aria-disabled="true"], .appearance-input)):hover:not(:focus-within),
+    &:has(input:not(:is(:disabled, [aria-disabled="true"])):hover):not(:focus-within) {
       --usewc-color-input-border: var(--usewc-color-input-border-hover);
     }
 
-    /* Matches the hover rule's own specificity (a real pseudo-class, not `:where()`-zeroed) so
-       that when both apply at once — hovering a focused control — source order decides and this,
-       declared after, wins; wrapping this in `:where()` as before let hover's specificity beat
-       it regardless of order. */
     &:focus,
     &:focus-within,
     &:has(input:focus) {
