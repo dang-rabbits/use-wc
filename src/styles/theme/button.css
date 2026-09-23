@@ -117,13 +117,16 @@
       }
     }
 
-    &:not([type="file"]):has(> use-caret:empty, > svg:only-child) {
+    &:not([type="file"]):is([aria-label], [aria-labelledby]):has(> use-caret:empty, > svg:only-child) {
       /*
        * :empty on use-caret checks for no text nodes at all, not just "no element siblings" —
        * that's what makes it safe to key square sizing off of: a caret with a label
-       * (<use-caret>Menu</use-caret>) never matches. svg:only-child has no such guarantee (a text
-       * node beside the svg still passes), so icon-only buttons without a use-caret wrapper should
-       * carry no other content.
+       * (<use-caret>Menu</use-caret>) never matches. svg:only-child has no such guarantee — a
+       * text node beside the svg (`<button><svg>…</svg> Show code</button>`) still passes it,
+       * since `:only-child` only counts sibling *elements* — so it's gated behind
+       * `[aria-label]`/`[aria-labelledby]` too: a real icon-only button needs one of those for
+       * accessibility regardless, while a button with its own visible text normally carries
+       * neither, and that's a more reliable signal than DOM shape alone.
        */
       /* aspect-ratio doesn't reliably resolve here — as a flex item inside use-control-set (or
        any flex/grid ancestor), its hypothetical main size can be computed from content before the
