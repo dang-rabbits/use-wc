@@ -225,7 +225,7 @@
   <h4>As a sidebar</h4>
   <nav class="sidebar" style="max-inline-size: 16rem">
     <a href="#">
-      <use-layout class="entry compact flush">
+      <use-pattern class="entry compact flush">
         <figure><use-avatar name="Dashboard"></use-avatar></figure>
         <header>
           <hgroup>
@@ -234,10 +234,10 @@
           </hgroup>
           <use-badge>3</use-badge>
         </header>
-      </use-layout>
+      </use-pattern>
     </a>
     <a href="#">
-      <use-layout class="entry compact flush">
+      <use-pattern class="entry compact flush">
         <figure><use-avatar name="Settings"></use-avatar></figure>
         <header>
           <hgroup>
@@ -245,24 +245,24 @@
             <p>Account, billing</p>
           </hgroup>
         </header>
-      </use-layout>
+      </use-pattern>
     </a>
   </nav>
   <p>
     <code>nav.sidebar</code> adds hover background, rounded corners, and its own padding to each <code>a</code>; the row
     layout, avatar rail and trailing badge alignment come from the nested
-    <code>use-layout.entry.compact</code> unchanged — <code>.compact</code> just steps <code>.entry</code>'s own density
-    down for a nav-sized row instead of a list-sized one. <code>.flush</code> drops <code>use-layout</code>'s own outer
-    inset so it doesn't double up with the anchor's padding.
+    <code>use-pattern.entry.compact</code> unchanged — <code>.compact</code> just steps <code>.entry</code>'s own
+    density down for a nav-sized row instead of a list-sized one. <code>.flush</code> drops <code>use-pattern</code>'s
+    own outer inset so it doesn't double up with the anchor's padding.
   </p>
-  <h4>As a sidebar, without use-layout</h4>
+  <h4>As a sidebar, without use-pattern</h4>
   <nav class="sidebar" style="max-inline-size: 16rem">
     <a href="#">Dashboard</a>
     <a href="#">Settings</a>
     <a href="#">Help</a>
   </nav>
   <p>
-    <code>nav.sidebar</code> doesn't require <code>use-layout</code> — it only adds hover background and rounded corners
-    to each <code>a</code>, so a plain text link works the same as one with an icon/title/badge row inside it.
+    <code>nav.sidebar</code> doesn't require <code>use-pattern</code> — it only adds hover background and rounded
+    corners to each <code>a</code>, so a plain text link works the same as one with an icon/title/badge row inside it.
   </p>
 </div>

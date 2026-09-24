@@ -70,7 +70,7 @@ export const Theme: Story = {
         <img alt="" src=${photo} />
       </use-avatar>
     </div>
-    <use-layout class="card" style="max-inline-size: 22rem">
+    <use-pattern class="card" style="max-inline-size: 22rem">
       <header>
         <use-avatar name="Riley Quinn"></use-avatar>
         <hgroup>
@@ -80,10 +80,10 @@ export const Theme: Story = {
       </header>
       <main>
         <p>
-          In a use-layout header the avatar takes that variant's avatar size, so it stays in step
+          In a use-pattern header the avatar takes that variant's avatar size, so it stays in step
           with the rest of the region.
         </p>
       </main>
-    </use-layout>
+    </use-pattern>
   `,
 };

@@ -6,8 +6,8 @@
    is already a specific enough signal on its own). Anchor positioning (`anchor-name`/
    `position-anchor`) is left to the author, the same way plain `[popover]` elements work
    otherwise — this only replaces the UA default chrome with the shared `surface` tokens,
-   matching `dialog` / `use-layout.card`. Chrome only, like `dialog`: nest a `use-layout`
-   variant inside to arrange a header / body / footer (`layout.css`).
+   matching `dialog` / `use-pattern.card`. Chrome only, like `dialog`: nest a `use-pattern`
+   variant inside to arrange a header / body / footer (`pattern.css`).
 
    The `::backdrop` is deliberately left at its transparent UA default: a `[popover]` at
    `popover="auto"` is non-modal — the page stays interactive and an outside click dismisses it

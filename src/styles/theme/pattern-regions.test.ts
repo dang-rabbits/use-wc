@@ -15,9 +15,9 @@ const supportsRowRule = CSS.supports("row-rule-style", "solid");
 const imageSource =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3C/svg%3E";
 
-const variants = ["page", "entry", "message", "card", "media"];
+const variants = ["entry", "message", "card", "media"];
 
-describe("layout region treatment", () => {
+describe("pattern region treatment", () => {
   describe("shared across variants", () => {
     // `.media` always needs a rail as its first child — with no tag-based guard, whatever lands
     // there is treated as the rail, so a bare header/main/footer first is an unsupported shape
@@ -28,13 +28,13 @@ describe("layout region treatment", () => {
     for (const variant of variants) {
       it(`${variant} clusters sections and splits a region holding two of them`, async () => {
         render(html`
-          <use-layout class=${variant}>
+          <use-pattern class=${variant}>
             ${rail(variant)}
             <footer id="footer">
               <section id="section"><button type="button">Delete</button></section>
               <section><button type="button">Send</button></section>
             </footer>
-          </use-layout>
+          </use-pattern>
         `);
 
         expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe(
@@ -45,16 +45,16 @@ describe("layout region treatment", () => {
 
       it(`${variant} resets a figure and fits its image`, async () => {
         render(html`
-          <use-layout class=${variant}>
+          <use-pattern class=${variant}>
             <figure id="figure"><img id="poster" alt="" src=${imageSource} /></figure>
-          </use-layout>
+          </use-pattern>
         `);
 
-        // `.page`/`.card` pad the host itself on every edge, so a figure sitting there pulls
+        // `.card` pads the host itself on every edge, so a figure sitting there pulls
         // itself back out with a negative margin on all four sides to keep bleeding edge to
         // edge — everywhere else a figure just gets a plain zero margin.
         const margin = styleOf(document.getElementById("figure")!, "margin");
-        if (variant === "page" || variant === "card") {
+        if (variant === "card") {
           expect(margin.split(" ").every((value) => value.startsWith("-"))).toBe(true);
         } else {
           expect(margin).toBe("0px");
@@ -64,7 +64,7 @@ describe("layout region treatment", () => {
 
       it(`${variant} sheds the outer block margins of its body content`, async () => {
         render(html`
-          <use-layout class=${variant}>
+          <use-pattern class=${variant}>
             ${rail(variant)}
             <main>
               <p id="first">first</p>
@@ -75,12 +75,12 @@ describe("layout region treatment", () => {
                 <li>last</li>
               </ol>
             </main>
-          </use-layout>
+          </use-pattern>
         `);
 
-        // `.page`/`.card` don't reset a plain child's own inner margins — only `.entry`/
+        // `.card` doesn't reset a plain child's own inner margins — only `.entry`/
         // `.message`/`.media` shed the block margin on `main`'s own first/last child.
-        if (variant === "page" || variant === "card") {
+        if (variant === "card") {
           expect(styleOf(document.getElementById("first")!, "margin-top")).not.toBe("0px");
           expect(styleOf(document.getElementById("last")!, "margin-bottom")).not.toBe("0px");
         } else {
@@ -93,7 +93,7 @@ describe("layout region treatment", () => {
 
       it(`${variant} lets the gap own the spacing in a header, margins and all`, async () => {
         render(html`
-          <use-layout class=${variant}>
+          <use-pattern class=${variant}>
             ${rail(variant)}
             <header>
               <hgroup id="hgroup">
@@ -102,7 +102,7 @@ describe("layout region treatment", () => {
               </hgroup>
               <p id="loose">Loose</p>
             </header>
-          </use-layout>
+          </use-pattern>
         `);
 
         for (const id of ["title", "meta", "loose"]) {
@@ -114,11 +114,11 @@ describe("layout region treatment", () => {
 
       it(`${variant} lays out with only a header and a footer`, async () => {
         render(html`
-          <use-layout class=${variant}>
+          <use-pattern class=${variant}>
             ${rail(variant)}
             <header id="header">Title</header>
             <footer id="footer"><button type="button">OK</button></footer>
-          </use-layout>
+          </use-pattern>
         `);
 
         expect(styleOf(document.getElementById("header")!, "display")).toBe("flex");
@@ -128,14 +128,14 @@ describe("layout region treatment", () => {
 
     it("gives a title group explicit line boxes and steps the subtitle down", async () => {
       render(html`
-        <use-layout class="entry">
+        <use-pattern class="entry">
           <header>
             <hgroup>
               <h4 id="title">Riley Quinn</h4>
               <p id="subtitle">Opened 3 days ago</p>
             </hgroup>
           </header>
-        </use-layout>
+        </use-pattern>
       `);
       const title = document.getElementById("title")!;
       const subtitle = document.getElementById("subtitle")!;
@@ -153,16 +153,16 @@ describe("layout region treatment", () => {
         <div>
           ${variants.map(
             (variant) => html`
-              <use-layout class=${variant} id=${`layout-${variant}`}>
+              <use-pattern class=${variant} id=${`layout-${variant}`}>
                 <header id=${`header-${variant}`}>Title</header>
-              </use-layout>
+              </use-pattern>
             `,
           )}
         </div>
       `);
 
-      // Every variant pads the container itself now — `.page`/`.card` own the inset on the host,
-      // and `.entry`/`.message`/`.media` already did.
+      // Every variant pads the container itself — `.card` owns the inset on the host, and
+      // `.entry`/`.message`/`.media` pad it the same way.
       const padding = Object.fromEntries(
         variants.map((variant) => [
           variant,
@@ -170,7 +170,6 @@ describe("layout region treatment", () => {
         ]),
       );
 
-      expect(padding.page).toBe("20px");
       expect(padding.card).toBe("16px");
       expect(padding.entry).toBe("16px");
       expect(padding.message).toBe("12px");
@@ -180,14 +179,14 @@ describe("layout region treatment", () => {
     it("steps padding, gap, and avatar size down when an entry is compact", async () => {
       render(html`
         <div>
-          <use-layout class="entry" id="entry">
+          <use-pattern class="entry" id="entry">
             <figure></figure>
             <header id="header">Title</header>
-          </use-layout>
-          <use-layout class="entry compact" id="compact">
+          </use-pattern>
+          <use-pattern class="entry compact" id="compact">
             <figure id="avatar"></figure>
             <header id="compact-header">Title</header>
-          </use-layout>
+          </use-pattern>
         </div>
       `);
 
@@ -203,9 +202,9 @@ describe("layout region treatment", () => {
         <div>
           ${variants.map(
             (variant) => html`
-              <use-layout class=${variant} id=${`v-${variant}`}>
+              <use-pattern class=${variant} id=${`v-${variant}`}>
                 <header>Title</header>
-              </use-layout>
+              </use-pattern>
             `,
           )}
         </div>
@@ -231,9 +230,9 @@ describe("layout region treatment", () => {
               padding: 3px;
             }
           </style>
-          <use-layout class="card">
+          <use-pattern class="card">
             <header id="header" class="tabbed">Title</header>
-          </use-layout>
+          </use-pattern>
         </div>
       `);
 
@@ -241,155 +240,10 @@ describe("layout region treatment", () => {
     });
   });
 
-  describe("page", () => {
-    it("keeps the host's own padding regardless of the header/footer, and draws no rule by default", async () => {
-      render(html`
-        <use-layout class="page" id="page">
-          <header id="header">
-            <hgroup><h4>Brand</h4></hgroup>
-          </header>
-          <main id="body">body</main>
-          <footer id="footer">status</footer>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
-      expect(styleOf(document.getElementById("footer")!, "border-top-width")).toBe("0px");
-      expect(styleOf(document.getElementById("page")!, "padding-left")).toBe("20px");
-      expect(styleOf(document.getElementById("page")!, "padding-top")).toBe("12px");
-      expect(styleOf(document.getElementById("body")!, "padding-top")).toBe("0px");
-    });
-
-    it("pads the host for a plain child too, not only header/main/footer", async () => {
-      render(html`
-        <use-layout class="page" id="page">
-          <div id="section">
-            <p id="first">first</p>
-            <p id="last">last</p>
-          </div>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("page")!, "padding-left")).toBe("20px");
-      expect(styleOf(document.getElementById("section")!, "padding-left")).toBe("0px");
-    });
-
-    it("rules the topbar and footer off from the body when divided, using row-rule or its border fallback", async () => {
-      render(html`
-        <use-layout class="page divided" id="page">
-          <header id="header">
-            <hgroup><h4>Brand</h4></hgroup>
-          </header>
-          <main id="body">body</main>
-          <footer id="footer">status</footer>
-        </use-layout>
-      `);
-
-      if (supportsRowRule) {
-        expect(styleOf(document.getElementById("page")!, "row-rule-style")).toBe("solid");
-      } else {
-        expect(styleOf(document.getElementById("header")!, "border-top-style")).toBe("none");
-        expect(styleOf(document.getElementById("body")!, "border-top-style")).toBe("solid");
-        expect(styleOf(document.getElementById("footer")!, "border-top-style")).toBe("solid");
-        expect(styleOf(document.getElementById("body")!, "padding-top")).toBe("12px");
-        expect(styleOf(document.getElementById("footer")!, "padding-top")).toBe("12px");
-      }
-    });
-
-    it("carries a stacking gap when row-rule decorates it, or turns it off for the border fallback's own padding", async () => {
-      render(
-        html`<use-layout class="page divided" id="page"
-          ><header></header>
-          <main></main
-        ></use-layout>`,
-      );
-
-      expect(styleOf(document.getElementById("page")!, "gap")).toBe(
-        supportsRowRule ? "12px" : "0px",
-      );
-    });
-
-    it("keeps the topbar shallower than it is wide", async () => {
-      render(html`
-        <use-layout class="page" id="page">
-          <header id="header">
-            <section>
-              <hgroup id="hgroup"><h4 id="title">Brand</h4></hgroup>
-            </section>
-          </header>
-          <footer id="footer">status</footer>
-        </use-layout>
-      `);
-
-      // The host itself carries the entire inset now, so neither region carries any padding of
-      // its own.
-      expect(styleOf(document.getElementById("page")!, "padding-top")).toBe("12px");
-      expect(styleOf(document.getElementById("page")!, "padding-bottom")).toBe("12px");
-      expect(styleOf(document.getElementById("page")!, "padding-left")).toBe("20px");
-      expect(styleOf(document.getElementById("header")!, "padding")).toBe("0px");
-      expect(styleOf(document.getElementById("footer")!, "padding")).toBe("0px");
-      expect(styleOf(document.getElementById("hgroup")!, "display")).toBe("flex");
-      expect(styleOf(document.getElementById("title")!, "margin-top")).toBe("0px");
-      expect(styleOf(document.getElementById("title")!, "margin-bottom")).toBe("0px");
-    });
-
-    it("splits its footer so status sits opposite the actions", async () => {
-      render(html`
-        <use-layout class="page">
-          <footer id="footer"><span>Saved</span></footer>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("space-between");
-    });
-
-    it("squares a figure avatar and grows the title group", async () => {
-      render(html`
-        <use-layout class="page">
-          <header>
-            <figure id="avatar"><img id="portrait" alt="" src=${imageSource} /></figure>
-            <hgroup id="hgroup"><h4>Title</h4></hgroup>
-          </header>
-        </use-layout>
-      `);
-      const avatar = document.getElementById("avatar")!;
-
-      expect(styleOf(avatar, "width")).toBe("36px");
-      expect(styleOf(avatar, "height")).toBe("36px");
-      expect(styleOf(avatar, "margin-left")).toBe("0px");
-      expect(styleOf(document.getElementById("portrait")!, "object-fit")).toBe("cover");
-      expect(styleOf(document.getElementById("hgroup")!, "flex-grow")).toBe("1");
-    });
-
-    it("sizes a use-avatar in a header to the variant's avatar size", async () => {
-      render(html`
-        <use-layout class="page">
-          <header><use-avatar id="avatar" name="Riley Quinn"></use-avatar></header>
-        </use-layout>
-      `);
-      const avatar = document.getElementById("avatar")!;
-
-      expect(styleOf(avatar, "width")).toBe("36px");
-      expect(styleOf(avatar, "height")).toBe("36px");
-    });
-
-    it("leaves a bare img in a header alone, with no avatar class convention", async () => {
-      render(html`
-        <use-layout class="page">
-          <header>
-            <img id="logo" alt="" src=${imageSource} />
-          </header>
-        </use-layout>
-      `);
-
-      expect(styleOf(document.getElementById("logo")!, "border-radius")).toBe("0px");
-    });
-  });
-
   describe("message", () => {
     it("puts the figure in a rail with the regions stacked beside it", async () => {
       render(html`
-        <use-layout class="message" id="message">
+        <use-pattern class="message" id="message">
           <figure id="rail"><img alt="" src=${imageSource} /></figure>
           <header id="header">
             <hgroup>
@@ -399,7 +253,7 @@ describe("layout region treatment", () => {
           </header>
           <main id="body">body</main>
           <footer id="footer"><button type="button">Reply</button></footer>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("message")!, "display")).toBe("grid");
@@ -415,10 +269,10 @@ describe("layout region treatment", () => {
 
     it("puts a use-avatar in the rail, sized to it", async () => {
       render(html`
-        <use-layout class="message">
+        <use-pattern class="message">
           <use-avatar id="avatar" name="Riley Quinn"></use-avatar>
           <main id="body">body</main>
-        </use-layout>
+        </use-pattern>
       `);
       const avatar = document.getElementById("avatar")!;
 
@@ -431,10 +285,10 @@ describe("layout region treatment", () => {
 
     it("centres a rail figure that isn't a photo", async () => {
       render(html`
-        <use-layout class="message">
+        <use-pattern class="message">
           <figure id="initials">TM</figure>
           <main>body</main>
-        </use-layout>
+        </use-pattern>
       `);
       const rail = document.getElementById("initials")!;
 
@@ -447,12 +301,12 @@ describe("layout region treatment", () => {
 
     it("treats a figure in the body as an attachment, not the rail", async () => {
       render(html`
-        <use-layout class="message" style="inline-size: 400px">
+        <use-pattern class="message" style="inline-size: 400px">
           <figure id="rail"><img alt="" src=${imageSource} /></figure>
           <main>
             <figure id="attachment"><img id="media" alt="" src=${imageSource} /></figure>
           </main>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("attachment")!, "margin-left")).toBe("0px");
@@ -465,14 +319,14 @@ describe("layout region treatment", () => {
     it("holds the rail width when a grouped message omits its header", async () => {
       render(html`
         <div style="inline-size: 400px">
-          <use-layout class="message">
+          <use-pattern class="message">
             <figure><img alt="" src=${imageSource} /></figure>
             <header>Name</header>
             <main id="first">first</main>
-          </use-layout>
-          <use-layout class="message">
+          </use-pattern>
+          <use-pattern class="message">
             <main id="grouped">grouped</main>
-          </use-layout>
+          </use-pattern>
         </div>
       `);
 
@@ -483,14 +337,14 @@ describe("layout region treatment", () => {
 
     it("keeps the name and timestamp on one line", async () => {
       render(html`
-        <use-layout class="message">
+        <use-pattern class="message">
           <header>
             <hgroup id="hgroup">
               <h4>Name</h4>
               <p>10:24</p>
             </hgroup>
           </header>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("hgroup")!, "display")).toBe("flex");
@@ -499,10 +353,10 @@ describe("layout region treatment", () => {
 
     it("draws no rules between its regions", async () => {
       render(html`
-        <use-layout class="message">
+        <use-pattern class="message">
           <header id="header">Name</header>
           <footer id="footer"><button type="button">Reply</button></footer>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
@@ -513,13 +367,13 @@ describe("layout region treatment", () => {
   describe("card", () => {
     it("carries the panel regions plus its floating chrome", async () => {
       render(html`
-        <use-layout class="card" id="card">
+        <use-pattern class="card" id="card">
           <header id="header">
             <hgroup><h4>Title</h4></hgroup>
           </header>
           <use-layout fill id="body">body</use-layout>
           <footer id="footer"><button type="button">Save</button></footer>
-        </use-layout>
+        </use-pattern>
       `);
       const card = document.getElementById("card")!;
 
@@ -534,10 +388,10 @@ describe("layout region treatment", () => {
 
     it("rules the footer off from the body when divided, using row-rule or its border fallback", async () => {
       render(html`
-        <use-layout class="card divided" id="card">
+        <use-pattern class="card divided" id="card">
           <main></main>
           <footer id="footer">Saved</footer>
-        </use-layout>
+        </use-pattern>
       `);
 
       if (supportsRowRule) {
@@ -551,9 +405,9 @@ describe("layout region treatment", () => {
     it("drops its own chrome inside an overlay that already paints one", async () => {
       render(html`
         <dialog open>
-          <use-layout class="card" id="nested">
+          <use-pattern class="card" id="nested">
             <footer id="footer"><button type="button">Save</button></footer>
-          </use-layout>
+          </use-pattern>
         </dialog>
       `);
       const nested = document.getElementById("nested")!;
@@ -564,7 +418,7 @@ describe("layout region treatment", () => {
     });
 
     it("drops the shadow when outlined", async () => {
-      render(html`<use-layout class="card outlined" id="card">body</use-layout>`);
+      render(html`<use-pattern class="card outlined" id="card">body</use-pattern>`);
 
       expect(styleOf(document.getElementById("card")!, "box-shadow")).toBe("none");
     });
@@ -573,14 +427,14 @@ describe("layout region treatment", () => {
   describe("media", () => {
     it("sizes the rail to its content and puts the regions in one column beside it", async () => {
       render(html`
-        <use-layout class="media" id="media" style="inline-size: 400px">
+        <use-pattern class="media" id="media" style="inline-size: 400px">
           <figure id="rail"><img alt="" src=${imageSource} style="inline-size: 48px" /></figure>
           <header id="header">
             <hgroup><h4>Title</h4></hgroup>
           </header>
           <main id="body">body</main>
           <footer id="footer"><button type="button">Share</button></footer>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("media")!, "display")).toBe("table");
@@ -603,12 +457,12 @@ describe("layout region treatment", () => {
 
     it("keeps the rail its content's own width rather than the avatar rail size", async () => {
       render(html`
-        <use-layout class="media">
+        <use-pattern class="media">
           <figure id="rail">
             <img id="railImage" alt="" src=${imageSource} style="inline-size: 90px" />
           </figure>
           <main>body</main>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(Math.round(document.getElementById("railImage")!.getBoundingClientRect().width)).toBe(
@@ -618,13 +472,13 @@ describe("layout region treatment", () => {
 
     it("aligns the rail and the header to the top", async () => {
       render(html`
-        <use-layout class="media" id="media">
+        <use-pattern class="media" id="media">
           <figure id="rail" style="block-size: 120px; inline-size: 48px"></figure>
           <header id="header">
             <hgroup><h4>Title</h4></hgroup>
           </header>
           <main>body</main>
-        </use-layout>
+        </use-pattern>
       `);
       const top = document.getElementById("media")!.getBoundingClientRect().top;
 
@@ -638,16 +492,16 @@ describe("layout region treatment", () => {
 
     it("keeps main directly under header regardless of the rail height", async () => {
       render(html`
-        <use-layout class="media" id="shortRail">
+        <use-pattern class="media" id="shortRail">
           <figure style="inline-size: 48px; block-size: 24px"></figure>
           <header id="shortHeader">Title</header>
           <main id="shortBody">body</main>
-        </use-layout>
-        <use-layout class="media" id="tallRail">
+        </use-pattern>
+        <use-pattern class="media" id="tallRail">
           <figure style="inline-size: 48px; block-size: 400px"></figure>
           <header id="tallHeader">Title</header>
           <main id="tallBody">body</main>
-        </use-layout>
+        </use-pattern>
       `);
 
       const gap = (headerId: string, bodyId: string) =>
@@ -665,11 +519,11 @@ describe("layout region treatment", () => {
 
     it("works with a use-avatar rail, not just a figure", async () => {
       render(html`
-        <use-layout class="media">
+        <use-pattern class="media">
           <use-avatar id="rail" name="Riley Quinn"></use-avatar>
           <header id="header">Title</header>
           <main id="body">body</main>
-        </use-layout>
+        </use-pattern>
       `);
 
       // the rail keeps its own layout untouched by the region reset...
@@ -682,11 +536,11 @@ describe("layout region treatment", () => {
 
     it("stacks the regions one region gap apart", async () => {
       render(html`
-        <use-layout class="media">
+        <use-pattern class="media">
           <figure></figure>
           <header id="header">Title</header>
           <main id="body">body</main>
-        </use-layout>
+        </use-pattern>
       `);
       const gap =
         document.getElementById("body")!.getBoundingClientRect().top -
@@ -697,11 +551,11 @@ describe("layout region treatment", () => {
 
     it("draws no rules between its regions", async () => {
       render(html`
-        <use-layout class="media">
+        <use-pattern class="media">
           <figure></figure>
           <header id="header">Title</header>
           <footer id="footer"><button type="button">Share</button></footer>
-        </use-layout>
+        </use-pattern>
       `);
 
       expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");

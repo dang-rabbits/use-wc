@@ -126,7 +126,7 @@ export const NestedComponent: Story = {
     <use-prose>
       <h2>A heading in prose</h2>
       <p>This paragraph is on the prose rhythm.</p>
-      <use-layout class="card" style="max-inline-size: 22rem">
+      <use-pattern class="card" style="max-inline-size: 22rem">
         <header>
           <hgroup>
             <h4>A heading in a card</h4>
@@ -136,7 +136,7 @@ export const NestedComponent: Story = {
         <main>
           <p>Body copy inside the card.</p>
         </main>
-      </use-layout>
+      </use-pattern>
       <p>Prose picks up again afterwards.</p>
     </use-prose>
   `,
