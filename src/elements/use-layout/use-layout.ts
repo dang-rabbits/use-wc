@@ -28,7 +28,9 @@ function readStringAttribute(value: string | null) {
  * their own, over a `main` that grows to fill the remaining space and scrolls on its own. A
  * `.page` defaults to `spacing` between its regions, `gutter` beside them, and `paddingblock` at
  * its own top and bottom, all at the page density, so a focus ring inside the scrolling `main`
- * has room to render. Set any of the three to override its default.
+ * has room to render. Set any of the three to override its default. Its footer splits status
+ * from actions by default; one that ends in a `type="submit"` button, or carries the `actions`
+ * class, aligns to the end instead.
  *
  * ```html
  * <use-layout spacing="medium">

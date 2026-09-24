@@ -543,6 +543,13 @@
       gap: var(--usewc-layout-page-gap);
     }
 
+    /* A footer that ends in a submit button, or carries `.actions`, is a row of actions rather
+       than a status bar, so it sits at the trailing edge the way a form's or dialog's own actions
+       do. Two or more `<section>`s still split to opposite ends instead (below). */
+    & > footer:is(.actions, :has(button[type="submit"]:last-child)):not(:has(> section ~ section)) {
+      justify-content: end;
+    }
+
     & > header > :is(use-avatar, figure) {
       flex: none;
       inline-size: var(--usewc-layout-page-avatar-size);

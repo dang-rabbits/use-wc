@@ -358,7 +358,7 @@ export const Wrap: Story = {
  *
  * A `.page` spends its inset as `spacing` between regions, `gutter` beside them, and `paddingblock` at its own top and bottom, rather than `gap` and `padding`. That puts the room inside each region's own box, so a focus ring near the edge of the scrolling `main` renders instead of being clipped. Set any of the three to override its default.
  *
- * The footer splits by default, so status text sits opposite its actions. Wrap groups of items in `<section>`s to control the ends of any region: two or more `<section>` children switch it to `space-between`.
+ * The footer splits by default, so status text sits opposite its actions. A footer that ends in a `type="submit"` button, or carries the `actions` class, is a row of actions instead and aligns to the end, the way a form's or dialog's own actions do. Wrap groups of items in `<section>`s to control the ends of any region: two or more `<section>` children switch it to `space-between`, which still wins over the end alignment.
  */
 export const Page: Story = {
   render: () => html`

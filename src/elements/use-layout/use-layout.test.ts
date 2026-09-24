@@ -546,6 +546,45 @@ describe("use-layout", () => {
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("space-between");
     });
 
+    it("aligns its footer to the end when it ends in a submit button", async () => {
+      render(html`
+        <use-layout class="page">
+          <footer id="footer">
+            <button type="button">Cancel</button>
+            <button type="submit">Save</button>
+          </footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("end");
+    });
+
+    it("aligns its footer to the end with the actions class", async () => {
+      render(html`
+        <use-layout class="page">
+          <footer id="footer" class="actions">
+            <button type="button">Cancel</button>
+            <button type="button">Apply</button>
+          </footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("end");
+    });
+
+    it("still splits a footer holding two sections, even when it ends in a submit button", async () => {
+      render(html`
+        <use-layout class="page">
+          <footer id="footer">
+            <section><span>Draft saved</span></section>
+            <section><button type="submit">Publish</button></section>
+          </footer>
+        </use-layout>
+      `);
+
+      expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("space-between");
+    });
+
     it("squares a figure avatar and grows the title group", async () => {
       render(html`
         <use-layout class="page">
