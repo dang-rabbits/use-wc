@@ -1,0 +1,716 @@
+/* Content patterns — `use-pattern` arranges a region-based unit of content by its variant class.
+   It's a registered custom element (`elements/use-pattern/use-pattern.ts`) only so it shows up
+   in the manifest and the tag-name map; it renders no shadow DOM, and every rule below targets
+   the plain `use-pattern` tag and its classes exactly as if it were unregistered. Generic flex
+   arrangement — direction, gap, padding, `fill`, and the `.page` app frame — belongs to
+   `use-layout` (`layout.css`) instead, and nests freely inside any pattern's regions.
+
+   Four variant classes name what the pattern *is*, and its semantic `<figure>` / `<header>` /
+   `<main>` / `<footer>` regions are arranged to match:
+
+     use-pattern.entry     a row in a list   — a leading avatar rail with the regions beside it
+     use-pattern.message   a chat or comment — `.entry`'s layout at chat density
+     use-pattern.card      a panel           — avatar + hgroup + actions, end-aligned footer,
+                                               compact, plus the chrome at end of file
+     use-pattern.media     a media object    — a rail cell beside an anonymous body cell holding
+                                               the stacked regions (à la Bootstrap 3's .media)
+
+   `header`/`main`/`footer` are style hooks, not required elements — none of these regions are
+   mandatory, any combination lays out correctly (`header` + `footer` is a confirm dialog, `header`
+   + `main` a bare card, `main` alone a grouped chat message), and on `.card` any other element is
+   just as welcome: it gets the same inset as a named region, it just doesn't pick up the
+   flex/alignment treatment `header`/`footer` add on top. Source order is canonical — figure,
+   header, main, footer — and a variant may re-position regions visually but never asks an author
+   to reorder markup. A `use-layout[fill]` child grows and scrolls inside any of them — a drawer's
+   body, say.
+
+   A variant's own density sets *only* two axes on itself — `--usewc-layout-region-padding` (the
+   inline inset) and `--usewc-layout-region-gap` (everything block) — plus `-avatar-size` and
+   `--usewc-layout-footer-justify`. For `.entry`, `.message` and `.media`, `-gap` is both a
+   region's own block padding and the room it leaves around its neighbours, reused rather than
+   duplicated so the two always agree. For `.card`, `-gap` is instead the host's own
+   `padding-block` and container `gap` directly — same value, same "how far apart do things
+   stack" meaning, just spent at the host level since a region there carries no padding of its
+   own. Each shape's own region rules read these, grouped by actual shape (`.card`,
+   `.entry`/`.message`, `.media` on its own), since one that stacks in one column, one that's a
+   two-column grid, and one that's a table end up with different results even reading the same
+   tokens.
+
+   `.card` also takes `.divided`, which rules every region off from the one before it — opt-in,
+   not a default. `.entry`, `.message` and `.media` don't take it — they arrange their regions
+   structurally instead of stacking them in one column, so a rule between them isn't a single
+   boundary to draw.
+
+   `.entry` also takes `.compact`, which steps its own density down for a tighter repetition of
+   the same shape — a nav item rather than a list row.
+
+   Every variant takes `.flush`, which drops a pattern's own outer inset so it can sit directly
+   inside a container that already pads itself — an `<a>` in a nav, a dialog's own padded
+   surface — without doubling up.
+
+   Every selector stays compound (`use-pattern.card`, never a bare `.card`) so none of these
+   common words can collide with an author's own class of the same name.
+
+   `dialog` and `[popover]` deliberately carry no layout here — they are chrome only
+   (`dialog.css`, `popover.css`). Nest a `use-pattern` inside one to lay it out, which keeps the
+   overlay element's UA-controlled `display` alone and lets a dialog host any variant. */
+@layer use-theme.pattern {
+  use-pattern {
+    display: flex;
+    flex-direction: column;
+    gap: var(--usewc-layout-region-gap, normal);
+  }
+
+  /* `--usewc-layout-region-gap`/`-padding` are custom properties, which inherit by default — left
+     alone, a nested `use-pattern` would pick up its ancestor's density instead of its own.
+     Resetting them here, at `:where()`'s zero specificity, stops that inheritance at every
+     `use-pattern` boundary without affecting a variant class below, which carries real
+     specificity and still wins on the element it targets. */
+  :where(use-pattern) {
+    --usewc-layout-region-gap: initial;
+    --usewc-layout-region-padding: initial;
+  }
+
+  /* ── Variant density ────────────────────────────────────────────────────────────────────────
+     A variant class sets its own scale and nothing else; the generic region rules below read
+     these properties. Keeping the arrangement in one ruleset rather than four means a future
+     region variant (a tabbed header, a search header, a toolbar) can be written as a plain
+     `header.tabbed` and win on specificity, instead of having to out-specify a
+     `use-pattern.card > header`. That's also why every generic rule scopes its container list in
+     `:where()` — it contributes no specificity, so those rules sit at the weight of a bare
+     `header` and are trivially overridden. Between themselves the generic and structural rules
+     order by source position, later winning. */
+  use-pattern.entry {
+    --usewc-layout-region-padding: var(--usewc-layout-entry-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-entry-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-entry-avatar-size);
+    --usewc-layout-region-row-gap: var(--usewc-layout-entry-gap);
+    --usewc-layout-footer-justify: flex-start;
+  }
+
+  use-pattern.entry.compact {
+    --usewc-layout-region-padding: var(--usewc-layout-entry-compact-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-entry-compact-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-entry-compact-avatar-size);
+    --usewc-layout-region-row-gap: var(--usewc-layout-entry-compact-gap);
+  }
+
+  /* Chat density on top of `.entry`'s layout — tighter, since a message repeats down a feed. */
+  use-pattern.message {
+    --usewc-layout-region-padding: var(--usewc-layout-message-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-message-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-message-rail);
+    --usewc-layout-region-row-gap: var(--usewc-layout-region-title-gap);
+    --usewc-layout-footer-justify: flex-start;
+  }
+
+  use-pattern.card {
+    --usewc-layout-region-padding: var(--usewc-layout-card-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-card-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-card-avatar-size);
+    --usewc-layout-footer-justify: flex-end;
+  }
+
+  /* `.media` is a media object — a rail beside a wider body column, at one compact density for
+     both the container inset and the gaps within it. The row gap is the standard region gap, so
+     the header, body and footer stack the same distance apart as the rail sits from the body. */
+  use-pattern.media {
+    --usewc-layout-region-padding: var(--usewc-layout-media-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-media-gap);
+    --usewc-layout-region-row-gap: var(--usewc-layout-media-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-region-title-block-size);
+    --usewc-layout-footer-justify: flex-start;
+  }
+
+  /* `.card` owns its entire inset on the host itself — one `padding` for the true
+     edges, the base rule's own `gap` (above) for the room between children — rather than each
+     child padding its own block edges and the first/last shedding the half that would double up
+     with the host's. A region carries no padding of its own any more (below), so nothing here is
+     tag-gated: whatever lands directly in `.card`, not only `header`/`main`/`footer`,
+     gets the same inset for free by virtue of sitting inside the host's own box. */
+  use-pattern.card {
+    padding: var(--usewc-layout-region-gap) var(--usewc-layout-region-padding);
+  }
+
+  /* Zeroes what the generic region rules above put on `header`/`main`/`footer`/`use-layout[fill]`,
+     and reaches a plain, unnamed child the same way — the host's own padding and gap already do
+     that job now. `figure` is excluded: it never had padding to zero, since it bleeds past the
+     host's inset instead (below) rather than sitting inside it. */
+  use-pattern.card > :not(figure) {
+    padding: 0;
+  }
+
+  /* A `<figure>` bleeds past the host's own inset on every edge it touches — the full inline
+     width always, since nothing else pads it back in from the sides now that the host carries
+     inline padding too; the block edges only when it's first or last, the same way it always has.
+     `.divided` (below) is excluded: a divided figure sits inset like any other region instead of
+     bleeding past the rule that would otherwise land on it. `.flush` already zeroes the host's
+     own padding, so there is nothing left to pull out of either way.
+
+     Skips `:where()`, unlike the rules around it: the generic region block further down sets a
+     flat `margin: 0` on every variant's `figure` at the same specificity a `:where()`-wrapped
+     selector would carry, and being later in source it would otherwise win. Out-specifying it on
+     purpose is the same trick `.flush` already relies on above. */
+  use-pattern.card:not(.divided):not(.flush) > figure {
+    margin-inline: calc(var(--usewc-layout-region-padding) * -1);
+  }
+
+  use-pattern.card:not(.divided):not(.flush) > figure:first-child {
+    margin-block-start: calc(var(--usewc-layout-region-gap) * -1);
+  }
+
+  use-pattern.card:not(.divided):not(.flush) > figure:last-child {
+    margin-block-end: calc(var(--usewc-layout-region-gap) * -1);
+  }
+
+  /* `.divided` rules a region off from the one before it by position, not by tag — so a
+     `<figure>`, an author's own `<section>`, or any other stand-in divides exactly like
+     `header`/`main`/`footer` do, with nothing to name per tag. It only makes sense on `.card`, the
+     one plain stacking shape here, where "the next region" is unambiguous; `.entry`, `.message` and `.media` arrange their regions structurally
+     instead, so a rule between them isn't a single boundary to draw.
+
+     The rule is drawn *in* the gap on browsers that support `row-rule` (CSS Gap Decorations), so
+     `.divided` needs no model of its own there: it's the same host `padding`/`gap` as undivided
+     (the base rule's own `gap` reads the card's own `--usewc-layout-region-gap`), just with
+     `row-rule` decorating it.
+
+     Everywhere else, a generated pseudo-element standing in for the gap doesn't hold up: a
+     `use-layout[fill]` region (the scrolling body of a drawer, say) has its own `overflow: auto`,
+     which scrolls and clips any pseudo generated *on* it right along with the rest of its
+     content — there's no positioning trick that both lives inside that region and stays put
+     against its own scrolling. So the fallback reaches for the one thing that's neither a
+     scrollable descendant nor a flex item of the region it's drawn on: a real
+     `border-block-start`, on the region's own box rather than a pseudo tucked inside it. That
+     needs a region to have padding again to keep the rule off its content, which means turning
+     the container `gap` back off — the same shape `.divided` had before this file started
+     spending it at the host level. */
+  @supports (row-rule-style: solid) {
+    use-pattern.card.divided {
+      row-rule: var(--usewc-layout-region-rule);
+    }
+  }
+
+  @supports not (row-rule-style: solid) {
+    use-pattern.card.divided {
+      gap: 0;
+
+      & > * {
+        padding-block: var(--usewc-layout-region-gap, 0px);
+      }
+
+      & > :not(:first-child) {
+        border-block-start: var(--usewc-layout-region-rule);
+      }
+    }
+  }
+
+  /* `.flush` zeroes a use-pattern's own outer inset. Inline padding is one token consumed
+     everywhere it's set (every region, and the container itself for `.entry`/`.message`/`.media`),
+     so overriding it here reaches all of them at once regardless of variant. Block padding comes
+     off the host directly for every variant now — `.card` carries its own
+     `padding-block` above, and `.entry`/`.message`/`.media` pad the container the same way — so
+     one rule zeroes it everywhere; a middle region's own padding and the space between regions
+     are untouched either way.
+
+     The selector matches the variant list rather than a bare `.flush` so this out-ranks a
+     two-class modifier like `.entry.compact` on specificity — `.entry.compact.flush` needs
+     `.flush` to win regardless of which order the three classes are combined in. */
+  use-pattern:is(.entry, .message, .card, .media).flush {
+    --usewc-layout-region-padding: 0;
+    padding-block: 0;
+  }
+
+  use-pattern.flush > :first-child {
+    padding-block-start: 0;
+  }
+
+  use-pattern.flush > :last-child {
+    padding-block-end: 0;
+  }
+
+  /* ── Regions: .card ─────────────────────────────────────────────────────────────────────────
+     Header/footer content is a flex row of its own — an avatar or icon-like figure squared to
+     the variant's avatar size, an `hgroup` growing to fill the rest, a trailing action or two —
+     independent of the outer inset, which the host itself owns (above). Neither gets its own
+     padding here: that's the whole point of the host owning it instead. */
+  :where(use-pattern.card) {
+    min-block-size: 0;
+
+    & > figure {
+      margin: 0;
+    }
+
+    & > figure > img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      object-fit: cover;
+    }
+
+    & > header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > footer {
+      display: flex;
+      align-items: center;
+      justify-content: var(--usewc-layout-footer-justify, flex-end);
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    /* A header's leading likeness is a `use-avatar` or a `<figure>` — no `img.avatar`
+       convention, since a bare `<img>` in a header is as likely to be a logo as a face, and a
+       class would have to be remembered where the element already says it. Both are squared to
+       the variant's avatar size; a `<figure>` centres whatever it holds. */
+    & > header > :is(use-avatar, figure) {
+      flex: none;
+      inline-size: var(--usewc-layout-region-avatar-size);
+      block-size: var(--usewc-layout-region-avatar-size);
+      border-radius: var(--usewc-effect-surface-avatar-border-radius);
+      overflow: hidden;
+    }
+
+    & > header > figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: 0;
+      font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+      line-height: 1;
+    }
+
+    & > header > figure > img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    /* An `hgroup` is a title stack wherever it turns up in a region — often wrapped in a
+       `<section>` in a topbar — so it's matched by descent rather than as a direct child. Only
+       the one sitting directly in a header grows, since that's what pushes trailing actions to
+       the far end. */
+    & > :is(header, footer) hgroup {
+      display: flex;
+      flex-direction: column;
+      gap: var(--usewc-layout-region-title-gap);
+      min-inline-size: 0;
+    }
+
+    & > header > hgroup {
+      flex: 1;
+    }
+
+    /* An `hgroup`'s lines get explicit line boxes so a stacked title and subtitle add up to a
+       predictable height beside a fixed-size avatar, and everything after the first steps down a
+       size — a timestamp, a byline, a location is secondary to the title it hangs off. The title
+       line box is a floor rather than a fixed value, so a headline larger than an `h4` grows its
+       leading with its font size instead of overlapping the line above. */
+    & > :is(header, footer) hgroup > * {
+      line-height: max(var(--usewc-layout-region-title-line-height), 1.25em);
+    }
+
+    & > :is(header, footer) hgroup > * + * {
+      font-size: var(--usewc-font-region-subtitle-size);
+      line-height: var(--usewc-layout-region-subtitle-line-height);
+      color: var(--usewc-color-document-text-muted);
+    }
+
+    /* A header and footer are flex containers and an `hgroup` is a flex column, so `gap` is the
+       spacing — a default block margin stacks on top of it and blows the region apart. Headings
+       are matched at any depth, since a topbar routinely nests them a `<section>` and an
+       `<hgroup>` down; `<p>` and friends only need it where they sit directly in the flex flow.
+       Body copy in `<main>` keeps its margins, which is the whole point of a paragraph there. */
+    & > :is(header, footer) > *,
+    & > :is(header, footer) hgroup > *,
+    & > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
+      margin-block: 0;
+    }
+
+    /* A `<section>` inside a header or footer is one cluster of related controls. Two or more of
+       them means the region has distinct ends, so it splits them apart regardless of the
+       variant's default justification. */
+    & > :is(header, footer) > section {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > :is(header, footer):has(> section ~ section) {
+      justify-content: space-between;
+    }
+  }
+
+  /* ── Regions: .entry / .message ─────────────────────────────────────────────────────────────
+     Same header/footer/hgroup treatment as `.card`, minus the two things their own
+     shape already covers elsewhere: `header`/`main`/`footer` take no padding of their own here
+     either (the structural rules below own the inset), and `main`/`use-layout[fill]`'s own
+     first/last child still sheds the block margin that would otherwise stack on top of it. */
+  :where(use-pattern:is(.entry, .message)) {
+    min-block-size: 0;
+    gap: var(--usewc-layout-region-row-gap);
+
+    & > :is(main, use-layout[fill]) > :first-child {
+      margin-block-start: 0;
+    }
+
+    & > :is(main, use-layout[fill]) > :last-child {
+      margin-block-end: 0;
+    }
+
+    & > figure {
+      margin: 0;
+    }
+
+    & > figure > img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      object-fit: cover;
+    }
+
+    & > header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > footer {
+      display: flex;
+      align-items: center;
+      justify-content: var(--usewc-layout-footer-justify, flex-end);
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > header > :is(use-avatar, figure) {
+      flex: none;
+      inline-size: var(--usewc-layout-region-avatar-size);
+      block-size: var(--usewc-layout-region-avatar-size);
+      border-radius: var(--usewc-effect-surface-avatar-border-radius);
+      overflow: hidden;
+    }
+
+    & > header > figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: 0;
+      font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+      line-height: 1;
+    }
+
+    & > header > figure > img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    & > :is(header, footer) hgroup {
+      display: flex;
+      flex-direction: column;
+      gap: var(--usewc-layout-region-title-gap);
+      min-inline-size: 0;
+    }
+
+    & > header > hgroup {
+      flex: 1;
+    }
+
+    & > :is(header, footer) hgroup > * {
+      line-height: max(var(--usewc-layout-region-title-line-height), 1.25em);
+    }
+
+    & > :is(header, footer) hgroup > * + * {
+      font-size: var(--usewc-font-region-subtitle-size);
+      line-height: var(--usewc-layout-region-subtitle-line-height);
+      color: var(--usewc-color-document-text-muted);
+    }
+
+    & > :is(header, footer) > *,
+    & > :is(header, footer) hgroup > *,
+    & > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
+      margin-block: 0;
+    }
+
+    & > :is(header, footer) > section {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > :is(header, footer):has(> section ~ section) {
+      justify-content: space-between;
+    }
+  }
+
+  /* ── Regions: .media ────────────────────────────────────────────────────────────────────────
+     Same header/footer/hgroup treatment again, adapted to the one thing `.media` does
+     differently: any non-rail child is a region, not just `header`/`main`/`footer` (its own
+     structural rule below reads by position, not by tag), so nothing here needs its own padding
+     either — that's already zeroed generically there. */
+  :where(use-pattern.media) {
+    min-block-size: 0;
+    gap: var(--usewc-layout-region-row-gap);
+
+    & > :is(main, use-layout[fill]) > :first-child {
+      margin-block-start: 0;
+    }
+
+    & > :is(main, use-layout[fill]) > :last-child {
+      margin-block-end: 0;
+    }
+
+    & > figure {
+      margin: 0;
+    }
+
+    & > figure > img {
+      display: block;
+      inline-size: 100%;
+      block-size: auto;
+      object-fit: cover;
+    }
+
+    & > header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > footer {
+      display: flex;
+      align-items: center;
+      justify-content: var(--usewc-layout-footer-justify, flex-end);
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > header > :is(use-avatar, figure) {
+      flex: none;
+      inline-size: var(--usewc-layout-region-avatar-size);
+      block-size: var(--usewc-layout-region-avatar-size);
+      border-radius: var(--usewc-effect-surface-avatar-border-radius);
+      overflow: hidden;
+    }
+
+    & > header > figure {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-inline: 0;
+      font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+      line-height: 1;
+    }
+
+    & > header > figure > img {
+      inline-size: 100%;
+      block-size: 100%;
+      object-fit: cover;
+    }
+
+    & > :is(header, footer) hgroup {
+      display: flex;
+      flex-direction: column;
+      gap: var(--usewc-layout-region-title-gap);
+      min-inline-size: 0;
+    }
+
+    & > header > hgroup {
+      flex: 1;
+    }
+
+    & > :is(header, footer) hgroup > * {
+      line-height: max(var(--usewc-layout-region-title-line-height), 1.25em);
+    }
+
+    & > :is(header, footer) hgroup > * + * {
+      font-size: var(--usewc-font-region-subtitle-size);
+      line-height: var(--usewc-layout-region-subtitle-line-height);
+      color: var(--usewc-color-document-text-muted);
+    }
+
+    & > :is(header, footer) > *,
+    & > :is(header, footer) hgroup > *,
+    & > :is(header, footer) :is(h1, h2, h3, h4, h5, h6) {
+      margin-block: 0;
+    }
+
+    & > :is(header, footer) > section {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-region-gap);
+    }
+
+    & > :is(header, footer):has(> section ~ section) {
+      justify-content: space-between;
+    }
+  }
+
+  /* ── Structural overrides ───────────────────────────────────────────────────────────────────
+     The arrangements a density property can't express. Same `:where()` weight as the generic
+     rules, winning on source order. */
+
+  /* `.entry` is the one variant that isn't a column: a leading avatar rail with every other
+     region stacked beside it — a comment, a notification, a search result, a row in a people
+     list. `.message` is the same layout at chat density, so both are matched here.
+
+     `align-self: start` on the rail is what keeps it honest. Left to stretch, a rail spanning
+     every row forces the rows to add up to at least its own height, which pads out a short
+     header and drops an awkward gap between the name and the body. Held at the start it sizes
+     to itself, the rows keep their content heights, and spanning still guarantees the entry is
+     never shorter than the rail.
+
+     Each variant sets its own row gap. `.entry` spaces its regions evenly, since a title, a body
+     and a row of actions are three separate things. `.message` keeps them tight — a name and the
+     message under it read as one unit — and buys the footer's separation back with a margin, so
+     reactions still sit apart from the text. The rail's column is reserved by `grid-template-columns` whether or not
+     a rail is present, so a grouped entry that omits it still lines its body up with the rest. */
+  use-pattern:is(.entry, .message) {
+    display: grid;
+    grid-template-columns: var(--usewc-layout-region-avatar-size) 1fr;
+    column-gap: var(--usewc-layout-region-gap);
+    row-gap: var(--usewc-layout-region-row-gap);
+    padding-inline: var(--usewc-layout-region-padding);
+    padding-block: var(--usewc-layout-region-gap);
+  }
+
+  :where(use-pattern:is(.entry, .message)) > :is(header, main, footer) {
+    grid-column: 2;
+  }
+
+  :where(use-pattern.message) > footer {
+    margin-block-start: var(--usewc-layout-region-gap);
+  }
+
+  /* The rail is a fixed square holding the likeness. `use-avatar` is the element for it — it
+     brings its own initials fallback and shape — and a bare `<figure>` works too, for a date
+     badge or an icon that isn't a person. A `<figure>` centres whatever it's given rather than
+     assuming an `<img>`; a photo inside one fills the square and crops. */
+  :where(use-pattern:is(.entry, .message)) > :is(use-avatar, figure) {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    inline-size: var(--usewc-layout-region-avatar-size);
+    block-size: var(--usewc-layout-region-avatar-size);
+    overflow: hidden;
+    border-radius: var(--usewc-effect-surface-avatar-border-radius);
+  }
+
+  /* The rail shares a centre with the title block rather than being pinned to the top of it, so
+     a stacked title over a subtitle and a single line each sit level with the avatar without
+     either being measured against the other. The rail's own row grows to hold it, so it can
+     never overhang, and everything after the header falls below both.
+
+     With no header the rail has no title to centre against — the body starts at the top of the
+     column and the rail starts with it. */
+  :where(use-pattern:is(.entry, .message):has(> header)) > :is(use-avatar, figure) {
+    align-self: center;
+  }
+
+  :where(use-pattern:is(.entry, .message)) > figure {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(var(--usewc-layout-region-avatar-size) * 0.4);
+    line-height: 1;
+  }
+
+  :where(use-pattern:is(.entry, .message)) > figure > img {
+    inline-size: 100%;
+    block-size: 100%;
+    object-fit: cover;
+  }
+
+  /* A `<figure>` inside the body is an attachment, not the rail — it keeps the flow but sheds the
+     UA margin so the region's own spacing is the only spacing. */
+  :where(use-pattern:is(.entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure {
+    margin-inline: 0;
+  }
+
+  :where(use-pattern:is(.entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure > img {
+    display: block;
+    inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* Name and timestamp sit on one line here rather than stacking, and the line never wraps —
+     trailing actions stay put as the name grows. */
+  :where(use-pattern.message) > header > hgroup {
+    flex-direction: row;
+    align-items: baseline;
+    gap: var(--usewc-layout-region-gap);
+    white-space: nowrap;
+  }
+
+  /* `.media` is a media object — a rail that shrink-wraps whatever it holds — an avatar, a
+     figure, a thumbnail, an inline icon — with the header, body and footer stacked beside it as
+     one column, the way Bootstrap's `.media` + `.media-body` reads. `use-pattern` has no body
+     wrapper, so this leans on anonymous table boxes to make one: the container is `display:
+     table`, the rail is a `table-cell`, and CSS wraps the run of regions after it in a single
+     anonymous `table-cell` — that cell *is* the body column.
+
+     Because the body column is one box, the regions inside it are plain block flow: `main` sits
+     exactly one row gap under `header` no matter how tall the rail is, and the container is only
+     ever as tall as its taller cell. The rail cell is `vertical-align: top`, so a rail and the
+     header start level; it sizes to its content, with a `padding-inline-end` standing in for the
+     column gap so no border-spacing leaks onto the outer edges.
+
+     The first child is always the rail — `use-avatar`, `figure`, a bare `img` or `svg` all
+     work — with no tag check, since the anonymous-cell trick only works when something is
+     actually sitting in that first table-cell. A `.media` with no rail isn't a supported shape:
+     `header` would become the cell instead and split away from the rest of the body. */
+  use-pattern.media {
+    display: table;
+    inline-size: 100%;
+    border-spacing: 0;
+    padding-inline: var(--usewc-layout-region-padding);
+    padding-block: var(--usewc-layout-region-gap);
+  }
+
+  :where(use-pattern.media) > :first-child {
+    display: table-cell;
+    inline-size: 0;
+    vertical-align: top;
+    padding-inline-end: var(--usewc-layout-region-gap);
+  }
+
+  /* Every region's own padding lives on the container instead. The rail is always the first
+     child, so everything after it is a region — no need to name `header`/`main`/`footer`
+     explicitly. */
+  :where(use-pattern.media) > :not(:first-child) {
+    padding: 0;
+  }
+
+  /* The row gap separates the regions from each other, not the rail from the first region — that
+     gap is the rail cell's own `padding-inline-end`. Since the rail is always child 1 and the
+     first region is always child 2, the row gap only starts from the third child on. */
+  :where(use-pattern.media) > :nth-child(n + 3) {
+    margin-block-start: var(--usewc-layout-region-row-gap);
+  }
+
+  /* Card chrome — the one bit of floating surface treatment that isn't layout, and the only
+     thing separating `.card` from the other three variants: they arrange regions, this also
+     paints a raised panel. `.outlined` keeps the border but drops the shadow, for a flatter
+     card.
+
+     A card nested directly in a `dialog` or `[popover]` skips the chrome: the overlay already
+     paints a surface, and stacking a second border and shadow inside it reads as a panel within
+     a panel. That makes `.card` the variant to reach for inside an overlay — a modal wants
+     exactly the card's arrangement (avatar header, actions collected at the inline-end edge),
+     just not a second background. */
+  use-pattern.card:not(:is(dialog, [popover]) > *) {
+    overflow: hidden;
+    background: var(--usewc-color-surface-background);
+    border: var(--usewc-layout-surface-border) solid var(--usewc-color-surface-border);
+    border-radius: var(--usewc-effect-surface-border-radius);
+    box-shadow: var(--usewc-effect-surface-shadow);
+    color: var(--usewc-color-document-text);
+  }
+
+  use-pattern.card.outlined:not(:is(dialog, [popover]) > *) {
+    box-shadow: none;
+  }
+}

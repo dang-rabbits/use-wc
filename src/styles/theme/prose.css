@@ -23,7 +23,7 @@
    layout region without fighting its padding.
 
    Prose reaches every descendant, which includes the slotted content of a nested component — a
-   `<p>` inside a `use-layout.card` picks up prose's margins today. That is deliberate for a first
+   `<p>` inside a `use-pattern.card` picks up prose's margins today. That is deliberate for a first
    pass: the alternative was a hand-maintained list of every `use-` tag to revert inside, which is
    a lot of upkeep for a problem nobody has hit yet. Wrap the exception in `use-theme-escape` if
    it bites, and revisit once there's a real case to design against.

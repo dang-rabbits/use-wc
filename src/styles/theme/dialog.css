@@ -6,8 +6,8 @@
    needs an opt-in class, since it pins to a block-size-100dvh edge panel instead — the positioning
    itself, not just the chrome, changes.
 
-   Chrome only — a `<dialog>` gets no layout from this family. Nest a `use-layout` variant
-   inside it (`layout.css`) to arrange a header / body / footer, which leaves the element's
+   Chrome only — a `<dialog>` gets no layout from this family. Nest a `use-pattern` variant
+   inside it (`pattern.css`) to arrange a header / body / footer, which leaves the element's
    UA-controlled `display` alone and lets one dialog host any variant. That nested layout is
    what makes a drawer work: its `use-layout[fill]` body scrolls while header and footer stay
    put over the full 100dvh. */

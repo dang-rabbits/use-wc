@@ -615,8 +615,8 @@
   --usewc-color-prose-code-border: var(--usewc-color-surface-border);
   --usewc-effect-prose-code-border-radius: var(--usewc-effect-border-radius-6);
 
-  /* Layout regions — the density scale each `use-layout` variant sets on itself, which the one
-     generic set of header / main / footer rules in `theme/layout.css` then reads. The four
+  /* Layout regions — the density scale each `use-pattern` variant sets on itself, which the one
+     generic set of header / main / footer rules in `theme/pattern.css` then reads. The four
      variants are deliberately far apart: a document and a card in a feed can't share one
      padding step and still read as themselves, so each gets its own rather than overriding a
      shared base. The hairline colour is shared, since a rule is a rule wherever it lands.
@@ -682,7 +682,7 @@
      backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA
      backdrop), and the gap an anchored surface keeps from its anchor. `-padding` is the inset a
      `dialog`/`[popover]` keeps from the viewport edge when sizing itself, not region padding —
-     the regions inside one come from whichever `use-layout` variant is nested there. */
+     the regions inside one come from whichever `use-pattern` variant is nested there. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
   --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);

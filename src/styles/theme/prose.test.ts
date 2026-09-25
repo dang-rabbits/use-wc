@@ -170,9 +170,9 @@ describe("use-prose", () => {
     render(html`
       <use-prose>
         <h2 id="proseHeading">Prose heading</h2>
-        <use-layout class="card">
+        <use-pattern class="card">
           <main><h2 id="nestedHeading">Nested heading</h2></main>
-        </use-layout>
+        </use-pattern>
       </use-prose>
     `);
 
