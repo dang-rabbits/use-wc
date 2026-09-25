@@ -640,7 +640,9 @@
       var(--usewc-layout-region-subtitle-line-height)
   );
 
-  --usewc-layout-page-padding: var(--usewc-space-20);
+  --usewc-layout-page-spacing: var(--usewc-space-32);
+  --usewc-layout-page-padding-block: var(--usewc-space-16);
+  --usewc-layout-page-padding-inline: var(--usewc-space-24);
   --usewc-layout-page-gap: var(--usewc-space-12);
   --usewc-layout-page-avatar-size: var(--usewc-layout-region-title-block-size);
   --usewc-font-page-title-size: var(--usewc-font-size-28);

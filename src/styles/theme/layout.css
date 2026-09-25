@@ -466,9 +466,9 @@
      has room to render instead of being clipped at its edge. `header`/`main`/`footer` are style
      hooks, not required elements. */
   use-layout.page {
-    --usewc-local-layout-default-spacing: var(--usewc-layout-page-gap);
-    --usewc-local-layout-default-gutter: var(--usewc-layout-page-padding);
-    --usewc-local-layout-default-padding-block: var(--usewc-layout-page-gap);
+    --usewc-local-layout-default-spacing: var(--usewc-layout-page-spacing);
+    --usewc-local-layout-default-padding-block: var(--usewc-layout-page-padding-block);
+    --usewc-local-layout-default-gutter: var(--usewc-layout-page-padding-inline);
     min-block-size: 0;
   }
 
