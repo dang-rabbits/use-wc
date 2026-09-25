@@ -461,16 +461,16 @@ describe("use-layout", () => {
       const body = document.getElementById("body")!;
       const footer = document.getElementById("footer")!;
 
-      expect(styleOf(page, "padding-top")).toBe("12px");
-      expect(styleOf(page, "padding-bottom")).toBe("12px");
+      expect(styleOf(page, "padding-top")).toBe("16px");
+      expect(styleOf(page, "padding-bottom")).toBe("16px");
       expect(styleOf(page, "padding-left")).toBe("0px");
       expect(styleOf(page, "column-gap")).toBe("0px");
       expect(styleOf(header, "padding-top")).toBe("0px");
-      expect(styleOf(header, "padding-bottom")).toBe("6px");
-      expect(styleOf(body, "padding-top")).toBe("6px");
-      expect(styleOf(body, "padding-bottom")).toBe("6px");
-      expect(styleOf(body, "padding-left")).toBe("20px");
-      expect(styleOf(body, "padding-right")).toBe("20px");
+      expect(styleOf(header, "padding-bottom")).toBe("16px");
+      expect(styleOf(body, "padding-top")).toBe("16px");
+      expect(styleOf(body, "padding-bottom")).toBe("16px");
+      expect(styleOf(body, "padding-left")).toBe("24px");
+      expect(styleOf(body, "padding-right")).toBe("24px");
       expect(styleOf(footer, "padding-bottom")).toBe("0px");
       expect(styleOf(header, "border-bottom-width")).toBe("0px");
       expect(styleOf(footer, "border-top-width")).toBe("0px");
@@ -485,7 +485,7 @@ describe("use-layout", () => {
         </use-layout>
       `);
 
-      expect(styleOf(document.getElementById("section")!, "padding-left")).toBe("20px");
+      expect(styleOf(document.getElementById("section")!, "padding-left")).toBe("24px");
     });
 
     it("rules its regions off with a border on each one after the first when divided", async () => {
@@ -533,7 +533,54 @@ describe("use-layout", () => {
       const figure = document.getElementById("figure")!;
 
       expect(styleOf(figure, "padding-left")).toBe("0px");
-      expect(styleOf(figure, "margin-top")).toBe("-12px");
+      expect(styleOf(figure, "margin-top")).toBe("-16px");
+    });
+
+    it("pulls a trailing clear icon-only header button into the gutter by its glyph's inset", async () => {
+      render(html`
+        <use-layout class="page">
+          <header>
+            <hgroup><h4>Brand</h4></hgroup>
+            <button type="button" class="clear" aria-label="Account">&#9679;</button>
+          </header>
+          <header>
+            <section>
+              <hgroup><h4>Brand</h4></hgroup>
+            </section>
+            <section>
+              <button type="button" class="clear" aria-label="Search" id="leading">&#9679;</button>
+              <button type="button" class="clear small" aria-label="Account" id="small">
+                &#9679;
+              </button>
+            </section>
+          </header>
+          <header>
+            <button type="button" class="clear" aria-label="Close" id="square">
+              <svg viewBox="0 0 2 2" width="24" height="24"></svg>
+            </button>
+          </header>
+          <header>
+            <button type="button" class="clear" aria-label="Close" id="icon">
+              <span class="icon">&times;</span>
+            </button>
+          </header>
+          <header>
+            <button type="button" aria-label="Account" id="filled">&#9679;</button>
+          </header>
+          <header>
+            <button type="button" class="clear" id="labelled">Sign in</button>
+          </header>
+        </use-layout>
+      `);
+      const direct = document.querySelector("header > button.clear")!;
+
+      expect(styleOf(direct, "margin-right")).toBe("-16px");
+      expect(styleOf(document.getElementById("small")!, "margin-right")).toBe("-12px");
+      expect(styleOf(document.getElementById("square")!, "margin-right")).toBe("-6px");
+      expect(styleOf(document.getElementById("icon")!, "margin-right")).toBe("-6px");
+      expect(styleOf(document.getElementById("leading")!, "margin-right")).toBe("0px");
+      expect(styleOf(document.getElementById("filled")!, "margin-right")).toBe("0px");
+      expect(styleOf(document.getElementById("labelled")!, "margin-right")).toBe("0px");
     });
 
     it("splits its footer so status sits opposite the actions", async () => {

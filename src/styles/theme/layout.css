@@ -466,9 +466,9 @@
      has room to render instead of being clipped at its edge. `header`/`main`/`footer` are style
      hooks, not required elements. */
   use-layout.page {
-    --usewc-local-layout-default-spacing: var(--usewc-layout-page-gap);
-    --usewc-local-layout-default-gutter: var(--usewc-layout-page-padding);
-    --usewc-local-layout-default-padding-block: var(--usewc-layout-page-gap);
+    --usewc-local-layout-default-spacing: var(--usewc-layout-page-spacing);
+    --usewc-local-layout-default-padding-block: var(--usewc-layout-page-padding-block);
+    --usewc-local-layout-default-gutter: var(--usewc-layout-page-padding-inline);
     min-block-size: 0;
   }
 
@@ -616,6 +616,22 @@
 
     & > :is(header, footer):has(> section ~ section) {
       justify-content: space-between;
+    }
+
+    /* A clear icon-only button closing out a header pulls its end edge into the gutter by the
+       room between its own edge and its glyph, so the glyph — not an invisible box — lines up
+       with the page's inset. A square button sheds its inline padding, so its glyph sits its
+       block padding in instead. The button reads its own size's padding tokens, which is why
+       this is a margin on it rather than less padding on the header. */
+    & > header > button,
+    & > header > section:last-child > button {
+      &.clear:is([aria-label], [aria-labelledby]):last-child {
+        margin-inline-end: calc(-1 * (var(--usewc-layout-button-padding-inline) + var(--usewc-layout-button-border)));
+      }
+
+      &.clear:is([aria-label], [aria-labelledby]):last-child:has(> use-caret:empty, > :is(svg, .icon):only-child) {
+        margin-inline-end: calc(-1 * (var(--usewc-layout-button-padding-block) + var(--usewc-layout-button-border)));
+      }
     }
 
     /* A `<figure>` inside the body is an attachment — it keeps the flow but sheds the UA margin. */
