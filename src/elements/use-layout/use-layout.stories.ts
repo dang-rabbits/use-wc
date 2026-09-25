@@ -369,7 +369,7 @@ export const Page: Story = {
         </section>
         <section>
           <button type="button">Search</button>
-          <button type="button" aria-label="Account">&#9679;</button>
+          <button type="button" class="clear" aria-label="Account">&#9679;</button>
         </section>
       </header>
       <main>${Array.from({ length: 8 }, (_, index) => html`<p>Row ${index + 1}</p>`)}</main>
