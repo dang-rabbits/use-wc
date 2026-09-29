@@ -59,4 +59,23 @@
       all: revert-layer;
     }
   }
+
+  /* A plain `span` is a static text cell rather than a control — pagination's ellipsis, or a
+     unit beside an input. It borrows a base button's border, face, and inline padding so the
+     strip's outline stays unbroken through it, and stretches to its neighbors' height through
+     the container's default `align-items: stretch` instead of needing its own block padding. */
+  use-control-set > span:not([class*="appearance-"]) {
+    display: inline-flex;
+    align-items: center;
+    padding-inline: var(--usewc-layout-button-base-padding-inline);
+    font-size: var(--usewc-font-button-base-size);
+    color: var(--usewc-color-document-text-muted);
+    background: var(--usewc-color-button-base-background-static);
+    border: var(--usewc-layout-button-border) var(--usewc-effect-button-border-style)
+      var(--usewc-color-button-base-border-static);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
 }

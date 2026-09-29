@@ -52,6 +52,43 @@
     <input type="search" placeholder="Search" aria-label="Search" />
     <button type="submit">Go</button>
   </use-control-set>
+
+  <h3>Pagination</h3>
+  <p>
+    Pagination doesn't need its own class: wrap <code>a.appearance-button</code> links in a
+    <code>use-control-set</code> inside a labelled <code>nav</code>. <code>aria-current="page"</code> holds the current
+    page in its pressed look, and a plain <code>span</code> renders as a static cell for the gap between page ranges.
+  </p>
+  <nav aria-label="Pagination">
+    <use-control-set>
+      <a class="appearance-button" href="#">Previous</a>
+      <a class="appearance-button" href="#">1</a>
+      <a class="appearance-button" href="#" aria-current="page">2</a>
+      <a class="appearance-button" href="#">3</a>
+      <span aria-hidden="true">&hellip;</span>
+      <a class="appearance-button" href="#">10</a>
+      <a class="appearance-button" href="#">Next</a>
+    </use-control-set>
+  </nav>
+  <p>
+    For separated buttons instead of one fused strip, set a positive <code>--usewc-layout-control-set-gap</code> and a
+    matching <code>--usewc-effect-control-set-border-radius-sequential</code> on the <code>nav</code>.
+  </p>
+  <nav
+    aria-label="Pagination, separated"
+    style="
+      --usewc-layout-control-set-gap: var(--usewc-space-4);
+      --usewc-effect-control-set-border-radius-sequential: var(--usewc-effect-button-border-radius);
+    "
+  >
+    <use-control-set>
+      <a class="appearance-button" href="#">Previous</a>
+      <a class="appearance-button" href="#">1</a>
+      <a class="appearance-button" href="#" aria-current="page">2</a>
+      <a class="appearance-button" href="#">3</a>
+      <a class="appearance-button" href="#">Next</a>
+    </use-control-set>
+  </nav>
 </div>
 
 <h2>Selection</h2>

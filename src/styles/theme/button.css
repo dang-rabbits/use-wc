@@ -263,6 +263,21 @@
       --usewc-effect-button-box-shadow-active: none;
     }
 
+    /* A current or pressed button holds its variant's own pressed look at rest and on hover — the
+       current page in a pagination `use-control-set`, or a toggle that's on. It comes after the
+       variant blocks so it re-points whichever `-active` values they set, rather than the base
+       ones. */
+    &:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"]) {
+      --usewc-color-button-text-static: var(--usewc-color-button-text-active);
+      --usewc-color-button-background-static: var(--usewc-color-button-background-active);
+      --usewc-color-button-border-static: var(--usewc-color-button-border-active);
+      --usewc-color-button-text-hover: var(--usewc-color-button-text-active);
+      --usewc-color-button-background-hover: var(--usewc-color-button-background-active);
+      --usewc-color-button-border-hover: var(--usewc-color-button-border-active);
+      --usewc-effect-button-box-shadow-static: var(--usewc-effect-button-box-shadow-active);
+      --usewc-effect-button-box-shadow-hover: var(--usewc-effect-button-box-shadow-active);
+    }
+
     &.extra-small {
       --usewc-layout-button-padding-block: var(--usewc-layout-button-extra-small-padding-block);
       --usewc-layout-button-padding-inline: var(--usewc-layout-button-extra-small-padding-inline);

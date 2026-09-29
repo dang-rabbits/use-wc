@@ -48,22 +48,5 @@
          text exactly here instead of staying a lighter tint of it. */
       --usewc-local-link-decoration-opacity: 1;
     }
-
-    nav.sidebar > & {
-      display: block;
-      /* Swapping these source tokens, rather than the resolved `--usewc-local-link-text` slot
-         itself, means the existing `:hover`/`:active` rules above keep working unmodified — they
-         already read through `-hover`/`-active`, so overriding what those resolve to here is
-         enough to recolor every state at once. */
-      --usewc-color-link-text-static: var(--usewc-color-sidebar-item-text-static);
-      --usewc-color-link-text-hover: var(--usewc-color-sidebar-item-text-hover);
-      --usewc-color-link-text-active: var(--usewc-color-sidebar-item-text-active);
-      padding: var(--usewc-layout-sidebar-item-padding-block) var(--usewc-layout-sidebar-item-padding-inline);
-      border-radius: var(--usewc-effect-sidebar-item-border-radius);
-
-      &:is(:hover, :focus-visible) {
-        background-color: var(--usewc-color-sidebar-item-background-hover);
-      }
-    }
   }
 }

@@ -18,11 +18,13 @@
 @import "./theme/input.css";
 @import "./theme/selector.css";
 @import "./theme/link.css";
+@import "./theme/breadcrumb.css";
 @import "./theme/button.css";
 @import "./theme/control-set.css";
 @import "./theme/code.css";
 @import "./theme/form.css";
 @import "./theme/details.css";
+@import "./theme/sidebar.css";
 @import "./theme/segment-input.css";
 @import "./theme/select.css";
 @import "./theme/icon.css";

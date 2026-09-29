@@ -1,0 +1,184 @@
+/* `nav.sidebar` turns every link inside it, at any depth, into a padded row with a hover
+   background — a nested `a` would be invalid HTML anyway, so matching descendants can't reach
+   anything that isn't a nav item. It lives in its own layer after `link.css` and `details.css` so
+   its plain selectors outrank both without a specificity fight.
+
+   Links keep `link.css`'s own state machinery: this swaps the source tokens it reads through
+   (`--usewc-color-link-text-static`/`-hover`/`-active`) rather than setting `color` directly, so
+   every existing state recolors at once. `aria-current="page"` swaps the same tokens again for the
+   current page.
+
+   A `details` inside the sidebar is a collapsible group: its `summary` renders as the same kind of
+   row, keeping `details.css`'s caret. When the summary starts with an icon (`svg` or `.icon`), the
+   icon shows at rest and the caret takes its place on hover or keyboard focus — both share
+   `--usewc-layout-sidebar-item-icon-size`, so the swap never shifts the label.
+
+   Everything after the summary hangs off a guide line centered under the summary's icon column,
+   drawn once on the group's `::details-content` rather than on each row, so the rows' own rounded
+   corners never bend it, and nested rows get just enough inline padding to land their text under
+   the summary's text.
+   Rows below the top level all share one derived padding, which is why a group nested two deep
+   reads its offset from that padding instead of the top-level one.
+
+   Rows can sit directly in the nav or in `ul`/`ol` lists — lists are recommended, since assistive
+   tech announces their item count — and lists lose their bullets and indentation here so both
+   shapes render the same. That's also why a top-level group is found as a `details` with no
+   `details` ancestor rather than as a direct child of the nav.
+
+   Headings that are direct children of the nav are group labels. Only direct children count,
+   since a sidebar row can hold its own heading inside a nested `use-pattern`. */
+@layer use-theme.sidebar {
+  nav.sidebar {
+    --usewc-local-sidebar-nested-padding-inline-start: calc(
+      var(--usewc-layout-sidebar-item-icon-size) / 2 + var(--usewc-layout-sidebar-item-gap) -
+        var(--usewc-layout-sidebar-nested-guide-width) / 2 - var(--usewc-layout-sidebar-nested-guide-gap)
+    );
+
+    :is(a, summary):not([class*="appearance-"]) {
+      display: flex;
+      align-items: center;
+      gap: var(--usewc-layout-sidebar-item-gap);
+      padding: var(--usewc-layout-sidebar-item-padding-block) var(--usewc-layout-sidebar-item-padding-inline);
+      border-radius: var(--usewc-effect-sidebar-item-border-radius);
+
+      &:is(:hover, :focus-visible) {
+        background-color: var(--usewc-color-sidebar-item-background-hover);
+      }
+
+      > :is(svg, .icon):first-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: none;
+        inline-size: var(--usewc-layout-sidebar-item-icon-size);
+        block-size: var(--usewc-layout-sidebar-item-icon-size);
+      }
+
+      > :only-child:not(svg, .icon) {
+        flex: auto;
+        min-inline-size: 0;
+      }
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    a:not([class*="appearance-"]) {
+      --usewc-color-link-text-static: var(--usewc-color-sidebar-item-text-static);
+      --usewc-color-link-text-hover: var(--usewc-color-sidebar-item-text-hover);
+      --usewc-color-link-text-active: var(--usewc-color-sidebar-item-text-active);
+
+      &[aria-current="page"] {
+        --usewc-color-link-text-static: var(--usewc-color-sidebar-item-text-current);
+        --usewc-color-link-text-hover: var(--usewc-color-sidebar-item-text-current);
+        --usewc-color-link-text-active: var(--usewc-color-sidebar-item-text-current);
+        background-color: var(--usewc-color-sidebar-item-background-current);
+      }
+    }
+
+    summary:not([class*="appearance-"]) {
+      color: var(--usewc-color-sidebar-item-text-static);
+      cursor: pointer;
+      outline-offset: var(--usewc-effect-outline-offset);
+
+      &:hover {
+        color: var(--usewc-color-sidebar-item-text-hover);
+      }
+
+      &:active {
+        color: var(--usewc-color-sidebar-item-text-active);
+      }
+
+      &:focus-visible {
+        outline: var(--usewc-effect-outline-size) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+      }
+
+      &::before {
+        flex: none;
+        inline-size: var(--usewc-layout-sidebar-item-icon-size);
+        block-size: var(--usewc-layout-sidebar-item-icon-size);
+      }
+
+      &:has(> :is(svg, .icon):first-child) {
+        &::before {
+          display: none;
+        }
+
+        &:is(:hover, :focus-visible) {
+          &::before {
+            display: inline-block;
+          }
+
+          > :is(svg, .icon):first-child {
+            display: none;
+          }
+        }
+      }
+
+      use-theme-escape &,
+      use-theme-escape &::before {
+        all: revert-layer;
+      }
+    }
+
+    :is(ul, ol) {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+
+    details:has(a[aria-current="page"]) > summary:not([class*="appearance-"]) {
+      color: var(--usewc-color-sidebar-item-text-current);
+    }
+
+    details::details-content {
+      padding-inline-start: var(--usewc-layout-sidebar-nested-guide-gap);
+      border-inline-start: var(--usewc-layout-sidebar-nested-guide-width) solid var(--usewc-color-sidebar-nested-guide);
+    }
+
+    details:not(details details)::details-content {
+      margin-inline-start: calc(
+        var(--usewc-layout-sidebar-item-padding-inline) + var(--usewc-layout-sidebar-item-icon-size) / 2 -
+          var(--usewc-layout-sidebar-nested-guide-width) / 2
+      );
+    }
+
+    details details::details-content {
+      margin-inline-start: calc(
+        var(--usewc-local-sidebar-nested-padding-inline-start) + var(--usewc-layout-sidebar-item-icon-size) / 2 -
+          var(--usewc-layout-sidebar-nested-guide-width) / 2
+      );
+    }
+
+    use-theme-escape & details::details-content {
+      all: revert-layer;
+    }
+
+    details > a:not([class*="appearance-"]),
+    details > :not(summary) :is(a, summary):not([class*="appearance-"]) {
+      padding-inline-start: var(--usewc-local-sidebar-nested-padding-inline-start);
+    }
+
+    > :is(h1, h2, h3, h4, h5, h6) {
+      margin: var(--usewc-layout-sidebar-group-label-spacing) 0 var(--usewc-space-4);
+      padding-inline: var(--usewc-layout-sidebar-item-padding-inline);
+      font-size: var(--usewc-font-sidebar-group-label-size);
+      font-weight: var(--usewc-font-sidebar-group-label-weight);
+      line-height: var(--usewc-layout-sidebar-group-label-line-height);
+      color: var(--usewc-color-sidebar-group-label-text);
+
+      &:first-child {
+        margin-block-start: 0;
+      }
+
+      use-theme-escape & {
+        all: revert-layer;
+      }
+    }
+  }
+}

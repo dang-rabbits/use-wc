@@ -61,6 +61,29 @@
   --usewc-effect-sidebar-item-border-radius: var(--usewc-effect-border-radius-6);
   --usewc-layout-sidebar-item-padding-block: var(--usewc-space-8);
   --usewc-layout-sidebar-item-padding-inline: var(--usewc-space-12);
+  --usewc-color-sidebar-item-text-current: var(--usewc-color-brand-primary);
+  --usewc-color-sidebar-item-background-current: oklch(from var(--usewc-color-brand-primary) l c h / 0.1);
+  /* A leading icon and the group caret share one box, so the caret can stand in for the icon on
+     hover without shifting the label, and one indent lines nested text up under either. */
+  --usewc-layout-sidebar-item-icon-size: 1em;
+  --usewc-layout-sidebar-item-gap: var(--usewc-space-8);
+  /* The guide is a tint of the document's own ink rather than a fixed gray, so it stays equally
+     faint against either theme's background without a dark-mode override. */
+  --usewc-color-sidebar-nested-guide: oklch(from var(--usewc-color-document-text) l c h / 0.15);
+  --usewc-layout-sidebar-nested-guide-width: var(--usewc-space-1);
+  --usewc-layout-sidebar-nested-guide-gap: var(--usewc-space-4);
+  --usewc-color-sidebar-group-label-text: var(--usewc-color-document-text-muted);
+  --usewc-font-sidebar-group-label-size: var(--usewc-font-size-12);
+  --usewc-font-sidebar-group-label-weight: var(--usewc-font-weight-semibold);
+  --usewc-layout-sidebar-group-label-line-height: var(--usewc-line-height-18);
+  --usewc-layout-sidebar-group-label-spacing: var(--usewc-space-16);
+  /* - Breadcrumb */
+  /* The separator is decoration rather than meaning, the same way a link's underline is, so it
+     lives under `effect` — `breadcrumb.css` gives it empty alt text so it's never announced. */
+  --usewc-effect-breadcrumb-separator: "/";
+  --usewc-color-breadcrumb-separator: var(--usewc-color-document-text-muted);
+  --usewc-color-breadcrumb-current-text: var(--usewc-color-document-text);
+  --usewc-layout-breadcrumb-gap: var(--usewc-space-8);
 
   /* Form */
   /* - Color */

@@ -210,6 +210,19 @@
       <li><a href="#">Help</a></li>
     </ul>
   </nav>
+  <h4>As a breadcrumb</h4>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Projects</a></li>
+      <li><a href="#" aria-current="page">Website redesign</a></li>
+    </ol>
+  </nav>
+  <p>
+    <code>nav.breadcrumb</code> lays out an <code>ol</code> of links as a wrapping trail. The separator comes from
+    <code>--usewc-effect-breadcrumb-separator</code> (default <code>"/"</code>) and is hidden from assistive tech;
+    <code>aria-current="page"</code> marks the last link as the current page and renders it in plain document text.
+  </p>
   <h4>In a tablist</h4>
   <div role="tablist">
     <a href="#" role="tab">One</a>
@@ -264,5 +277,66 @@
   <p>
     <code>nav.sidebar</code> doesn't require <code>use-pattern</code> — it only adds hover background and rounded
     corners to each <code>a</code>, so a plain text link works the same as one with an icon/title/badge row inside it.
+  </p>
+  <h4>As a sidebar, nested</h4>
+  <nav class="sidebar" aria-label="Workspace" style="max-inline-size: 16rem">
+    <h2>Workspace</h2>
+    <ul>
+      <li>
+        <a href="#"
+          ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 10l9-7 9 7v10a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z" />
+          </svg>
+          Dashboard</a
+        >
+      </li>
+      <li>
+        <details open>
+          <summary>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M3 6a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            </svg>
+            Projects
+          </summary>
+          <ul>
+            <li><a href="#">Website redesign</a></li>
+            <li><a href="#" aria-current="page">Mobile app</a></li>
+            <li>
+              <details>
+                <summary>Archived</summary>
+                <ul>
+                  <li><a href="#">Launch campaign</a></li>
+                  <li><a href="#">Brand refresh</a></li>
+                </ul>
+              </details>
+            </li>
+          </ul>
+        </details>
+      </li>
+    </ul>
+    <h2>Account</h2>
+    <ul>
+      <li>
+        <details>
+          <summary>Settings</summary>
+          <ul>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Billing</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="#">Help</a></li>
+    </ul>
+  </nav>
+  <p>
+    A <code>details</code> inside <code>nav.sidebar</code> is a collapsible group: its <code>summary</code> renders as a
+    sidebar row, and everything after it hangs off a guide line with its text lined up under the summary's. When the
+    summary starts with an icon, the caret replaces it on hover or keyboard focus. Headings that are direct children of
+    the nav render as group labels. <code>aria-current="page"</code> highlights the current link and colors the summary
+    of every group containing it — CSS can't open a closed group, so set <code>open</code> on those yourself.
+  </p>
+  <p>
+    Wrapping rows in <code>ul</code>/<code>li</code> is recommended — screen readers announce the list and its item
+    count — and <code>nav.sidebar</code> strips list bullets and indentation, so bare links render the same way.
   </p>
 </div>
