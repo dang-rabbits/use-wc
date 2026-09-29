@@ -61,6 +61,13 @@
   --usewc-effect-sidebar-item-border-radius: var(--usewc-effect-border-radius-6);
   --usewc-layout-sidebar-item-padding-block: var(--usewc-space-8);
   --usewc-layout-sidebar-item-padding-inline: var(--usewc-space-12);
+  /* - Breadcrumb */
+  /* The separator is decoration rather than meaning, the same way a link's underline is, so it
+     lives under `effect` — `breadcrumb.css` gives it empty alt text so it's never announced. */
+  --usewc-effect-breadcrumb-separator: "/";
+  --usewc-color-breadcrumb-separator: var(--usewc-color-document-text-muted);
+  --usewc-color-breadcrumb-current-text: var(--usewc-color-document-text);
+  --usewc-layout-breadcrumb-gap: var(--usewc-space-8);
 
   /* Form */
   /* - Color */

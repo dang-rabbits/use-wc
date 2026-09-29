@@ -18,6 +18,7 @@
 @import "./theme/input.css";
 @import "./theme/selector.css";
 @import "./theme/link.css";
+@import "./theme/breadcrumb.css";
 @import "./theme/button.css";
 @import "./theme/control-set.css";
 @import "./theme/code.css";

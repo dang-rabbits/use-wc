@@ -210,6 +210,19 @@
       <li><a href="#">Help</a></li>
     </ul>
   </nav>
+  <h4>As a breadcrumb</h4>
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <ol>
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Projects</a></li>
+      <li><a href="#" aria-current="page">Website redesign</a></li>
+    </ol>
+  </nav>
+  <p>
+    <code>nav.breadcrumb</code> lays out an <code>ol</code> of links as a wrapping trail. The separator comes from
+    <code>--usewc-effect-breadcrumb-separator</code> (default <code>"/"</code>) and is hidden from assistive tech;
+    <code>aria-current="page"</code> marks the last link as the current page and renders it in plain document text.
+  </p>
   <h4>In a tablist</h4>
   <div role="tablist">
     <a href="#" role="tab">One</a>

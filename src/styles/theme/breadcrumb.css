@@ -1,0 +1,43 @@
+/* `nav.breadcrumb` lays an `ol` of links out as a single wrapping trail. The separator is
+   generated content on every item after the first, reading its glyph from
+   `--usewc-effect-breadcrumb-separator` with empty alt text (`/ ""`), so assistive tech hears the
+   list structure rather than a run of slashes.
+
+   The current page is marked with `aria-current="page"` on its link. Rather than restyling
+   `color` directly, it swaps the link's own source tokens — the same approach `nav.sidebar` takes
+   in `link.css` — so every link state resolves to the document's ink instead of link blue. The
+   link's underline is already off here, since `link.css` treats every link inside a `nav` as
+   chrome. */
+@layer use-theme.breadcrumb {
+  nav.breadcrumb > ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--usewc-layout-breadcrumb-gap);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    > li {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--usewc-layout-breadcrumb-gap);
+    }
+
+    > li + li::before {
+      content: var(--usewc-effect-breadcrumb-separator) / "";
+      color: var(--usewc-color-breadcrumb-separator);
+    }
+
+    [aria-current="page"] {
+      --usewc-color-link-text-static: var(--usewc-color-breadcrumb-current-text);
+      --usewc-color-link-text-hover: var(--usewc-color-breadcrumb-current-text);
+      --usewc-color-link-text-active: var(--usewc-color-breadcrumb-current-text);
+      cursor: default;
+    }
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+}

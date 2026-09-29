@@ -36,7 +36,21 @@ import { customElement } from "lit/decorators.js";
  * A child is a `<button>`, anything wearing `.appearance-button`, an `<input>` (other than a
  * checkbox/radio/range/file), a `<select>`, a `<textarea>`, or anything wearing
  * `.appearance-input` — see `theme/control-set.css` for exactly which selectors read which
- * radius/border tokens.
+ * radius/border tokens. A plain `span` renders as a static text cell between controls.
+ *
+ * Pagination follows the same shape, with `a.appearance-button` links and `aria-current="page"`
+ * holding the current page in its pressed look:
+ *
+ * ```html
+ * <nav aria-label="Pagination">
+ *   <use-control-set>
+ *     <a class="appearance-button" href="?page=1">1</a>
+ *     <a class="appearance-button" href="?page=2" aria-current="page">2</a>
+ *     <span aria-hidden="true">&hellip;</span>
+ *     <a class="appearance-button" href="?page=10">10</a>
+ *   </use-control-set>
+ * </nav>
+ * ```
  *
  * How the touching sides render is themeable rather than fixed: `--usewc-layout-control-set-gap`
  * (default: a negative overlap equal to the child's own border, for a seamless merged line) and
