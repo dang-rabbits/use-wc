@@ -28,8 +28,8 @@
       mask-position: center;
     }
 
-    &:is([open], :open) summary:not([class*="appearance-"])::before,
-    &:is([open], :open) summary.appearance-button::before {
+    &:is([open], :open) > summary:not([class*="appearance-"])::before,
+    &:is([open], :open) > summary.appearance-button::before {
       mask-image: var(--usewc-effect-dropdown-trigger-icon-mask-image, none);
     }
 
