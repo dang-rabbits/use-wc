@@ -265,10 +265,10 @@
     }
 
     /* A current or pressed button holds its variant's own pressed look at rest and on hover — the
-       current page in a pagination `use-control-set`, or a toggle that's on. It comes after the
-       variant blocks so it re-points whichever `-active` values they set, rather than the base
-       ones. */
-    &:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"]) {
+       current page in a pagination `use-control-set`, or a toggle that's on. A `mixed` toggle
+       (bold over a partly bold selection) reads as on too. It comes after the variant blocks so it
+       re-points whichever `-active` values they set, rather than the base ones. */
+    &:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-pressed="mixed"]) {
       --usewc-local-button-text-static: var(--usewc-local-button-text-active);
       --usewc-local-button-background-static: var(--usewc-local-button-background-active);
       --usewc-local-button-border-static: var(--usewc-local-button-border-active);

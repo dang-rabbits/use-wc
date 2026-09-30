@@ -52,6 +52,9 @@ import { customElement } from "lit/decorators.js";
  * </nav>
  * ```
  *
+ * A formatting toolbar works the same way with toggle buttons: `aria-pressed="true"` (or `"mixed"`,
+ * for a selection it only partly covers) holds a format that's on in its pressed look.
+ *
  * How the touching sides render is themeable rather than fixed: `--usewc-layout-control-set-gap`
  * (default: a negative overlap equal to the child's own border, for a seamless merged line) and
  * `--usewc-effect-control-set-border-radius-sequential` (default: `0`, for square touching

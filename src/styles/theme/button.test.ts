@@ -34,4 +34,42 @@ describe("button", () => {
       expect(getComputedStyle(document.getElementById(id)!).paddingLeft).toBe("15px");
     }
   });
+
+  it("holds a pressed or mixed toggle in its pressed look", async () => {
+    render(html`
+      <button type="button" aria-pressed="false" id="off">Bold</button>
+      <button type="button" aria-pressed="true" id="on">Bold</button>
+      <button type="button" aria-pressed="mixed" id="mixed">Bold</button>
+    `);
+
+    const offStyle = getComputedStyle(document.getElementById("off")!);
+    for (const id of ["on", "mixed"]) {
+      const pressedStyle = getComputedStyle(document.getElementById(id)!);
+      expect(pressedStyle.backgroundColor).not.toBe(offStyle.backgroundColor);
+      expect(pressedStyle.boxShadow).not.toBe(offStyle.boxShadow);
+    }
+  });
+
+  it("renders an unpressed toggle like a plain button", async () => {
+    render(html`
+      <button type="button" id="plain">Bold</button>
+      <button type="button" aria-pressed="false" id="off">Bold</button>
+    `);
+
+    const plainStyle = getComputedStyle(document.getElementById("plain")!);
+    const offStyle = getComputedStyle(document.getElementById("off")!);
+    expect(offStyle.backgroundColor).toBe(plainStyle.backgroundColor);
+    expect(offStyle.boxShadow).toBe(plainStyle.boxShadow);
+  });
+
+  it("holds a pressed clear toggle in its pressed look", async () => {
+    render(html`
+      <button type="button" class="clear" aria-pressed="false" id="off">Bold</button>
+      <button type="button" class="clear" aria-pressed="true" id="on">Bold</button>
+    `);
+
+    expect(getComputedStyle(document.getElementById("on")!).backgroundColor).not.toBe(
+      getComputedStyle(document.getElementById("off")!).backgroundColor,
+    );
+  });
 });
