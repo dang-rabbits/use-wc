@@ -220,7 +220,7 @@ describe("use-caret", () => {
 
       const style = getComputedStyle(button);
       const expectedEnd = getComputedStyle(document.documentElement).getPropertyValue(
-        "--usewc-layout-button-padding-inline",
+        "--usewc-layout-button-base-padding-inline",
       );
 
       expect(style.paddingInlineEnd).not.toBe(style.paddingInlineStart);

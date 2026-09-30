@@ -626,11 +626,11 @@
     & > header > button,
     & > header > section:last-child > button {
       &.clear:is([aria-label], [aria-labelledby]):last-child {
-        margin-inline-end: calc(-1 * (var(--usewc-layout-button-padding-inline) + var(--usewc-layout-button-border)));
+        margin-inline-end: calc(-1 * (var(--usewc-local-button-padding-inline) + var(--usewc-layout-button-border)));
       }
 
       &.clear:is([aria-label], [aria-labelledby]):last-child:has(> use-caret:empty, > :is(svg, .icon):only-child) {
-        margin-inline-end: calc(-1 * (var(--usewc-layout-button-padding-block) + var(--usewc-layout-button-border)));
+        margin-inline-end: calc(-1 * (var(--usewc-local-button-padding-block) + var(--usewc-layout-button-border)));
       }
     }
 
