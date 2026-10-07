@@ -22,6 +22,10 @@
     --usewc-local-button-background-active: var(--usewc-color-button-base-background-active);
     --usewc-local-button-border-active: var(--usewc-color-button-base-border-active);
     --usewc-local-button-background-active-auxiliary: var(--usewc-color-button-base-background-active-auxiliary);
+    --usewc-local-button-text-pressed: var(--usewc-color-button-base-text-pressed);
+    --usewc-local-button-background-pressed: var(--usewc-color-button-base-background-pressed);
+    --usewc-local-button-border-pressed: var(--usewc-color-button-base-border-pressed);
+    --usewc-local-button-background-pressed-auxiliary: var(--usewc-color-button-base-background-pressed-auxiliary);
 
     --usewc-local-button-shadow-tint: var(--usewc-color-button-base-shadow-tint);
     --usewc-local-button-shadow-chroma-multiplier: var(--usewc-effect-button-base-shadow-chroma-multiplier);
@@ -47,6 +51,7 @@
     --usewc-local-button-box-shadow-hover:
       var(--usewc-local-button-box-shadow-layer), var(--usewc-local-button-box-shadow-outset-hover);
     --usewc-local-button-box-shadow-active: var(--usewc-local-button-box-shadow-layer);
+    --usewc-local-button-box-shadow-pressed: var(--usewc-local-button-box-shadow-active);
 
     --usewc-local-button-padding-block: var(--usewc-layout-button-base-padding-block);
     --usewc-local-button-padding-inline: var(--usewc-layout-button-base-padding-inline);
@@ -200,6 +205,10 @@
       --usewc-local-button-background-active: var(--usewc-color-button-primary-background-active);
       --usewc-local-button-border-active: var(--usewc-color-button-primary-border-active);
       --usewc-local-button-background-active-auxiliary: var(--usewc-color-button-primary-background-active-auxiliary);
+      --usewc-local-button-text-pressed: var(--usewc-color-button-primary-text-pressed);
+      --usewc-local-button-background-pressed: var(--usewc-color-button-primary-background-pressed);
+      --usewc-local-button-border-pressed: var(--usewc-color-button-primary-border-pressed);
+      --usewc-local-button-background-pressed-auxiliary: var(--usewc-color-button-primary-background-pressed-auxiliary);
       --usewc-local-button-shadow-tint: var(--usewc-color-button-primary-shadow-tint);
       --usewc-local-button-shadow-chroma-multiplier: var(--usewc-effect-button-primary-shadow-chroma-multiplier);
       --usewc-local-button-shadow-alpha-multiplier: var(--usewc-effect-button-primary-shadow-alpha-multiplier);
@@ -222,6 +231,10 @@
       --usewc-local-button-background-active: var(--usewc-color-button-danger-background-active);
       --usewc-local-button-border-active: var(--usewc-color-button-danger-border-active);
       --usewc-local-button-background-active-auxiliary: var(--usewc-color-button-danger-background-active-auxiliary);
+      --usewc-local-button-text-pressed: var(--usewc-color-button-danger-text-pressed);
+      --usewc-local-button-background-pressed: var(--usewc-color-button-danger-background-pressed);
+      --usewc-local-button-border-pressed: var(--usewc-color-button-danger-border-pressed);
+      --usewc-local-button-background-pressed-auxiliary: var(--usewc-color-button-danger-background-pressed-auxiliary);
       --usewc-local-button-shadow-tint: var(--usewc-color-button-danger-shadow-tint);
       --usewc-local-button-shadow-chroma-multiplier: var(--usewc-effect-button-danger-shadow-chroma-multiplier);
       --usewc-local-button-shadow-alpha-multiplier: var(--usewc-effect-button-danger-shadow-alpha-multiplier);
@@ -244,6 +257,10 @@
       --usewc-local-button-background-active: var(--usewc-color-button-clear-background-active);
       --usewc-local-button-border-active: var(--usewc-color-button-clear-border-active);
       --usewc-local-button-background-active-auxiliary: var(--usewc-color-button-clear-background-active-auxiliary);
+      --usewc-local-button-text-pressed: var(--usewc-color-button-clear-text-pressed);
+      --usewc-local-button-background-pressed: var(--usewc-color-button-clear-background-pressed);
+      --usewc-local-button-border-pressed: var(--usewc-color-button-clear-border-pressed);
+      --usewc-local-button-background-pressed-auxiliary: var(--usewc-color-button-clear-background-pressed-auxiliary);
       --usewc-local-button-box-shadow-static: none;
       --usewc-local-button-box-shadow-hover: none;
       --usewc-local-button-box-shadow-active: none;
@@ -259,24 +276,29 @@
       --usewc-local-button-text-active: var(--usewc-local-button-text-static-auxiliary);
       --usewc-local-button-background-active: var(--usewc-local-button-background-active-auxiliary);
       --usewc-local-button-border-active: var(--usewc-local-button-border-hover-auxiliary);
+      --usewc-local-button-text-pressed: var(--usewc-local-button-text-static-auxiliary);
+      --usewc-local-button-background-pressed: var(--usewc-local-button-background-pressed-auxiliary);
+      --usewc-local-button-border-pressed: var(--usewc-local-button-border-hover-auxiliary);
       --usewc-local-button-box-shadow-static: none;
       --usewc-local-button-box-shadow-hover: none;
       --usewc-local-button-box-shadow-active: none;
     }
 
-    /* A current or pressed button holds its variant's own pressed look at rest and on hover — the
-       current page in a pagination `use-control-set`, or a toggle that's on. A `mixed` toggle
-       (bold over a partly bold selection) reads as on too. It comes after the variant blocks so it
-       re-points whichever `-active` values they set, rather than the base ones. */
+    /* A current or pressed button holds its variant's own `-pressed` look at rest and on hover —
+       the current page in a pagination `use-control-set`, or a toggle that's on. A `mixed` toggle
+       (bold over a partly bold selection) reads as on too. The `-pressed` tokens default to the
+       variant's `-active` ones, but stay separate so a theme can tell a held toggle apart from a
+       click. It comes after the variant blocks so it re-points whichever `-pressed` values they
+       set, rather than the base ones. */
     &:is([aria-current]:not([aria-current="false"]), [aria-pressed="true"], [aria-pressed="mixed"]) {
-      --usewc-local-button-text-static: var(--usewc-local-button-text-active);
-      --usewc-local-button-background-static: var(--usewc-local-button-background-active);
-      --usewc-local-button-border-static: var(--usewc-local-button-border-active);
-      --usewc-local-button-text-hover: var(--usewc-local-button-text-active);
-      --usewc-local-button-background-hover: var(--usewc-local-button-background-active);
-      --usewc-local-button-border-hover: var(--usewc-local-button-border-active);
-      --usewc-local-button-box-shadow-static: var(--usewc-local-button-box-shadow-active);
-      --usewc-local-button-box-shadow-hover: var(--usewc-local-button-box-shadow-active);
+      --usewc-local-button-text-static: var(--usewc-local-button-text-pressed);
+      --usewc-local-button-background-static: var(--usewc-local-button-background-pressed);
+      --usewc-local-button-border-static: var(--usewc-local-button-border-pressed);
+      --usewc-local-button-text-hover: var(--usewc-local-button-text-pressed);
+      --usewc-local-button-background-hover: var(--usewc-local-button-background-pressed);
+      --usewc-local-button-border-hover: var(--usewc-local-button-border-pressed);
+      --usewc-local-button-box-shadow-static: var(--usewc-local-button-box-shadow-pressed);
+      --usewc-local-button-box-shadow-hover: var(--usewc-local-button-box-shadow-pressed);
     }
 
     &.extra-small {

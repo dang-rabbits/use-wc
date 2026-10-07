@@ -142,7 +142,9 @@
   <h4>Pressed</h4>
   <p>
     <code>aria-pressed="true"</code> holds a toggle button in its variant's pressed look, and
-    <code>aria-pressed="mixed"</code> reads the same way for a toggle that only partly applies.
+    <code>aria-pressed="mixed"</code> reads the same way for a toggle that only partly applies. Each variant's
+    <code>--usewc-color-button-{variant}-{text,background,border}-pressed</code> tokens default to its active look, and
+    theme a held toggle apart from a click.
   </p>
   <div>
     <button type="button" aria-pressed="false">Off</button>

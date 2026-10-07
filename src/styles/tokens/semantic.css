@@ -241,8 +241,12 @@
   --usewc-color-button-base-text-static-auxiliary: var(--usewc-color-document-text);
   --usewc-color-button-base-text-hover: var(--usewc-color-document-text);
   --usewc-color-button-base-text-active: var(--usewc-color-document-text);
+  --usewc-color-button-base-text-pressed: var(--usewc-color-button-base-text-active);
+  --usewc-color-button-base-background-pressed: var(--usewc-color-button-base-background-active);
+  --usewc-color-button-base-border-pressed: var(--usewc-color-button-base-border-active);
   --usewc-color-button-base-background-hover-auxiliary: oklch(from var(--usewc-color-document-text) l c h / 0.07);
   --usewc-color-button-base-background-active-auxiliary: oklch(from var(--usewc-color-document-text) l c h / 0.13);
+  --usewc-color-button-base-background-pressed-auxiliary: var(--usewc-color-button-base-background-active-auxiliary);
   --usewc-color-button-base-border-hover-auxiliary: var(--usewc-color-button-base-border-static-auxiliary);
   /* -- Primary color: derived */
   --usewc-color-button-primary-background-hover: oklch(
@@ -272,11 +276,17 @@
   --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-button-primary-background-static);
   --usewc-color-button-primary-text-hover: var(--usewc-color-white);
   --usewc-color-button-primary-text-active: var(--usewc-color-white);
+  --usewc-color-button-primary-text-pressed: var(--usewc-color-button-primary-text-active);
+  --usewc-color-button-primary-background-pressed: var(--usewc-color-button-primary-background-active);
+  --usewc-color-button-primary-border-pressed: var(--usewc-color-button-primary-border-active);
   --usewc-color-button-primary-background-hover-auxiliary: oklch(
     from var(--usewc-color-button-primary-background-static) l c h / 0.09
   );
   --usewc-color-button-primary-background-active-auxiliary: oklch(
     from var(--usewc-color-button-primary-background-static) l c h / 0.15
+  );
+  --usewc-color-button-primary-background-pressed-auxiliary: var(
+    --usewc-color-button-primary-background-active-auxiliary
   );
   --usewc-color-button-primary-border-hover-auxiliary: oklch(
     from var(--usewc-color-button-primary-background-static) l c h / 0.85
@@ -307,11 +317,17 @@
   --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-button-danger-background-static);
   --usewc-color-button-danger-text-hover: var(--usewc-color-white);
   --usewc-color-button-danger-text-active: var(--usewc-color-white);
+  --usewc-color-button-danger-text-pressed: var(--usewc-color-button-danger-text-active);
+  --usewc-color-button-danger-background-pressed: var(--usewc-color-button-danger-background-active);
+  --usewc-color-button-danger-border-pressed: var(--usewc-color-button-danger-border-active);
   --usewc-color-button-danger-background-hover-auxiliary: oklch(
     from var(--usewc-color-button-danger-background-static) l c h / 0.09
   );
   --usewc-color-button-danger-background-active-auxiliary: oklch(
     from var(--usewc-color-button-danger-background-static) l c h / 0.15
+  );
+  --usewc-color-button-danger-background-pressed-auxiliary: var(
+    --usewc-color-button-danger-background-active-auxiliary
   );
   --usewc-color-button-danger-border-hover-auxiliary: oklch(
     from var(--usewc-color-button-danger-background-static) l c h / 0.85
@@ -327,8 +343,12 @@
   --usewc-color-button-clear-text-static-auxiliary: var(--usewc-color-document-text);
   --usewc-color-button-clear-text-hover: var(--usewc-color-document-text);
   --usewc-color-button-clear-text-active: var(--usewc-color-document-text);
+  --usewc-color-button-clear-text-pressed: var(--usewc-color-button-clear-text-active);
+  --usewc-color-button-clear-background-pressed: var(--usewc-color-button-clear-background-active);
+  --usewc-color-button-clear-border-pressed: var(--usewc-color-button-clear-border-active);
   --usewc-color-button-clear-background-hover-auxiliary: var(--usewc-color-button-clear-background-hover);
   --usewc-color-button-clear-background-active-auxiliary: var(--usewc-color-button-clear-background-active);
+  --usewc-color-button-clear-background-pressed-auxiliary: var(--usewc-color-button-clear-background-active-auxiliary);
   --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-gray-500);
   /* -- Shadow color */
   --usewc-color-button-shadow-lightness: 0.25;

@@ -62,6 +62,58 @@ describe("button", () => {
     expect(offStyle.boxShadow).toBe(plainStyle.boxShadow);
   });
 
+  it("themes the pressed look apart from the active one", async () => {
+    render(html`
+      <button type="button" id="plain">Bold</button>
+      <button
+        type="button"
+        aria-pressed="true"
+        id="pressed"
+        style="--usewc-color-button-base-background-pressed: rgb(1, 2, 3)"
+      >
+        Bold
+      </button>
+    `);
+
+    const pressedStyle = getComputedStyle(document.getElementById("pressed")!);
+    expect(pressedStyle.backgroundColor).toBe("rgb(1, 2, 3)");
+    expect(pressedStyle.getPropertyValue("--usewc-local-button-background-active")).toBe(
+      getComputedStyle(document.getElementById("plain")!).getPropertyValue(
+        "--usewc-local-button-background-active",
+      ),
+    );
+  });
+
+  it("reads each variant's own pressed tokens", async () => {
+    render(html`
+      <button
+        type="button"
+        class="primary"
+        aria-pressed="true"
+        id="primary"
+        style="--usewc-color-button-primary-background-pressed: rgb(1, 2, 3)"
+      >
+        Bold
+      </button>
+      <button
+        type="button"
+        class="primary auxiliary"
+        aria-pressed="true"
+        id="auxiliary"
+        style="--usewc-color-button-primary-background-pressed-auxiliary: rgb(4, 5, 6)"
+      >
+        Bold
+      </button>
+    `);
+
+    expect(getComputedStyle(document.getElementById("primary")!).backgroundColor).toBe(
+      "rgb(1, 2, 3)",
+    );
+    expect(getComputedStyle(document.getElementById("auxiliary")!).backgroundColor).toBe(
+      "rgb(4, 5, 6)",
+    );
+  });
+
   it("holds a pressed clear toggle in its pressed look", async () => {
     render(html`
       <button type="button" class="clear" aria-pressed="false" id="off">Bold</button>
