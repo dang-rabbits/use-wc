@@ -139,6 +139,20 @@
     <button type="button" class="large">Large</button>
     <button type="button" class="extra-large">Extra large</button>
   </div>
+  <h4>Pressed</h4>
+  <p>
+    <code>aria-pressed="true"</code> holds a toggle button in its variant's pressed look, and
+    <code>aria-pressed="mixed"</code> reads the same way for a toggle that only partly applies. Each variant's
+    <code>--usewc-color-button-{variant}-{text,background,border}-pressed</code> tokens default to its active look, and
+    theme a held toggle apart from a click.
+  </p>
+  <div>
+    <button type="button" aria-pressed="false">Off</button>
+    <button type="button" aria-pressed="true">On</button>
+    <button type="button" aria-pressed="mixed">Mixed</button>
+    <button type="button" class="primary" aria-pressed="true">Primary on</button>
+    <button type="button" class="clear" aria-pressed="true">Clear on</button>
+  </div>
   <h4>As link</h4>
   <div>
     <button type="button" class="clear appearance-a">Button as Link</button>
@@ -149,27 +163,27 @@
     <button
       type="button"
       style="
-        --usewc-color-button-background-static: linear-gradient(
+        --usewc-color-button-base-background-static: linear-gradient(
           to bottom,
           var(--usewc-color-indigo-500),
           var(--usewc-color-blue-500)
         );
-        --usewc-color-button-background-hover: linear-gradient(
+        --usewc-color-button-base-background-hover: linear-gradient(
           to bottom,
           var(--usewc-color-indigo-600),
           var(--usewc-color-blue-600)
         );
-        --usewc-color-button-background-active: linear-gradient(
+        --usewc-color-button-base-background-active: linear-gradient(
           to bottom,
           var(--usewc-color-indigo-700),
           var(--usewc-color-blue-700)
         );
-        --usewc-color-button-text-static: var(--usewc-color-white);
-        --usewc-color-button-text-hover: var(--usewc-color-white);
-        --usewc-color-button-text-active: var(--usewc-color-white);
-        --usewc-color-button-border-static: var(--usewc-color-transparent);
-        --usewc-color-button-border-hover: var(--usewc-color-blue-700);
-        --usewc-color-button-border-active: var(--usewc-color-blue-800);
+        --usewc-color-button-base-text-static: var(--usewc-color-white);
+        --usewc-color-button-base-text-hover: var(--usewc-color-white);
+        --usewc-color-button-base-text-active: var(--usewc-color-white);
+        --usewc-color-button-base-border-static: var(--usewc-color-transparent);
+        --usewc-color-button-base-border-hover: var(--usewc-color-blue-700);
+        --usewc-color-button-base-border-active: var(--usewc-color-blue-800);
       "
     >
       Gradient button

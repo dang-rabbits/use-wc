@@ -545,9 +545,9 @@
        and rounded to the pill's radius, so it reads as part of the chip rather than a stray
        button. `1lh` (its own line-height) drives a clean square that scales with the text. */
     use-gridcell button {
-      --usewc-layout-button-padding-inline: 0;
-      --usewc-layout-button-padding-block: 0;
-      --usewc-effect-button-radius: var(--usewc-effect-grid-chip-border-radius);
+      --usewc-local-button-padding-inline: 0;
+      --usewc-local-button-padding-block: 0;
+      --usewc-local-button-radius: var(--usewc-effect-grid-chip-border-radius);
 
       inline-size: 1lh;
       block-size: 1lh;

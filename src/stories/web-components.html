@@ -53,6 +53,20 @@
     <button type="submit">Go</button>
   </use-control-set>
 
+  <h3>Toolbar</h3>
+  <p>
+    Toggle buttons in a <code>use-control-set</code> make a formatting toolbar. <code>aria-pressed="true"</code> holds a
+    format that's on in its pressed look, and <code>aria-pressed="mixed"</code> reads the same way for a selection it
+    only partly covers.
+  </p>
+  <div role="toolbar" aria-label="Text formatting">
+    <use-control-set>
+      <button type="button" aria-label="Bold" aria-pressed="true"><b class="icon">B</b></button>
+      <button type="button" aria-label="Italic" aria-pressed="mixed"><i class="icon">I</i></button>
+      <button type="button" aria-label="Underline" aria-pressed="false"><u class="icon">U</u></button>
+    </use-control-set>
+  </div>
+
   <h3>Pagination</h3>
   <p>
     Pagination doesn't need its own class: wrap <code>a.appearance-button</code> links in a

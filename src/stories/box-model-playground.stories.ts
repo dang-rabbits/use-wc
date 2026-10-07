@@ -125,6 +125,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     stateDefaults: {
       hover: "var(--usewc-color-button-base-border-hover)",
       active: "var(--usewc-color-button-base-border-active)",
+      pressed: "var(--usewc-color-button-base-border-pressed)",
     },
   },
   {
@@ -148,6 +149,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
       hover:
         "var(--usewc-effect-button-box-shadow-none), var(--usewc-effect-button-box-shadow-outset-hover)",
       active: "var(--usewc-effect-button-box-shadow-none)",
+      pressed: "var(--usewc-effect-button-box-shadow-none)",
     },
   },
   { name: "text-shadow", list: "effect", category: "effect" },
@@ -159,6 +161,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     stateDefaults: {
       hover: "var(--usewc-color-button-base-background-hover)",
       active: "var(--usewc-color-button-base-background-active)",
+      pressed: "var(--usewc-color-button-base-background-pressed)",
     },
   },
   { name: "background-image", list: "all", category: "effect" },
@@ -172,6 +175,7 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     stateDefaults: {
       hover: "var(--usewc-color-button-base-text-hover)",
       active: "var(--usewc-color-button-base-text-active)",
+      pressed: "var(--usewc-color-button-base-text-pressed)",
     },
   },
   { name: "text-decoration", list: "all", category: "effect" },
@@ -337,7 +341,7 @@ function renderBlock(properties: Record<string, string>) {
 }
 
 const COLOR_REMAP_PARTS = ["background", "border", "text"] as const;
-const COLOR_REMAP_STATES = ["static", "hover", "active"] as const;
+const COLOR_REMAP_STATES = ["static", "hover", "active", "pressed"] as const;
 const SIZE_REMAP_PROPERTIES = ["padding-block", "padding-inline", "gap", "font-size"] as const;
 
 function applyVariantRemap(staticProps: Record<string, string>, variant: string) {

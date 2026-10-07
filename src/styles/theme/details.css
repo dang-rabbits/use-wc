@@ -8,7 +8,7 @@
       all: unset;
       display: inline-flex;
       align-items: center;
-      gap: var(--usewc-layout-button-gap);
+      gap: var(--usewc-local-button-gap);
     }
 
     /* Both the plain and button-styled summary share the same masked-icon disclosure indicator
@@ -38,7 +38,7 @@
      outranks button outright. */
     summary.appearance-button {
       padding-inline-start: calc(
-        var(--usewc-layout-button-padding-inline) - var(--usewc-layout-dropdown-trigger-icon-size) / 4
+        var(--usewc-local-button-padding-inline) - var(--usewc-layout-dropdown-trigger-icon-size) / 4
       );
     }
 
