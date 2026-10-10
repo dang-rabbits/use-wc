@@ -19,6 +19,8 @@ jobs:
           cache: true
       - name: Check
         run: vp check
+      - name: Type check
+        run: vp exec tsc --noEmit
 
   test:
     name: Test
