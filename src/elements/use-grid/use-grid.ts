@@ -291,7 +291,9 @@ export class UseGrid extends LitElement {
     super.attributeChangedCallback(name, oldValue, newValue);
     if (name === "lang") {
       for (const row of this.querySelectorAll("use-gridrow")) {
-        row.requestUpdate("locale");
+        if (row instanceof UseGridRow) {
+          row.requestUpdate("locale");
+        }
       }
     }
   }
