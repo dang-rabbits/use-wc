@@ -50,6 +50,11 @@ function isInteractiveContent(node: HTMLElement) {
 @customElement("use-grid")
 export class UseGrid extends LitElement {
   static formAssociated = true;
+
+  static get observedAttributes() {
+    return [...super.observedAttributes, "lang"];
+  }
+
   #internals: ElementInternals;
 
   get internals() {
@@ -281,6 +286,15 @@ export class UseGrid extends LitElement {
 
   #hasInitializedRows = false;
   #skipReinitAfterFirstUpdate = false;
+
+  attributeChangedCallback(name: string, oldValue: string | null, newValue: string | null) {
+    super.attributeChangedCallback(name, oldValue, newValue);
+    if (name === "lang") {
+      for (const row of this.querySelectorAll("use-gridrow")) {
+        row.requestUpdate("locale");
+      }
+    }
+  }
 
   // Keyboard navigation and selection logic
   connectedCallback() {

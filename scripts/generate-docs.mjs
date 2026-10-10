@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readComponentStrings } from "./strings-catalog.mjs";
 
 const scriptsDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptsDir, "..");
@@ -29,6 +30,8 @@ function defaultText(value) {
 function descriptionText(value) {
   return value ? escapeCell(value) : "-";
 }
+
+const englishStrings = readComponentStrings();
 
 function generateMarkdown(declaration) {
   const sections = [];
@@ -117,6 +120,15 @@ function generateMarkdown(declaration) {
       descriptionText(state.description),
     ]);
     sections.push(`## CSS States\n\n${renderTable(["State", "Description"], rows)}`);
+  }
+
+  const strings = Object.entries(englishStrings[declaration.tagName] ?? {});
+  if (strings.length > 0) {
+    const rows = strings.map(([key, value]) => [
+      escapeCell(key),
+      `\`${escapeCell(JSON.stringify(value))}\``,
+    ]);
+    sections.push(`## Strings\n\n${renderTable(["Key", "English default"], rows)}`);
   }
 
   return sections.join("\n\n");

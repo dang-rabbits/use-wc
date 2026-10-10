@@ -3,6 +3,8 @@ import { setCustomElementsManifest } from "@storybook/web-components-vite";
 import { create } from "storybook/theming";
 import { createElement } from "react";
 import { fontBase, fontCode } from "./theme-fonts";
+import { sampleStrings } from "./sample-strings";
+import { registerLocales } from "../src/i18n/i18n";
 import {
   Controls,
   Description,
@@ -21,6 +23,38 @@ import "../src/elements";
 import customElements from "../custom-elements.json";
 
 setCustomElementsManifest(customElements);
+registerLocales({ locales: sampleStrings });
+
+const stringFiles = import.meta.glob<Record<string, unknown>>("../src/elements/**/*.strings.json", {
+  eager: true,
+  import: "default",
+});
+const stringsByTag = Object.fromEntries(
+  Object.entries(stringFiles).map(([path, strings]) => [
+    path.split("/").pop()!.replace(".strings.json", ""),
+    strings,
+  ]),
+);
+
+// Adds a read-only "strings" section to a component's API table from its `<tag>.strings.json`.
+const addStringArgTypes: NonNullable<Preview["argTypesEnhancers"]>[number] = (context) => {
+  const tag = typeof context.component === "string" ? context.component : undefined;
+  const rows = Object.entries((tag && stringsByTag[tag]) ?? {}).map(([key, value]) => [
+    `strings:${key}`,
+    {
+      name: key,
+      description:
+        "Override with the localization add-on, or the `strings` property of the element that renders it.",
+      control: false,
+      table: {
+        category: "strings",
+        type: { summary: "string" },
+        defaultValue: { summary: JSON.stringify(value) },
+      },
+    },
+  ]);
+  return { ...context.argTypes, ...Object.fromEntries(rows) };
+};
 
 // Not imported from "storybook/core-events" — that subpath isn't exported
 // under the preview build's package.json conditions. The values are stable.
@@ -36,25 +70,61 @@ function applyBrandPrimary(globals: Record<string, unknown> | undefined) {
   }
 }
 
+const defaultLang = document.documentElement.getAttribute("lang");
+
+function applyLocale(globals: Record<string, unknown> | undefined) {
+  const value = globals?.locale;
+  const lang = typeof value === "string" && value !== "default" ? value : defaultLang;
+  if (lang) {
+    document.documentElement.setAttribute("lang", lang);
+  } else {
+    document.documentElement.removeAttribute("lang");
+  }
+}
+
 // Applied via the channel rather than a decorator so it also reaches
 // `<Meta>`-only docs pages (e.g. Native Elements, Web Components) that render
 // raw HTML directly and have no CSF story — and thus never run decorators —
 // but share the same preview iframe and document.
 const channel = addons.getChannel();
-channel.on(SET_GLOBALS, (data: { globals: Record<string, unknown> }) =>
-  applyBrandPrimary(data.globals),
-);
+function applyGlobals(globals: Record<string, unknown> | undefined) {
+  applyBrandPrimary(globals);
+  applyLocale(globals);
+}
+
+channel.on(SET_GLOBALS, (data: { globals: Record<string, unknown> }) => applyGlobals(data.globals));
 channel.on(GLOBALS_UPDATED, (data: { globals: Record<string, unknown> }) =>
-  applyBrandPrimary(data.globals),
+  applyGlobals(data.globals),
 );
 
 const preview: Preview = {
+  argTypesEnhancers: [addStringArgTypes],
   globalTypes: {
     brandPrimary: {
       name: "Brand primary color",
       description: "Overrides --usewc-color-brand-primary to preview a custom brand color",
     },
+    locale: {
+      name: "Locale",
+      description: "Sets <html lang> so locale-aware components render in that locale",
+      toolbar: {
+        icon: "globe",
+        dynamicTitle: true,
+        items: [
+          { value: "default", title: "Default locale" },
+          { value: "en-US", title: "English (US)" },
+          { value: "en-GB", title: "English (UK)" },
+          { value: "fr", title: "Français" },
+          { value: "de", title: "Deutsch" },
+          { value: "es", title: "Español" },
+          { value: "ja", title: "日本語" },
+          { value: "ar", title: "العربية" },
+          { value: "zh-Hans", title: "简体中文" },
+        ],
+      },
+    },
   },
+  initialGlobals: { locale: "default" },
   parameters: {
     docs: {
       // The stock autodocs template renders `<Primary/>` and then `<Stories/>`, and `Stories`
@@ -81,6 +151,18 @@ const preview: Preview = {
       // consumer would ever write themselves.
       source: {
         excludeDecorators: true,
+      },
+    },
+
+    options: {
+      storySort: {
+        order: [
+          "About use-wc",
+          "Localization",
+          ["Overview", "Add-on"],
+          "Design System",
+          ["Overview"],
+        ],
       },
     },
 

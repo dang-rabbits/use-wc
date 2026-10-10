@@ -1,10 +1,11 @@
-import { expect, describe, it } from "vite-plus/test";
+import { afterEach, expect, describe, it } from "vite-plus/test";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 import "./index";
 import { UseGrid } from "./use-grid";
 import { UseGridRow } from "./use-gridrow";
 import { UseGridCell } from "./use-gridcell";
+import { notifyStringsChange, setStringResolver } from "../../utils/strings";
 
 describe("use-grid", () => {
   function getGrid() {
@@ -1016,6 +1017,128 @@ describe("use-grid", () => {
         expect(getBodyRows(grid)[0].selected).toBe(false);
         expect(event.defaultPrevented).toBe(false);
       });
+    });
+  });
+
+  describe("strings", () => {
+    const originalLang = document.documentElement.getAttribute("lang");
+
+    afterEach(() => {
+      setStringResolver(undefined);
+      if (originalLang === null) {
+        document.documentElement.removeAttribute("lang");
+      } else {
+        document.documentElement.setAttribute("lang", originalLang);
+      }
+    });
+
+    async function settle(grid: UseGrid) {
+      await grid.updateComplete;
+      await Promise.all(getRows(grid).map((row) => row.updateComplete));
+      await grid.updateComplete;
+    }
+
+    function selectionInputs(grid: UseGrid) {
+      return Array.from(
+        grid.querySelectorAll<HTMLInputElement>("use-gridcell[data-usewc-selection-cell] input"),
+      );
+    }
+
+    function labels(grid: UseGrid) {
+      return selectionInputs(grid).map((input) => input.getAttribute("aria-label"));
+    }
+
+    function selectableGrid() {
+      return html`
+        <use-grid selectmode="multiple" selectwith="control">
+          <use-gridhead>
+            <use-gridrow><use-gridcell>Name</use-gridcell></use-gridrow>
+          </use-gridhead>
+          <use-gridbody>
+            <use-gridrow value="1"><use-gridcell>Alice</use-gridcell></use-gridrow>
+            <use-gridrow value="2"><use-gridcell></use-gridcell></use-gridrow>
+          </use-gridbody>
+        </use-grid>
+      `;
+    }
+
+    it("labels selection controls with the English defaults", async () => {
+      render(selectableGrid());
+      const grid = getGrid();
+      await settle(grid);
+      expect(labels(grid)).toEqual(["Select all rows", "Select Alice", "Select row 2"]);
+    });
+
+    it("applies per-element strings overrides", async () => {
+      render(selectableGrid());
+      const grid = getGrid();
+      await settle(grid);
+      const [headerRow, firstRow, secondRow] = getRows(grid);
+      headerRow.strings = { selectAllRows: "Tout sélectionner" };
+      firstRow.strings = { selectRow: "Sélectionner {label}" };
+      secondRow.strings = { selectRowNumber: "Sélectionner la ligne {index}" };
+      await settle(grid);
+      expect(labels(grid)).toEqual([
+        "Tout sélectionner",
+        "Sélectionner Alice",
+        "Sélectionner la ligne 2",
+      ]);
+    });
+
+    it("re-applies labels when the strings change event fires", async () => {
+      render(selectableGrid());
+      const grid = getGrid();
+      await settle(grid);
+      setStringResolver((_locale, component, key) =>
+        component === "use-grid" && key === "selectRow" ? "Choose {label}" : undefined,
+      );
+      notifyStringsChange();
+      await settle(grid);
+      expect(labels(grid)[1]).toBe("Choose Alice");
+    });
+
+    it("follows the grid's lang over the document's", async () => {
+      document.documentElement.setAttribute("lang", "de");
+      render(html`
+        <use-grid lang="fr" selectmode="multiple" selectwith="control">
+          <use-gridbody>
+            <use-gridrow value="1"><use-gridcell>Alice</use-gridcell></use-gridrow>
+            <use-gridrow value="2" lang="ja"><use-gridcell>Bob</use-gridcell></use-gridrow>
+          </use-gridbody>
+        </use-grid>
+      `);
+      const grid = getGrid();
+      await settle(grid);
+      expect(getRows(grid).map((row) => row.locale)).toEqual(["fr", "ja"]);
+    });
+
+    it("re-applies labels when the grid's lang changes", async () => {
+      render(selectableGrid());
+      const grid = getGrid();
+      await settle(grid);
+      setStringResolver((locale, component, key) =>
+        locale === "fr" && component === "use-grid" && key === "selectAllRows"
+          ? "Tout sélectionner"
+          : undefined,
+      );
+      grid.lang = "fr";
+      await settle(grid);
+      expect(labels(grid)[0]).toBe("Tout sélectionner");
+    });
+
+    it("re-applies labels when the document lang changes", async () => {
+      render(selectableGrid());
+      const grid = getGrid();
+      await settle(grid);
+      setStringResolver((locale, component, key) =>
+        locale === "fr" && component === "use-grid" && key === "selectAllRows"
+          ? "Tout sélectionner"
+          : undefined,
+      );
+      document.documentElement.setAttribute("lang", "fr");
+      await new Promise((resolve) => setTimeout(resolve));
+      await settle(grid);
+      expect(labels(grid)[0]).toBe("Tout sélectionner");
     });
   });
 });

@@ -1,12 +1,10 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import * as duration from "duration-fns";
-import getDateTimeAriaLabels, {
-  DateTimeAriaLabels,
-  DEFAULT_ARIA_LABELS,
-} from "../../utils/date-time-aria-labels";
+import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
+import strings from "./use-duration-input.strings.json";
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   year: "years",
@@ -24,10 +22,17 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
  *
  * Uses the [`duration-fns`](https://www.npmjs.com/package/duration-fns) library for parsing ISO 8601 values.
  *
+ * Its user-facing strings are listed under "strings" in the API table; override them with the
+ * `strings` property or the localization add-on.
+ *
  * <baseline-status featureId="intl-duration-format"></baseline-status>
  */
 @customElement("use-duration-input")
-export class UseDurationInput extends UseLocaleElement {
+export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings) {
+  protected intlStrings() {
+    return getDateTimeAriaLabels(this.locale, { plural: true });
+  }
+
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -74,7 +79,6 @@ export class UseDurationInput extends UseLocaleElement {
   connectedCallback() {
     super.connectedCallback();
     this.#formatParts = this.#initialFormatParts();
-    this.#ariaLabels = this.#initialAriaLabels();
   }
 
   #id = "";
@@ -138,12 +142,10 @@ export class UseDurationInput extends UseLocaleElement {
 
   #formatParts: Array<{ type: string; value: string; unit?: string }> = [];
 
-  #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
-
   #initialFormatParts() {
     try {
       // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/60608
-      return new Intl.DurationFormat(this.lang, { style: this.format })
+      return new Intl.DurationFormat(this.locale, { style: this.format })
         .formatToParts({
           years: this.years ? 2 : 0,
           months: this.months ? 2 : 0,
@@ -226,8 +228,8 @@ export class UseDurationInput extends UseLocaleElement {
     }
   }
 
-  #initialAriaLabels() {
-    return getDateTimeAriaLabels(this.lang, { plural: true });
+  #unitLabel(unit: string) {
+    return unit in strings ? this.string(unit as keyof typeof strings) : undefined;
   }
 
   render() {
@@ -244,8 +246,8 @@ export class UseDurationInput extends UseLocaleElement {
                   ?readonly=${this.readOnly}
                   aria-label=${
                     this.format === "digital" && part.type === "fraction"
-                      ? this.#ariaLabels.millisecond
-                      : this.#ariaLabels[unit as keyof DateTimeAriaLabels]
+                      ? this.string("millisecond")
+                      : this.#unitLabel(unit)
                   }
                   min="0"
                   part="segment-input segment-input-${unit}"

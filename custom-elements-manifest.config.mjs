@@ -7,6 +7,18 @@ export default {
   globs: ["src/elements/**/*.ts", "!src/elements/**/*.stories.ts"],
   plugins: [
     {
+      name: "web-components-inherited-private-members-filter",
+      packageLinkPhase({ customElementsManifest }) {
+        for (const module of customElementsManifest.modules) {
+          for (const declaration of module.declarations ?? []) {
+            if (declaration.members) {
+              declaration.members = declaration.members.filter((member) => !member.privacy);
+            }
+          }
+        }
+      },
+    },
+    {
       name: "web-components-private-fields-filter",
       analyzePhase({ ts, node, moduleDoc }) {
         switch (node.kind) {

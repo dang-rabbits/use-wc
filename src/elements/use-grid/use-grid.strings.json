@@ -1,0 +1,5 @@
+{
+  "selectAllRows": "Select all rows",
+  "selectRow": "Select {label}",
+  "selectRowNumber": "Select row {index}"
+}

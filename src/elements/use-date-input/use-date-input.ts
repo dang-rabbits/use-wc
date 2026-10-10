@@ -1,11 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
-import getDateTimeAriaLabels, {
-  DateTimeAriaLabels,
-  DEFAULT_ARIA_LABELS,
-} from "../../utils/date-time-aria-labels";
+import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
+import strings from "./use-date-input.strings.json";
 
 type DateSegment = "year" | "month" | "day";
 
@@ -13,9 +11,16 @@ type DateSegment = "year" | "month" | "day";
  * Displays a date picker using segmented inputs for year, month, and day.
  *
  * Uses browser locale for formatting and ARIA labels.
+ *
+ * Its user-facing strings are listed under "strings" in the API table; override them with the
+ * `strings` property or the localization add-on.
  */
 @customElement("use-date-input")
-export class UseDateInput extends UseLocaleElement {
+export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
+  protected intlStrings() {
+    return getDateTimeAriaLabels(this.locale, { plural: false });
+  }
+
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -26,7 +31,6 @@ export class UseDateInput extends UseLocaleElement {
   #internals: ElementInternals;
   #formId: string | undefined;
   #id: string;
-  #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
   #formatParts: Array<{ type: string; value: string }> = [];
 
   @query('input[part="segment-input segment-input-year"]') yearInput!: HTMLInputElement;
@@ -71,7 +75,7 @@ export class UseDateInput extends UseLocaleElement {
         day: "2-digit",
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.lang, options);
+      const formatter = new Intl.DateTimeFormat(this.locale, options);
       const date = new Date(2024, 5, 1); // Sample date for formatting
       return formatter.formatToParts(date);
     } catch {
@@ -81,12 +85,7 @@ export class UseDateInput extends UseLocaleElement {
 
   connectedCallback() {
     super.connectedCallback();
-    this.#ariaLabels = this.#initialAriaLabels();
     this.#formatParts = this.#initialFormatParts();
-  }
-
-  #initialAriaLabels() {
-    return getDateTimeAriaLabels(this.lang, { plural: false });
   }
 
   #valueData: Record<DateSegment, string> = { year: "", month: "", day: "" };
@@ -187,7 +186,7 @@ export class UseDateInput extends UseLocaleElement {
               .value=${this.#valueData[part.type as DateSegment]}
               ?disabled=${this.disabled}
               ?readonly=${this.readOnly}
-              aria-label=${this.#ariaLabels[part.type as keyof DateTimeAriaLabels]}
+              aria-label=${this.string(part.type as keyof typeof strings)}
               min=${part.type === "year" ? "0" : "1"}
               max=${part.type === "month" ? "12" : part.type === "day" ? "31" : undefined}
               part="segment-input segment-input-${part.type}"

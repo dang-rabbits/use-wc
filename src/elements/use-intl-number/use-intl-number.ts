@@ -117,7 +117,7 @@ export class UseIntlNumber extends UseLocaleElement {
 
   #computeFormatted(): { valueAttr: string; text: string } | null {
     const value = this.value ?? "";
-    const locale = this.lang;
+    const locale = this.locale;
 
     if (!value || value.trim() === "") return null;
 

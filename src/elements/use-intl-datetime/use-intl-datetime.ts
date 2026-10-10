@@ -61,7 +61,7 @@ export class UseIntlDatetime extends UseLocaleElement {
 
   #computeFormatted(): { datetimeAttr: string; text: string } | null {
     const value = this.value ?? "";
-    const locale = this.lang;
+    const locale = this.locale;
     const hasDateStyle = this.datestyle !== undefined;
     const hasTimeStyle = this.timestyle !== undefined;
 

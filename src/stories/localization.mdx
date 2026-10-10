@@ -1,19 +1,23 @@
 import { Meta } from "@storybook/addon-docs/blocks";
 
-<Meta title="Localization" />
+<Meta title="Localization" name="Overview" />
 
 # Localization
 
-Components in this library that render locale-sensitive content (such as month names, day names, and date formats) are locale-aware. They resolve their locale automatically based on context, with no configuration required in most cases.
+Components in this library that render locale-sensitive content (such as month names, day names, date formats, and accessible names) are locale-aware. They resolve their locale automatically based on context, with no configuration required in most cases. Wherever possible, text comes from the browser's `Intl` APIs, so setting `lang` is usually all it takes.
 
 ## Resolution Order
 
 When a component needs to determine its locale, it checks in the following order:
 
 1. The `lang` attribute or property set directly on the component
-2. The nearest ancestor element with a `lang` attribute
+2. The `lang` attribute on the root `<html>` element
 3. The browser's `navigator.language`
 4. Fallback: `"en-US"`
+
+A component's `lang` stays the standard attribute and property: it holds only what you set, and setting the property updates the attribute. Read the read-only `locale` property for the locale a component actually renders in.
+
+Components don't read `lang` from other ancestors, so they behave the same inside another component's shadow DOM. The one exception is a component's own parts: rows in a `use-grid` follow the grid's `lang`.
 
 ## Usage
 
@@ -25,20 +29,9 @@ Set the `lang` attribute directly on a component to explicitly control its local
 <use-month-picker lang="fr-FR"></use-month-picker>
 ```
 
-### Ancestor inheritance
-
-Wrap components in a container with a `lang` attribute. All locale-aware components inside will inherit it automatically:
-
-```html
-<div lang="de">
-  <use-month-picker></use-month-picker>
-  <use-date-picker></use-date-picker>
-</div>
-```
-
 ### Page-level locale
 
-Set `lang` on the root `<html>` element and all locale-aware components on the page will use it (unless they have a more specific `lang` set):
+Set `lang` on the root `<html>` element and all locale-aware components on the page will use it (unless they have their own `lang` set):
 
 ```html
 <html lang="es">
@@ -54,14 +47,34 @@ Locale-aware components subscribe to changes on the `<html>` element. Updating `
 document.documentElement.lang = "ja";
 ```
 
-## Supported Components
+## Customizing Strings
 
-The following components are locale-aware:
+Text that `Intl` can't provide, such as the "Select all rows" label in `use-grid`, ships in English. Every component that renders a string like this lists its keys and English defaults in its API docs under **Strings**.
 
-- `use-date-input`
-- `use-datetime-input`
-- `use-duration-input`
-- `use-time-input`
-- `use-month-picker`
-- `use-date-picker`
-- `use-week-picker`
+### Per-element overrides
+
+Set the `strings` property on an element to replace some or all of its strings:
+
+```js
+const row = document.querySelector("use-gridrow");
+row.strings = {
+  selectRow: "Choose {label}",
+  selectRowNumber: "Choose row {index}",
+};
+```
+
+Values support two formats, so they can come from a server or a JSON file:
+
+- **Placeholders:** `{name}` is replaced with a value the component provides, such as `{label}` or `{index}`. Numbers are formatted for the element's locale.
+- **Plurals:** an object keyed by [`Intl.PluralRules`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules) category, such as `{ "one": "{count} row selected", "other": "{count} rows selected" }`.
+
+### Lookup order
+
+For each string, a component uses the first of these that has a value:
+
+1. The element's `strings` property
+2. Translations registered with the [localization add-on](?path=/docs/localization-add-on--docs) for the element's `lang`, then its base language (`fr-CA`, then `fr`)
+3. The label derived from `Intl` for the element's `lang`
+4. The component's English default
+
+To translate strings across a whole app, or to deliver them from a server, use the [localization add-on](?path=/docs/localization-add-on--docs).

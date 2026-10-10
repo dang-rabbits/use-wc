@@ -367,7 +367,7 @@ export class UseMonthPicker extends UseLocaleElement {
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
 
-    const months = getMonthNames(this.lang, "short");
+    const months = getMonthNames(this.locale, "short");
 
     const minYear = this.#minYear;
     const maxYear = this.#maxYear;

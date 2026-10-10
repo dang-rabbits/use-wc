@@ -25,10 +25,6 @@ export function subscribeToLocaleChanges(callback: () => void): () => void {
   };
 }
 
-export function resolveLocale(element: Element): string {
-  const ancestor = element.closest("[lang]");
-  if (ancestor instanceof HTMLElement) {
-    return ancestor.getAttribute("lang") || navigator.language || "en-US";
-  }
-  return navigator.language || "en-US";
+export function resolveLocale(element: HTMLElement): string {
+  return element.lang || document.documentElement.lang || navigator.language || "en-US";
 }

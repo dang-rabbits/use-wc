@@ -90,6 +90,11 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - [ ] Run `vp install` after pulling remote changes and before getting started.
 - [ ] Run `vp check` and `vp test` to validate changes.
 
+## Strings
+
+- user-facing text that `Intl` can't provide (accessible names, titles, placeholders) is declared in a flat `<tag-name>.strings.json` file next to the component, named after the component's tag, passed to `LocalizedElement(UseLocaleElement, strings)`; an element that is part of another component sets `protected readonly owner = "<owner-tag>"` and shares the owner's strings file (e.g. `use-gridrow` uses `use-grid.strings.json`), typed by running `vp run generate-strings` (which regenerates `src/i18n/catalog.ts`; never edit it by hand), and resolved with `this.string(key, parameters)`; never hardcode it in templates or `setAttribute` calls
+- the `use-wc/no-hardcoded-strings` lint rule (`lint/use-wc-plugin.mjs`) enforces this in `src/elements` and `src/components`
+
 ## Styling
 
 - component CSS exists in the component file directly in the `css` prop

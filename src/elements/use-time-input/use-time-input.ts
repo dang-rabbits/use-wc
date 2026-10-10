@@ -1,11 +1,9 @@
 import { LitElement, css, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
-import getDateTimeAriaLabels, {
-  DateTimeAriaLabels,
-  DEFAULT_ARIA_LABELS,
-} from "../../utils/date-time-aria-labels";
+import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
+import strings from "./use-time-input.strings.json";
 
 type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPeriod" | "literal";
 
@@ -13,9 +11,16 @@ type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPerio
  * Displays time picker using [`Intl.DateTimeFormat`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat).
  *
  * Allows users to pick time values with proper localization and formatting.
+ *
+ * Its user-facing strings are listed under "strings" in the API table; override them with the
+ * `strings` property or the localization add-on.
  */
 @customElement("use-time-input")
-export class UseTimeInput extends UseLocaleElement {
+export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
+  protected intlStrings() {
+    return getDateTimeAriaLabels(this.locale, { plural: true });
+  }
+
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -27,9 +32,6 @@ export class UseTimeInput extends UseLocaleElement {
   #internals: ElementInternals;
   #formId: string | undefined;
   #maxHours: number = 23;
-  #ariaLabels: DateTimeAriaLabels = DEFAULT_ARIA_LABELS;
-  #amChar: string = "a";
-  #pmChar: string = "p";
 
   constructor() {
     super();
@@ -202,7 +204,7 @@ export class UseTimeInput extends UseLocaleElement {
 
     if (this.dayPeriodInput) {
       this.dayPeriodInput.value = this.#valueData.dayPeriod
-        ? (this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels] ?? "")
+        ? this.string(this.#valueData.dayPeriod as "am" | "pm")
         : "";
     }
   }
@@ -214,7 +216,7 @@ export class UseTimeInput extends UseLocaleElement {
 
   #initializeHourFormat() {
     if (!this.hourFormat) {
-      const formatter = new Intl.DateTimeFormat(this.lang, { hour: "numeric" });
+      const formatter = new Intl.DateTimeFormat(this.locale, { hour: "numeric" });
       this.hourFormat = formatter.resolvedOptions().hour12 ? "12" : "24";
     }
   }
@@ -232,17 +234,11 @@ export class UseTimeInput extends UseLocaleElement {
         timeZone: "UTC",
       };
 
-      const formatter = new Intl.DateTimeFormat(this.lang, options);
+      const formatter = new Intl.DateTimeFormat(this.locale, options);
       const date = new Date(2024, 0, 1, 12, 30, 45); // Sample time for formatting
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
       const usesDayPeriod = !!formatter.resolvedOptions().hour12 && this.dayPeriod;
       this.#maxHours = usesDayPeriod ? 12 : 23;
-      this.#ariaLabels = getDateTimeAriaLabels(this.lang);
-      const [amChar, pmChar] = this.#ariaLabels.dayPeriod
-        .split("/")
-        .map((char) => char.toLowerCase().charAt(0));
-      this.#amChar = amChar;
-      this.#pmChar = pmChar;
 
       if (!this.dayPeriod) {
         return parts.filter((part) => part.type !== "dayPeriod");
@@ -277,7 +273,9 @@ export class UseTimeInput extends UseLocaleElement {
   }
 
   #amPmValue(chars: string) {
-    const value = [this.#amChar, this.#pmChar].indexOf(chars.toLowerCase().charAt(0));
+    const value = [this.string("am"), this.string("pm")]
+      .map((label) => label.toLowerCase().charAt(0))
+      .indexOf(chars.toLowerCase().charAt(0));
     return value === -1 ? null : value === 0 ? "am" : "pm";
   }
 
@@ -337,7 +335,7 @@ export class UseTimeInput extends UseLocaleElement {
     const currentPeriod = this.#valueData.dayPeriod ?? "am";
     const newValue = value ?? this.#getOtherDayPeriod(currentPeriod);
     this.#valueData.dayPeriod = newValue;
-    target.value = this.#ariaLabels[newValue as keyof DateTimeAriaLabels] ?? "";
+    target.value = this.string(newValue);
     this.#updateInternalValue();
   }
 
@@ -436,15 +434,13 @@ export class UseTimeInput extends UseLocaleElement {
             value=${
               part.type === "dayPeriod"
                 ? this.#valueData.dayPeriod
-                  ? this.#ariaLabels[this.#valueData.dayPeriod as keyof DateTimeAriaLabels]
+                  ? this.string(this.#valueData.dayPeriod as "am" | "pm")
                   : ""
                 : this.#valueData[part.type]
             }
             ?disabled=${this.disabled}
             ?readonly=${this.readOnly}
-            aria-label=${
-              this.#ariaLabels[part.type === "fractionalSecond" ? "millisecond" : part.type]
-            }
+            aria-label=${this.string(part.type === "fractionalSecond" ? "millisecond" : part.type)}
             min="0"
             max=${this.#getMaxValue(part.type)}
             part="segment-input segment-input-${part.type}"

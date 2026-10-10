@@ -1,7 +1,9 @@
-import { LitElement, html, css } from "lit";
+import { html, css, type PropertyValues } from "lit";
 import { customElement, property } from "lit/decorators.js";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { SELECTION_CELL_ATTRIBUTE, SELECTION_COLUMN_ATTRIBUTE } from "./constants";
 import type { UseGridCell } from "./use-gridcell";
+import strings from "./use-grid.strings.json";
 
 function setAriaFlag(element: Element, name: string, on: boolean) {
   if (on) {
@@ -11,8 +13,17 @@ function setAriaFlag(element: Element, name: string, on: boolean) {
   }
 }
 
+/**
+ * A row in a `use-grid`. When the grid shows a selection column, the row builds and labels the
+ * leading selection control.
+ *
+ * Its user-facing strings are listed under "strings" in the `use-grid` API table; override them
+ * with the `strings` property or the localization add-on.
+ */
 @customElement("use-gridrow")
-export class UseGridRow extends LitElement {
+export class UseGridRow extends LocalizedElement(UseLocaleElement, strings) {
+  protected readonly owner = "use-grid";
+
   @property({ type: Boolean, reflect: true })
   selected = false;
 
@@ -34,7 +45,7 @@ export class UseGridRow extends LitElement {
     this.reconcileSelectorCell();
   }
 
-  updated() {
+  updated(changedProperties: PropertyValues) {
     const selectmode = this.closest("use-grid")?.getAttribute("selectmode") ?? "none";
     if (selectmode !== "none") {
       this.setAttribute("aria-selected", this.selected ? "true" : "false");
@@ -52,7 +63,11 @@ export class UseGridRow extends LitElement {
       this.#reflectsAriaDisabled = false;
     }
 
-    if (!this.closest("use-gridhead")) {
+    if (
+      !this.closest("use-gridhead") ||
+      changedProperties.has("locale" as keyof UseGridRow) ||
+      changedProperties.has("strings")
+    ) {
       this.#syncSelectorCell();
     }
   }
@@ -112,7 +127,7 @@ export class UseGridRow extends LitElement {
 
     if (this.closest("use-gridhead")) {
       if (grid.isMultiSelect) {
-        input.setAttribute("aria-label", "Select all rows");
+        input.setAttribute("aria-label", this.string("selectAllRows"));
         setAriaFlag(input, "aria-disabled", grid.disabled);
         setAriaFlag(input, "aria-readonly", !grid.disabled && grid.readonly);
       } else {
@@ -134,10 +149,10 @@ export class UseGridRow extends LitElement {
     );
     const label = labelCell?.textContent?.trim();
     if (label) {
-      input.setAttribute("aria-label", `Select ${label}`);
+      input.setAttribute("aria-label", this.string("selectRow", { label }));
     } else {
       const index = Array.from(grid.querySelectorAll("use-gridbody use-gridrow")).indexOf(this);
-      input.setAttribute("aria-label", `Select row ${index + 1}`);
+      input.setAttribute("aria-label", this.string("selectRowNumber", { index: index + 1 }));
     }
 
     const disabled = grid.isRowDisabled(this) || grid.disabled;

@@ -1,0 +1,121 @@
+import { ArgTypes, Meta } from "@storybook/addon-docs/blocks";
+import * as ApiStories from "./localization-add-on.stories";
+
+<Meta title="Localization/Add-on" />
+
+# Localization Add-on
+
+The `use-wc/i18n` add-on registers translations for every `use-wc` element at once, per locale. It is optional: apps that don't import it pay nothing, and components keep using `Intl` and their English defaults.
+
+The library ships English only. Apps supply their own translations, and `Intl` continues to cover everything it can, such as month names and date field labels.
+
+## Starting a translation
+
+Write each language as a TypeScript module typed with `UseWcStrings`, exported from `use-wc/i18n`. The type is generated from each component's English defaults, so your editor autocompletes component names and keys, shows each key's English default on hover, and flags a misspelled key:
+
+```ts
+import type { UseWcStrings } from "use-wc/i18n";
+
+export default {
+  "use-grid": {
+    selectAllRows: "Tout sélectionner",
+    selectRow: "Sélectionner {label}",
+  },
+} satisfies UseWcStrings;
+```
+
+`UseWcStrings` is keyed by component name, like the JSON, so you can type a single component's strings by indexing it:
+
+```ts
+const gridRow = { selectAllRows: "Tout sélectionner" } satisfies UseWcStrings["use-grid"];
+```
+
+A translation only needs the keys you want to change; anything missing falls back to `Intl` and then to English. Translations kept as JSON, such as a file your server embeds, use the same shape but aren't type-checked.
+
+## Loading translations
+
+All three loading paths use the same file format and end in a call to `registerLocales`. Registering a locale again merges over its earlier strings, and a regional locale such as `fr-CA` falls back to its base language `fr` key by key.
+
+`registerLocales` doesn't choose a language for the page. Each element looks up its own locale when it renders: its own `lang`, then `<html lang>`, then the browser's locale. A component with its own `lang` therefore gets that locale's translations.
+
+Register strings before elements render, by calling `registerLocales` before importing `use-wc`, and the first render is already translated. Elements already on the page re-render when you call it.
+
+Which path to use:
+
+- **Server-provided:** your server knows each user's language and can embed only the strings they need. There's no extra request, and translations stay out of the JS bundle, but they're sent again with every page.
+- **Bundled on the client:** you support a few languages, or the app renders on the client. Translations are cached with the bundle, and every user downloads every language.
+- **Lazy loading on the client:** you support many languages. Each user downloads only theirs, at the cost of one extra request before the first render.
+
+### 1. Server-provided
+
+Embed the strings in a block, keyed by locale. When the server knows the user's language, include only that one:
+
+```html
+<html lang="fr">
+  <head>
+    <script type="application/json" id="locales">
+      {
+        "fr": { "use-grid": { "selectAllRows": "Tout sélectionner" } },
+        "de": { "use-grid": { "selectAllRows": "Alle auswählen" } }
+      }
+    </script>
+    <script type="module">
+      import { registerLocales } from "use-wc/i18n";
+      registerLocales({ selector: "#locales" });
+      import("use-wc");
+    </script>
+  </head>
+</html>
+```
+
+Pass a CSS `selector` for the block; nothing is read without one. `type="application/json"` is never executed, so it is CSP-safe. Blocks are read when `registerLocales` runs. If the selector matches more than one block (for example `script.locales`), their locales merge, so a layout and a page can each contribute strings. Escape `</` as `<\/` if your translations can contain it.
+
+Any backend can serve the same JSON. Echo the app's translations file, keyed by locale:
+
+```blade
+{{-- Laravel --}}
+<script type="application/json" id="locales">
+  {!! file_get_contents(resource_path('strings/locales.json')) !!}
+</script>
+```
+
+```php
+<!-- PHP -->
+<script type="application/json" id="locales">
+  <?= file_get_contents(__DIR__ . "/strings/locales.json") ?>
+</script>
+```
+
+### 2. Bundled on the client
+
+Pass translations to `registerLocales`. ES modules run in import order, so `registerLocales` finishes before `use-wc` defines any elements and the first render is already translated:
+
+```ts
+import { registerLocales } from "use-wc/i18n";
+import french from "./strings/fr";
+import german from "./strings/de";
+
+registerLocales({ locales: { fr: french, de: german } });
+```
+
+Calling `registerLocales` again merges new strings over earlier ones for the same locale.
+
+### 3. Lazy loading on the client
+
+Load only the current language yourself, then register it before importing the library:
+
+```ts
+import { registerLocales } from "use-wc/i18n";
+
+const lang = document.documentElement.lang;
+const { default: strings } = await import(`./strings/${lang}.ts`);
+registerLocales({ locales: { [lang]: strings } });
+await import("use-wc");
+```
+
+- Pair it with `<link rel="modulepreload">` so the locale file downloads alongside the main bundle.
+- To switch languages at runtime, load and register the new locale first, then set `lang`, so elements never show the previous language.
+
+## API
+
+<ArgTypes of={ApiStories} sort="none" />
