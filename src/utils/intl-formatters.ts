@@ -67,11 +67,6 @@ export function pluralRules(locale: string, options?: Intl.PluralRulesOptions) {
   return cachedFormatter(Intl.PluralRules, locale, options);
 }
 
-/** A shared `Intl.RelativeTimeFormat` for this locale and options, created once. */
-export function relativeTimeFormat(locale: string, options?: Intl.RelativeTimeFormatOptions) {
-  return cachedFormatter(Intl.RelativeTimeFormat, locale, options);
-}
-
 /** A shared `Intl.DisplayNames` for this locale and options, created once. */
 export function displayNames(locale: string, options: Intl.DisplayNamesOptions) {
   return cachedFormatter(Intl.DisplayNames, locale, options);
