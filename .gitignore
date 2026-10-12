@@ -16,6 +16,7 @@ dist-ssr
 *.local
 storybook-static
 custom-elements.json
+coverage
 vscode.html-custom-data.json
 vscode.css-custom-data.json
 
