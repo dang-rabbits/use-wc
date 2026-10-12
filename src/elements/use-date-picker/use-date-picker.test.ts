@@ -292,17 +292,12 @@ describe("use-date-picker", () => {
   });
 
   describe("today control", () => {
-    it("labels the today control with today's date in the picker's lang", async () => {
+    it("labels the today control with the word for today in the picker's lang", async () => {
       render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
       const picker = getPicker();
       await picker.updateComplete;
-      const expected = new Intl.DateTimeFormat("fr", {
-        month: "long",
-        year: "numeric",
-        day: "numeric",
-      }).format(new Date());
       const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
-      expect(todayControl?.getAttribute("aria-label")).toBe(expected);
+      expect(todayControl?.getAttribute("aria-label")).toBe("Aujourd’hui");
     });
   });
 });
