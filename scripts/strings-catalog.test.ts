@@ -13,7 +13,8 @@ describe("strings catalog", () => {
         continue;
       }
       const component =
-        source.match(/owner = "([^"]+)"/)?.[1] ?? source.match(/@customElement\("([^"]+)"\)/)?.[1];
+        source.match(/localeRoot = "([^"]+)"/)?.[1] ??
+        source.match(/@customElement\("([^"]+)"\)/)?.[1];
       expect(existsSync(resolve(projectRoot, dirname(file), `${component}.strings.json`))).toBe(
         true,
       );

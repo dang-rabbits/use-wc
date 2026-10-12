@@ -92,7 +92,7 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 
 ## Strings
 
-- user-facing text that `Intl` can't provide (accessible names, titles, placeholders) is declared in a flat `<tag-name>.strings.json` file next to the component, named after the component's tag, passed to `LocalizedElement(UseLocaleElement, strings)`; an element that is part of another component sets `protected readonly owner = "<owner-tag>"` and shares the owner's strings file (e.g. `use-gridrow` uses `use-grid.strings.json`), typed by `src/i18n/catalog.ts`, which is generated and ignored by git (`pack` and CI generate it; run `vp run generate-strings` locally to create or refresh it for editor types and `tsc`), and resolved with `this.string(key, parameters)`; never hardcode it in templates or `setAttribute` calls
+- user-facing text that `Intl` can't provide (accessible names, titles, placeholders) is declared in a flat `<tag-name>.strings.json` file next to the component, named after the component's tag, passed to `LocalizedElement(UseLocaleElement, strings)`; an element that is part of another component sets `protected readonly localeRoot = "<root-tag>"` and shares the root's strings file (e.g. `use-gridrow` uses `use-grid.strings.json`), typed by `src/i18n/catalog.ts`, which is generated and ignored by git (`pack` and CI generate it; run `vp run generate-strings` locally to create or refresh it for editor types and `tsc`), and resolved with `this.string(key, parameters)`; never hardcode it in templates or `setAttribute` calls
 - the `use-wc/no-hardcoded-strings` lint rule (`lint/use-wc-plugin.mjs`) enforces this in `src/elements` and `src/components`
 
 ## Styling
