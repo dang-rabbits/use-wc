@@ -19,6 +19,8 @@ jobs:
           cache: true
       - name: Check
         run: vp check
+      - name: Generate strings types
+        run: vp run generate-strings
       - name: Type check
         run: vp exec tsc --noEmit
 

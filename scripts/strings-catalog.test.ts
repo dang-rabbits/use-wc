@@ -1,13 +1,9 @@
 import { existsSync, globSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vite-plus/test";
-import { catalogPath, readComponentStrings, renderCatalog } from "./strings-catalog.mjs";
+import { readComponentStrings, renderCatalog } from "./strings-catalog.mjs";
 
 describe("strings catalog", () => {
-  it("matches the component strings files", () => {
-    expect(readFileSync(catalogPath, "utf-8")).toBe(renderCatalog());
-  });
-
   it("names every localized component after a strings file next to it", () => {
     const projectRoot = resolve(import.meta.dirname, "..");
     const namedComponents = new Set<string>();
@@ -24,6 +20,11 @@ describe("strings catalog", () => {
       namedComponents.add(component!);
     }
     expect([...namedComponents].sort()).toEqual(Object.keys(readComponentStrings()));
+  });
+
+  it("keeps the calendar pickers' navigation strings identical", () => {
+    const strings = readComponentStrings();
+    expect(strings["use-week-picker"]).toEqual(strings["use-date-picker"]);
   });
 
   it("documents each key with its English default", () => {
