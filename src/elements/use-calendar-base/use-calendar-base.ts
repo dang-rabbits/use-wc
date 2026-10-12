@@ -293,7 +293,7 @@ export class UseCalendarBase extends UseLocaleElement {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
-    }).format(new Date(year, month - 1, 1));
+    }).format(Date.UTC(year, month - 1, 1));
   }
 
   get #nextMonthLabel() {
@@ -302,7 +302,7 @@ export class UseCalendarBase extends UseLocaleElement {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
-    }).format(new Date(year, month - 1, 1));
+    }).format(Date.UTC(year, month - 1, 1));
   }
 
   get #nextMonthData() {
@@ -333,8 +333,7 @@ export class UseCalendarBase extends UseLocaleElement {
         timeZone: "UTC",
       };
       const formatter = dateTimeFormat(this.locale, options);
-      const date = new Date(this.year, this.month - 1, 1);
-      return formatter.formatToParts(date);
+      return formatter.formatToParts(Date.UTC(this.year, this.month - 1, 1));
     } catch {
       return [];
     }
