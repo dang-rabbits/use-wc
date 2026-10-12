@@ -1,4 +1,4 @@
-import { afterEach, expect, describe, it } from "vite-plus/test";
+import { afterEach, expect, describe, it, vi } from "vite-plus/test";
 import { cdp } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
@@ -294,7 +294,45 @@ describe("use-date-picker", () => {
 
   describe("month labels", () => {
     afterEach(async () => {
+      vi.useRealTimers();
       await cdp().send("Emulation.setTimezoneOverride", { timezoneId: "" });
+    });
+
+    it.each([
+      ["America/New_York", "Today, October 2026"],
+      ["Australia/Sydney", "Today, November 2026"],
+    ])(
+      "labels the today control with the current month on the clock in %s",
+      async (timezoneId, label) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(Date.UTC(2026, 9, 31, 14, 30));
+        render(html`<use-date-picker lang="en" year="2020" month="1" controls></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
+        expect(todayControl?.getAttribute("aria-label")).toBe(label);
+      },
+    );
+
+    it("labels the today control in the picker's lang", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 9, 15));
+      render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
+      expect(todayControl?.getAttribute("aria-label")).toBe("Today, octobre 2026");
+    });
+
+    it("applies per-element strings overrides to the navigation controls", async () => {
+      render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      picker.strings = { nextMonth: "Mois suivant, {month}" };
+      await picker.updateComplete;
+      const nextControl = picker.shadowRoot!.querySelector('[part~="control-next"]');
+      expect(nextControl?.getAttribute("aria-label")).toBe("Mois suivant, février 2020");
     });
 
     it.each(["America/New_York", "UTC", "Australia/Sydney"])(
@@ -309,25 +347,12 @@ describe("use-date-picker", () => {
           shadow.querySelector('[part="title-button"]')?.textContent?.replace(/\s+/g, " ").trim(),
         ).toBe("January 2020");
         expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
-          "December 2019",
+          "Previous month, December 2019",
         );
         expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
-          "February 2020",
+          "Next month, February 2020",
         );
       },
     );
-  });
-
-  describe("today control", () => {
-    it("labels the today control with the current month in the picker's lang", async () => {
-      render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
-      const picker = getPicker();
-      await picker.updateComplete;
-      const expected = new Intl.DateTimeFormat("fr", { month: "long", year: "numeric" }).format(
-        new Date(),
-      );
-      const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
-      expect(todayControl?.getAttribute("aria-label")).toBe(expected);
-    });
   });
 });

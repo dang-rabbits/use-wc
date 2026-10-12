@@ -8,6 +8,7 @@ import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
 import { keyed } from "lit/directives/keyed.js";
 
 import { dateTimeFormat } from "../../utils/intl-formatters";
+import type { StringParameterValue } from "../../utils/strings";
 
 import "../use-calendarday/use-calendarday";
 
@@ -146,8 +147,9 @@ export class UseCalendarBase extends UseLocaleElement {
 
   #pickerMode: "days" | "picker" = "days";
   #pickerHeight: number | null = null;
-  get #currentMonthLabel() {
-    return dateTimeFormat(this.locale, { month: "long", year: "numeric" }).format(new Date());
+  get #currentMonthName() {
+    const today = new Date();
+    return this.#monthName(today.getFullYear(), today.getMonth() + 1);
   }
 
   constructor() {
@@ -261,6 +263,10 @@ export class UseCalendarBase extends UseLocaleElement {
 
   protected onActiveDateChanged(_dateStr: string): void {}
 
+  protected string(_key: string, _parameters?: Record<string, StringParameterValue>): string {
+    throw new Error("UseCalendarBase: subclasses must apply LocalizedElement");
+  }
+
   protected onGridFocusOut(): void {}
 
   #dateDisabled(date: string) {
@@ -287,8 +293,7 @@ export class UseCalendarBase extends UseLocaleElement {
     };
   }
 
-  get #previousMonthLabel() {
-    const { year, month } = this.#previousMonthData;
+  #monthName(year: number, month: number) {
     return dateTimeFormat(this.locale, {
       month: "long",
       year: "numeric",
@@ -296,13 +301,14 @@ export class UseCalendarBase extends UseLocaleElement {
     }).format(Date.UTC(year, month - 1, 1));
   }
 
-  get #nextMonthLabel() {
+  get #previousMonthName() {
+    const { year, month } = this.#previousMonthData;
+    return this.#monthName(year, month);
+  }
+
+  get #nextMonthName() {
     const { year, month } = this.#nextMonthData;
-    return dateTimeFormat(this.locale, {
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(Date.UTC(year, month - 1, 1));
+    return this.#monthName(year, month);
   }
 
   get #nextMonthData() {
@@ -913,7 +919,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-previous"
-                    aria-label=${this.#previousMonthLabel}
+                    aria-label=${this.string("previousMonth", { month: this.#previousMonthName })}
                     @click=${this.previousMonth}
                     ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
                   >
@@ -922,7 +928,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-today"
-                    aria-label=${this.#currentMonthLabel}
+                    aria-label=${this.string("today", { month: this.#currentMonthName })}
                     @click=${this.today}
                     ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
                   >
@@ -931,7 +937,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-next"
-                    aria-label=${this.#nextMonthLabel}
+                    aria-label=${this.string("nextMonth", { month: this.#nextMonthName })}
                     @click=${this.nextMonth}
                     ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
                   >

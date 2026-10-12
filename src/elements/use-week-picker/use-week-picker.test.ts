@@ -175,4 +175,30 @@ describe("use-week-picker", () => {
 
     expect(picker.value).toBe("2026-W10");
   });
+
+  it("labels its navigation controls from its own strings", async () => {
+    render(html`<use-week-picker lang="en" year="2020" month="1" controls></use-week-picker>`);
+    const picker = getPicker();
+    await picker.updateComplete;
+    const shadow = picker.shadowRoot!;
+    expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
+      "Previous month, December 2019",
+    );
+    expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
+      "Next month, February 2020",
+    );
+  });
+
+  it("labels its navigation controls from its own strings", async () => {
+    render(html`<use-week-picker lang="en" year="2020" month="1" controls></use-week-picker>`);
+    const picker = getPicker();
+    await picker.updateComplete;
+    const shadow = picker.shadowRoot!;
+    expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
+      "Previous month, December 2019",
+    );
+    expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
+      "Next month, February 2020",
+    );
+  });
 });
