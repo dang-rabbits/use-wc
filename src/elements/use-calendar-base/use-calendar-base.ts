@@ -7,7 +7,7 @@ import { tabbable } from "tabbable";
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
 import { keyed } from "lit/directives/keyed.js";
 
-import { dateTimeFormat, relativeTimeFormat } from "../../utils/intl-formatters";
+import { dateTimeFormat } from "../../utils/intl-formatters";
 
 import "../use-calendarday/use-calendarday";
 
@@ -146,9 +146,8 @@ export class UseCalendarBase extends UseLocaleElement {
 
   #pickerMode: "days" | "picker" = "days";
   #pickerHeight: number | null = null;
-  get #todayLabel() {
-    const today = relativeTimeFormat(this.locale, { numeric: "auto" }).format(0, "day");
-    return today.charAt(0).toLocaleUpperCase(this.locale) + today.slice(1);
+  get #currentMonthLabel() {
+    return dateTimeFormat(this.locale, { month: "long", year: "numeric" }).format(new Date());
   }
 
   constructor() {
@@ -924,7 +923,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-today"
-                    aria-label=${this.#todayLabel}
+                    aria-label=${this.#currentMonthLabel}
                     @click=${this.today}
                     ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
                   >
