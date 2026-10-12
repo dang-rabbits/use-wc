@@ -299,8 +299,8 @@ describe("use-date-picker", () => {
     });
 
     it.each([
-      ["America/New_York", "Today, October 2026"],
-      ["Australia/Sydney", "Today, November 2026"],
+      ["America/New_York", "Current month, October 2026"],
+      ["Australia/Sydney", "Current month, November 2026"],
     ])(
       "labels the today control with the current month on the clock in %s",
       async (timezoneId, label) => {
@@ -322,7 +322,7 @@ describe("use-date-picker", () => {
       const picker = getPicker();
       await picker.updateComplete;
       const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
-      expect(todayControl?.getAttribute("aria-label")).toBe("Today, octobre 2026");
+      expect(todayControl?.getAttribute("aria-label")).toBe("Current month, octobre 2026");
     });
 
     it("applies per-element strings overrides to the navigation controls", async () => {

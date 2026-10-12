@@ -1,5 +1,5 @@
 {
   "previousMonth": "Previous month, {month}",
-  "today": "Today, {month}",
+  "currentMonth": "Current month, {month}",
   "nextMonth": "Next month, {month}"
 }

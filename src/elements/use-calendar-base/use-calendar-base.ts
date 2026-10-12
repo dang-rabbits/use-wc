@@ -928,7 +928,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-today"
-                    aria-label=${this.string("today", { month: this.#currentMonthName })}
+                    aria-label=${this.string("currentMonth", { month: this.#currentMonthName })}
                     @click=${this.today}
                     ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
                   >
