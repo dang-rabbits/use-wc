@@ -22,7 +22,7 @@ function setAriaFlag(element: Element, name: string, on: boolean) {
  */
 @customElement("use-gridrow")
 export class UseGridRow extends LocalizedElement(UseLocaleElement, strings) {
-  protected readonly localeRoot = "use-grid";
+  static localeRoot = "use-grid";
 
   @property({ type: Boolean, reflect: true })
   selected = false;

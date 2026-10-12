@@ -74,7 +74,7 @@ export declare class LocalizedElementInterface<Defaults extends StringDefaults> 
 /**
  * Adds string resolution to a `UseLocaleElement` subclass. `defaults` holds the English strings.
  * Translations registered by the localization add-on are keyed by the element's tag, or by
- * `localeRoot` when the element is part of another component, such as `use-grid` for its rows; an
+ * the static `localeRoot` when the element is part of another component, such as `use-grid` for its rows; an
  * element without its own `lang` then follows the closest root's. Instances resolve a string with
  * `this.string(key, parameters)`; override `intlStrings()` to supply labels derived from `Intl`
  * for the element's `locale`.
@@ -94,11 +94,14 @@ export function LocalizedElement<
      */
     declare strings: StringOverrides | undefined;
 
-    /** The tag of the component this element is part of, such as `use-grid` for its rows. */
-    declare protected readonly localeRoot?: string;
+    /**
+     * The tag whose translations this element uses and whose `lang` it follows when it has none of
+     * its own, such as `use-grid` for its rows. Defaults to the element's own tag.
+     */
+    static localeRoot?: string;
 
     get #component() {
-      return this.localeRoot ?? this.localName;
+      return (this.constructor as typeof Localized).localeRoot ?? this.localName;
     }
 
     protected get localeOwner(): HTMLElement {
@@ -118,5 +121,6 @@ export function LocalizedElement<
       );
     }
   }
-  return Localized as unknown as Constructor<LocalizedElementInterface<Defaults>> & Base;
+  return Localized as unknown as Constructor<LocalizedElementInterface<Defaults>> &
+    Base & { localeRoot?: string };
 }

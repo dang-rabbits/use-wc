@@ -23,11 +23,6 @@ describe("strings catalog", () => {
     expect([...namedComponents].sort()).toEqual(Object.keys(readComponentStrings()));
   });
 
-  it("keeps the calendar pickers' navigation strings identical", () => {
-    const strings = readComponentStrings();
-    expect(strings["use-week-picker"]).toEqual(strings["use-date-picker"]);
-  });
-
   it("documents each key with its English default", () => {
     const catalog = renderCatalog({
       "use-example": { label: "Select {label}", count: { one: "# row", other: "# rows" } },

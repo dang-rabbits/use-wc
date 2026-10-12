@@ -33,6 +33,13 @@ function descriptionText(value) {
 
 const englishStrings = readComponentStrings();
 
+function stringsTag(declaration) {
+  const localeRoot = declaration.members?.find(
+    (member) => member.name === "localeRoot" && member.static,
+  )?.default;
+  return localeRoot ? JSON.parse(localeRoot) : declaration.tagName;
+}
+
 function generateMarkdown(declaration) {
   const sections = [];
 
@@ -122,13 +129,16 @@ function generateMarkdown(declaration) {
     sections.push(`## CSS States\n\n${renderTable(["State", "Description"], rows)}`);
   }
 
-  const strings = Object.entries(englishStrings[declaration.tagName] ?? {});
+  const translationKey = stringsTag(declaration);
+  const strings = Object.entries(englishStrings[translationKey] ?? {});
   if (strings.length > 0) {
     const rows = strings.map(([key, value]) => [
       escapeCell(key),
       `\`${escapeCell(JSON.stringify(value))}\``,
     ]);
-    sections.push(`## Strings\n\n${renderTable(["Key", "English default"], rows)}`);
+    sections.push(
+      `## Strings\n\nTranslate under \`${translationKey}\` with the localization add-on.\n\n${renderTable(["Key", "English default"], rows)}`,
+    );
   }
 
   return sections.join("\n\n");

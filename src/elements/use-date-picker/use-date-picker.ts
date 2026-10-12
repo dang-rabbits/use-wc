@@ -1,7 +1,5 @@
 import { customElement } from "lit/decorators.js";
 import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
-import { LocalizedElement } from "../use-locale-element/use-locale-element";
-import strings from "./use-date-picker.strings.json";
 
 /**
  * A day-granularity date picker. Value format: YYYY-MM-DD.
@@ -28,7 +26,7 @@ import strings from "./use-date-picker.strings.json";
  * @fires use-change - Fired on selection with detail `{ value: string }`
  */
 @customElement("use-date-picker")
-export class UseDatePicker extends LocalizedElement(UseCalendarBase, strings) {
+export class UseDatePicker extends UseCalendarBase {
   static styles = UseCalendarBase.styles;
 
   connectedCallback() {

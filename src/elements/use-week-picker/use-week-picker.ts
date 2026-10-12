@@ -2,8 +2,6 @@ import { css } from "lit";
 import { customElement } from "lit/decorators.js";
 import { formatISOWeek, parseISOWeek } from "../../utils/date-time-aria-labels";
 import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
-import { LocalizedElement } from "../use-locale-element/use-locale-element";
-import strings from "./use-week-picker.strings.json";
 
 /**
  * A week-granularity date picker. Value format: YYYY-Www (ISO 8601 week).
@@ -30,7 +28,7 @@ import strings from "./use-week-picker.strings.json";
  * @fires use-change - Fired on selection with detail `{ value: string; dates: string[] }`
  */
 @customElement("use-week-picker")
-export class UseWeekPicker extends LocalizedElement(UseCalendarBase, strings) {
+export class UseWeekPicker extends UseCalendarBase {
   static styles = [
     UseCalendarBase.styles,
     css`

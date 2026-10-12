@@ -1,6 +1,6 @@
 import { html, css, TemplateResult, CSSResultGroup } from "lit";
 import { property, query } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-time-aria-labels";
 import { map } from "lit/directives/map.js";
 import { tabbable } from "tabbable";
@@ -8,7 +8,7 @@ import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
 import { keyed } from "lit/directives/keyed.js";
 
 import { dateTimeFormat } from "../../utils/intl-formatters";
-import type { StringParameterValue } from "../../utils/strings";
+import strings from "./use-calendar.strings.json";
 
 import "../use-calendarday/use-calendarday";
 
@@ -79,7 +79,9 @@ export type UseCalendarRenderDay = (
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
-export class UseCalendarBase extends UseLocaleElement {
+export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings) {
+  static localeRoot = "use-calendar";
+
   static formAssociated = true;
 
   #internals: ElementInternals;
@@ -262,10 +264,6 @@ export class UseCalendarBase extends UseLocaleElement {
   }
 
   protected onActiveDateChanged(_dateStr: string): void {}
-
-  protected string(_key: string, _parameters?: Record<string, StringParameterValue>): string {
-    throw new Error("UseCalendarBase: subclasses must apply LocalizedElement");
-  }
 
   protected onGridFocusOut(): void {}
 

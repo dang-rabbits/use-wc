@@ -36,23 +36,40 @@ const stringsByTag = Object.fromEntries(
   ]),
 );
 
-// Adds a read-only "strings" section to a component's API table from its `<tag>.strings.json`.
+type ManifestMember = { name: string; static?: boolean; default?: string };
+type ManifestDeclaration = { tagName?: string; members?: ManifestMember[] };
+
+const declarations = (
+  customElements as { modules: { declarations?: ManifestDeclaration[] }[] }
+).modules.flatMap((module) => module.declarations ?? []);
+
+// A component's strings live under its static `localeRoot` when it sets one, otherwise its tag.
+function stringsTag(tag: string) {
+  const localeRoot = declarations
+    .find((declaration) => declaration.tagName === tag)
+    ?.members?.find((member) => member.name === "localeRoot" && member.static)?.default;
+  return localeRoot ? (JSON.parse(localeRoot) as string) : tag;
+}
+
+// Adds a read-only "strings" section to a component's API table from its strings file.
 const addStringArgTypes: NonNullable<Preview["argTypesEnhancers"]>[number] = (context) => {
   const tag = typeof context.component === "string" ? context.component : undefined;
-  const rows = Object.entries((tag && stringsByTag[tag]) ?? {}).map(([key, value]) => [
-    `strings:${key}`,
-    {
-      name: key,
-      description:
-        "Override with the localization add-on, or the `strings` property of the element that renders it.",
-      control: false,
-      table: {
-        category: "strings",
-        type: { summary: "string" },
-        defaultValue: { summary: JSON.stringify(value) },
+  const translationKey = tag && stringsTag(tag);
+  const rows = Object.entries((translationKey && stringsByTag[translationKey]) ?? {}).map(
+    ([key, value]) => [
+      `strings:${key}`,
+      {
+        name: key,
+        description: `Translate under \`${translationKey}\` with the localization add-on, or override with the \`strings\` property of the element that renders it.`,
+        control: false,
+        table: {
+          category: "strings",
+          type: { summary: "string" },
+          defaultValue: { summary: JSON.stringify(value) },
+        },
       },
-    },
-  ]);
+    ],
+  );
   return { ...context.argTypes, ...Object.fromEntries(rows) };
 };
 
