@@ -28,8 +28,8 @@ const UNIT_DISPLAYS: UnitDisplay[] = ["short", "narrow", "long"];
  * - `currency` → currency amount, requires `currency`
  * - `unit` → measurement, requires `unit`
  *
- * Locale is resolved from the nearest ancestor `[lang]` attribute, or
- * `navigator.language` if none is found. Set `lang` directly on the element to override.
+ * Formats in the element's own `lang`, then `<html lang>`, then the browser's language. The
+ * resolved locale is available as the read-only `locale` property.
  *
  * @attr {string} value - Numeric amount to format
  * @attr {string} numberstyle - Format style: `decimal` | `percent` | `currency` | `unit`
@@ -39,7 +39,7 @@ const UNIT_DISPLAYS: UnitDisplay[] = ["short", "narrow", "long"];
  * @attr {string} unit - [Unit identifier](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#unit), e.g. `kilometer-per-hour`, `liter`. Required when numberstyle is `unit`
  * @attr {string} unitdisplay - [How the unit is denoted](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#unitdisplay): `short` | `narrow` | `long`
  * @attr {string} signdisplay - [When to show the sign](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#signdisplay): `auto` | `always` | `exceptZero` | `never`
- * @attr {string} lang - BCP 47 locale tag. Inherits from nearest ancestor `[lang]` if not set.
+ * @attr {string} lang - BCP 47 locale tag. Falls back to `<html lang>` if not set.
  */
 @customElement("use-intl-number")
 export class UseIntlNumber extends UseLocaleElement {

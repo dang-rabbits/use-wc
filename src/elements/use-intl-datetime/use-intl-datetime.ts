@@ -20,13 +20,13 @@ const TIME_PATTERN = /^(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?$/;
  * - `timestyle` only → time formatting
  * - both → date and time formatting
  *
- * Locale is resolved from the nearest ancestor `[lang]` attribute, or
- * `navigator.language` if none is found. Set `lang` directly on the element to override.
+ * Formats in the element's own `lang`, then `<html lang>`, then the browser's language. The
+ * resolved locale is available as the read-only `locale` property.
  *
  * @attr {string} value - ISO date/time string or Unix timestamp (ms)
  * @attr {string} datestyle - Date format style: `short` | `medium` | `long` | `full`
  * @attr {string} timestyle - Time format style: `short` | `medium` | `long` | `full`
- * @attr {string} lang - BCP 47 locale tag. Inherits from nearest ancestor `[lang]` if not set.
+ * @attr {string} lang - BCP 47 locale tag. Falls back to `<html lang>` if not set.
  */
 @customElement("use-intl-datetime")
 export class UseIntlDatetime extends UseLocaleElement {
