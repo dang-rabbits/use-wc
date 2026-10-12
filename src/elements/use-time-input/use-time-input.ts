@@ -4,6 +4,7 @@ import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-lo
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-time-input.strings.json";
+import { dateTimeFormat } from "../../utils/intl-formatters";
 
 type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPeriod" | "literal";
 
@@ -216,7 +217,7 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
 
   #initializeHourFormat() {
     if (!this.hourFormat) {
-      const formatter = new Intl.DateTimeFormat(this.locale, { hour: "numeric" });
+      const formatter = dateTimeFormat(this.locale, { hour: "numeric" });
       this.hourFormat = formatter.resolvedOptions().hour12 ? "12" : "24";
     }
   }
@@ -234,7 +235,7 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
         timeZone: "UTC",
       };
 
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = dateTimeFormat(this.locale, options);
       const date = new Date(2024, 0, 1, 12, 30, 45); // Sample time for formatting
       const parts = formatter.formatToParts(date) as Array<{ type: TimeSegment; value: string }>;
       const usesDayPeriod = !!formatter.resolvedOptions().hour12 && this.dayPeriod;

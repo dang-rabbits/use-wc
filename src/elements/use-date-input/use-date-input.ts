@@ -4,6 +4,7 @@ import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-lo
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-date-input.strings.json";
+import { dateTimeFormat } from "../../utils/intl-formatters";
 
 type DateSegment = "year" | "month" | "day";
 
@@ -75,7 +76,7 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
         day: "2-digit",
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = dateTimeFormat(this.locale, options);
       const date = new Date(2024, 5, 1); // Sample date for formatting
       return formatter.formatToParts(date);
     } catch {

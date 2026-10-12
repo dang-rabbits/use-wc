@@ -1,6 +1,7 @@
 import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { dateTimeFormat } from "../../utils/intl-formatters";
 
 type DateTimeStyle = "short" | "medium" | "long" | "full";
 
@@ -73,7 +74,7 @@ export class UseIntlDatetime extends UseLocaleElement {
         if (!parsedDate) return null;
         return {
           datetimeAttr: parsedDate.toISOString().split("T")[0],
-          text: new Intl.DateTimeFormat(locale, {
+          text: dateTimeFormat(locale, {
             dateStyle: this.#resolveDateStyle(),
           }).format(parsedDate),
         };
@@ -103,7 +104,7 @@ export class UseIntlDatetime extends UseLocaleElement {
 
         return {
           datetimeAttr,
-          text: new Intl.DateTimeFormat(locale, {
+          text: dateTimeFormat(locale, {
             timeStyle: this.#resolveTimeStyle(),
           }).format(parsedDate),
         };
@@ -113,7 +114,7 @@ export class UseIntlDatetime extends UseLocaleElement {
       if (!parsedDate) return null;
       return {
         datetimeAttr: parsedDate.toISOString(),
-        text: new Intl.DateTimeFormat(locale, {
+        text: dateTimeFormat(locale, {
           dateStyle: this.#resolveDateStyle(),
           timeStyle: this.#resolveTimeStyle(),
         }).format(parsedDate),

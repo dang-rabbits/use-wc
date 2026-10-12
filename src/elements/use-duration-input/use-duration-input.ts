@@ -5,6 +5,7 @@ import createId from "../../utils/create-id";
 import * as duration from "duration-fns";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-duration-input.strings.json";
+import { durationFormat, type DurationFormatPart } from "../../utils/intl-formatters";
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   year: "years",
@@ -140,12 +141,11 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
   @property({ type: String, attribute: true })
   format: "long" | "short" | "narrow" | "digital" = "short";
 
-  #formatParts: Array<{ type: string; value: string; unit?: string }> = [];
+  #formatParts: Array<DurationFormatPart> = [];
 
   #initialFormatParts() {
     try {
-      // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/60608
-      return new Intl.DurationFormat(this.locale, { style: this.format })
+      return durationFormat(this.locale, { style: this.format })
         .formatToParts({
           years: this.years ? 2 : 0,
           months: this.months ? 2 : 0,
@@ -156,17 +156,14 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
           seconds: this.seconds ? 2 : 0,
           milliseconds: this.milliseconds ? 2 : 0,
         })
-        .filter(
-          (part: { type: string; value: string; unit?: string }) =>
-            this.format === "digital" || part.type !== "literal",
-        );
+        .filter((part) => this.format === "digital" || part.type !== "literal");
     } catch {
       return [];
     }
   }
 
-  get #groupedParts(): Map<string, Array<{ type: string; value: string; unit?: string }>> {
-    const grouped = new Map<string, Array<{ type: string; value: string; unit?: string }>>();
+  get #groupedParts(): Map<string, Array<DurationFormatPart>> {
+    const grouped = new Map<string, Array<DurationFormatPart>>();
 
     this.#formatParts.forEach((part, index) => {
       if (part.unit || (this.format === "digital" && part.type === "literal")) {

@@ -1,3 +1,4 @@
+import { numberFormat, pluralRules } from "./intl-formatters";
 export type PluralTemplate = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
 export type StringTemplate = string | PluralTemplate;
 export type StringDefaults = Record<string, StringTemplate>;
@@ -25,24 +26,12 @@ export const STRING_RESOLVER = Symbol.for("use-wc.string-resolver");
 export const STRINGS_CHANGE_EVENT = "use-wc-strings-change";
 
 const templatesByComponentLocale = new Map<string, Map<string, StringTemplate>>();
-const pluralRulesByLocale = new Map<string, Intl.PluralRules>();
-const numberFormatsByLocale = new Map<string, Intl.NumberFormat>();
-
-function cachedFormatter<Formatter>(
-  cache: Map<string, Formatter>,
-  locale: string,
-  create: (locale: string) => Formatter,
-): Formatter {
-  let formatter = cache.get(locale);
-  if (!formatter) {
-    try {
-      formatter = create(locale);
-    } catch {
-      formatter = create("en");
-    }
-    cache.set(locale, formatter);
+function withEnglishFallback<Formatter>(locale: string, create: (locale: string) => Formatter) {
+  try {
+    return create(locale);
+  } catch {
+    return create("en");
   }
-  return formatter;
 }
 
 export function formatString(
@@ -53,13 +42,8 @@ export function formatString(
   const text =
     typeof template === "string"
       ? template
-      : (template[
-          cachedFormatter(
-            pluralRulesByLocale,
-            locale,
-            (pluralLocale) => new Intl.PluralRules(pluralLocale),
-          ).select(Number(parameters.count))
-        ] ?? template.other);
+      : (template[withEnglishFallback(locale, pluralRules).select(Number(parameters.count))] ??
+        template.other);
 
   return text.replace(/\{(\w+)\}/g, (placeholder, name: string) => {
     if (!(name in parameters)) {
@@ -67,11 +51,7 @@ export function formatString(
     }
     const value = parameters[name];
     return typeof value === "number"
-      ? cachedFormatter(
-          numberFormatsByLocale,
-          locale,
-          (numberLocale) => new Intl.NumberFormat(numberLocale),
-        ).format(value)
+      ? withEnglishFallback(locale, numberFormat).format(value)
       : value;
   });
 }

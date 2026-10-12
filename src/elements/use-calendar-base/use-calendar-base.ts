@@ -7,6 +7,8 @@ import { tabbable } from "tabbable";
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
 import { keyed } from "lit/directives/keyed.js";
 
+import { dateTimeFormat } from "../../utils/intl-formatters";
+
 import "../use-calendarday/use-calendarday";
 
 const INITIAL_TABINDEX_ATTR = "data-usewc-calendar-tabindex";
@@ -145,7 +147,7 @@ export class UseCalendarBase extends UseLocaleElement {
   #pickerMode: "days" | "picker" = "days";
   #pickerHeight: number | null = null;
   get #todayLabel() {
-    return new Intl.DateTimeFormat(this.locale, {
+    return dateTimeFormat(this.locale, {
       month: "long",
       year: "numeric",
       day: "numeric",
@@ -291,7 +293,7 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #previousMonthLabel() {
     const { year, month } = this.#previousMonthData;
-    return new Intl.DateTimeFormat(this.locale, {
+    return dateTimeFormat(this.locale, {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
@@ -300,7 +302,7 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #nextMonthLabel() {
     const { year, month } = this.#nextMonthData;
-    return new Intl.DateTimeFormat(this.locale, {
+    return dateTimeFormat(this.locale, {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
@@ -334,7 +336,7 @@ export class UseCalendarBase extends UseLocaleElement {
         day: undefined,
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.locale, options);
+      const formatter = dateTimeFormat(this.locale, options);
       const date = new Date(this.year, this.month - 1, 1);
       return formatter.formatToParts(date);
     } catch {

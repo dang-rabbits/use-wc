@@ -1,6 +1,7 @@
 import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { numberFormat } from "../../utils/intl-formatters";
 
 type NumberStyle = "decimal" | "percent" | "currency" | "unit";
 type CurrencyDisplay = "symbol" | "narrowSymbol" | "code" | "name";
@@ -130,7 +131,7 @@ export class UseIntlNumber extends UseLocaleElement {
     try {
       return {
         valueAttr: String(amount),
-        text: new Intl.NumberFormat(locale, options).format(amount),
+        text: numberFormat(locale, options).format(amount),
       };
     } catch {
       return null;

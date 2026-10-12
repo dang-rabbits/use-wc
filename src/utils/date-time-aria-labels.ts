@@ -1,4 +1,4 @@
-type DurationPart = { type: string; value: string; unit?: string };
+import { dateTimeFormat, displayNames, durationFormat, localeInfo } from "./intl-formatters";
 
 export type DateTimeAriaLabelKeys =
   | "am"
@@ -16,7 +16,7 @@ export type DateTimeAriaLabels = Record<DateTimeAriaLabelKeys, string>;
 const INTL_ARIA_LABELS = new Map<string, Partial<DateTimeAriaLabels>>();
 
 function getDayPeriodNames(locale: string) {
-  const formatter = new Intl.DateTimeFormat(locale, {
+  const formatter = dateTimeFormat(locale, {
     hour: "numeric",
     hour12: true,
     timeZone: "UTC",
@@ -35,11 +35,10 @@ export default function getDateTimeAriaLabels(
   const cacheKey = `${locale}-${plural ? "plural" : "singular"}`;
 
   if (!INTL_ARIA_LABELS.has(cacheKey)) {
-    const displayNameFormatter = new Intl.DisplayNames(locale, { type: "dateTimeField" });
+    const displayNameFormatter = displayNames(locale, { type: "dateTimeField" });
     const unitCount = plural ? 2 : 1;
 
-    // @ts-expect-error - https://github.com/microsoft/TypeScript/issues/60608
-    const parts: DurationPart[] = new Intl.DurationFormat(locale, { style: "long" })
+    const parts = durationFormat(locale, { style: "long" })
       .formatToParts({
         years: unitCount,
         months: unitCount,
@@ -50,7 +49,7 @@ export default function getDateTimeAriaLabels(
         seconds: unitCount,
         milliseconds: unitCount,
       })
-      .filter((part: DurationPart) => part.type === "unit" && part.unit);
+      .filter((part) => part.type === "unit" && part.unit);
 
     const unitLabel = (unit: string) => parts.find((part) => part.unit === unit)?.value;
 
@@ -76,9 +75,8 @@ export default function getDateTimeAriaLabels(
 }
 
 export function getLocaleFirstDay(locale = "en"): number {
-  const localeInfo = new Intl.Locale(locale);
   // @ts-expect-error - getWeekInfo is not typed
-  return localeInfo.getWeekInfo().firstDay % 7; // 0=Sun, 1=Mon … 6=Sat
+  return localeInfo(locale).getWeekInfo().firstDay % 7; // 0=Sun, 1=Mon … 6=Sat
 }
 
 const DAY_NAMES = new Map<string, string[]>();
@@ -86,7 +84,7 @@ export function getDayNames(locale = "en", format: "long" | "short" | "narrow" =
   const cacheKey = `${locale}-${format}`;
 
   if (!DAY_NAMES.has(cacheKey)) {
-    const formatter = new Intl.DateTimeFormat(locale, { weekday: format });
+    const formatter = dateTimeFormat(locale, { weekday: format });
     const days = [7, 8, 9, 10, 11, 12, 13].map((day) => formatter.format(new Date(2024, 0, day)));
     const firstDayOfWeek = getLocaleFirstDay(locale);
     DAY_NAMES.set(cacheKey, days.slice(firstDayOfWeek).concat(days.slice(0, firstDayOfWeek)));
@@ -99,7 +97,7 @@ const MONTH_NAMES = new Map<string, string[]>();
 export function getMonthNames(locale = "en", format: "long" | "short" | "narrow" = "long") {
   const cacheKey = `${locale}-${format}`;
   if (!MONTH_NAMES.has(cacheKey)) {
-    const formatter = new Intl.DateTimeFormat(locale, { month: format });
+    const formatter = dateTimeFormat(locale, { month: format });
     MONTH_NAMES.set(
       cacheKey,
       [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((month) =>
