@@ -550,7 +550,11 @@ export class UseCalendarBase extends UseLocaleElement {
   }
 
   get #activeDateString() {
-    return this.#activeDate.toISOString().split("T")[0];
+    return this.#formatDate(
+      this.#activeDate.getFullYear(),
+      this.#activeDate.getMonth() + 1,
+      this.#activeDate.getDate(),
+    );
   }
 
   #mouseDownTarget = null as HTMLElement | null;

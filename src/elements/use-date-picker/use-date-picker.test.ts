@@ -1,5 +1,5 @@
 import { afterEach, expect, describe, it, vi } from "vite-plus/test";
-import { cdp } from "vite-plus/test/browser";
+import { cdp, userEvent } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 import "./use-date-picker";
@@ -317,7 +317,7 @@ describe("use-date-picker", () => {
     });
   });
 
-  describe("month labels", () => {
+  describe("labels and time zones", () => {
     afterEach(async () => {
       vi.useRealTimers();
       await cdp().send("Emulation.setTimezoneOverride", { timezoneId: "" });
@@ -337,6 +337,24 @@ describe("use-date-picker", () => {
         await picker.updateComplete;
         const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
         expect(todayControl?.getAttribute("aria-label")).toBe(label);
+      },
+    );
+
+    it.each(["America/New_York", "Australia/Sydney"])(
+      "selects the focused day with the keyboard in %s",
+      async (timezoneId) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        render(html`<use-date-picker year="2026" month="10"></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        picker.shadowRoot!.querySelector<HTMLElement>('[part="grid-body"]')!.focus();
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(picker.shadowRoot!.activeElement?.getAttribute("data-usewc-date")).toBe(
+          "2026-10-01",
+        );
+        await userEvent.keyboard("{Enter}");
+        await picker.updateComplete;
+        expect(picker.value).toBe("2026-10-01");
       },
     );
 
