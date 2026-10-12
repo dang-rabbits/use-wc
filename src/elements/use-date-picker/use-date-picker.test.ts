@@ -292,6 +292,31 @@ describe("use-date-picker", () => {
     });
   });
 
+  describe("month and year view", () => {
+    it("formats year headings for the picker's locale", async () => {
+      render(
+        html`<use-date-picker
+          lang="th"
+          year="2026"
+          month="1"
+          min="2026-01-01"
+          max="2026-12-31"
+        ></use-date-picker>`,
+      );
+      const picker = getPicker();
+      await picker.updateComplete;
+      picker.shadowRoot!.querySelector<HTMLButtonElement>('[part="title-button"]')!.click();
+      await picker.updateComplete;
+      const shadow = picker.shadowRoot!;
+      expect(shadow.querySelector('[part="picker-year-label"]')?.textContent?.trim()).toBe(
+        "พ.ศ. 2569",
+      );
+      expect(shadow.querySelector('[part="picker-months"]')?.getAttribute("aria-label")).toBe(
+        "พ.ศ. 2569",
+      );
+    });
+  });
+
   describe("month labels", () => {
     afterEach(async () => {
       vi.useRealTimers();

@@ -301,6 +301,12 @@ export class UseCalendarBase extends UseLocaleElement {
     }).format(Date.UTC(year, month - 1, 1));
   }
 
+  #yearName(year: number) {
+    return dateTimeFormat(this.locale, { year: "numeric", timeZone: "UTC" }).format(
+      Date.UTC(year, 0, 1),
+    );
+  }
+
   get #previousMonthName() {
     const { year, month } = this.#previousMonthData;
     return this.#monthName(year, month);
@@ -800,8 +806,8 @@ export class UseCalendarBase extends UseLocaleElement {
             .filter(({ monthNum }) => this.#monthAllowed(monthNum, year));
           return html`
             <div part="picker-year-section" data-picker-year=${year}>
-              <div part="picker-year-label">${year}</div>
-              <div part="picker-months" role="grid" aria-label=${String(year)}>
+              <div part="picker-year-label">${this.#yearName(year)}</div>
+              <div part="picker-months" role="grid" aria-label=${this.#yearName(year)}>
                 ${allowedMonths.map(({ name, monthNum }) => {
                   const isCurrent = year === this.year && monthNum === this.month;
                   return html`
