@@ -1,4 +1,4 @@
-import { expect, describe, it } from "vite-plus/test";
+import { afterEach, expect, describe, it, vi } from "vite-plus/test";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 
@@ -463,6 +463,46 @@ describe("use-month-picker", () => {
       const form = document.getElementById("test-form2") as HTMLFormElement;
       const data = new FormData(form);
       expect(data.get("period")).toBe("2026-12");
+    });
+  });
+
+  describe("year controls", () => {
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function controlLabel(picker: UseMonthPicker, part: string) {
+      return picker.shadowRoot!.querySelector(`[part~="${part}"]`)?.getAttribute("aria-label");
+    }
+
+    it("names each control by its action and destination year", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 9, 15));
+      render(html`<use-month-picker lang="en" year="2020"></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      expect(controlLabel(picker, "control-previous")).toBe("Previous year, 2019");
+      expect(controlLabel(picker, "control-thismonth")).toBe("Current year, 2026");
+      expect(controlLabel(picker, "control-next")).toBe("Next year, 2021");
+    });
+
+    it("formats years for the picker's locale", async () => {
+      render(html`<use-month-picker lang="th" year="2026"></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      expect(picker.shadowRoot!.querySelector('[part="title"]')!.textContent!.trim()).toBe(
+        "พ.ศ. 2569",
+      );
+      expect(getGrid(picker).getAttribute("aria-label")).toBe("พ.ศ. 2569");
+    });
+
+    it("applies per-element strings overrides", async () => {
+      render(html`<use-month-picker lang="en" year="2020"></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      picker.strings = { nextYear: "Go to {year}" };
+      await picker.updateComplete;
+      expect(controlLabel(picker, "control-next")).toBe("Go to 2021");
     });
   });
 });
