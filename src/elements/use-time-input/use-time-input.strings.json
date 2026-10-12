@@ -1,0 +1,9 @@
+{
+  "hour": "hours",
+  "minute": "minutes",
+  "second": "seconds",
+  "millisecond": "milliseconds",
+  "dayPeriod": "AM/PM",
+  "am": "AM",
+  "pm": "PM"
+}

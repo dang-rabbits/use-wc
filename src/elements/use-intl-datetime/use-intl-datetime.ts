@@ -1,6 +1,7 @@
 import { css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { dateTimeFormat } from "../../utils/intl-formatters";
 
 type DateTimeStyle = "short" | "medium" | "long" | "full";
 
@@ -19,13 +20,13 @@ const TIME_PATTERN = /^(\d{2}):(\d{2})(?::(\d{2})(?:\.\d+)?)?$/;
  * - `timestyle` only → time formatting
  * - both → date and time formatting
  *
- * Locale is resolved from the nearest ancestor `[lang]` attribute, or
- * `navigator.language` if none is found. Set `lang` directly on the element to override.
+ * Formats in the element's own `lang`, then `<html lang>`, then the browser's language. The
+ * resolved locale is available as the read-only `locale` property.
  *
  * @attr {string} value - ISO date/time string or Unix timestamp (ms)
  * @attr {string} datestyle - Date format style: `short` | `medium` | `long` | `full`
  * @attr {string} timestyle - Time format style: `short` | `medium` | `long` | `full`
- * @attr {string} lang - BCP 47 locale tag. Inherits from nearest ancestor `[lang]` if not set.
+ * @attr {string} lang - BCP 47 locale tag. Falls back to `<html lang>` if not set.
  */
 @customElement("use-intl-datetime")
 export class UseIntlDatetime extends UseLocaleElement {
@@ -61,7 +62,7 @@ export class UseIntlDatetime extends UseLocaleElement {
 
   #computeFormatted(): { datetimeAttr: string; text: string } | null {
     const value = this.value ?? "";
-    const locale = this.lang;
+    const locale = this.locale;
     const hasDateStyle = this.datestyle !== undefined;
     const hasTimeStyle = this.timestyle !== undefined;
 
@@ -73,7 +74,7 @@ export class UseIntlDatetime extends UseLocaleElement {
         if (!parsedDate) return null;
         return {
           datetimeAttr: parsedDate.toISOString().split("T")[0],
-          text: new Intl.DateTimeFormat(locale, {
+          text: dateTimeFormat(locale, {
             dateStyle: this.#resolveDateStyle(),
           }).format(parsedDate),
         };
@@ -103,7 +104,7 @@ export class UseIntlDatetime extends UseLocaleElement {
 
         return {
           datetimeAttr,
-          text: new Intl.DateTimeFormat(locale, {
+          text: dateTimeFormat(locale, {
             timeStyle: this.#resolveTimeStyle(),
           }).format(parsedDate),
         };
@@ -113,7 +114,7 @@ export class UseIntlDatetime extends UseLocaleElement {
       if (!parsedDate) return null;
       return {
         datetimeAttr: parsedDate.toISOString(),
-        text: new Intl.DateTimeFormat(locale, {
+        text: dateTimeFormat(locale, {
           dateStyle: this.#resolveDateStyle(),
           timeStyle: this.#resolveTimeStyle(),
         }).format(parsedDate),

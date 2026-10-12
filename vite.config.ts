@@ -31,9 +31,21 @@ export default {
     "*": "vp check --fix",
   },
   fmt: {},
-  lint: { ignorePatterns: ["dist/**", "node_modules/**", ".claude/**"] },
+  lint: {
+    ignorePatterns: ["dist/**", "node_modules/**", ".claude/**"],
+    jsPlugins: ["./lint/use-wc-plugin.mjs"],
+    overrides: [
+      {
+        files: ["src/elements/**", "src/components/**"],
+        rules: { "use-wc/no-hardcoded-strings": "error" },
+      },
+    ],
+  },
   pack: {
-    entry: ["src/use-wc.ts"],
+    entry: {
+      "use-wc": "src/use-wc.ts",
+      i18n: "src/i18n/i18n.ts",
+    },
     dts: {
       tsgo: true,
     },
@@ -46,18 +58,34 @@ export default {
     ],
   },
   test: {
-    include: ["src/**/*.test.ts"],
     coverage: {
       provider: "v8",
       reporter: ["text", "lcov", "json-summary"],
       include: ["src/**"],
       exclude: ["src/**/*.test.ts"],
     },
-    browser: {
-      enabled: true,
-      headless: true,
-      provider: playwright({}),
-      instances: [{ browser: "chromium" }],
-    },
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "browser",
+          include: ["src/**/*.test.ts"],
+          browser: {
+            enabled: true,
+            headless: true,
+            provider: playwright({}),
+            instances: [{ browser: "chromium" }],
+          },
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "node",
+          include: ["lint/**/*.test.ts", "scripts/**/*.test.ts"],
+          environment: "node",
+        },
+      },
+    ],
   },
 };

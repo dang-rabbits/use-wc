@@ -1,6 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { readComponentStrings } from "./strings-catalog.mjs";
 
 const scriptsDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(scriptsDir, "..");
@@ -28,6 +29,15 @@ function defaultText(value) {
 
 function descriptionText(value) {
   return value ? escapeCell(value) : "-";
+}
+
+const englishStrings = readComponentStrings();
+
+function stringsTag(declaration) {
+  const localeRoot = declaration.members?.find(
+    (member) => member.name === "localeRoot" && member.static,
+  )?.default;
+  return localeRoot ? JSON.parse(localeRoot) : declaration.tagName;
 }
 
 function generateMarkdown(declaration) {
@@ -117,6 +127,18 @@ function generateMarkdown(declaration) {
       descriptionText(state.description),
     ]);
     sections.push(`## CSS States\n\n${renderTable(["State", "Description"], rows)}`);
+  }
+
+  const translationKey = stringsTag(declaration);
+  const strings = Object.entries(englishStrings[translationKey] ?? {});
+  if (strings.length > 0) {
+    const rows = strings.map(([key, value]) => [
+      escapeCell(key),
+      `\`${escapeCell(JSON.stringify(value))}\``,
+    ]);
+    sections.push(
+      `## Strings\n\nTranslate under \`${translationKey}\` with the localization add-on.\n\n${renderTable(["Key", "English default"], rows)}`,
+    );
   }
 
   return sections.join("\n\n");

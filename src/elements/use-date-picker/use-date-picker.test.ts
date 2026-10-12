@@ -1,4 +1,5 @@
-import { expect, describe, it } from "vite-plus/test";
+import { afterEach, expect, describe, it, vi } from "vite-plus/test";
+import { cdp, userEvent } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 import "./use-date-picker";
@@ -289,5 +290,112 @@ describe("use-date-picker", () => {
 
       expect(getShadow(picker).activeElement).toBe(btns[janIdx + 1]);
     });
+  });
+
+  describe("month and year view", () => {
+    it("formats year headings for the picker's locale", async () => {
+      render(
+        html`<use-date-picker
+          lang="th"
+          year="2026"
+          month="1"
+          min="2026-01-01"
+          max="2026-12-31"
+        ></use-date-picker>`,
+      );
+      const picker = getPicker();
+      await picker.updateComplete;
+      picker.shadowRoot!.querySelector<HTMLButtonElement>('[part="title-button"]')!.click();
+      await picker.updateComplete;
+      const shadow = picker.shadowRoot!;
+      expect(shadow.querySelector('[part="picker-year-label"]')?.textContent?.trim()).toBe(
+        "พ.ศ. 2569",
+      );
+      expect(shadow.querySelector('[part="picker-months"]')?.getAttribute("aria-label")).toBe(
+        "พ.ศ. 2569",
+      );
+    });
+  });
+
+  describe("labels and time zones", () => {
+    afterEach(async () => {
+      vi.useRealTimers();
+      await cdp().send("Emulation.setTimezoneOverride", { timezoneId: "" });
+    });
+
+    it.each([
+      ["America/New_York", "Current month, October 2026"],
+      ["Australia/Sydney", "Current month, November 2026"],
+    ])(
+      "labels the today control with the current month on the clock in %s",
+      async (timezoneId, label) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        vi.useFakeTimers({ toFake: ["Date"] });
+        vi.setSystemTime(Date.UTC(2026, 9, 31, 14, 30));
+        render(html`<use-date-picker lang="en" year="2020" month="1" controls></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
+        expect(todayControl?.getAttribute("aria-label")).toBe(label);
+      },
+    );
+
+    it.each(["America/New_York", "Australia/Sydney"])(
+      "selects the focused day with the keyboard in %s",
+      async (timezoneId) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        render(html`<use-date-picker year="2026" month="10"></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        picker.shadowRoot!.querySelector<HTMLElement>('[part="grid-body"]')!.focus();
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(picker.shadowRoot!.activeElement?.getAttribute("data-usewc-date")).toBe(
+          "2026-10-01",
+        );
+        await userEvent.keyboard("{Enter}");
+        await picker.updateComplete;
+        expect(picker.value).toBe("2026-10-01");
+      },
+    );
+
+    it("labels the today control in the picker's lang", async () => {
+      vi.useFakeTimers({ toFake: ["Date"] });
+      vi.setSystemTime(new Date(2026, 9, 15));
+      render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      const todayControl = picker.shadowRoot!.querySelector('[part~="control-today"]');
+      expect(todayControl?.getAttribute("aria-label")).toBe("Current month, octobre 2026");
+    });
+
+    it("applies per-element strings overrides to the navigation controls", async () => {
+      render(html`<use-date-picker lang="fr" year="2020" month="1" controls></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      picker.strings = { nextMonth: "Mois suivant, {month}" };
+      await picker.updateComplete;
+      const nextControl = picker.shadowRoot!.querySelector('[part~="control-next"]');
+      expect(nextControl?.getAttribute("aria-label")).toBe("Mois suivant, février 2020");
+    });
+
+    it.each(["America/New_York", "UTC", "Australia/Sydney"])(
+      "names the shown, previous, and next months in %s",
+      async (timezoneId) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        render(html`<use-date-picker lang="en" year="2020" month="1" controls></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        const shadow = picker.shadowRoot!;
+        expect(
+          shadow.querySelector('[part="title-button"]')?.textContent?.replace(/\s+/g, " ").trim(),
+        ).toBe("January 2020");
+        expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
+          "Previous month, December 2019",
+        );
+        expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
+          "Next month, February 2020",
+        );
+      },
+    );
   });
 });

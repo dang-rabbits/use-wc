@@ -1,11 +1,14 @@
 import { html, css, TemplateResult, CSSResultGroup } from "lit";
 import { property, query } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-time-aria-labels";
 import { map } from "lit/directives/map.js";
 import { tabbable } from "tabbable";
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
 import { keyed } from "lit/directives/keyed.js";
+
+import { dateTimeFormat } from "../../utils/intl-formatters";
+import strings from "./use-calendar.strings.json";
 
 import "../use-calendarday/use-calendarday";
 
@@ -76,7 +79,9 @@ export type UseCalendarRenderDay = (
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
-export class UseCalendarBase extends UseLocaleElement {
+export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings) {
+  static localeRoot = "use-calendar";
+
   static formAssociated = true;
 
   #internals: ElementInternals;
@@ -144,12 +149,10 @@ export class UseCalendarBase extends UseLocaleElement {
 
   #pickerMode: "days" | "picker" = "days";
   #pickerHeight: number | null = null;
-  #todayLabel = new Intl.DateTimeFormat(navigator.language, {
-    month: "long",
-    year: "numeric",
-    day: "numeric",
-    timeZone: "UTC",
-  }).format(new Date());
+  get #currentMonthName() {
+    const today = new Date();
+    return this.#monthName(today.getFullYear(), today.getMonth() + 1);
+  }
 
   constructor() {
     super();
@@ -288,22 +291,28 @@ export class UseCalendarBase extends UseLocaleElement {
     };
   }
 
-  get #previousMonthLabel() {
-    const { year, month } = this.#previousMonthData;
-    return new Intl.DateTimeFormat(this.lang, {
+  #monthName(year: number, month: number) {
+    return dateTimeFormat(this.locale, {
       month: "long",
       year: "numeric",
       timeZone: "UTC",
-    }).format(new Date(year, month - 1, 1));
+    }).format(Date.UTC(year, month - 1, 1));
   }
 
-  get #nextMonthLabel() {
+  #yearName(year: number) {
+    return dateTimeFormat(this.locale, { year: "numeric", timeZone: "UTC" }).format(
+      Date.UTC(year, 0, 1),
+    );
+  }
+
+  get #previousMonthName() {
+    const { year, month } = this.#previousMonthData;
+    return this.#monthName(year, month);
+  }
+
+  get #nextMonthName() {
     const { year, month } = this.#nextMonthData;
-    return new Intl.DateTimeFormat(this.lang, {
-      month: "long",
-      year: "numeric",
-      timeZone: "UTC",
-    }).format(new Date(year, month - 1, 1));
+    return this.#monthName(year, month);
   }
 
   get #nextMonthData() {
@@ -318,11 +327,11 @@ export class UseCalendarBase extends UseLocaleElement {
 
   get #startDayOffset() {
     const firstOfMonth = new Date(this.year, this.month - 1, 1);
-    return (firstOfMonth.getDay() - getLocaleFirstDay(this.lang) + 7) % 7;
+    return (firstOfMonth.getDay() - getLocaleFirstDay(this.locale) + 7) % 7;
   }
 
   #weekdayNames() {
-    return getDayNames(this.lang, "short");
+    return getDayNames(this.locale, "short");
   }
 
   get #title() {
@@ -333,9 +342,8 @@ export class UseCalendarBase extends UseLocaleElement {
         day: undefined,
         timeZone: "UTC",
       };
-      const formatter = new Intl.DateTimeFormat(this.lang, options);
-      const date = new Date(this.year, this.month - 1, 1);
-      return formatter.formatToParts(date);
+      const formatter = dateTimeFormat(this.locale, options);
+      return formatter.formatToParts(Date.UTC(this.year, this.month - 1, 1));
     } catch {
       return [];
     }
@@ -540,7 +548,11 @@ export class UseCalendarBase extends UseLocaleElement {
   }
 
   get #activeDateString() {
-    return this.#activeDate.toISOString().split("T")[0];
+    return this.#formatDate(
+      this.#activeDate.getFullYear(),
+      this.#activeDate.getMonth() + 1,
+      this.#activeDate.getDate(),
+    );
   }
 
   #mouseDownTarget = null as HTMLElement | null;
@@ -778,7 +790,7 @@ export class UseCalendarBase extends UseLocaleElement {
   };
 
   #renderPicker() {
-    const months = getMonthNames(this.lang, "short");
+    const months = getMonthNames(this.locale, "short");
     const startYear = this.min ? (this.#parseDate(this.min)?.getFullYear() ?? 1970) : 1970;
     const endYear = this.max
       ? (this.#parseDate(this.max)?.getFullYear() ?? new Date().getFullYear() + 100)
@@ -796,8 +808,8 @@ export class UseCalendarBase extends UseLocaleElement {
             .filter(({ monthNum }) => this.#monthAllowed(monthNum, year));
           return html`
             <div part="picker-year-section" data-picker-year=${year}>
-              <div part="picker-year-label">${year}</div>
-              <div part="picker-months" role="grid" aria-label=${String(year)}>
+              <div part="picker-year-label">${this.#yearName(year)}</div>
+              <div part="picker-months" role="grid" aria-label=${this.#yearName(year)}>
                 ${allowedMonths.map(({ name, monthNum }) => {
                   const isCurrent = year === this.year && monthNum === this.month;
                   return html`
@@ -831,7 +843,7 @@ export class UseCalendarBase extends UseLocaleElement {
     const endDate = this.#endDate;
     const startDay = startDate && this.#isThisMonth(startDate) ? startDate.getDate() : 1;
     const endDay = endDate && this.#isThisMonth(endDate) ? endDate.getDate() : daysInMonth;
-    const localeFirstDay = getLocaleFirstDay(this.lang);
+    const localeFirstDay = getLocaleFirstDay(this.locale);
     const firstDay =
       startDate && this.#isThisMonth(startDate)
         ? (startDate.getDay() - localeFirstDay + 7) % 7
@@ -915,7 +927,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-previous"
-                    aria-label=${this.#previousMonthLabel}
+                    aria-label=${this.string("previousMonth", { month: this.#previousMonthName })}
                     @click=${this.previousMonth}
                     ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
                   >
@@ -924,7 +936,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-today"
-                    aria-label=${this.#todayLabel}
+                    aria-label=${this.string("currentMonth", { month: this.#currentMonthName })}
                     @click=${this.today}
                     ?hidden=${this.#isSameMonth(this.#startDate, this.#endDate)}
                   >
@@ -933,7 +945,7 @@ export class UseCalendarBase extends UseLocaleElement {
                   <button
                     type="button"
                     part="control control-next"
-                    aria-label=${this.#nextMonthLabel}
+                    aria-label=${this.string("nextMonth", { month: this.#nextMonthName })}
                     @click=${this.nextMonth}
                     ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
                   >

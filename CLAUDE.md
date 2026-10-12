@@ -90,6 +90,11 @@ For GitHub Actions, consider using [`voidzero-dev/setup-vp`](https://github.com/
 - [ ] Run `vp install` after pulling remote changes and before getting started.
 - [ ] Run `vp check` and `vp test` to validate changes.
 
+## Strings
+
+- user-facing text that `Intl` can't provide (accessible names, titles, placeholders) is declared in a flat `<tag-name>.strings.json` file next to the component, named after the component's tag, passed to `LocalizedElement(UseLocaleElement, strings)`; an element that is part of another component sets `static localeRoot = "<root-tag>"` and shares the root's strings file (e.g. `use-gridrow` uses `use-grid.strings.json`; the date and week pickers inherit `use-calendar` from `UseCalendarBase`), typed by `src/i18n/catalog.ts`, which is generated and ignored by git (`pack` and CI generate it; run `vp run generate-strings` locally to create or refresh it for editor types and `tsc`), and resolved with `this.string(key, parameters)`; never hardcode it in templates or `setAttribute` calls
+- the `use-wc/no-hardcoded-strings` lint rule (`lint/use-wc-plugin.mjs`) enforces this in `src/elements` and `src/components`
+
 ## Styling
 
 - component CSS exists in the component file directly in the `css` prop

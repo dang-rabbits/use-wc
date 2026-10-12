@@ -65,4 +65,36 @@ describe("use-date-input", () => {
       expect(monthInput.value).toBe("6");
     });
   });
+
+  describe("segment labels", () => {
+    it("keeps lang as the native attribute and re-renders when it changes", async () => {
+      render(html`<use-date-input></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      expect(dateInput.lang).toBe("");
+
+      dateInput.lang = "fr";
+      await dateInput.updateComplete;
+      expect(dateInput.getAttribute("lang")).toBe("fr");
+      expect(dateInput.locale).toBe("fr");
+      expect(getSegmentInput(dateInput, "year").getAttribute("aria-label")).toBe("an");
+    });
+
+    it("labels segments with Intl-derived names for the lang", async () => {
+      render(html`<use-date-input lang="fr"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      expect(getSegmentInput(dateInput, "year").getAttribute("aria-label")).toBe("an");
+    });
+
+    it("applies per-element strings overrides", async () => {
+      render(html`<use-date-input lang="en"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      expect(getSegmentInput(dateInput, "year").getAttribute("aria-label")).toBe("year");
+      dateInput.strings = { year: "Calendar year" };
+      await dateInput.updateComplete;
+      expect(getSegmentInput(dateInput, "year").getAttribute("aria-label")).toBe("Calendar year");
+    });
+  });
 });

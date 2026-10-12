@@ -1,7 +1,9 @@
 import { LitElement, TemplateResult, css, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
-import { UseLocaleElement } from "../use-locale-element/use-locale-element";
+import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getMonthNames } from "../../utils/date-time-aria-labels";
+import { dateTimeFormat } from "../../utils/intl-formatters";
+import strings from "./use-month-picker.strings.json";
 
 type LitHtml = typeof html;
 
@@ -61,7 +63,7 @@ export type UseMonthPickerRenderMonth = (
  * @slot month-{YYYY-MM} - Per-month content that replaces the default month name (e.g. `month-2026-03`)
  */
 @customElement("use-month-picker")
-export class UseMonthPicker extends UseLocaleElement {
+export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -203,6 +205,12 @@ export class UseMonthPicker extends UseLocaleElement {
     if (maxYear !== null && this.year >= maxYear) return;
     this.year = this.year + 1;
     this.requestUpdate();
+  }
+
+  #yearName(year: number) {
+    return dateTimeFormat(this.locale, { year: "numeric", timeZone: "UTC" }).format(
+      Date.UTC(year, 0, 1),
+    );
   }
 
   /** Navigate the view to the current real-world year. */
@@ -367,7 +375,7 @@ export class UseMonthPicker extends UseLocaleElement {
     const todayYear = today.getFullYear();
     const todayMonth = today.getMonth() + 1;
 
-    const months = getMonthNames(this.lang, "short");
+    const months = getMonthNames(this.locale, "short");
 
     const minYear = this.#minYear;
     const maxYear = this.#maxYear;
@@ -378,12 +386,12 @@ export class UseMonthPicker extends UseLocaleElement {
 
     return html`
       <div part="header">
-        <span part="title" aria-live="polite">${this.year}</span>
+        <span part="title" aria-live="polite">${this.#yearName(this.year)}</span>
         <div part="controls">
           <button
             type="button"
             part="control control-previous"
-            aria-label=${String(this.year - 1)}
+            aria-label=${this.string("previousYear", { year: this.#yearName(this.year - 1) })}
             ?disabled=${prevDisabled}
             @click=${this.previousYear}
           >
@@ -392,7 +400,7 @@ export class UseMonthPicker extends UseLocaleElement {
           <button
             type="button"
             part="control control-thismonth"
-            aria-label=${String(todayYear)}
+            aria-label=${this.string("currentYear", { year: this.#yearName(todayYear) })}
             @click=${this.thisMonth}
           >
             ●
@@ -400,7 +408,7 @@ export class UseMonthPicker extends UseLocaleElement {
           <button
             type="button"
             part="control control-next"
-            aria-label=${String(this.year + 1)}
+            aria-label=${this.string("nextYear", { year: this.#yearName(this.year + 1) })}
             ?disabled=${nextDisabled}
             @click=${this.nextYear}
           >
@@ -411,7 +419,7 @@ export class UseMonthPicker extends UseLocaleElement {
       <div
         part="grid"
         role="grid"
-        aria-label=${String(this.year)}
+        aria-label=${this.#yearName(this.year)}
         @keydown=${this.navigationEnabled ? this.#handleKeyDown : undefined}
       >
         ${months.map((name: string, i: number) => {
