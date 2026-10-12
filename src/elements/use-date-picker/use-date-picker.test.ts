@@ -1,4 +1,5 @@
-import { expect, describe, it } from "vite-plus/test";
+import { afterEach, expect, describe, it } from "vite-plus/test";
+import { cdp } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 import "./use-date-picker";
@@ -292,21 +293,29 @@ describe("use-date-picker", () => {
   });
 
   describe("month labels", () => {
-    it("names the shown, previous, and next months", async () => {
-      render(html`<use-date-picker lang="en" year="2020" month="1" controls></use-date-picker>`);
-      const picker = getPicker();
-      await picker.updateComplete;
-      const shadow = picker.shadowRoot!;
-      expect(
-        shadow.querySelector('[part="title-button"]')?.textContent?.replace(/\s+/g, " ").trim(),
-      ).toBe("January 2020");
-      expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
-        "December 2019",
-      );
-      expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
-        "February 2020",
-      );
+    afterEach(async () => {
+      await cdp().send("Emulation.setTimezoneOverride", { timezoneId: "" });
     });
+
+    it.each(["America/New_York", "UTC", "Australia/Sydney"])(
+      "names the shown, previous, and next months in %s",
+      async (timezoneId) => {
+        await cdp().send("Emulation.setTimezoneOverride", { timezoneId });
+        render(html`<use-date-picker lang="en" year="2020" month="1" controls></use-date-picker>`);
+        const picker = getPicker();
+        await picker.updateComplete;
+        const shadow = picker.shadowRoot!;
+        expect(
+          shadow.querySelector('[part="title-button"]')?.textContent?.replace(/\s+/g, " ").trim(),
+        ).toBe("January 2020");
+        expect(shadow.querySelector('[part~="control-previous"]')?.getAttribute("aria-label")).toBe(
+          "December 2019",
+        );
+        expect(shadow.querySelector('[part~="control-next"]')?.getAttribute("aria-label")).toBe(
+          "February 2020",
+        );
+      },
+    );
   });
 
   describe("today control", () => {
