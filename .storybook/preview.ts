@@ -88,17 +88,19 @@ function applyBrandPrimary(globals: Record<string, unknown> | undefined) {
 }
 
 const defaultLang = document.documentElement.getAttribute("lang");
-const defaultDir = document.documentElement.getAttribute("dir");
 
 type LocaleWithTextInfo = Intl.Locale & {
   getTextInfo?: () => { direction?: string };
   textInfo?: { direction?: string };
 };
 
-function textDirection(lang: string) {
+function textDirection(locale: unknown) {
+  if (typeof locale !== "string" || locale === "default") {
+    return "ltr";
+  }
   try {
-    const locale = new Intl.Locale(lang) as LocaleWithTextInfo;
-    return (locale.getTextInfo?.() ?? locale.textInfo)?.direction ?? "ltr";
+    const intlLocale = new Intl.Locale(locale) as LocaleWithTextInfo;
+    return (intlLocale.getTextInfo?.() ?? intlLocale.textInfo)?.direction ?? "ltr";
   } catch {
     return "ltr";
   }
@@ -112,13 +114,6 @@ function applyLocale(globals: Record<string, unknown> | undefined) {
     document.documentElement.setAttribute("lang", lang);
   } else {
     document.documentElement.removeAttribute("lang");
-  }
-
-  const dir = selected ? textDirection(selected) : defaultDir;
-  if (dir) {
-    document.documentElement.setAttribute("dir", dir);
-  } else {
-    document.documentElement.removeAttribute("dir");
   }
 }
 
@@ -147,7 +142,7 @@ const preview: Preview = {
     locale: {
       name: "Locale",
       description:
-        "Sets <html lang> and <html dir> so locale-aware components render in that locale and direction",
+        "Sets <html lang> so locale-aware components render in that locale, and mirrors story examples for right-to-left locales",
       toolbar: {
         icon: "globe",
         dynamicTitle: true,
@@ -215,6 +210,12 @@ const preview: Preview = {
     },
   },
   decorators: [
+    (story, context) => {
+      if (textDirection(context.globals.locale) !== "rtl") {
+        return story();
+      }
+      return html`<div dir="rtl" style="display: contents">${story()}</div>`;
+    },
     (story, context) => {
       // theme.css is loaded globally for every story. Component stories stay
       // wrapped in `use-theme-escape` to render as native, unstyled
