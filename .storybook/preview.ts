@@ -88,14 +88,37 @@ function applyBrandPrimary(globals: Record<string, unknown> | undefined) {
 }
 
 const defaultLang = document.documentElement.getAttribute("lang");
+const defaultDir = document.documentElement.getAttribute("dir");
+
+type LocaleWithTextInfo = Intl.Locale & {
+  getTextInfo?: () => { direction?: string };
+  textInfo?: { direction?: string };
+};
+
+function textDirection(lang: string) {
+  try {
+    const locale = new Intl.Locale(lang) as LocaleWithTextInfo;
+    return (locale.getTextInfo?.() ?? locale.textInfo)?.direction ?? "ltr";
+  } catch {
+    return "ltr";
+  }
+}
 
 function applyLocale(globals: Record<string, unknown> | undefined) {
   const value = globals?.locale;
-  const lang = typeof value === "string" && value !== "default" ? value : defaultLang;
+  const selected = typeof value === "string" && value !== "default" ? value : null;
+  const lang = selected ?? defaultLang;
   if (lang) {
     document.documentElement.setAttribute("lang", lang);
   } else {
     document.documentElement.removeAttribute("lang");
+  }
+
+  const dir = selected ? textDirection(selected) : defaultDir;
+  if (dir) {
+    document.documentElement.setAttribute("dir", dir);
+  } else {
+    document.documentElement.removeAttribute("dir");
   }
 }
 
@@ -123,7 +146,8 @@ const preview: Preview = {
     },
     locale: {
       name: "Locale",
-      description: "Sets <html lang> so locale-aware components render in that locale",
+      description:
+        "Sets <html lang> and <html dir> so locale-aware components render in that locale and direction",
       toolbar: {
         icon: "globe",
         dynamicTitle: true,
