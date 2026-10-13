@@ -32,6 +32,14 @@ export const WithLocale: StoryObj<UseMonthPicker> = {
 };
 
 /**
+ * In a right-to-left layout, set with `dir="rtl"` on the element or an ancestor, the previous and next
+ * year controls swap sides and their arrows mirror, and ArrowLeft and ArrowRight follow the visual direction.
+ */
+export const RightToLeft: StoryObj<UseMonthPicker> = {
+  render: () => html`<use-month-picker dir="rtl" locale="ar-SA"></use-month-picker>`,
+};
+
+/**
  * `min` and `max` constrain the selectable range to ISO 8601 `YYYY-MM` values.
  * Months outside the range are visually indicated and not selectable.
  * Year navigation buttons are disabled once the boundary year is reached.

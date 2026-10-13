@@ -5,6 +5,7 @@ import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-
 import { map } from "lit/directives/map.js";
 import { tabbable } from "tabbable";
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
+import inlineArrowKey from "../../utils/inline-arrow-key";
 import { keyed } from "lit/directives/keyed.js";
 
 import { dateTimeFormat } from "../../utils/intl-formatters";
@@ -61,6 +62,7 @@ export type UseCalendarRenderDay = (
  * @csspart control-previous - Previous month button
  * @csspart control-today - Today button
  * @csspart control-next - Next month button
+ * @csspart control-icon - Arrow glyph inside the previous and next buttons, mirrored in right-to-left layouts
  * @csspart grid - The main calendar grid
  * @csspart grid-header - The header row with day names
  * @csspart grid-header-cell - Individual day name header cell
@@ -633,24 +635,25 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
       return;
     }
 
+    const key = inlineArrowKey(this, event.key);
     let moveTo;
-    if (event.key === "ArrowRight") {
+    if (key === "ArrowRight") {
       moveTo = currentDay + 1;
       if (!this.#navigationWrap) {
         moveTo = Math.min(moveTo, this.#daysInMonth);
       }
-    } else if (event.key === "ArrowLeft") {
+    } else if (key === "ArrowLeft") {
       moveTo = currentDay - 1;
       if (!this.#navigationWrap) {
         moveTo = Math.max(moveTo, 1);
       }
-    } else if (event.key === "ArrowUp") {
+    } else if (key === "ArrowUp") {
       if (this.#showPreviousMonth && this.#navigationWrap) {
         moveTo = currentDay - 7;
       } else {
         moveTo = Math.max(currentDay - 7, 1);
       }
-    } else if (event.key === "ArrowDown") {
+    } else if (key === "ArrowDown") {
       if (this.#showNextMonth && this.#navigationWrap) {
         moveTo = currentDay + 7;
       } else {
@@ -763,13 +766,14 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
     if (idx === -1) return;
 
     const yearSize = 12;
+    const key = inlineArrowKey(this, event.key);
     let next = -1;
-    if (event.key === "ArrowRight") next = Math.min(idx + 1, btns.length - 1);
-    else if (event.key === "ArrowLeft") next = Math.max(idx - 1, 0);
-    else if (event.key === "ArrowDown") next = Math.min(idx + 4, btns.length - 1);
-    else if (event.key === "ArrowUp") next = Math.max(idx - 4, 0);
-    else if (event.key === "Home") next = Math.floor(idx / yearSize) * yearSize;
-    else if (event.key === "End")
+    if (key === "ArrowRight") next = Math.min(idx + 1, btns.length - 1);
+    else if (key === "ArrowLeft") next = Math.max(idx - 1, 0);
+    else if (key === "ArrowDown") next = Math.min(idx + 4, btns.length - 1);
+    else if (key === "ArrowUp") next = Math.max(idx - 4, 0);
+    else if (key === "Home") next = Math.floor(idx / yearSize) * yearSize;
+    else if (key === "End")
       next = Math.min(Math.floor(idx / yearSize) * yearSize + yearSize - 1, btns.length - 1);
 
     if (next > -1) {
@@ -931,7 +935,7 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
                     @click=${this.previousMonth}
                     ?disabled=${this.#startDate && this.#isThisMonth(this.#startDate)}
                   >
-                    ◄
+                    <span part="control-icon" aria-hidden="true">◄</span>
                   </button>
                   <button
                     type="button"
@@ -949,7 +953,7 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
                     @click=${this.nextMonth}
                     ?disabled=${this.#endDate && this.#isThisMonth(this.#endDate)}
                   >
-                    ►
+                    <span part="control-icon" aria-hidden="true">►</span>
                   </button>
                 `
               : ""
@@ -1022,6 +1026,11 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
 
     [part="header"] slot:not(:empty) {
       display: block;
+    }
+
+    :host(:dir(rtl)) [part~="control-icon"] {
+      display: inline-block;
+      scale: -1 1;
     }
 
     [part*="day-selected"] {

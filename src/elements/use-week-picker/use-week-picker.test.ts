@@ -201,4 +201,27 @@ describe("use-week-picker", () => {
       "Next month, February 2020",
     );
   });
+
+  it("ArrowLeft moves to the next day in right-to-left layouts", async () => {
+    render(html`<use-week-picker dir="rtl" locale="ar" year="2026" month="3"></use-week-picker>`);
+    const picker = getPicker();
+    await picker.updateComplete;
+
+    picker.focus();
+    await picker.updateComplete;
+
+    keydown(getGridBody(picker), "ArrowLeft");
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(picker.shadowRoot!.activeElement).toBe(getCell(picker, "2026-03-02"));
+  });
+
+  it("mirrors the control icons in right-to-left layouts", async () => {
+    render(html`<use-week-picker dir="rtl" locale="ar" controls></use-week-picker>`);
+    const picker = getPicker();
+    await picker.updateComplete;
+    const icons = picker.shadowRoot!.querySelectorAll<HTMLElement>('[part~="control-icon"]');
+    expect(icons).toHaveLength(2);
+    icons.forEach((icon) => expect(getComputedStyle(icon).scale).toBe("-1 1"));
+  });
 });

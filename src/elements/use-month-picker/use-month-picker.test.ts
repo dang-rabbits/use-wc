@@ -505,4 +505,55 @@ describe("use-month-picker", () => {
       expect(controlLabel(picker, "control-next")).toBe("Go to 2021");
     });
   });
+
+  describe("right-to-left", () => {
+    async function renderRightToLeft() {
+      render(html`<use-month-picker dir="rtl" locale="ar" year="2026"></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      return picker;
+    }
+
+    it("mirrors the previous and next control icons", async () => {
+      const picker = await renderRightToLeft();
+      const icons = picker.shadowRoot!.querySelectorAll<HTMLElement>('[part~="control-icon"]');
+      expect(icons).toHaveLength(2);
+      icons.forEach((icon) => expect(getComputedStyle(icon).scale).toBe("-1 1"));
+    });
+
+    it("does not mirror the control icons in left-to-right layouts", async () => {
+      render(html`<use-month-picker></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      const icon = picker.shadowRoot!.querySelector<HTMLElement>('[part~="control-icon"]')!;
+      expect(getComputedStyle(icon).scale).toBe("none");
+    });
+
+    it("ArrowLeft moves focus to the next month", async () => {
+      const picker = await renderRightToLeft();
+      const buttons = getMonthButtons(picker);
+      buttons[0].focus();
+      keydown(getGrid(picker), "ArrowLeft");
+
+      expect(picker.shadowRoot!.activeElement).toBe(buttons[1]);
+    });
+
+    it("ArrowRight moves focus to the previous month", async () => {
+      const picker = await renderRightToLeft();
+      const buttons = getMonthButtons(picker);
+      buttons[5].focus();
+      keydown(getGrid(picker), "ArrowRight");
+
+      expect(picker.shadowRoot!.activeElement).toBe(buttons[4]);
+    });
+
+    it("ArrowRight on the first month wraps to the previous year", async () => {
+      const picker = await renderRightToLeft();
+      getMonthButtons(picker)[0].focus();
+      keydown(getGrid(picker), "ArrowRight");
+      await picker.updateComplete;
+
+      expect(picker.year).toBe(2025);
+    });
+  });
 });

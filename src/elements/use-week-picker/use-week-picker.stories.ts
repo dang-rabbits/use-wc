@@ -38,6 +38,14 @@ export const Controls: StoryObj<UseWeekPicker> = {
 };
 
 /**
+ * In a right-to-left layout, set with `dir="rtl"` on the element or an ancestor, the previous and next
+ * controls swap sides and their arrows mirror, and ArrowLeft and ArrowRight follow the visual direction.
+ */
+export const RightToLeft: StoryObj<UseWeekPicker> = {
+  render: () => html`<use-week-picker dir="rtl" locale="ar-SA" controls></use-week-picker>`,
+};
+
+/**
  * A week can be pre-selected by setting the `value` attribute to an ISO 8601
  * week string (`YYYY-Www`).
  */

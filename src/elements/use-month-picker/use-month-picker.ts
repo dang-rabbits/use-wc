@@ -3,6 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getMonthNames } from "../../utils/date-time-aria-labels";
 import { dateTimeFormat } from "../../utils/intl-formatters";
+import inlineArrowKey from "../../utils/inline-arrow-key";
 import strings from "./use-month-picker.strings.json";
 
 type LitHtml = typeof html;
@@ -55,6 +56,7 @@ export type UseMonthPickerRenderMonth = (
  * @csspart control-previous - Previous-year nav button
  * @csspart control-thismonth - "This month" nav button
  * @csspart control-next - Next-year nav button
+ * @csspart control-icon - Arrow glyph inside the previous and next buttons, mirrored in right-to-left layouts
  * @csspart grid - 4-column 12-month grid container
  * @csspart month - Individual month cell button
  * @csspart month-selected - Applied when this month is the selected value
@@ -85,6 +87,11 @@ export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) 
     [part="controls"] {
       display: flex;
       align-items: center;
+    }
+
+    :host(:dir(rtl)) [part~="control-icon"] {
+      display: inline-block;
+      scale: -1 1;
     }
 
     [part="grid"] {
@@ -292,7 +299,7 @@ export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) 
     let next = -1;
     let yearDelta = 0;
 
-    switch (event.key) {
+    switch (inlineArrowKey(this, event.key)) {
       case "ArrowRight":
         if (idx === 11 && this.#navigationWrap) {
           yearDelta = 1;
@@ -395,7 +402,7 @@ export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) 
             ?disabled=${prevDisabled}
             @click=${this.previousYear}
           >
-            ◄
+            <span part="control-icon" aria-hidden="true">◄</span>
           </button>
           <button
             type="button"
@@ -412,7 +419,7 @@ export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) 
             ?disabled=${nextDisabled}
             @click=${this.nextYear}
           >
-            ►
+            <span part="control-icon" aria-hidden="true">►</span>
           </button>
         </div>
       </div>
