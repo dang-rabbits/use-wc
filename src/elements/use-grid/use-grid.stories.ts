@@ -12,6 +12,12 @@ import { UseGrid } from "./use-grid";
 const meta: Meta<UseGrid> = {
   title: "Web Components/use-grid",
   component: "use-grid",
+  subcomponents: {
+    "use-gridhead": "use-gridhead",
+    "use-gridbody": "use-gridbody",
+    "use-gridrow": "use-gridrow",
+    "use-gridcell": "use-gridcell",
+  },
   tags: ["autodocs", "!dev", "input", "utility"],
   argTypes: {
     selectmode: {
