@@ -89,9 +89,27 @@ function applyBrandPrimary(globals: Record<string, unknown> | undefined) {
 
 const defaultLang = document.documentElement.getAttribute("lang");
 
+type LocaleWithTextInfo = Intl.Locale & {
+  getTextInfo?: () => { direction?: string };
+  textInfo?: { direction?: string };
+};
+
+function textDirection(locale: unknown) {
+  if (typeof locale !== "string" || locale === "default") {
+    return "ltr";
+  }
+  try {
+    const intlLocale = new Intl.Locale(locale) as LocaleWithTextInfo;
+    return (intlLocale.getTextInfo?.() ?? intlLocale.textInfo)?.direction ?? "ltr";
+  } catch {
+    return "ltr";
+  }
+}
+
 function applyLocale(globals: Record<string, unknown> | undefined) {
   const value = globals?.locale;
-  const lang = typeof value === "string" && value !== "default" ? value : defaultLang;
+  const selected = typeof value === "string" && value !== "default" ? value : null;
+  const lang = selected ?? defaultLang;
   if (lang) {
     document.documentElement.setAttribute("lang", lang);
   } else {
@@ -123,7 +141,8 @@ const preview: Preview = {
     },
     locale: {
       name: "Locale",
-      description: "Sets <html lang> so locale-aware components render in that locale",
+      description:
+        "Sets <html lang> so locale-aware components render in that locale, and mirrors story examples for right-to-left locales",
       toolbar: {
         icon: "globe",
         dynamicTitle: true,
@@ -191,6 +210,12 @@ const preview: Preview = {
     },
   },
   decorators: [
+    (story, context) => {
+      if (textDirection(context.globals.locale) !== "rtl") {
+        return story();
+      }
+      return html`<div dir="rtl" style="display: contents">${story()}</div>`;
+    },
     (story, context) => {
       // theme.css is loaded globally for every story. Component stories stay
       // wrapped in `use-theme-escape` to render as native, unstyled

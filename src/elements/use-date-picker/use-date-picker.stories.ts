@@ -41,6 +41,14 @@ export const Controls: StoryObj<UseDatePicker> = {
   },
 };
 
+/**
+ * In a right-to-left layout, set with `dir="rtl"` on the element or an ancestor, the previous and next
+ * controls swap sides and their arrows mirror, and ArrowLeft and ArrowRight follow the visual direction.
+ */
+export const RightToLeft: StoryObj<UseDatePicker> = {
+  render: () => html`<use-date-picker dir="rtl" locale="ar-SA" controls></use-date-picker>`,
+};
+
 /** Turning off navigation should only be done when selection is not needed */
 export const DisableNavigation: StoryObj<UseDatePicker> = {
   render: () => {

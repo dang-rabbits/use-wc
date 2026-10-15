@@ -398,4 +398,85 @@ describe("use-date-picker", () => {
       },
     );
   });
+
+  describe("right-to-left", () => {
+    async function renderRightToLeft() {
+      render(
+        html`<use-date-picker
+          dir="rtl"
+          locale="ar"
+          year="2026"
+          month="3"
+          controls
+        ></use-date-picker>`,
+      );
+      const picker = getPicker();
+      await picker.updateComplete;
+      return picker;
+    }
+
+    it("mirrors the previous and next control icons", async () => {
+      const picker = await renderRightToLeft();
+      const icons = picker.shadowRoot!.querySelectorAll<HTMLElement>('[part~="control-icon"]');
+      expect(icons).toHaveLength(2);
+      icons.forEach((icon) => expect(getComputedStyle(icon).scale).toBe("-1 1"));
+    });
+
+    it("does not mirror the control icons in left-to-right layouts", async () => {
+      render(html`<use-date-picker controls></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      const icon = picker.shadowRoot!.querySelector<HTMLElement>('[part~="control-icon"]')!;
+      expect(getComputedStyle(icon).scale).toBe("none");
+    });
+
+    it("places the previous control to the right of the next control", async () => {
+      const picker = await renderRightToLeft();
+      const previous = picker.shadowRoot!.querySelector('[part~="control-previous"]')!;
+      const next = picker.shadowRoot!.querySelector('[part~="control-next"]')!;
+      expect(previous.getBoundingClientRect().left).toBeGreaterThan(
+        next.getBoundingClientRect().left,
+      );
+    });
+
+    it("ArrowLeft moves focus to the next day", async () => {
+      const picker = await renderRightToLeft();
+      picker.focus();
+      await picker.updateComplete;
+
+      keydown(getGridBody(picker), "ArrowLeft");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(picker.shadowRoot!.activeElement).toBe(getCell(picker, "2026-03-02"));
+    });
+
+    it("ArrowRight moves focus to the previous day", async () => {
+      const picker = await renderRightToLeft();
+      picker.focus();
+      await picker.updateComplete;
+
+      keydown(getGridBody(picker), "ArrowDown");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      keydown(getGridBody(picker), "ArrowRight");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(picker.shadowRoot!.activeElement).toBe(getCell(picker, "2026-03-07"));
+    });
+
+    it("ArrowLeft moves focus to the next month button in the month and year view", async () => {
+      const picker = await renderRightToLeft();
+      picker.shadowRoot!.querySelector<HTMLButtonElement>('[part="title-button"]')!.click();
+      await picker.updateComplete;
+
+      const buttons = Array.from(
+        picker.shadowRoot!.querySelectorAll<HTMLButtonElement>('[part~="picker-month"]'),
+      );
+      const current = picker.shadowRoot!.activeElement as HTMLButtonElement;
+      const currentIndex = buttons.indexOf(current);
+      keydown(current, "ArrowLeft");
+      await picker.updateComplete;
+
+      expect(picker.shadowRoot!.activeElement).toBe(buttons[currentIndex + 1]);
+    });
+  });
 });
