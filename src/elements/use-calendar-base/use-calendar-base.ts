@@ -5,7 +5,7 @@ import { getDayNames, getLocaleFirstDay, getMonthNames } from "../../utils/date-
 import { map } from "lit/directives/map.js";
 import { tabbable } from "tabbable";
 import getTabIndex, { INITIAL_TABINDEX_VALUE } from "../../utils/get-tabindex";
-import inlineArrowKey from "../../utils/inline-arrow-key";
+import { InlineDirectionElement } from "../../utils/inline-direction-element";
 import { keyed } from "lit/directives/keyed.js";
 
 import { dateTimeFormat } from "../../utils/intl-formatters";
@@ -81,7 +81,9 @@ export type UseCalendarRenderDay = (
  * @csspart picker-month - An individual month button
  * @csspart picker-month-current - Applied to the currently selected month button
  */
-export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings) {
+export class UseCalendarBase extends InlineDirectionElement(
+  LocalizedElement(UseLocaleElement, strings),
+) {
   static localeRoot = "use-calendar";
 
   static formAssociated = true;
@@ -635,7 +637,7 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
       return;
     }
 
-    const key = inlineArrowKey(this, event.key);
+    const key = this.inlineArrowKey(event.key);
     let moveTo;
     if (key === "ArrowRight") {
       moveTo = currentDay + 1;
@@ -766,7 +768,7 @@ export class UseCalendarBase extends LocalizedElement(UseLocaleElement, strings)
     if (idx === -1) return;
 
     const yearSize = 12;
-    const key = inlineArrowKey(this, event.key);
+    const key = this.inlineArrowKey(event.key);
     let next = -1;
     if (key === "ArrowRight") next = Math.min(idx + 1, btns.length - 1);
     else if (key === "ArrowLeft") next = Math.max(idx - 1, 0);

@@ -3,7 +3,7 @@ import { customElement, property } from "lit/decorators.js";
 import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import { getMonthNames } from "../../utils/date-time-aria-labels";
 import { dateTimeFormat } from "../../utils/intl-formatters";
-import inlineArrowKey from "../../utils/inline-arrow-key";
+import { InlineDirectionElement } from "../../utils/inline-direction-element";
 import strings from "./use-month-picker.strings.json";
 
 type LitHtml = typeof html;
@@ -65,7 +65,9 @@ export type UseMonthPickerRenderMonth = (
  * @slot month-{YYYY-MM} - Per-month content that replaces the default month name (e.g. `month-2026-03`)
  */
 @customElement("use-month-picker")
-export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) {
+export class UseMonthPicker extends InlineDirectionElement(
+  LocalizedElement(UseLocaleElement, strings),
+) {
   static formAssociated = true;
 
   static shadowRootOptions = {
@@ -299,7 +301,7 @@ export class UseMonthPicker extends LocalizedElement(UseLocaleElement, strings) 
     let next = -1;
     let yearDelta = 0;
 
-    switch (inlineArrowKey(this, event.key)) {
+    switch (this.inlineArrowKey(event.key)) {
       case "ArrowRight":
         if (idx === 11 && this.#navigationWrap) {
           yearDelta = 1;
