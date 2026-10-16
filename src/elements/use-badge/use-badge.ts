@@ -201,7 +201,9 @@ export class UseBadge extends LitElement {
      instead of centering on the corner point, the same approach theme.css's badge.css uses (see
      its own comment for why: plain anchor(), never calc(anchor() - <offset>), with the offset
      living in translate instead) — kept as a literal, un-tokened mirror of that formula so an
-     unthemed badge's positioning is consistent with a themed one, not just its shape and color. */
+     unthemed badge's positioning is consistent with a themed one, not just its shape and color.
+     The inline axis pins with physical left/right chosen by :dir(rtl) because logical insets and
+     anchor(start|end) follow the containing block's direction, not the badge's own. */
   static styles = css`
     :host {
       --usewc-badge-offset: calc(0.5rem / 3);
@@ -233,15 +235,15 @@ export class UseBadge extends LitElement {
       --usewc-badge-translate-y: -1;
       translate: calc(var(--usewc-badge-translate-x) * var(--usewc-badge-offset))
         calc(var(--usewc-badge-translate-y) * var(--usewc-badge-offset));
-      inset-inline-start: unset;
-      inset-inline-end: anchor(end);
+      left: unset;
+      right: anchor(right);
       inset-block-end: unset;
       inset-block-start: anchor(start);
     }
 
     :host(:state(anchored)[inlinealign="start"]) {
-      inset-inline-end: unset;
-      inset-inline-start: anchor(start);
+      right: unset;
+      left: anchor(left);
       --usewc-badge-translate-x: -1;
     }
 
@@ -252,10 +254,14 @@ export class UseBadge extends LitElement {
     }
 
     :host(:dir(rtl):state(anchored)) {
+      right: unset;
+      left: anchor(left);
       --usewc-badge-translate-x: -1;
     }
 
     :host(:dir(rtl):state(anchored)[inlinealign="start"]) {
+      left: unset;
+      right: anchor(right);
       --usewc-badge-translate-x: 1;
     }
 
