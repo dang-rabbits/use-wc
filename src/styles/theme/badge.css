@@ -7,10 +7,14 @@
    Unlike most native elements this family themes, use-badge's own :host styles already are a
    complete, self-sufficient look (shape, color, and anchor-corner positioning), not a bare
    browser default — so `use-theme-escape & { all: revert-layer; }` on every rule below reverts
-   cleanly back to that built-in appearance, the same as everywhere else in this family. */
+   cleanly back to that built-in appearance, the same as everywhere else in this family.
+
+   Anchor-corner positioning stays entirely in the component; this layer only supplies the
+   themed distance through the component's --usewc-badge-offset custom property. `all` doesn't
+   cover custom properties, so the escape blocks revert that property explicitly. */
 @layer use-theme.badge {
   use-badge {
-    --usewc-layout-badge-offset: calc(var(--usewc-layout-badge-dot-size) / 3);
+    --usewc-badge-offset: calc(var(--usewc-layout-badge-dot-size) / 3);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -25,6 +29,7 @@
 
     use-theme-escape & {
       all: revert-layer;
+      --usewc-badge-offset: revert-layer;
     }
   }
 
@@ -35,89 +40,20 @@
      `88`, are identical in size. The inline padding is `em`-relative and small enough that a
      one-digit count still clears the `1lh` floor rather than widening past it. */
   use-badge:not([dot]) {
-    --usewc-layout-badge-offset: 0.5lh;
+    --usewc-badge-offset: 0.5lh;
     block-size: 1lh;
     min-inline-size: 1lh;
     padding-inline: var(--usewc-layout-badge-padding-inline);
 
     use-theme-escape & {
       all: revert-layer;
+      --usewc-badge-offset: revert-layer;
     }
   }
 
   use-badge[dot] {
     inline-size: var(--usewc-layout-badge-dot-size);
     block-size: var(--usewc-layout-badge-dot-size);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  /* Positioning pins via plain anchor() — never calc(anchor() - <offset>) — because calc()
-     silently drops its arithmetic when the anchor() inside it crosses a shadow root boundary
-     (confirmed with both var() and literal operands; plain anchor() with no calc() is
-     unaffected, as is calc() that doesn't contain an anchor()). The offset instead lives in
-     translate, a separate post-layout transform that never touches anchor() at all, so it's
-     immune to that bug — using a per-axis sign multiplier since translate is always physical
-     x/y. The inline axis pins with anchor(self-start|self-end) rather than anchor(start|end),
-     because the latter take their direction from the badge's containing block (usually the LTR
-     document root), not from the badge itself — the inset-inline-* properties already follow the
-     badge's own direction. translate doesn't mirror at all, so :dir(rtl) flips the inline
-     translate sign to keep the badge extending away from its anchor.
-
-     The default corner (block-start/inline-end) is set unconditionally in this base rule, both
-     insets at once, rather than via :is(:not([blockalign]), [blockalign="start"]) — deliberately
-     avoiding :is()/:not() compound selectors here: at least one browser has been observed to mis-
-     resolve which of two same-property declarations wins when the selectors get this compound,
-     even though .matches() correctly reports only one of them as matching. The two attribute
-     overrides below are plain, unambiguous attribute selectors instead, each resetting the axis
-     the base rule set and pinning its own edge — simple enough to be safe across engines. */
-  use-badge:state(anchored) {
-    --usewc-badge-translate-x: 1;
-    --usewc-badge-translate-y: -1;
-    translate: calc(var(--usewc-badge-translate-x) * var(--usewc-layout-badge-offset))
-      calc(var(--usewc-badge-translate-y) * var(--usewc-layout-badge-offset));
-    inset-inline-start: unset;
-    inset-inline-end: anchor(self-end);
-    inset-block-end: unset;
-    inset-block-start: anchor(start);
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  use-badge:state(anchored)[inlinealign="start"] {
-    inset-inline-end: unset;
-    inset-inline-start: anchor(self-start);
-    --usewc-badge-translate-x: -1;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  use-badge:state(anchored)[blockalign="end"] {
-    inset-block-start: unset;
-    inset-block-end: anchor(end);
-    --usewc-badge-translate-y: 1;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  use-badge:dir(rtl):state(anchored) {
-    --usewc-badge-translate-x: -1;
-
-    use-theme-escape & {
-      all: revert-layer;
-    }
-  }
-
-  use-badge:dir(rtl):state(anchored)[inlinealign="start"] {
-    --usewc-badge-translate-x: 1;
 
     use-theme-escape & {
       all: revert-layer;
