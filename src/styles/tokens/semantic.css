@@ -453,6 +453,8 @@
   --usewc-color-badge-border: var(--usewc-color-document-background);
   --usewc-layout-badge-padding-inline: var(--usewc-space-4-relative);
   --usewc-layout-badge-dot-size: var(--usewc-space-12);
+  --usewc-layout-badge-offset: 0.5lh;
+  --usewc-layout-badge-dot-offset: calc(var(--usewc-layout-badge-dot-size) / 3);
   --usewc-layout-badge-border: var(--usewc-space-1);
   --usewc-font-badge-size: var(--usewc-font-size-12);
   --usewc-font-badge-weight: var(--usewc-font-weight-medium);
