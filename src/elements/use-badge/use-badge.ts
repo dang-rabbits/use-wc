@@ -77,6 +77,7 @@ import { AnchorController } from "../../utils/anchor-controller";
  * @attr inlinealign `"start" | "end"`: Aligns the badge along the inline axis relative to its anchor.
  * @attr options - Space-separated feature flags. `noaria` opts out of the automatic
  * `aria-describedby` wiring described above.
+ * @cssprop --usewc-badge-offset - How far an anchored badge extends past its anchor's corner.
  */
 @customElement("use-badge")
 export class UseBadge extends LitElement {
@@ -198,10 +199,20 @@ export class UseBadge extends LitElement {
      normal flow — no position/inset/translate, so it never needs an anchor to look reasonable.
 
      Once anchored, the badge extends outward past its anchor's corner by --usewc-badge-offset
-     instead of centering on the corner point, the same approach theme.css's badge.css uses (see
-     its own comment for why: plain anchor(), never calc(anchor() - <offset>), with the offset
-     living in translate instead) — kept as a literal, un-tokened mirror of that formula so an
-     unthemed badge's positioning is consistent with a themed one, not just its shape and color. */
+     instead of centering on the corner point. theme.css only overrides that offset; the
+     positioning below is shared by themed and unthemed badges.
+
+     Positioning pins via plain anchor() — never calc(anchor() - <offset>) — because calc()
+     silently drops its arithmetic when the anchor() inside it crosses a shadow root boundary.
+     The offset instead lives in translate, using a per-axis sign multiplier since translate is
+     always physical x/y. The inline axis pins with anchor(self-start|self-end) rather than
+     anchor(start|end), because the latter take their direction from the badge's containing block
+     (usually the LTR document root), not from the badge itself. translate doesn't mirror at all,
+     so :dir(rtl) flips the inline translate sign to keep the badge extending away from its anchor.
+
+     The default corner is set in the base anchored rule and each alignment override is a plain
+     attribute selector rather than an :is()/:not() compound, because at least one browser has
+     been observed to mis-resolve which same-property declaration wins with compound selectors. */
   static styles = css`
     :host {
       --usewc-badge-offset: calc(0.5rem / 3);
@@ -229,34 +240,32 @@ export class UseBadge extends LitElement {
 
     :host(:state(anchored)) {
       position: absolute;
-      --usewc-badge-translate-x: 1;
-      --usewc-badge-translate-y: -1;
-      translate: calc(var(--usewc-badge-translate-x) * var(--usewc-badge-offset))
-        calc(var(--usewc-badge-translate-y) * var(--usewc-badge-offset));
-      inset-inline-start: unset;
-      inset-inline-end: anchor(end);
-      inset-block-end: unset;
+      --_badge-translate-x: 1;
+      --_badge-translate-y: -1;
+      translate: calc(var(--_badge-translate-x) * var(--usewc-badge-offset))
+        calc(var(--_badge-translate-y) * var(--usewc-badge-offset));
+      inset-inline-end: anchor(self-end);
       inset-block-start: anchor(start);
     }
 
     :host(:state(anchored)[inlinealign="start"]) {
       inset-inline-end: unset;
-      inset-inline-start: anchor(start);
-      --usewc-badge-translate-x: -1;
+      inset-inline-start: anchor(self-start);
+      --_badge-translate-x: -1;
     }
 
     :host(:state(anchored)[blockalign="end"]) {
       inset-block-start: unset;
       inset-block-end: anchor(end);
-      --usewc-badge-translate-y: 1;
+      --_badge-translate-y: 1;
     }
 
     :host(:dir(rtl):state(anchored)) {
-      --usewc-badge-translate-x: -1;
+      --_badge-translate-x: -1;
     }
 
     :host(:dir(rtl):state(anchored)[inlinealign="start"]) {
-      --usewc-badge-translate-x: 1;
+      --_badge-translate-x: 1;
     }
 
     :host([dot]) {

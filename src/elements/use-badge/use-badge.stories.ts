@@ -80,6 +80,27 @@ export const Corners: Story = {
 };
 
 /**
+ * In a right-to-left container, a badge's inline-end corner is its anchor's left edge, and
+ * `inlinealign="start"` moves it to the right edge. The badge's own direction decides the corner,
+ * so the container doesn't need to be positioned.
+ */
+export const RightToLeft: Story = {
+  render: () => html`
+    <div dir="rtl" style="display: flex; gap: 3rem; padding: 1rem">
+      ${["end", "start"].map((inlinealign) => {
+        const id = `use-badge-rtl-${inlinealign}`;
+        return html`
+          <div style="display: inline-block">
+            <button id=${id} type="button">${inlinealign}</button>
+            <use-badge anchortarget=${id} inlinealign=${inlinealign}>3</use-badge>
+          </div>
+        `;
+      })}
+    </div>
+  `,
+};
+
+/**
  * A component whose host renders as `display: contents` has no box of its own for anchor
  * positioning to resolve against. It can publish `--usewc-anchor-name`, pointing at a real,
  * box-generating part of itself, so a badge anchored to the host still targets something anchor

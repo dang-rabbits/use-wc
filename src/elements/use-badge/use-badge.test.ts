@@ -482,12 +482,12 @@ describe("use-badge", () => {
       );
     });
 
-    // translate doesn't auto-mirror for RTL the way the logical inset-*-start/-end properties
-    // and anchor() arguments do, so the inline-axis sign needs an explicit :dir(rtl) override —
-    // without it, a badge extends into its anchor instead of away from it under RTL.
-    it("extends outward on the correct side under RTL", async () => {
+    // The RTL container is deliberately not positioned, so the badge's containing block is the
+    // LTR document root. Logical insets and anchor(start|end) follow the containing block's
+    // direction, so the badge must pick its physical edge from its own :dir(rtl) instead.
+    it("extends outward from the anchor's left corner by default under RTL", async () => {
       render(html`
-        <div dir="rtl" style="position: relative; padding: 4rem">
+        <div dir="rtl" style="padding: 4rem">
           <button id="anchor-target" type="button">Inbox</button>
           <use-badge anchortarget="anchor-target">3</use-badge>
         </div>
@@ -500,9 +500,26 @@ describe("use-badge", () => {
       const badgeRect = badge.getBoundingClientRect();
       const halfLineHeight = halfLineHeightOf(badge);
 
-      // Default alignment (inline-end) is the anchor's left edge under RTL, so the badge should
-      // extend further left (outward), not overlap back into the button.
       expect(badgeRect.left).toBeCloseTo(anchorRect.left - halfLineHeight, 0);
+      expect(badgeRect.top).toBeCloseTo(anchorRect.top - halfLineHeight, 0);
+    });
+
+    it("extends outward from the anchor's right corner when inline-start aligned under RTL", async () => {
+      render(html`
+        <div dir="rtl" style="padding: 4rem">
+          <button id="anchor-target" type="button">Inbox</button>
+          <use-badge anchortarget="anchor-target" inlinealign="start">3</use-badge>
+        </div>
+      `);
+      const anchorTarget = document.getElementById("anchor-target") as HTMLButtonElement;
+      const badge = document.querySelector("use-badge") as UseBadge;
+      await badge.updateComplete;
+
+      const anchorRect = anchorTarget.getBoundingClientRect();
+      const badgeRect = badge.getBoundingClientRect();
+      const halfLineHeight = halfLineHeightOf(badge);
+
+      expect(badgeRect.right).toBeCloseTo(anchorRect.right + halfLineHeight, 0);
       expect(badgeRect.top).toBeCloseTo(anchorRect.top - halfLineHeight, 0);
     });
   });
@@ -557,6 +574,48 @@ describe("use-badge", () => {
 
       expect(badgeRect.top).toBeCloseTo(anchorRect.top - dotOffset, 0);
       expect(badgeRect.right).toBeCloseTo(anchorRect.right + dotOffset, 0);
+    });
+
+    it("extends outward from the anchor's left corner by default under RTL", async () => {
+      render(html`
+        <use-theme-escape>
+          <div dir="rtl" style="padding: 4rem">
+            <button id="anchor-target" type="button">Inbox</button>
+            <use-badge anchortarget="anchor-target">3</use-badge>
+          </div>
+        </use-theme-escape>
+      `);
+      const anchorTarget = document.getElementById("anchor-target") as HTMLButtonElement;
+      const badge = document.querySelector("use-badge") as UseBadge;
+      await badge.updateComplete;
+
+      const anchorRect = anchorTarget.getBoundingClientRect();
+      const badgeRect = badge.getBoundingClientRect();
+      const halfLineHeight = halfLineHeightOf(badge);
+
+      expect(badgeRect.top).toBeCloseTo(anchorRect.top - halfLineHeight, 0);
+      expect(badgeRect.left).toBeCloseTo(anchorRect.left - halfLineHeight, 0);
+    });
+
+    it("extends outward from the anchor's right corner when inline-start aligned under RTL", async () => {
+      render(html`
+        <use-theme-escape>
+          <div dir="rtl" style="padding: 4rem">
+            <button id="anchor-target" type="button">Inbox</button>
+            <use-badge anchortarget="anchor-target" inlinealign="start">3</use-badge>
+          </div>
+        </use-theme-escape>
+      `);
+      const anchorTarget = document.getElementById("anchor-target") as HTMLButtonElement;
+      const badge = document.querySelector("use-badge") as UseBadge;
+      await badge.updateComplete;
+
+      const anchorRect = anchorTarget.getBoundingClientRect();
+      const badgeRect = badge.getBoundingClientRect();
+      const halfLineHeight = halfLineHeightOf(badge);
+
+      expect(badgeRect.top).toBeCloseTo(anchorRect.top - halfLineHeight, 0);
+      expect(badgeRect.right).toBeCloseTo(anchorRect.right + halfLineHeight, 0);
     });
   });
 });
