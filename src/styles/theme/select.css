@@ -1,10 +1,130 @@
 @layer use-theme.select {
-  select:not(.appearance-native) {
+  select:not([multiple], [size]:not([size="1"]), .appearance-native) {
     padding-inline-end: calc(var(--usewc-layout-input-padding-inline) * 2 + var(--usewc-layout-selector-width));
     background-image: var(--usewc-effect-select-trigger-background-image, none);
     /* TODO use logical position */
     background-position: right var(--usewc-layout-input-padding-inline) center;
     background-repeat: no-repeat;
     background-size: var(--usewc-effect-select-trigger-background-size, 1em);
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
+  }
+
+  /* Customizable select — where `appearance: base-select` is supported, a single-choice dropdown
+   swaps its OS popup for an in-page `::picker(select)` that's styled to match `use-menu` and
+   `use-listbox-input`, reusing the `popover-menu` tokens. Elsewhere it falls back to the
+   `appearance: none` trigger above. A `multiple` or `size` listbox is left out of both rules: it
+   has no picker, so it gets neither the chevron nor the base-select appearance.
+   The trigger keeps the background-image chevron from the rule above, so `::picker-icon` is
+   hidden instead of themed a second time. Pseudo-element escapes are siblings for the same
+   reason `input.css` gives. */
+  @supports (appearance: base-select) {
+    select:not([multiple], [size]:not([size="1"]), .appearance-native) {
+      appearance: base-select;
+
+      &::picker-icon {
+        display: none;
+      }
+
+      use-theme-escape &::picker-icon {
+        all: revert-layer;
+      }
+
+      &::picker(select) {
+        appearance: base-select;
+        margin-block: var(--usewc-layout-popover-menu-anchor-offset);
+        border: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+          var(--usewc-color-popover-menu-border);
+        padding: var(--usewc-layout-popover-menu-padding);
+        background: var(--usewc-color-popover-menu-background);
+        color: var(--usewc-color-input-text-static);
+        border-radius: var(--usewc-effect-popover-menu-border-radius);
+        box-shadow: var(--usewc-effect-popover-menu-shadow);
+      }
+
+      use-theme-escape &::picker(select) {
+        all: revert-layer;
+      }
+
+      option {
+        --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+        --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-static);
+        --usewc-effect-outline-width: 0;
+
+        gap: var(--usewc-layout-popover-menu-item-padding-inline);
+        line-height: var(--usewc-layout-popover-menu-item-line-height);
+        padding-inline: var(--usewc-layout-popover-menu-item-padding-inline);
+        padding-block: var(--usewc-layout-popover-menu-item-padding-block);
+        font-weight: var(--usewc-font-weight-normal);
+        background-color: var(--usewc-color-popover-menu-item-background);
+        border-radius: var(--usewc-effect-popover-menu-item-border-radius);
+        color: var(--usewc-color-popover-menu-item-text);
+        outline: var(--usewc-effect-outline-width) var(--usewc-effect-outline-style) var(--usewc-color-outline);
+        outline-offset: var(--usewc-effect-outline-offset-flush);
+        transition: var(--usewc-effect-outline-transition);
+
+        use-theme-escape & {
+          all: revert-layer;
+        }
+
+        &:hover {
+          --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-hover);
+          --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-hover);
+        }
+
+        &:focus-visible {
+          --usewc-effect-outline-width: var(--usewc-effect-outline-size);
+          --usewc-color-popover-menu-item-background: var(--usewc-color-popover-menu-item-background-static);
+          --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-focus);
+        }
+
+        &:disabled {
+          opacity: var(--usewc-effect-form-opacity-disabled);
+        }
+
+        &::checkmark {
+          content: "";
+          inline-size: var(--usewc-layout-selected-indicator-size);
+          block-size: var(--usewc-layout-selected-indicator-size);
+          background-color: var(--usewc-effect-selected-indicator-color, currentColor);
+          mask-image: var(--usewc-effect-selected-indicator-mask-image, none);
+          mask-size: contain;
+          mask-repeat: no-repeat;
+          mask-position: center;
+        }
+
+        use-theme-escape &::checkmark {
+          all: revert-layer;
+        }
+      }
+
+      optgroup {
+        padding-block-start: var(--usewc-layout-popover-menu-padding);
+        font-size: var(--usewc-font-popover-menu-header-size);
+        font-weight: var(--usewc-font-popover-menu-header-weight);
+        color: var(--usewc-color-popover-menu-header-text);
+
+        use-theme-escape & {
+          all: revert-layer;
+        }
+
+        option {
+          font-size: var(--usewc-font-input-size);
+        }
+      }
+
+      hr {
+        border: 0;
+        border-block-start: var(--usewc-layout-popover-menu-border) var(--usewc-effect-popover-menu-border-style)
+          var(--usewc-color-popover-menu-border);
+        margin-block: var(--usewc-layout-popover-menu-padding);
+
+        use-theme-escape & {
+          all: revert-layer;
+        }
+      }
+    }
   }
 }
