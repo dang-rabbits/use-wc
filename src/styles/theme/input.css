@@ -52,7 +52,7 @@
 
     &:disabled,
     &[aria-disabled="true"],
-    &:has(:disabled, [aria-disabled="true"]) {
+    &:has(:not(option, optgroup):is(:disabled, [aria-disabled="true"])) {
       --usewc-effect-opacity: var(--usewc-effect-form-opacity-disabled);
       --usewc-effect-pointer-events: none;
     }
@@ -128,6 +128,10 @@
 
   select:not(.appearance-native) {
     appearance: none;
+
+    use-theme-escape & {
+      all: revert-layer;
+    }
   }
 
   .appearance-input {
