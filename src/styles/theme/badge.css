@@ -60,11 +60,11 @@
      unaffected, as is calc() that doesn't contain an anchor()). The offset instead lives in
      translate, a separate post-layout transform that never touches anchor() at all, so it's
      immune to that bug — using a per-axis sign multiplier since translate is always physical
-     x/y. The inline axis pins with physical left/right rather than inset-inline-*, because
-     logical insets and anchor(start|end) take their direction from the badge's containing block
-     (usually the LTR document root), not from the badge itself. :dir(rtl) swaps which physical
-     edge is pinned and flips the inline translate sign together, so the badge's own direction
-     decides its corner.
+     x/y. The inline axis pins with anchor(self-start|self-end) rather than anchor(start|end),
+     because the latter take their direction from the badge's containing block (usually the LTR
+     document root), not from the badge itself — the inset-inline-* properties already follow the
+     badge's own direction. translate doesn't mirror at all, so :dir(rtl) flips the inline
+     translate sign to keep the badge extending away from its anchor.
 
      The default corner (block-start/inline-end) is set unconditionally in this base rule, both
      insets at once, rather than via :is(:not([blockalign]), [blockalign="start"]) — deliberately
@@ -78,8 +78,8 @@
     --usewc-badge-translate-y: -1;
     translate: calc(var(--usewc-badge-translate-x) * var(--usewc-layout-badge-offset))
       calc(var(--usewc-badge-translate-y) * var(--usewc-layout-badge-offset));
-    left: unset;
-    right: anchor(right);
+    inset-inline-start: unset;
+    inset-inline-end: anchor(self-end);
     inset-block-end: unset;
     inset-block-start: anchor(start);
 
@@ -89,8 +89,8 @@
   }
 
   use-badge:state(anchored)[inlinealign="start"] {
-    right: unset;
-    left: anchor(left);
+    inset-inline-end: unset;
+    inset-inline-start: anchor(self-start);
     --usewc-badge-translate-x: -1;
 
     use-theme-escape & {
@@ -109,8 +109,6 @@
   }
 
   use-badge:dir(rtl):state(anchored) {
-    right: unset;
-    left: anchor(left);
     --usewc-badge-translate-x: -1;
 
     use-theme-escape & {
@@ -119,8 +117,6 @@
   }
 
   use-badge:dir(rtl):state(anchored)[inlinealign="start"] {
-    left: unset;
-    right: anchor(right);
     --usewc-badge-translate-x: 1;
 
     use-theme-escape & {
