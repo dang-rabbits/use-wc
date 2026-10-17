@@ -191,20 +191,29 @@ export class UseBadge extends LitElement {
   }
 
   /* These are fixed, literal defaults — never design tokens. Tokens belong to theme.css, an
-     opt-in layer that fully replaces this default look by targeting `use-badge` from the
-     outside; the component itself doesn't know the token system exists.
+     opt-in layer that overrides the token-driven parts of this look by targeting `use-badge`
+     from the outside; the component itself doesn't know the token system exists.
+
+     A content badge is at least as wide as it is tall — `block-size: 1lh` fixes the height to
+     one line so a longer count can't grow it, `min-inline-size: 1lh` makes a single-glyph badge
+     a circle, and a longer count grows the width out into a pill while the height holds.
+     `tabular-nums` keeps every digit the same advance width, so `1` and `8`, or `11` and `88`,
+     are identical in size.
 
      Without a resolved anchor (:state(anchored) unset) the badge is a plain inline chip in
-     normal flow — no position/inset/translate, so it never needs an anchor to look reasonable.
+     normal flow, so it never needs an anchor to look reasonable.
 
-     Once anchored, the badge extends outward past its anchor's corner by --usewc-badge-offset
-     instead of centering on the corner point, the same approach theme.css's badge.css uses (see
-     its own comment for why: plain anchor(), never calc(anchor() - <offset>), with the offset
-     living in translate instead) — kept as a literal, un-tokened mirror of that formula so an
-     unthemed badge's positioning is consistent with a themed one, not just its shape and color. */
+     Once anchored, the badge pins to its anchor's corner and extends outward past it by
+     --_badge-offset: half a line height for content badges, and a third of the dot's size for
+     dots. The inline axis uses anchor(self-start|self-end) rather than anchor(start|end),
+     because the latter take their direction from the badge's containing block (usually the LTR
+     document root), not from the badge itself.
+
+     The default corner is set in the base anchored rule and each alignment override is a plain
+     attribute selector rather than an :is()/:not() compound, because at least one browser has
+     been observed to mis-resolve which same-property declaration wins with compound selectors. */
   static styles = css`
     :host {
-      --usewc-badge-offset: calc(0.5rem / 3);
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -222,49 +231,34 @@ export class UseBadge extends LitElement {
     }
 
     :host(:not([dot])) {
-      --usewc-badge-offset: 0.5lh;
+      --_badge-offset: 0.5lh;
       block-size: 1lh;
       min-inline-size: 1lh;
     }
 
-    :host(:state(anchored)) {
-      position: absolute;
-      --usewc-badge-translate-x: 1;
-      --usewc-badge-translate-y: -1;
-      translate: calc(var(--usewc-badge-translate-x) * var(--usewc-badge-offset))
-        calc(var(--usewc-badge-translate-y) * var(--usewc-badge-offset));
-      inset-inline-start: unset;
-      inset-inline-end: anchor(end);
-      inset-block-end: unset;
-      inset-block-start: anchor(start);
-    }
-
-    :host(:state(anchored)[inlinealign="start"]) {
-      inset-inline-end: unset;
-      inset-inline-start: anchor(start);
-      --usewc-badge-translate-x: -1;
-    }
-
-    :host(:state(anchored)[blockalign="end"]) {
-      inset-block-start: unset;
-      inset-block-end: anchor(end);
-      --usewc-badge-translate-y: 1;
-    }
-
-    :host(:dir(rtl):state(anchored)) {
-      --usewc-badge-translate-x: -1;
-    }
-
-    :host(:dir(rtl):state(anchored)[inlinealign="start"]) {
-      --usewc-badge-translate-x: 1;
-    }
-
     :host([dot]) {
+      --_badge-offset: calc(0.5rem / 3);
       inline-size: 0.5rem;
       block-size: 0.5rem;
       min-inline-size: 0;
       min-block-size: 0;
       padding-inline: 0;
+    }
+
+    :host(:state(anchored)) {
+      position: absolute;
+      inset-inline-end: calc(anchor(self-end) - var(--_badge-offset));
+      inset-block-start: calc(anchor(start) - var(--_badge-offset));
+    }
+
+    :host(:state(anchored)[inlinealign="start"]) {
+      inset-inline-end: unset;
+      inset-inline-start: calc(anchor(self-start) - var(--_badge-offset));
+    }
+
+    :host(:state(anchored)[blockalign="end"]) {
+      inset-block-start: unset;
+      inset-block-end: calc(anchor(end) - var(--_badge-offset));
     }
   `;
 }
