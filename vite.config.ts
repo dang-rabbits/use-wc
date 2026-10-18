@@ -46,9 +46,7 @@ export default {
       "use-wc": "src/use-wc.ts",
       i18n: "src/i18n/i18n.ts",
     },
-    dts: {
-      tsgo: true,
-    },
+    dts: true,
     exports: false,
     plugins: [
       cssEntries({
