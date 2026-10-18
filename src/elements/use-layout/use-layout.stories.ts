@@ -81,9 +81,8 @@ type Story = StoryObj<UseLayout>;
 const items = (count: number) =>
   Array.from(
     { length: count },
-    (_, index) => html`<div style="background: #dbeafe; outline: 1px dashed #60a5fa;">
-      Item ${index + 1}
-    </div>`,
+    (_, index) =>
+      html`<div style="background: #dbeafe; outline: 1px dashed #60a5fa;">Item ${index + 1}</div>`,
   );
 
 const plainItems = (count: number) =>
