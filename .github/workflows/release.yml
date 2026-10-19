@@ -41,3 +41,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+      - name: Point latest at the newest prerelease
+        if: github.ref_name == 'pre'
+        run: npm dist-tag add "use-wc@$(npm view use-wc dist-tags.pre)" latest
