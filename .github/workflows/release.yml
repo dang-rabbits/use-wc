@@ -24,23 +24,22 @@ jobs:
       id-token: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
         with:
           node-version: "24"
-      - name: Install dependencies
-        run: npm clean-install
+          cache: true
       - name: Bundle library
-        run: npm run build
+        run: vp run build
       - name: Verify the integrity of provenance attestations and registry signatures for installed dependencies
-        run: npm audit signatures
+        run: vp pm audit signatures
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: vp exec semantic-release
       - name: Point latest at the newest prerelease
         if: github.ref_name == 'pre'
-        run: npm dist-tag add "use-wc@$(npm view use-wc dist-tags.pre)" latest
+        run: vp pm dist-tag add "use-wc@$(vp pm view use-wc dist-tags.pre)" latest
