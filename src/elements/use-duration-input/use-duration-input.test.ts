@@ -16,6 +16,20 @@ describe("use-duration-input", () => {
     ) as HTMLInputElement;
   }
 
+  function paste(input: HTMLInputElement, text: string) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.setData("text/plain", text);
+    const event = new InputEvent("beforeinput", {
+      inputType: "insertFromPaste",
+      dataTransfer,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+    return event;
+  }
+
   describe("segment labels", () => {
     it("labels segments with plural Intl-derived names and applies overrides", async () => {
       render(html`<use-duration-input lang="en" hours minutes></use-duration-input>`);
@@ -70,6 +84,32 @@ describe("use-duration-input", () => {
 
       await userEvent.keyboard("{ArrowUp}");
       expect(hourInput.value).toBe("١");
+      expect(durationInput.value).toBe("PT1H");
+    });
+  });
+
+  describe("pasting", () => {
+    it("fills every segment when an ISO 8601 duration is pasted", async () => {
+      render(html`<use-duration-input lang="ar-SA" hours minutes></use-duration-input>`);
+      const durationInput = getDurationInput();
+      await durationInput.updateComplete;
+
+      const event = paste(getSegmentInput(durationInput, "hour"), "PT3H15M");
+      await durationInput.updateComplete;
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(durationInput.value).toBe("PT3H15M");
+      expect(getSegmentInput(durationInput, "minute").value).toBe("١٥");
+    });
+
+    it("cancels pasted text that is neither digits nor a duration", async () => {
+      render(html`<use-duration-input hours value="PT1H"></use-duration-input>`);
+      const durationInput = getDurationInput();
+      await durationInput.updateComplete;
+
+      const event = paste(getSegmentInput(durationInput, "hour"), "1.5");
+
+      expect(event.defaultPrevented).toBe(true);
       expect(durationInput.value).toBe("PT1H");
     });
   });

@@ -142,6 +142,19 @@ export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocale
     };
   }
 
+  #handleSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    const match = /^(\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))(?:T.*)?$/.exec(text);
+    if (!match) {
+      return false;
+    }
+    this.value = match[1];
+    return true;
+  }
+
   #handleSegmentKeydown(segment: DateSegment) {
     return (event: KeyboardEvent) => {
       this.stepSegment(event, this.#segmentMinimum[segment], this.#segmentMaximum[segment]);
@@ -221,6 +234,7 @@ export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocale
               id="${this.#segmentId(segment)}"
               form=${this.#formId}
               size=${segment === "year" ? 4 : 2}
+              @beforeinput=${this.#handleSegmentBeforeInput}
               @input=${this.#handleSegmentInput(segment)}
               @compositionend=${this.#handleSegmentInput(segment)}
               @keydown=${this.#handleSegmentKeydown(segment)}

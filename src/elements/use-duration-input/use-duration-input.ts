@@ -196,6 +196,23 @@ export class UseDurationInput extends LocaleDigitsElement(
     };
   }
 
+  #handleSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    if (!text.startsWith("P")) {
+      return false;
+    }
+    try {
+      duration.parse(text);
+    } catch {
+      return false;
+    }
+    this.value = text;
+    return true;
+  }
+
   #handleSegmentKeydown(event: KeyboardEvent) {
     this.stepSegment(event, 0);
   }
@@ -267,6 +284,7 @@ export class UseDurationInput extends LocaleDigitsElement(
                   part="segment-input segment-input-${unit}"
                   id="${this.#segmentId(unit)}"
                   form=${this.#formId}
+                  @beforeinput=${this.#handleSegmentBeforeInput}
                   @input=${this.#handleSegmentInput(unit as keyof duration.Duration)}
                   @compositionend=${this.#handleSegmentInput(unit as keyof duration.Duration)}
                   @keydown=${this.#handleSegmentKeydown}

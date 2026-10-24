@@ -16,6 +16,20 @@ describe("use-time-input", () => {
     ) as HTMLInputElement;
   }
 
+  function paste(input: HTMLInputElement, text: string) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.setData("text/plain", text);
+    const event = new InputEvent("beforeinput", {
+      inputType: "insertFromPaste",
+      dataTransfer,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+    return event;
+  }
+
   describe("segment labels", () => {
     it("labels segments with Intl-derived names", async () => {
       render(
@@ -141,6 +155,43 @@ describe("use-time-input", () => {
       expect(minuteInput.value).toBe("٥٨");
       expect(minuteInput.getAttribute("aria-valuenow")).toBe("58");
       expect(timeInput.value).toBe("14:58");
+    });
+  });
+
+  describe("pasting", () => {
+    it("fills every segment when an ISO time is pasted", async () => {
+      render(html`<use-time-input lang="ar-SA" hours minutes hourformat="24"></use-time-input>`);
+      const timeInput = getTimeInput();
+      await timeInput.updateComplete;
+
+      const event = paste(getSegmentInput(timeInput, "minute"), "١٤:٣٠");
+      await timeInput.updateComplete;
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(timeInput.value).toBe("14:30");
+      expect(getSegmentInput(timeInput, "hour").value).toBe("١٤");
+      expect(getSegmentInput(timeInput, "minute").getAttribute("aria-valuenow")).toBe("30");
+    });
+
+    it("takes the time from a pasted ISO date-time", async () => {
+      render(html`<use-time-input hours minutes hourformat="24"></use-time-input>`);
+      const timeInput = getTimeInput();
+      await timeInput.updateComplete;
+
+      paste(getSegmentInput(timeInput, "hour"), "2026-10-14T09:05:00Z");
+
+      expect(timeInput.value).toBe("09:05");
+    });
+
+    it("cancels a pasted time that is out of range", async () => {
+      render(html`<use-time-input hours minutes hourformat="24" value="14:05"></use-time-input>`);
+      const timeInput = getTimeInput();
+      await timeInput.updateComplete;
+
+      const event = paste(getSegmentInput(timeInput, "hour"), "25:00");
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(timeInput.value).toBe("14:05");
     });
   });
 });

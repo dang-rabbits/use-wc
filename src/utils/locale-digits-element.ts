@@ -1,6 +1,12 @@
 import type { PropertyValues } from "lit";
 import type { UseLocaleElement } from "../elements/use-locale-element/use-locale-element";
-import { resolveLocaleDigits, toLatinDigits, toLocaleDigits } from "./locale-digits";
+import {
+  hasOnlyDigits,
+  normalizeDigits,
+  resolveLocaleDigits,
+  toLatinDigits,
+  toLocaleDigits,
+} from "./locale-digits";
 
 type Constructor<Instance> = new (...args: any[]) => Instance;
 
@@ -9,6 +15,10 @@ export declare class LocaleDigitsElementInterface {
   protected toLatinDigits(text: string): string;
   protected segmentNumber(text: string | undefined): number | undefined;
   protected stepSegment(event: KeyboardEvent, minimum: number, maximum?: number): void;
+  protected filterSegmentInput(
+    event: InputEvent,
+    applyPastedValue: (text: string) => boolean,
+  ): void;
 }
 
 /**
@@ -64,6 +74,33 @@ export function LocaleDigitsElement<Base extends Constructor<UseLocaleElement>>(
       const clamped = Math.max(minimum, maximum === undefined ? next : Math.min(maximum, next));
       input.value = this.toLocaleDigits(clamped);
       input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+    }
+
+    /**
+     * Handles a numeric segment's `beforeinput` event. Typed, pasted, or dropped digits go through
+     * as usual. Other text is cancelled, unless `applyPastedValue` accepts it as a whole value, with
+     * its digits already rewritten as Latin digits, in which case an `input` event is dispatched
+     * from the element.
+     */
+    protected filterSegmentInput(event: InputEvent, applyPastedValue: (text: string) => boolean) {
+      if (event.isComposing || event.inputType === "insertCompositionText") {
+        return;
+      }
+      const text = event.data ?? event.dataTransfer?.getData("text/plain") ?? "";
+      if (text === "" || hasOnlyDigits(this.#digits, text)) {
+        return;
+      }
+      event.preventDefault();
+      if (applyPastedValue(normalizeDigits(this.#digits, text.trim()))) {
+        this.dispatchEvent(
+          new InputEvent("input", {
+            bubbles: true,
+            composed: true,
+            inputType: "insertFromPaste",
+            data: text,
+          }),
+        );
+      }
     }
   }
   return LocaleDigits as unknown as Constructor<LocaleDigitsElementInterface> & Base;

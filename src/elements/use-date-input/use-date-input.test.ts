@@ -16,6 +16,20 @@ describe("use-date-input", () => {
     ) as HTMLInputElement;
   }
 
+  function paste(input: HTMLInputElement, text: string) {
+    const dataTransfer = new DataTransfer();
+    dataTransfer.setData("text/plain", text);
+    const event = new InputEvent("beforeinput", {
+      inputType: "insertFromPaste",
+      dataTransfer,
+      bubbles: true,
+      composed: true,
+      cancelable: true,
+    });
+    input.dispatchEvent(event);
+    return event;
+  }
+
   function simulateInput(input: HTMLInputElement, value: string) {
     input.value = value;
     input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
@@ -194,6 +208,65 @@ describe("use-date-input", () => {
       monthInput.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }));
       expect(monthInput.value).toBe("3");
       expect(dateInput.value).toBe("2026-03-14");
+    });
+
+    it("ignores typed characters that are not digits", async () => {
+      render(html`<use-date-input value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      const dayInput = getSegmentInput(dateInput, "day");
+
+      await userEvent.click(dayInput);
+      await userEvent.keyboard("{End}.5");
+
+      expect(dayInput.value).toBe("31");
+      expect(dateInput.value).toBe("2026-10-31");
+    });
+
+    it("fills every segment when an ISO date is pasted", async () => {
+      render(html`<use-date-input lang="ar-SA"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      let inputEvent: InputEvent | undefined;
+      dateInput.addEventListener("input", (event) => (inputEvent = event as InputEvent));
+
+      const event = paste(getSegmentInput(dateInput, "day"), "٢٠٢٦-١٠-١٤");
+      await dateInput.updateComplete;
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(dateInput.value).toBe("2026-10-14");
+      expect(getSegmentInput(dateInput, "year").value).toBe("٢٠٢٦");
+      expect(getSegmentInput(dateInput, "day").getAttribute("aria-valuenow")).toBe("14");
+      expect(inputEvent?.inputType).toBe("insertFromPaste");
+    });
+
+    it("takes the date from a pasted ISO date-time", async () => {
+      render(html`<use-date-input></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+
+      paste(getSegmentInput(dateInput, "year"), "2026-10-14T09:30:00Z");
+
+      expect(dateInput.value).toBe("2026-10-14");
+    });
+
+    it("cancels pasted text that is neither digits nor an ISO date", async () => {
+      render(html`<use-date-input value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+
+      const event = paste(getSegmentInput(dateInput, "year"), "2026-13-45");
+
+      expect(event.defaultPrevented).toBe(true);
+      expect(dateInput.value).toBe("2026-10-14");
+    });
+
+    it("lets pasted digits through", async () => {
+      render(html`<use-date-input></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+
+      expect(paste(getSegmentInput(dateInput, "year"), "2026").defaultPrevented).toBe(false);
     });
   });
 });

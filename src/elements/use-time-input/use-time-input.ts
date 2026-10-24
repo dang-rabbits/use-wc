@@ -340,6 +340,22 @@ export class UseTimeInput extends LocaleDigitsElement(LocalizedElement(UseLocale
     };
   }
 
+  #handleNumericSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    const match =
+      /^(?:\d{4}-\d{2}-\d{2}T)?((?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,3})?)?)(?:Z|[+-]\d{2}:?\d{2})?$/.exec(
+        text,
+      );
+    if (!match) {
+      return false;
+    }
+    this.value = match[1];
+    return true;
+  }
+
   #handleNumericSegmentKeydown(segment: TimeSegment) {
     return (event: KeyboardEvent) => {
       this.stepSegment(event, this.#getMinValue(segment), this.#getMaxValue(segment));
@@ -479,6 +495,7 @@ export class UseTimeInput extends LocaleDigitsElement(LocalizedElement(UseLocale
               part="segment-input segment-input-${part.type}"
               id="${this.#segmentId(part.type)}"
               form=${this.#formId}
+              @beforeinput=${this.#handleNumericSegmentBeforeInput}
               @input=${this.#handleSegmentInput(part.type)}
               @compositionend=${this.#handleSegmentInput(part.type)}
               @keydown=${this.#handleNumericSegmentKeydown(part.type)}

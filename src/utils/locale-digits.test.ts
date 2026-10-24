@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vite-plus/test";
-import { resolveLocaleDigits, toLatinDigits, toLocaleDigits } from "./locale-digits";
+import {
+  hasOnlyDigits,
+  normalizeDigits,
+  resolveLocaleDigits,
+  toLatinDigits,
+  toLocaleDigits,
+} from "./locale-digits";
 
 describe("locale digits", () => {
   const arabicDigits = resolveLocaleDigits("ar-EG");
@@ -40,5 +46,16 @@ describe("locale digits", () => {
   it("reads full-width digits as Latin digits", () => {
     expect(toLatinDigits(undefined, "１４")).toBe("14");
     expect(toLatinDigits(arabicDigits, "１٤")).toBe("14");
+  });
+
+  it("rewrites digits as Latin digits while keeping other characters", () => {
+    expect(normalizeDigits(arabicDigits, "٢٠٢٦-١٠-١٤")).toBe("2026-10-14");
+    expect(normalizeDigits(undefined, "１２:３０")).toBe("12:30");
+  });
+
+  it("checks whether text holds only digits", () => {
+    expect(hasOnlyDigits(arabicDigits, "١4１")).toBe(true);
+    expect(hasOnlyDigits(undefined, "1.5")).toBe(false);
+    expect(hasOnlyDigits(undefined, "٤")).toBe(false);
   });
 });

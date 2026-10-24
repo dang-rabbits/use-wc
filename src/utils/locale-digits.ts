@@ -56,3 +56,14 @@ export function toLatinDigits(digits: string[] | undefined, text: string) {
     .join("");
 }
 
+/** Rewrites the given digits and full-width digits as Latin digits, keeping any other characters. */
+export function normalizeDigits(digits: string[] | undefined, text: string) {
+  return Array.from(text)
+    .map((character) => latinDigit(digits, character) ?? character)
+    .join("");
+}
+
+/** Whether every character is one of the given digits, a full-width digit, or a Latin digit. */
+export function hasOnlyDigits(digits: string[] | undefined, text: string) {
+  return Array.from(text).every((character) => latinDigit(digits, character) !== undefined);
+}
