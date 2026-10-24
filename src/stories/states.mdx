@@ -4,13 +4,13 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 # States
 
-Elements can have various states and we strive to support these in every web component where applicable:
+Each state below maps to the CSS selector that use-wc components and theme styles match. A web component mirrors a native element's state with the same pseudo-class or ARIA attribute, so one selector styles both.
 
 <table>
   <thead>
     <tr>
       <th>State</th>
-      <th>CSS Equivilent</th>
+      <th>CSS selector</th>
       <th>Description</th>
     </tr>
   </thead>
@@ -51,7 +51,7 @@ Elements can have various states and we strive to support these in every web com
     <tr>
       <td>Selected</td>
       <td>
-        <code>:selected</code>
+        <code>:checked</code> / <code>[aria-selected="true"]</code>
       </td>
       <td>Element is selected</td>
     </tr>
@@ -65,7 +65,7 @@ Elements can have various states and we strive to support these in every web com
     <tr>
       <td>Readonly</td>
       <td>
-        <code>:readonly</code>
+        <code>:read-only</code>
       </td>
       <td>Element is read-only</td>
     </tr>
@@ -99,7 +99,9 @@ Elements can have various states and we strive to support these in every web com
     </tr>
     <tr>
       <td>Busy</td>
-      <td>n/a</td>
+      <td>
+        <code>[aria-busy="true"]</code>
+      </td>
       <td>Element is busy</td>
     </tr>
     <tr>

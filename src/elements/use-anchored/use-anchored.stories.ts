@@ -38,6 +38,74 @@ export const Theme: Story = {
           <code>use-menu</code>.
         </div>
       </use-anchored>
+      <button id="use-anchored-theme-form-trigger" popovertarget="use-anchored-theme-form">
+        Edit profile
+      </button>
+      <use-anchored target="use-anchored-theme-form-trigger">
+        <div
+          id="use-anchored-theme-form"
+          popover
+          role="dialog"
+          aria-label="Edit profile"
+          style="padding: 1rem;"
+        >
+          <form
+            style="display: flex; flex-direction: column; gap: 0.75rem; min-inline-size: 20rem;"
+          >
+            <use-field>
+              <label for="use-anchored-theme-name">Name</label>
+              <input type="text" id="use-anchored-theme-name" value="Sample Name" />
+            </use-field>
+            <use-field>
+              <label for="use-anchored-theme-email">Email</label>
+              <input type="email" id="use-anchored-theme-email" value="name@example.com" />
+            </use-field>
+            <div style="display: flex; gap: 0.5rem; justify-content: end;">
+              <button
+                type="button"
+                popovertarget="use-anchored-theme-form"
+                popovertargetaction="hide"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                class="primary"
+                popovertarget="use-anchored-theme-form"
+                popovertargetaction="hide"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </use-anchored>
+    </div>
+  `,
+};
+
+/**
+ * `target` can point at a different element from the one that opens the popover. Here the button opens it, but it tracks the field instead of whatever invoked it.
+ */
+export const SeparateAnchor: Story = {
+  render: () => html`
+    <div style="min-block-size: 10rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <input
+          id="use-anchored-separate-field"
+          type="text"
+          value="name@example.com"
+          aria-label="Email"
+        />
+        <button id="use-anchored-separate-trigger" popovertarget="use-anchored-separate-hint">
+          Explain
+        </button>
+      </div>
+      <use-anchored target="use-anchored-separate-field">
+        <div id="use-anchored-separate-hint" popover style="padding: 1rem; margin: 0;">
+          The button opens this popover, but <code>target</code> points at the field.
+        </div>
+      </use-anchored>
     </div>
   `,
 };

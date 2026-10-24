@@ -35,16 +35,48 @@ export const Theme: Story = {
   ...Default,
   parameters: { ...Default.parameters, allowTheme: true },
   render: () => html`
-    <use-menu aria-label="Menu">
-      <button role="menuitem">menu item 1</button>
-      <button role="menuitem" aria-selected="true">selected menu item</button>
-      <hr />
-      <button role="menuitemcheckbox" aria-checked="true" type="button">checked option</button>
-      <button role="menuitemcheckbox" aria-checked="false" type="button">unchecked option</button>
-      <hr />
-      <button role="menuitemradio" aria-checked="true" type="button">selected radio</button>
-      <button role="menuitemradio" aria-checked="false" type="button">unselected radio</button>
-    </use-menu>
+    <div style="display: flex; flex-direction: column; gap: 1rem; align-items: start;">
+      <use-menu aria-label="Menu">
+        <button role="menuitem">menu item 1</button>
+        <button role="menuitem" aria-selected="true">selected menu item</button>
+        <hr />
+        <button role="menuitemcheckbox" aria-checked="true" type="button">checked option</button>
+        <button role="menuitemcheckbox" aria-checked="false" type="button">unchecked option</button>
+        <hr />
+        <button role="menuitemradio" aria-checked="true" type="button">selected radio</button>
+        <button role="menuitemradio" aria-checked="false" type="button">unselected radio</button>
+      </use-menu>
+      <button id="use-menu-theme-trigger" popovertarget="use-menu-theme-popover">
+        <use-caret>Menu</use-caret>
+      </button>
+      <use-menu id="use-menu-theme-popover" aria-label="Menu">
+        <div role="group" aria-label="File">
+          <button role="menuitem">
+            Open&hellip;
+            <kbd>&#8984;O</kbd>
+          </button>
+          <button
+            id="use-menu-theme-submenu-trigger"
+            role="menuitem"
+            popovertarget="use-menu-theme-submenu"
+          >
+            <use-caret>Open recent</use-caret>
+          </button>
+          <use-menu id="use-menu-theme-submenu" aria-label="Open recent">
+            <a href="#" role="menuitem">Final draft.docx</a>
+            <a href="#" role="menuitem">Rough draft.docx</a>
+          </use-menu>
+          <button role="menuitem">Save</button>
+        </div>
+        <hr />
+        <div role="group" aria-label="Speed">
+          <button role="menuitemradio" aria-checked="true" type="button">Slow</button>
+          <button role="menuitemradio" type="button">Fast</button>
+        </div>
+        <hr />
+        <a href="#" role="menuitem">Documentation</a>
+      </use-menu>
+    </div>
   `,
 };
 

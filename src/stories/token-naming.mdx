@@ -1,0 +1,152 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design System/Token Naming" />
+
+# Token Naming
+
+Every design system token is a CSS custom property prefixed with `--usewc-`. Tokens come in two tiers:
+
+- **Atomic** tokens (`src/styles/tokens/atomic.css`) are the raw scales: `--usewc-color-gray-100`, `--usewc-space-8`, `--usewc-line-height-20`, `--usewc-icon-checkmark`.
+- **Semantic** tokens (`src/styles/tokens/semantic.css`) name what a value is for and point at atomic tokens: `--usewc-color-button-primary-background-static`, `--usewc-layout-input-padding-inline`.
+
+Theme styles only read semantic tokens, so a team can map its own core and alias tokens onto the semantic names without touching component CSS.
+
+## Anatomy
+
+A semantic token name is built from these segments, in order, skipping any that don't apply:
+
+```
+--usewc-{category}-{component}-{part}-{variant}-{property}-{modifier}-{state}
+```
+
+<table>
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Category</th>
+      <th>Component</th>
+      <th>Part</th>
+      <th>Variant</th>
+      <th>Property</th>
+      <th>Modifier</th>
+      <th>State</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <code>--usewc-color-button-primary-background-hover</code>
+      </td>
+      <td>color</td>
+      <td>button</td>
+      <td></td>
+      <td>primary</td>
+      <td>background</td>
+      <td></td>
+      <td>hover</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--usewc-color-input-segment-background-focus</code>
+      </td>
+      <td>color</td>
+      <td>input</td>
+      <td>segment</td>
+      <td></td>
+      <td>background</td>
+      <td></td>
+      <td>focus</td>
+    </tr>
+    <tr>
+      <td>
+        <code>--usewc-layout-input-padding-inline</code>
+      </td>
+      <td>layout</td>
+      <td>input</td>
+      <td></td>
+      <td></td>
+      <td>padding</td>
+      <td>inline</td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>
+        <code>--usewc-color-link-text-visited</code>
+      </td>
+      <td>color</td>
+      <td>link</td>
+      <td></td>
+      <td></td>
+      <td>text</td>
+      <td></td>
+      <td>visited</td>
+    </tr>
+  </tbody>
+</table>
+
+Use the [Token Name Builder](?path=/docs/design-system-tools-token-name-builder--docs) to assemble a name from these segments.
+
+### Categories
+
+- `color`
+- `font` — family, size, weight
+- `layout` — sizes, spacing and other geometry a component reads
+- `effect` — radii, shadows, outlines, masks
+- `transition`
+- `space` — the atomic step scale (`--usewc-space-8`, `--usewc-space-16`, …) that the semantic `layout` tokens are built from. Only atomic tokens use this category; a semantic token names what it spaces, so it belongs under `layout`.
+
+### Components
+
+The component segment names the element or pattern being styled, such as `document`, `surface`, `prose`, `form`, `input`, `select`, `selector` (checkboxes, radios and switches), `range`, `button`, `link`, `menu`, `popover`, `dropdown`, `grid`, `tree` or `sidebar`.
+
+### Parts
+
+A part names a piece inside the component, such as `trigger` (the popover indicator icon for an input), `segment` (a piece of an input's value), `indicator` (the selected-state mark), `icon`, `label`, `header`, `item`, `row`, `cell`, `track` or `thumb`.
+
+### Variants
+
+- Intent: `base`, `primary`, `danger`, `auxiliary`
+- Scale: `compact`, `small`, `medium`, `large`
+
+### Properties and modifiers
+
+Properties are `background`, `border`, `text`, `padding`, `gap`, `size`, `line-height`, `radius`, `outline` and `shadow`. Modifiers narrow a property to a side or direction: `inline`, `inline-start`, `inline-end`, `block`, `block-start`, `block-end`, `inset` and `outset`.
+
+### States
+
+`static`, `hover`, `focus`, `active`, `pressed`, `checked`, `selected`, `visited`, `disabled`, `readonly`, `placeholder` and `invalid`.
+
+## Derivation knobs
+
+Some components (currently `button`) compute their hover, active and border colors from a single fill with `oklch(from …)` instead of naming every state explicitly. The knobs behind that derivation follow the same `--usewc-effect-<component>-<variant>-<name>` shape as any other effect token:
+
+- `shift` — which direction interaction moves lightness (`-1` darkens, `1` lightens; dark-mode surfaces flip this)
+- `hover-step` / `active-step` — how far hover and active move the fill's lightness
+- `border-direction` — which direction the border sits relative to its own face (`-1` darker, `1` lighter)
+- `border-step` / `border-step-hover` — how far the border moves from the face
+
+A component that derives its states this way still keeps a plain, overridable token for every state name (for example `--usewc-color-button-base-background-hover`). The knobs only describe how that value's default is computed.
+
+## Local slots
+
+Inside a theme rule, a component reads its semantic tokens into `--usewc-local-*` slots. Only one rule assigns real properties from those slots, and each state rule only remaps the slots:
+
+```css
+button {
+  --usewc-local-button-background-static: var(--usewc-color-button-base-background-static);
+  --usewc-local-button-background-hover: var(--usewc-color-button-base-background-hover);
+  --usewc-local-button-background: var(--usewc-local-button-background-static);
+
+  background: var(--usewc-local-button-background);
+
+  &:hover {
+    --usewc-local-button-background: var(--usewc-local-button-background-hover);
+  }
+}
+```
+
+Because state rules never set `background` directly, `use-theme-escape` only has to revert the one rule that assigns properties, and every state is reverted along with it. `--usewc-local-*` properties are internal to a theme file and aren't tokens; override the semantic token instead.
+
+## Inspiration
+
+- [Naming Tokens in Design Systems](https://medium.com/eightshapes-llc/naming-tokens-in-design-systems-9e86c7444676)
