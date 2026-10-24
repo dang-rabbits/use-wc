@@ -6,6 +6,7 @@ import "../use-date-input/use-date-input";
 import "../use-time-input/use-time-input";
 import { UseDateInput } from "../use-date-input/use-date-input";
 import { UseTimeInput } from "../use-time-input/use-time-input";
+import { normalizeDigits, resolveLocaleDigits } from "../../utils/locale-digits";
 
 /**
  * Displays a date and time picker by combining `use-date` and `use-time`.
@@ -34,6 +35,7 @@ export class UseDatetimeInput extends UseLocaleElement {
     if (this.hasAttribute("disabled")) {
       this.#internals.states.add("disabled");
     }
+    this.addEventListener("beforeinput", this.#handleBeforeInput, { capture: true });
   }
 
   get id() {
@@ -91,7 +93,7 @@ export class UseDatetimeInput extends UseLocaleElement {
   }
 
   #initializeValue(val: string) {
-    const [datePart, timePart] = this.value.replace("Z", "").split("T");
+    const [datePart, timePart] = val.replace("Z", "").split("T");
     this.#dateValue = datePart ?? "";
     this.#timeValue = timePart ?? "";
     this.#internalValue = val;
@@ -121,6 +123,32 @@ export class UseDatetimeInput extends UseLocaleElement {
 
     this.#internals.setFormValue(this.#internalValue);
   }
+
+  #handleBeforeInput = (event: InputEvent) => {
+    if (event.isComposing) {
+      return;
+    }
+    const text = event.data ?? event.dataTransfer?.getData("text/plain") ?? "";
+    const match = /^(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?)/.exec(
+      normalizeDigits(resolveLocaleDigits(this.locale), text.trim()),
+    );
+    if (!match || !this.dateElement || !this.timeElement) {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    this.dateElement.value = match[1];
+    this.timeElement.value = match[2];
+    this.#updateInternalValue();
+    this.dispatchEvent(
+      new InputEvent("input", {
+        bubbles: true,
+        composed: true,
+        inputType: "insertFromPaste",
+        data: text,
+      }),
+    );
+  };
 
   #handleInput(event: Event) {
     // Stop propagation of inner input events so we don't spam

@@ -182,6 +182,8 @@ const preview: Preview = {
           { value: "es", title: "Español" },
           { value: "ja", title: "日本語" },
           { value: "ar", title: "العربية" },
+          { value: "ar-EG", title: "العربية (مصر)" },
+          { value: "fa-IR", title: "فارسی (ایران)" },
           { value: "zh-Hans", title: "简体中文" },
         ],
       },
@@ -244,10 +246,8 @@ const preview: Preview = {
   },
   decorators: [
     (story, context) => {
-      if (textDirection(context.globals.locale) !== "rtl") {
-        return story();
-      }
-      return html`<div dir="rtl" style="display: contents">${story()}</div>`;
+      const direction = textDirection(context.globals.locale);
+      return html`<div dir=${direction} style="display: contents">${story()}</div>`;
     },
     (story, context) => {
       // theme.css is loaded globally for every story. Component stories stay

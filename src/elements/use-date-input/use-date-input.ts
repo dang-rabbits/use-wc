@@ -1,10 +1,11 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-date-input.strings.json";
 import { dateTimeFormat } from "../../utils/intl-formatters";
+import { LocaleDigitsElement } from "../../utils/locale-digits-element";
 
 type DateSegment = "year" | "month" | "day";
 
@@ -17,7 +18,7 @@ type DateSegment = "year" | "month" | "day";
  * `strings` property or the localization add-on.
  */
 @customElement("use-date-input")
-export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
+export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocaleElement, strings)) {
   protected intlStrings() {
     return getDateTimeAriaLabels(this.locale, { plural: false });
   }
@@ -55,6 +56,9 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
         this.#valueData = { year: "", month: "", day: "" };
       } else {
         const date = new Date(value.concat("T00:00:00"));
+        if (isNaN(date.getTime())) {
+          throw new RangeError(`Invalid date: ${value}`);
+        }
         this.#valueData = {
           year: date.getFullYear().toString(),
           month: (date.getMonth() + 1).toString(),
@@ -92,9 +96,9 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
   #valueData: Record<DateSegment, string> = { year: "", month: "", day: "" };
 
   #updateInputValues() {
-    if (this.yearInput) this.yearInput.value = this.#valueData.year;
-    if (this.monthInput) this.monthInput.value = this.#valueData.month;
-    if (this.dayInput) this.dayInput.value = this.#valueData.day;
+    if (this.yearInput) this.yearInput.value = this.toLocaleDigits(this.#valueData.year);
+    if (this.monthInput) this.monthInput.value = this.toLocaleDigits(this.#valueData.month);
+    if (this.dayInput) this.dayInput.value = this.toLocaleDigits(this.#valueData.day);
   }
 
   #updateInternalValue() {
@@ -107,22 +111,53 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
     this.#internals.setFormValue(this.#internalValue);
   }
 
-  #segmentMaximum: Record<DateSegment, number | null> = {
-    year: null,
+  #segmentMinimum: Record<DateSegment, number> = {
+    year: 0,
+    month: 1,
+    day: 1,
+  };
+
+  #segmentMaximum: Record<DateSegment, number | undefined> = {
+    year: undefined,
     month: 12,
     day: 31,
   };
 
   #handleSegmentInput(segment: DateSegment) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
       const maximum = this.#segmentMaximum[segment];
-      const numericValue = parseInt(target.value, 10);
-      if (maximum !== null && !isNaN(numericValue) && numericValue > maximum) {
-        target.value = String(maximum);
+      let value = this.toLatinDigits(target.value);
+      const numericValue = parseInt(value, 10);
+      if (maximum !== undefined && !isNaN(numericValue) && numericValue > maximum) {
+        value = String(maximum);
       }
-      this.#valueData[segment] = target.value;
+      target.value = this.toLocaleDigits(value);
+      this.#valueData[segment] = value;
       this.#updateInternalValue();
+      this.requestUpdate();
+    };
+  }
+
+  #handleSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    const match = /^(\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01]))(?:T.*)?$/.exec(text);
+    if (!match) {
+      return false;
+    }
+    this.value = match[1];
+    return true;
+  }
+
+  #handleSegmentKeydown(segment: DateSegment) {
+    return (event: KeyboardEvent) => {
+      this.stepSegment(event, this.#segmentMinimum[segment], this.#segmentMaximum[segment]);
     };
   }
 
@@ -175,26 +210,34 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
   set value(value: string) {
     this.#initializeValue(value);
     this.#updateInputValues();
+    this.requestUpdate();
   }
 
   render() {
     return html`
       ${this.#formatParts.map((part) => {
         if (["year", "month", "day"].includes(part.type)) {
+          const segment = part.type as DateSegment;
           return html`
             <input
-              type="number"
-              .value=${this.#valueData[part.type as DateSegment]}
+              type="text"
+              inputmode="numeric"
+              role="spinbutton"
+              .value=${this.toLocaleDigits(this.#valueData[segment])}
               ?disabled=${this.disabled}
               ?readonly=${this.readOnly}
-              aria-label=${this.string(part.type as keyof typeof strings)}
-              min=${part.type === "year" ? "0" : "1"}
-              max=${part.type === "month" ? "12" : part.type === "day" ? "31" : undefined}
-              part="segment-input segment-input-${part.type}"
-              id="${this.#segmentId(part.type)}"
+              aria-label=${this.string(segment)}
+              aria-valuemin=${this.#segmentMinimum[segment]}
+              aria-valuemax=${this.#segmentMaximum[segment] ?? nothing}
+              aria-valuenow=${this.segmentNumber(this.#valueData[segment]) ?? nothing}
+              part="segment-input segment-input-${segment}"
+              id="${this.#segmentId(segment)}"
               form=${this.#formId}
-              size=${part.type === "year" ? 4 : 2}
-              @input=${this.#handleSegmentInput(part.type as DateSegment)}
+              size=${segment === "year" ? 4 : 2}
+              @beforeinput=${this.#handleSegmentBeforeInput}
+              @input=${this.#handleSegmentInput(segment)}
+              @compositionend=${this.#handleSegmentInput(segment)}
+              @keydown=${this.#handleSegmentKeydown(segment)}
             />
           `;
         } else if (part.type === "literal") {
@@ -214,19 +257,12 @@ export class UseDateInput extends LocalizedElement(UseLocaleElement, strings) {
       gap: 0.5ch;
 
       input {
-        -moz-appearance: textfield;
         font-variant-numeric: tabular-nums;
         field-sizing: content;
         text-align: end;
         min-width: 2ch;
         width: fit-content;
       }
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
   `;
 }

@@ -224,4 +224,15 @@ describe("use-week-picker", () => {
     expect(icons).toHaveLength(2);
     icons.forEach((icon) => expect(getComputedStyle(icon).scale).toBe("-1 1"));
   });
+
+  it("shows days in the locale's numbering system and keeps a Latin ISO week value", async () => {
+    render(html`<use-week-picker lang="ar-EG" year="2026" month="3"></use-week-picker>`);
+    const picker = getPicker();
+    await picker.updateComplete;
+    expect(getCell(picker, "2026-03-05").textContent!.trim()).toBe("٥");
+
+    getCell(picker, "2026-03-05").click();
+    await picker.updateComplete;
+    expect(picker.value).toBe("2026-W10");
+  });
 });

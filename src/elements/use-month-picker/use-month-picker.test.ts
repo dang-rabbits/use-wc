@@ -556,4 +556,13 @@ describe("use-month-picker", () => {
       expect(picker.year).toBe(2025);
     });
   });
+
+  describe("locale digits", () => {
+    it("shows the year in the locale's numbering system", async () => {
+      render(html`<use-month-picker lang="ar-EG" year="2026"></use-month-picker>`);
+      const picker = getMonthPicker();
+      await picker.updateComplete;
+      expect(picker.shadowRoot!.querySelector('[part="title"]')!.textContent).toBe("٢٠٢٦");
+    });
+  });
 });

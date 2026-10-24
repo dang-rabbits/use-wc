@@ -1,10 +1,11 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-time-input.strings.json";
 import { dateTimeFormat } from "../../utils/intl-formatters";
+import { LocaleDigitsElement } from "../../utils/locale-digits-element";
 
 type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPeriod" | "literal";
 
@@ -17,7 +18,7 @@ type TimeSegment = "hour" | "minute" | "second" | "fractionalSecond" | "dayPerio
  * `strings` property or the localization add-on.
  */
 @customElement("use-time-input")
-export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
+export class UseTimeInput extends LocaleDigitsElement(LocalizedElement(UseLocaleElement, strings)) {
   protected intlStrings() {
     return getDateTimeAriaLabels(this.locale, { plural: true });
   }
@@ -167,6 +168,7 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
   set value(value: string) {
     this.#initializeValue(value);
     this.#updateInputValues();
+    this.requestUpdate();
   }
   #valueData: Partial<Record<TimeSegment, string | undefined>> = {
     hour: undefined,
@@ -176,31 +178,27 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
     dayPeriod: undefined,
   };
 
+  #segmentText(segment: TimeSegment) {
+    const length =
+      segment === "fractionalSecond" ? 3 : segment === "hour" && this.hourFormat === "12" ? 1 : 2;
+    return this.toLocaleDigits(this.#valueData[segment]?.padStart(length, "0"));
+  }
+
   #updateInputValues() {
     if (this.hourInput) {
-      if (this.hourFormat === "12") {
-        this.hourInput.value = this.#valueData.hour ? this.#valueData.hour : "";
-      } else {
-        this.hourInput.value = this.#valueData.hour ? this.#valueData.hour.padStart(2, "0") : "";
-      }
+      this.hourInput.value = this.#segmentText("hour");
     }
 
     if (this.minuteInput) {
-      this.minuteInput.value = this.#valueData.minute
-        ? this.#valueData.minute.padStart(2, "0")
-        : "";
+      this.minuteInput.value = this.#segmentText("minute");
     }
 
     if (this.secondInput) {
-      this.secondInput.value = this.#valueData.second
-        ? this.#valueData.second.padStart(2, "0")
-        : "";
+      this.secondInput.value = this.#segmentText("second");
     }
 
     if (this.fractionalSecondInput) {
-      this.fractionalSecondInput.value = this.#valueData.fractionalSecond
-        ? this.#valueData.fractionalSecond.padStart(3, "0")
-        : "";
+      this.fractionalSecondInput.value = this.#segmentText("fractionalSecond");
     }
 
     if (this.dayPeriodInput) {
@@ -292,15 +290,23 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
 
   #handleSegmentInput(segment: TimeSegment) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
 
-      if (target.value === "") {
+      const isEmpty =
+        segment === "dayPeriod" ? target.value === "" : this.toLatinDigits(target.value) === "";
+
+      if (isEmpty) {
+        target.value = "";
         this.#valueData[segment] = undefined;
         this.#updateInternalValue();
+        this.requestUpdate();
         return;
       }
 
-      const value = isNaN(target.valueAsNumber) ? 0 : target.valueAsNumber;
+      const value = this.segmentNumber(target.value) ?? 0;
 
       // Validate ranges
       if (segment === "hour") {
@@ -308,17 +314,18 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
         const min = use12Hour ? 1 : 0;
         const max = use12Hour ? 12 : 23;
         this.#valueData.hour = Math.max(min, Math.min(max, value)).toString();
-        target.value =
-          this.hourFormat === "12" ? this.#valueData.hour : this.#valueData.hour.padStart(2, "0");
+        target.value = this.toLocaleDigits(
+          this.hourFormat === "12" ? this.#valueData.hour : this.#valueData.hour.padStart(2, "0"),
+        );
       } else if (segment === "minute") {
         this.#valueData.minute = Math.max(0, Math.min(59, value)).toString();
-        target.value = this.#valueData.minute.padStart(2, "0");
+        target.value = this.toLocaleDigits(this.#valueData.minute.padStart(2, "0"));
       } else if (segment === "second") {
         this.#valueData.second = Math.max(0, Math.min(59, value)).toString();
-        target.value = this.#valueData.second.padStart(2, "0");
+        target.value = this.toLocaleDigits(this.#valueData.second.padStart(2, "0"));
       } else if (segment === "fractionalSecond") {
         this.#valueData.fractionalSecond = Math.max(0, Math.min(999, value)).toString();
-        target.value = this.#valueData.fractionalSecond.padStart(3, "0");
+        target.value = this.toLocaleDigits(this.#valueData.fractionalSecond.padStart(3, "0"));
       } else if (segment === "dayPeriod") {
         event.preventDefault();
         const validValue = this.#computeValidAmPmValue(event);
@@ -329,6 +336,29 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
       }
 
       this.#updateInternalValue();
+      this.requestUpdate();
+    };
+  }
+
+  #handleNumericSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    const match =
+      /^(?:\d{4}-\d{2}-\d{2}T)?((?:[01]\d|2[0-3]):[0-5]\d(?::[0-5]\d(?:\.\d{1,3})?)?)(?:Z|[+-]\d{2}:?\d{2})?$/.exec(
+        text,
+      );
+    if (!match) {
+      return false;
+    }
+    this.value = match[1];
+    return true;
+  }
+
+  #handleNumericSegmentKeydown(segment: TimeSegment) {
+    return (event: KeyboardEvent) => {
+      this.stepSegment(event, this.#getMinValue(segment), this.#getMaxValue(segment));
     };
   }
 
@@ -411,6 +441,10 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
     this.#internals.setFormValue(this.#internalValue);
   }
 
+  #getMinValue(type: TimeSegment) {
+    return type === "hour" && this.hourFormat === "12" && this.dayPeriod ? 1 : 0;
+  }
+
   #getMaxValue(type: TimeSegment) {
     if (type === "hour") {
       return this.#maxHours;
@@ -430,26 +464,42 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
         ? html`<span part="segment-literal segment-literal-${part.type}" aria-hidden="true"
             >${part.value}</span
           >`
-        : html`<input
-            type=${part.type === "dayPeriod" ? "text" : "number"}
-            value=${
-              part.type === "dayPeriod"
-                ? this.#valueData.dayPeriod
+        : part.type === "dayPeriod"
+          ? html`<input
+              type="text"
+              value=${
+                this.#valueData.dayPeriod
                   ? this.string(this.#valueData.dayPeriod as "am" | "pm")
                   : ""
-                : this.#valueData[part.type]
-            }
-            ?disabled=${this.disabled}
-            ?readonly=${this.readOnly}
-            aria-label=${this.string(part.type === "fractionalSecond" ? "millisecond" : part.type)}
-            min="0"
-            max=${this.#getMaxValue(part.type)}
-            part="segment-input segment-input-${part.type}"
-            id="${this.#segmentId(part.type)}"
-            form=${this.#formId}
-            @input=${this.#handleSegmentInput(part.type)}
-            @keydown=${part.type === "dayPeriod" ? this.#handleSegmentKeydown : undefined}
-          />`;
+              }
+              ?disabled=${this.disabled}
+              ?readonly=${this.readOnly}
+              aria-label=${this.string(part.type)}
+              part="segment-input segment-input-${part.type}"
+              id="${this.#segmentId(part.type)}"
+              form=${this.#formId}
+              @input=${this.#handleSegmentInput(part.type)}
+              @keydown=${this.#handleSegmentKeydown}
+            />`
+          : html`<input
+              type="text"
+              inputmode="numeric"
+              role="spinbutton"
+              .value=${this.#segmentText(part.type)}
+              ?disabled=${this.disabled}
+              ?readonly=${this.readOnly}
+              aria-label=${this.string(part.type === "fractionalSecond" ? "millisecond" : part.type)}
+              aria-valuemin=${this.#getMinValue(part.type)}
+              aria-valuemax=${this.#getMaxValue(part.type) ?? nothing}
+              aria-valuenow=${this.segmentNumber(this.#valueData[part.type]) ?? nothing}
+              part="segment-input segment-input-${part.type}"
+              id="${this.#segmentId(part.type)}"
+              form=${this.#formId}
+              @beforeinput=${this.#handleNumericSegmentBeforeInput}
+              @input=${this.#handleSegmentInput(part.type)}
+              @compositionend=${this.#handleSegmentInput(part.type)}
+              @keydown=${this.#handleNumericSegmentKeydown(part.type)}
+            />`;
     });
   }
 
@@ -460,7 +510,6 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
       gap: 0.5ch;
 
       input {
-        -moz-appearance: textfield;
         font-variant-numeric: tabular-nums;
         field-sizing: content;
         text-align: end;
@@ -470,12 +519,6 @@ export class UseTimeInput extends LocalizedElement(UseLocaleElement, strings) {
       input::part(segment-input-fractionalSecond) {
         min-width: 3ch;
       }
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
   `;
 }

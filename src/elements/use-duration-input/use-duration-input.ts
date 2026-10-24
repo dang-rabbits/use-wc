@@ -1,4 +1,4 @@
-import { LitElement, css, html } from "lit";
+import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { LocalizedElement, UseLocaleElement } from "../use-locale-element/use-locale-element";
 import createId from "../../utils/create-id";
@@ -6,6 +6,7 @@ import * as duration from "duration-fns";
 import getDateTimeAriaLabels from "../../utils/date-time-aria-labels";
 import strings from "./use-duration-input.strings.json";
 import { durationFormat, type DurationFormatPart } from "../../utils/intl-formatters";
+import { LocaleDigitsElement } from "../../utils/locale-digits-element";
 
 const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
   year: "years",
@@ -29,7 +30,9 @@ const ISO_DURATION_SEGMENTS: Record<string, keyof duration.Duration> = {
  * <baseline-status featureId="intl-duration-format"></baseline-status>
  */
 @customElement("use-duration-input")
-export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings) {
+export class UseDurationInput extends LocaleDigitsElement(
+  LocalizedElement(UseLocaleElement, strings),
+) {
   protected intlStrings() {
     return getDateTimeAriaLabels(this.locale, { plural: true });
   }
@@ -135,6 +138,7 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
   set value(value: string) {
     this.#initializeValue(value);
     this.#updateInputValues();
+    this.requestUpdate();
   }
   #valueData: Partial<duration.Duration> = {};
 
@@ -183,45 +187,67 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
 
   #handleSegmentInput(segment: keyof duration.Duration) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
-      this.#valueData[ISO_DURATION_SEGMENTS[segment]] = isNaN(target.valueAsNumber)
-        ? 0
-        : target.valueAsNumber;
+      this.#valueData[ISO_DURATION_SEGMENTS[segment]] = this.segmentNumber(target.value) ?? 0;
       this.value = duration.toString(this.#valueData);
     };
   }
 
+  #handleSegmentBeforeInput(event: InputEvent) {
+    this.filterSegmentInput(event, (text) => this.#applyPastedValue(text));
+  }
+
+  #applyPastedValue(text: string) {
+    if (!text.startsWith("P")) {
+      return false;
+    }
+    try {
+      duration.parse(text);
+    } catch {
+      return false;
+    }
+    this.value = text;
+    return true;
+  }
+
+  #handleSegmentKeydown(event: KeyboardEvent) {
+    this.stepSegment(event, 0);
+  }
+
   #updateInputValues() {
     if (this.yearInput) {
-      this.yearInput.value = String(this.#valueData.years ?? 0);
+      this.yearInput.value = this.toLocaleDigits(this.#valueData.years ?? 0);
     }
 
     if (this.monthInput) {
-      this.monthInput.value = String(this.#valueData.months ?? 0);
+      this.monthInput.value = this.toLocaleDigits(this.#valueData.months ?? 0);
     }
 
     if (this.weekInput) {
-      this.weekInput.value = String(this.#valueData.weeks ?? 0);
+      this.weekInput.value = this.toLocaleDigits(this.#valueData.weeks ?? 0);
     }
 
     if (this.dayInput) {
-      this.dayInput.value = String(this.#valueData.days ?? 0);
+      this.dayInput.value = this.toLocaleDigits(this.#valueData.days ?? 0);
     }
 
     if (this.hourInput) {
-      this.hourInput.value = String(this.#valueData.hours ?? 0);
+      this.hourInput.value = this.toLocaleDigits(this.#valueData.hours ?? 0);
     }
 
     if (this.minuteInput) {
-      this.minuteInput.value = String(this.#valueData.minutes ?? 0);
+      this.minuteInput.value = this.toLocaleDigits(this.#valueData.minutes ?? 0);
     }
 
     if (this.secondInput) {
-      this.secondInput.value = String(this.#valueData.seconds ?? 0);
+      this.secondInput.value = this.toLocaleDigits(this.#valueData.seconds ?? 0);
     }
 
     if (this.millisecondInput) {
-      this.millisecondInput.value = String(this.#valueData.milliseconds ?? 0);
+      this.millisecondInput.value = this.toLocaleDigits(this.#valueData.milliseconds ?? 0);
     }
   }
 
@@ -237,8 +263,12 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
             if (["integer", "fraction"].includes(part.type)) {
               return html`
                 <input
-                  type="number"
-                  .value=${this.#valueData[ISO_DURATION_SEGMENTS[unit as keyof duration.Duration]]}
+                  type="text"
+                  inputmode="numeric"
+                  role="spinbutton"
+                  .value=${this.toLocaleDigits(
+                    this.#valueData[ISO_DURATION_SEGMENTS[unit as keyof duration.Duration]],
+                  )}
                   ?disabled=${this.disabled}
                   ?readonly=${this.readOnly}
                   aria-label=${
@@ -246,11 +276,18 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
                       ? this.string("millisecond")
                       : this.#unitLabel(unit)
                   }
-                  min="0"
+                  aria-valuemin="0"
+                  aria-valuenow=${
+                    this.#valueData[ISO_DURATION_SEGMENTS[unit as keyof duration.Duration]] ??
+                    nothing
+                  }
                   part="segment-input segment-input-${unit}"
                   id="${this.#segmentId(unit)}"
                   form=${this.#formId}
+                  @beforeinput=${this.#handleSegmentBeforeInput}
                   @input=${this.#handleSegmentInput(unit as keyof duration.Duration)}
+                  @compositionend=${this.#handleSegmentInput(unit as keyof duration.Duration)}
+                  @keydown=${this.#handleSegmentKeydown}
                 />
               `;
             }
@@ -277,7 +314,6 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
   static styles = css`
     :host {
       input {
-        -moz-appearance: textfield;
         font-variant-numeric: tabular-nums;
         field-sizing: content;
         text-align: end;
@@ -289,12 +325,6 @@ export class UseDurationInput extends LocalizedElement(UseLocaleElement, strings
       display: inline-flex;
       align-items: center;
       gap: 0.5ch;
-    }
-
-    input::-webkit-outer-spin-button,
-    input::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
     }
   `;
 }
