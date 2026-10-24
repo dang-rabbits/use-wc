@@ -53,6 +53,22 @@ describe("select", () => {
     }
   });
 
+  it("draws the chevron at the inline end in both directions", async () => {
+    render(html`
+      <select id="left-to-right">
+        <option>One</option>
+      </select>
+      <div dir="rtl">
+        <select id="right-to-left">
+          <option>One</option>
+        </select>
+      </div>
+    `);
+
+    expect(style("left-to-right").backgroundPositionX).toBe("calc(100% - 7px)");
+    expect(style("right-to-left").backgroundPositionX).toBe("7px");
+  });
+
   it("restores the browser's appearance inside use-theme-escape", async () => {
     render(html`
       <use-theme-escape>
