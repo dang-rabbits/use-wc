@@ -186,7 +186,6 @@ export const CustomStyles: Story = {
 
       .custom-time::part(segment-input) {
         all: unset;
-        appearance: none;
         field-sizing: content;
         border-radius: 0.125rem;
         padding: 0 0.125rem;

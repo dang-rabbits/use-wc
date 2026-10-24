@@ -16,8 +16,6 @@
     &::part(segment-input) {
       all: unset;
       box-sizing: content-box;
-      appearance: none;
-      -moz-appearance: textfield;
       field-sizing: content;
       outline: none;
       border-radius: var(--usewc-effect-input-border-radius);
