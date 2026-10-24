@@ -2,12 +2,13 @@ import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 import { customElement } from "lit/decorators.js";
 import { UseDatePicker } from "./use-date-picker";
+import type { UseCalendarDayData } from "../use-calendar-base/use-calendar-base";
 
 @customElement("demo-date-picker-render-day")
 class DemoDatePickerRenderDay extends UseDatePicker {
-  renderDay(data: { day: number; date: string }, h: typeof html) {
+  renderDay(data: UseCalendarDayData, h: typeof html) {
     const isWeekend = new Date(`${data.date}T00:00:00`).getDay() % 6 === 0;
-    return isWeekend ? h`<strong>${data.day}</strong>` : super.renderDay(data, h);
+    return isWeekend ? h`<strong>${data.localizedDay}</strong>` : super.renderDay(data, h);
   }
 }
 
@@ -152,9 +153,9 @@ export const StartAndEndDates: StoryObj<UseDatePicker> = {
 };
 
 /**
- * The `renderDay` property accepts a function `({ day, date }, html) => TemplateResult | string`
+ * The `renderDay` property accepts a function `({ day, localizedDay, date }, html) => TemplateResult | string`
  * that replaces the default day number inside every cell, including leading and trailing
- * cells from the adjacent month. Use it to add badges, links, or any inline markup per day.
+ * cells from the adjacent month. `localizedDay` is the day in the locale's numbering system. Use it to add badges, links, or any inline markup per day.
  */
 export const CustomRenderer: StoryObj<UseDatePicker> = {
   render: () => {
@@ -166,8 +167,8 @@ export const CustomRenderer: StoryObj<UseDatePicker> = {
       <use-date-picker
         year="2026"
         month="3"
-        .renderDay=${({ day, date }: { day: number; date: string }, h: typeof html) =>
-          holidays[date] ? h`${day}<span>&nbsp;${holidays[date]}</span>` : String(day)}
+        .renderDay=${({ localizedDay, date }: UseCalendarDayData, h: typeof html) =>
+          holidays[date] ? h`${localizedDay}<span>&nbsp;${holidays[date]}</span>` : localizedDay}
       ></use-date-picker>
     `;
   },

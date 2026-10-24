@@ -9,6 +9,7 @@ import { InlineDirectionElement } from "../../utils/inline-direction-element";
 import { keyed } from "lit/directives/keyed.js";
 
 import { dateTimeFormat } from "../../utils/intl-formatters";
+import { LocaleDigitsElement } from "../../utils/locale-digits-element";
 import strings from "./use-calendar.strings.json";
 
 import "../use-calendarday/use-calendarday";
@@ -17,13 +18,21 @@ const INITIAL_TABINDEX_ATTR = "data-usewc-calendar-tabindex";
 
 type LitHtml = typeof html;
 
+/** The day cell passed to {@link UseCalendarRenderDay}. */
+export type UseCalendarDayData = {
+  day: number;
+  localizedDay: string;
+  date: string;
+};
+
 /**
  * Renders the content of a single day cell. Called for every cell in the
  * grid, including leading and trailing filler cells from the previous and
  * next month, so `date` may fall outside the displayed month.
  *
- * `day` is the numeric day of month (not zero-padded); `date` is the ISO
- * `YYYY-MM-DD` string for that cell. The `html` argument is Lit's tag
+ * `day` is the numeric day of month (not zero-padded); `localizedDay` is that
+ * day written in the locale's numbering system (e.g. `١٤` for `ar-EG`); `date`
+ * is the ISO `YYYY-MM-DD` string for that cell. The `html` argument is Lit's tag
  * function, passed in so consumers do not need to import `lit` themselves —
  * use it to return markup, since a plain returned string is escaped.
  *
@@ -37,7 +46,7 @@ type LitHtml = typeof html;
  * generated docs or Storybook.
  */
 export type UseCalendarRenderDay = (
-  data: { day: number; date: string },
+  data: UseCalendarDayData,
   html: LitHtml,
 ) => TemplateResult | string;
 
@@ -82,7 +91,7 @@ export type UseCalendarRenderDay = (
  * @csspart picker-month-current - Applied to the currently selected month button
  */
 export class UseCalendarBase extends InlineDirectionElement(
-  LocalizedElement(UseLocaleElement, strings),
+  LocaleDigitsElement(LocalizedElement(UseLocaleElement, strings)),
 ) {
   static localeRoot = "use-calendar";
 
@@ -427,7 +436,8 @@ export class UseCalendarBase extends InlineDirectionElement(
   }
 
   /**
-   * See {@link UseCalendarRenderDay}. Assigning a new function on an
+   * See {@link UseCalendarRenderDay}. The default renders `localizedDay`, the
+   * day in the locale's numbering system, e.g. `١٤` for `ar-EG`. Assigning a new function on an
    * instance (e.g. via `.renderDay=${fn}` in a Lit template) after first
    * render does not schedule a re-render on its own — call `requestUpdate()`
    * if needed.
@@ -436,8 +446,8 @@ export class UseCalendarBase extends InlineDirectionElement(
    * overrides can call `super.renderDay(data, html)` to fall back to the
    * default (or a parent override's) rendering.
    */
-  renderDay(data: { day: number; date: string }, _html: LitHtml): TemplateResult | string {
-    return String(data.day);
+  renderDay(data: UseCalendarDayData, _html: LitHtml): TemplateResult | string {
+    return data.localizedDay;
   }
 
   get #todayDate() {
@@ -454,6 +464,7 @@ export class UseCalendarBase extends InlineDirectionElement(
   ) {
     const date = this.#formatDate(year, month, day);
     const disabled = this.#dateDisabled(date);
+    const localizedDay = this.toLocaleDigits(day);
 
     return html`
       <div
@@ -478,7 +489,7 @@ export class UseCalendarBase extends InlineDirectionElement(
         aria-rowindex="${rowIndex}"
         aria-colindex="${columnIndex}"
       >
-        <slot name="date-${date}">${this.renderDay({ day, date }, html)}</slot>
+        <slot name="date-${date}">${this.renderDay({ day, localizedDay, date }, html)}</slot>
       </div>
     `;
   }

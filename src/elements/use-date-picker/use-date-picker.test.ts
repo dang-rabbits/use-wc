@@ -479,4 +479,34 @@ describe("use-date-picker", () => {
       expect(picker.shadowRoot!.activeElement).toBe(buttons[currentIndex + 1]);
     });
   });
+
+  describe("locale digits", () => {
+    it("shows days and the year in the locale's numbering system and keeps a Latin value", async () => {
+      render(html`<use-date-picker lang="ar-EG" year="2026" month="3"></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      expect(getCell(picker, "2026-03-14").textContent!.trim()).toBe("١٤");
+      expect(picker.shadowRoot!.querySelector('[part="title-year"]')!.textContent).toBe("٢٠٢٦");
+
+      getCell(picker, "2026-03-14").click();
+      await picker.updateComplete;
+      expect(picker.value).toBe("2026-03-14");
+    });
+
+    it("passes the localized day to custom renderDay callbacks", async () => {
+      render(html`<use-date-picker lang="ar-EG" year="2026" month="3"></use-date-picker>`);
+      const picker = getPicker();
+      await picker.updateComplete;
+      const calls: Array<{ day: number; localizedDay: string; date: string }> = [];
+      picker.renderDay = (data) => {
+        calls.push(data);
+        return `[${data.localizedDay}]`;
+      };
+      picker.requestUpdate();
+      await picker.updateComplete;
+
+      expect(calls).toContainEqual({ day: 14, localizedDay: "١٤", date: "2026-03-14" });
+      expect(getCell(picker, "2026-03-14").textContent!.trim()).toBe("[١٤]");
+    });
+  });
 });

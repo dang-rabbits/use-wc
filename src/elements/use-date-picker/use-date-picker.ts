@@ -6,17 +6,17 @@ import { UseCalendarBase } from "../use-calendar-base/use-calendar-base";
  *
  * Customize day rendering on an instance:
  * ```ts
- * datePicker.renderDay = ({ day, date }, html) =>
- *   date === "2026-03-17" ? html`<strong>${day}</strong>` : String(day);
+ * datePicker.renderDay = ({ localizedDay, date }, html) =>
+ *   date === "2026-03-17" ? html`<strong>${localizedDay}</strong>` : localizedDay;
  * ```
  *
  * Or override on a subclass to apply it to every instance, falling back to
  * `super.renderDay(...)` for dates you don't want to customize:
  * ```ts
  * class MyDatePicker extends UseDatePicker {
- *   renderDay(data: { day: number; date: string }, html: LitHtml) {
+ *   renderDay(data: UseCalendarDayData, html: LitHtml) {
  *     if (data.date === "2026-03-17") {
- *       return html`<strong>${data.day}</strong>`;
+ *       return html`<strong>${data.localizedDay}</strong>`;
  *     }
  *     return super.renderDay(data, html);
  *   }
