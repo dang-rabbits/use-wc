@@ -58,6 +58,9 @@ export function LocaleDigitsElement<Base extends Constructor<UseLocaleElement>>(
       if (event.key !== "ArrowUp" && event.key !== "ArrowDown") {
         return;
       }
+      if (event.altKey || event.ctrlKey || event.metaKey) {
+        return;
+      }
       event.preventDefault();
       const input = event.target as HTMLInputElement;
       if (input.readOnly || input.disabled) {
@@ -73,7 +76,14 @@ export function LocaleDigitsElement<Base extends Constructor<UseLocaleElement>>(
           : current + step;
       const clamped = Math.max(minimum, maximum === undefined ? next : Math.min(maximum, next));
       input.value = this.toLocaleDigits(clamped);
-      input.dispatchEvent(new Event("input", { bubbles: true, composed: true }));
+      input.dispatchEvent(
+        new InputEvent("input", {
+          bubbles: true,
+          composed: true,
+          inputType: "insertReplacementText",
+          data: input.value,
+        }),
+      );
     }
 
     /**

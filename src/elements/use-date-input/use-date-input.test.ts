@@ -269,4 +269,34 @@ describe("use-date-input", () => {
       expect(paste(getSegmentInput(dateInput, "year"), "2026").defaultPrevented).toBe(false);
     });
   });
+
+  describe("arrow keys", () => {
+    it("leaves modified arrow keys to the browser", async () => {
+      render(html`<use-date-input value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      const dayInput = getSegmentInput(dateInput, "day");
+
+      dayInput.focus();
+      await userEvent.keyboard("{Alt>}{ArrowUp}{/Alt}");
+      await userEvent.keyboard("{Control>}{ArrowUp}{/Control}");
+
+      expect(dateInput.value).toBe("2026-10-14");
+    });
+
+    it("dispatches an InputEvent when stepping", async () => {
+      render(html`<use-date-input value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      let inputEvent: Event | undefined;
+      dateInput.addEventListener("input", (event) => (inputEvent = event));
+
+      getSegmentInput(dateInput, "day").focus();
+      await userEvent.keyboard("{ArrowUp}");
+
+      expect(inputEvent).toBeInstanceOf(InputEvent);
+      expect((inputEvent as InputEvent).inputType).toBe("insertReplacementText");
+      expect(dateInput.value).toBe("2026-10-15");
+    });
+  });
 });
