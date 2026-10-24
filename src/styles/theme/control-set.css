@@ -3,10 +3,11 @@
    in the cascade. Rather than enumerating every control family (which would leave out any custom
    input component this file doesn't know about) and reading each one's own radius token by name
    (which would leave out any component using a token this file has never heard of), the rule
-   below matches every direct child indiscriminately and reads back each one's *already-computed*
-   radius with `revert-layer` — the value it would have had from an earlier layer if this layer
-   didn't exist. That's the exact radius button.css, input.css, select.css, or a future custom
-   element's own theme file already gave it, with no name to keep in sync here.
+   below matches every direct child indiscriminately and only overrides the corners that touch a
+   neighbor. The outer corners are never set here, so they keep the exact radius button.css,
+   input.css, select.css, or a future custom element's own theme file already gave them, with no
+   name to keep in sync here. (Squaring every corner and restoring the outer ones with
+   `revert-layer` on the logical longhands left them square in Firefox.)
 
    This still needs `[type="file"]` and `.appearance-native` excluded: a file input gets a
    completely different treatment in input.css, and `.appearance-native` is this system's opt-out
@@ -17,9 +18,7 @@
    plain, ordinary-specificity selector: cascade layers are compared before specificity, so a
    later layer wins over an earlier one regardless of how each rule's own selector weighs in — no
    need to fight any control's own selector list for a specificity win the way an override nested
-   inside one of them would. `revert-layer` itself also depends on this layer ordering — it rolls
-   back to the *previous* layer's value, so it only reaches button.css/input.css's own radius
-   because this file's layer comes after theirs.
+   inside one of them would.
 
    The container only sets `display` and `isolation` — `isolation: isolate` scopes the hover
    `z-index` below to just this set's own children, so a lifted border can't bleed into stacking
@@ -37,18 +36,20 @@
 
   use-control-set > *:not([type="file"], .appearance-native) {
     margin-inline-start: var(--usewc-layout-control-set-gap);
-    border-radius: var(--usewc-effect-control-set-border-radius-sequential);
 
-    /* first-child and last-child both apply to a lone child, restoring its full radius. */
-    &:first-child {
-      margin-inline-start: 0;
-      border-start-start-radius: revert-layer;
-      border-end-start-radius: revert-layer;
+    /* A lone child matches neither rule below, so it keeps its full radius. */
+    &:not(:first-child) {
+      border-start-start-radius: var(--usewc-effect-control-set-border-radius-sequential);
+      border-end-start-radius: var(--usewc-effect-control-set-border-radius-sequential);
     }
 
-    &:last-child {
-      border-start-end-radius: revert-layer;
-      border-end-end-radius: revert-layer;
+    &:not(:last-child) {
+      border-start-end-radius: var(--usewc-effect-control-set-border-radius-sequential);
+      border-end-end-radius: var(--usewc-effect-control-set-border-radius-sequential);
+    }
+
+    &:first-child {
+      margin-inline-start: 0;
     }
 
     &:where(:hover, :focus-visible, :focus-within) {
