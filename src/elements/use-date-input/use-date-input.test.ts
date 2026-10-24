@@ -167,4 +167,33 @@ describe("use-date-input", () => {
       expect(monthInput.getAttribute("aria-valuemax")).toBe("12");
     });
   });
+
+  describe("typing and pasting", () => {
+    it("reads full-width digits", async () => {
+      render(html`<use-date-input lang="ja" value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+
+      await userEvent.fill(getSegmentInput(dateInput, "month"), "１２");
+
+      expect(getSegmentInput(dateInput, "month").value).toBe("12");
+      expect(dateInput.value).toBe("2026-12-14");
+    });
+
+    it("waits for composition to end before reading a segment", async () => {
+      render(html`<use-date-input lang="ja" value="2026-10-14"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      const monthInput = getSegmentInput(dateInput, "month");
+
+      monthInput.value = "３";
+      monthInput.dispatchEvent(new InputEvent("input", { isComposing: true, bubbles: true }));
+      expect(monthInput.value).toBe("３");
+      expect(dateInput.value).toBe("2026-10-14");
+
+      monthInput.dispatchEvent(new CompositionEvent("compositionend", { bubbles: true }));
+      expect(monthInput.value).toBe("3");
+      expect(dateInput.value).toBe("2026-03-14");
+    });
+  });
 });

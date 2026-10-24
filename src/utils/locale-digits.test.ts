@@ -36,4 +36,9 @@ describe("locale digits", () => {
     expect(toLatinDigits(undefined, "1e-4")).toBe("14");
     expect(toLatinDigits(arabicDigits, "a١b")).toBe("1");
   });
+
+  it("reads full-width digits as Latin digits", () => {
+    expect(toLatinDigits(undefined, "１４")).toBe("14");
+    expect(toLatinDigits(arabicDigits, "１٤")).toBe("14");
+  });
 });

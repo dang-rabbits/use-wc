@@ -125,6 +125,9 @@ export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocale
 
   #handleSegmentInput(segment: DateSegment) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
       const maximum = this.#segmentMaximum[segment];
       let value = this.toLatinDigits(target.value);
@@ -219,6 +222,7 @@ export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocale
               form=${this.#formId}
               size=${segment === "year" ? 4 : 2}
               @input=${this.#handleSegmentInput(segment)}
+              @compositionend=${this.#handleSegmentInput(segment)}
               @keydown=${this.#handleSegmentKeydown(segment)}
             />
           `;

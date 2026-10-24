@@ -290,6 +290,9 @@ export class UseTimeInput extends LocaleDigitsElement(LocalizedElement(UseLocale
 
   #handleSegmentInput(segment: TimeSegment) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
 
       const isEmpty =
@@ -477,6 +480,7 @@ export class UseTimeInput extends LocaleDigitsElement(LocalizedElement(UseLocale
               id="${this.#segmentId(part.type)}"
               form=${this.#formId}
               @input=${this.#handleSegmentInput(part.type)}
+              @compositionend=${this.#handleSegmentInput(part.type)}
               @keydown=${this.#handleNumericSegmentKeydown(part.type)}
             />`;
     });

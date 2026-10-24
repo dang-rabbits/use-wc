@@ -187,6 +187,9 @@ export class UseDurationInput extends LocaleDigitsElement(
 
   #handleSegmentInput(segment: keyof duration.Duration) {
     return (event: Event) => {
+      if (event instanceof InputEvent && event.isComposing) {
+        return;
+      }
       const target = event.target as HTMLInputElement;
       this.#valueData[ISO_DURATION_SEGMENTS[segment]] = this.segmentNumber(target.value) ?? 0;
       this.value = duration.toString(this.#valueData);
@@ -265,6 +268,7 @@ export class UseDurationInput extends LocaleDigitsElement(
                   id="${this.#segmentId(unit)}"
                   form=${this.#formId}
                   @input=${this.#handleSegmentInput(unit as keyof duration.Duration)}
+                  @compositionend=${this.#handleSegmentInput(unit as keyof duration.Duration)}
                   @keydown=${this.#handleSegmentKeydown}
                 />
               `;
