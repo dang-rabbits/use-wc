@@ -91,7 +91,7 @@ export class UseDatetimeInput extends UseLocaleElement {
   }
 
   #initializeValue(val: string) {
-    const [datePart, timePart] = this.value.replace("Z", "").split("T");
+    const [datePart, timePart] = val.replace("Z", "").split("T");
     this.#dateValue = datePart ?? "";
     this.#timeValue = timePart ?? "";
     this.#internalValue = val;

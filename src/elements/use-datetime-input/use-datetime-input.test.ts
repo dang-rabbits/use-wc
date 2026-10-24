@@ -12,6 +12,22 @@ describe("use-datetime-input", () => {
       .shadowRoot!.querySelector(`input[part~="segment-input-${segment}"]`) as HTMLInputElement;
   }
 
+  it("passes its initial value to the date and time inputs", async () => {
+    render(
+      html`<use-datetime-input
+        hours
+        minutes
+        hourformat="24"
+        value="2026-10-14T14:05"
+      ></use-datetime-input>`,
+    );
+    const datetimeInput = document.querySelector("use-datetime-input") as UseDatetimeInput;
+    await datetimeInput.updateComplete;
+
+    expect(getSegmentInput(datetimeInput, "use-date-input", "day").value).toBe("14");
+    expect(getSegmentInput(datetimeInput, "use-time-input", "minute").value).toBe("05");
+  });
+
   describe("locale digits", () => {
     it("reads locale digits and submits a Latin ISO value", async () => {
       render(
