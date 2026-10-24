@@ -56,6 +56,9 @@ export class UseDateInput extends LocaleDigitsElement(LocalizedElement(UseLocale
         this.#valueData = { year: "", month: "", day: "" };
       } else {
         const date = new Date(value.concat("T00:00:00"));
+        if (isNaN(date.getTime())) {
+          throw new RangeError(`Invalid date: ${value}`);
+        }
         this.#valueData = {
           year: date.getFullYear().toString(),
           month: (date.getMonth() + 1).toString(),

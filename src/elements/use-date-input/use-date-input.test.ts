@@ -67,6 +67,18 @@ describe("use-date-input", () => {
     });
   });
 
+  describe("invalid value", () => {
+    it("leaves segments empty instead of showing NaN", async () => {
+      render(html`<use-date-input value="not-a-date"></use-date-input>`);
+      const dateInput = getDateInput();
+      await dateInput.updateComplete;
+      expect(getSegmentInput(dateInput, "year").value).toBe("");
+      expect(getSegmentInput(dateInput, "month").value).toBe("");
+      expect(getSegmentInput(dateInput, "day").value).toBe("");
+      expect(dateInput.value).not.toContain("NaN");
+    });
+  });
+
   describe("segment labels", () => {
     it("keeps lang as the native attribute and re-renders when it changes", async () => {
       render(html`<use-date-input></use-date-input>`);
