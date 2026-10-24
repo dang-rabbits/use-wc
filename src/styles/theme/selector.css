@@ -72,9 +72,9 @@
         display: block;
         position: absolute;
         inset-block-start: 10%;
-        inset-inline-start: 33%;
-        border-inline-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
-          var(--usewc-color-selector-icon-fill);
+        left: 33%;
+        right: auto;
+        border-right: var(--usewc-layout-selector-checkbox-icon-border-size) solid var(--usewc-color-selector-icon-fill);
         border-block-end: var(--usewc-layout-selector-checkbox-icon-border-size) solid
           var(--usewc-color-selector-icon-fill);
         width: 40%;

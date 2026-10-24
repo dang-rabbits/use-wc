@@ -33,6 +33,13 @@
       mask-image: var(--usewc-effect-dropdown-trigger-icon-mask-image, none);
     }
 
+    /* The inline caret icons only swap for right-to-left under `:root:dir(rtl)`, so a summary
+     whose direction differs from the root's mirrors its indicator itself. */
+    :root:not(:dir(rtl)) & summary:dir(rtl):is(:not([class*="appearance-"]), .appearance-button)::before,
+    :root:dir(rtl) & summary:dir(ltr):is(:not([class*="appearance-"]), .appearance-button)::before {
+      scale: -1 1;
+    }
+
     /* Mirrors the button family's own :has(> use-caret) padding reduction, on the leading side
      instead of the trailing one. No specificity trick needed here — the details layer already
      outranks button outright. */
