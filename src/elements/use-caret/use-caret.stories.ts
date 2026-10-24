@@ -38,9 +38,36 @@ export const Default: Story = {
   },
 };
 
+function themedTrigger(className: string, label: string) {
+  const id = `use-caret-theme-${label.toLowerCase().replaceAll(" ", "-")}`;
+  return html`
+    <button id="${id}-trigger" class=${className} popovertarget="${id}-menu">
+      <use-caret>${label}</use-caret>
+    </button>
+    <use-menu id="${id}-menu" aria-label=${label}>
+      <button role="menuitem">Open&hellip;</button>
+      <button role="menuitem">Save</button>
+    </use-menu>
+  `;
+}
+
+/** The caret scales with each button size and takes its color from each button variant. */
 export const Theme: Story = {
   ...Default,
   parameters: { ...Default.parameters, allowTheme: true },
+  render: () => html`
+    <div style="display: flex; flex-direction: column; gap: 1rem;">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
+        ${themedTrigger("extra-small", "Extra small")} ${themedTrigger("small", "Small")}
+        ${themedTrigger("", "Base")} ${themedTrigger("large", "Large")}
+        ${themedTrigger("extra-large", "Extra large")}
+      </div>
+      <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;">
+        ${themedTrigger("primary", "Primary")} ${themedTrigger("danger", "Danger")}
+        ${themedTrigger("clear", "Clear")} ${themedTrigger("auxiliary", "Auxiliary")}
+      </div>
+    </div>
+  `,
 };
 
 /** The `icon` slot replaces the default caret glyph entirely. */

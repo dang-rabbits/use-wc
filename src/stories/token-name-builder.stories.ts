@@ -7,7 +7,7 @@ async function handleCopyToClipboard() {
 }
 
 const meta: Meta = {
-  title: "Token Name Builder",
+  title: "Design System/Tools/Token Name Builder",
   tags: ["autodocs", "!dev", "utility"],
   parameters: { allowTheme: true },
   args: {},
@@ -21,7 +21,6 @@ const meta: Meta = {
         "--usewc",
         formData.get("category"),
         formData.get("component"),
-        formData.get("type"),
         formData.get("part"),
         formData.get("variant"),
         formData.get("property"),
@@ -37,14 +36,13 @@ const meta: Meta = {
         <table width="100%">
           <thead>
             <tr>
-              <th width="12.5%">Category</th>
-              <th width="12.5%">Component</th>
-              <th width="12.5%">Type</th>
-              <th width="12.5%">Part</th>
-              <th width="12.5%">Variant</th>
-              <th width="12.5%">Property</th>
-              <th width="12.5%">Modifier</th>
-              <th width="12.5%">State</th>
+              <th width="14%">Category</th>
+              <th width="14%">Component</th>
+              <th width="14%">Part</th>
+              <th width="14%">Variant</th>
+              <th width="14%">Property</th>
+              <th width="14%">Modifier</th>
+              <th width="14%">State</th>
             </tr>
           </thead>
           <tbody>
@@ -52,31 +50,51 @@ const meta: Meta = {
               <td>
                 <select size="15" name="category" style="width: 100%">
                   <option>color</option>
-                  <option>size</option>
-                  <option>space</option>
                   <option>layout</option>
                   <option>font</option>
                   <option>effect</option>
+                  <option>transition</option>
                 </select>
               </td>
               <td>
                 <select size="15" name="component" style="width: 100%">
                   <option value="" selected>-</option>
-                  <option>document</option>
-                  <option>form</option>
-                  <option>input</option>
-                  <option>selector</option>
-                  <option>action</option>
-                </select>
-              </td>
-              <td>
-                <select size="15" name="type" style="width: 100%">
-                  <option value="" selected>-</option>
-                  <option>checkbox</option>
-                  <option>radio</option>
-                  <option>switch</option>
-                  <option>button</option>
-                  <option>link</option>
+                  <optgroup label="Document">
+                    <option>document</option>
+                    <option>surface</option>
+                    <option>page</option>
+                    <option>region</option>
+                    <option>prose</option>
+                    <option>code</option>
+                    <option>quote</option>
+                  </optgroup>
+                  <optgroup label="Form">
+                    <option>form</option>
+                    <option>entry</option>
+                    <option>input</option>
+                    <option>select</option>
+                    <option>selector</option>
+                    <option>range</option>
+                    <option>control</option>
+                  </optgroup>
+                  <optgroup label="Action">
+                    <option>button</option>
+                    <option>link</option>
+                    <option>menu</option>
+                    <option>breadcrumb</option>
+                  </optgroup>
+                  <optgroup label="Overlay">
+                    <option>popover</option>
+                    <option>dropdown</option>
+                  </optgroup>
+                  <optgroup label="Collection">
+                    <option>grid</option>
+                    <option>tree</option>
+                    <option>sidebar</option>
+                    <option>card</option>
+                    <option>badge</option>
+                    <option>avatar</option>
+                  </optgroup>
                 </select>
               </td>
               <td>
@@ -85,13 +103,17 @@ const meta: Meta = {
                   <option>trigger</option>
                   <option>segment</option>
                   <option>indicator</option>
-                  <option>text</option>
+                  <option>icon</option>
                   <option>label</option>
-                  <option>helper-text</option>
+                  <option>helper</option>
                   <option>header</option>
-                  <option>body</option>
-                  <option>aside</option>
-                  <option>footer</option>
+                  <option>title</option>
+                  <option>item</option>
+                  <option>row</option>
+                  <option>cell</option>
+                  <option>track</option>
+                  <option>thumb</option>
+                  <option>chip</option>
                 </select>
               </td>
               <td>
@@ -100,13 +122,11 @@ const meta: Meta = {
                   <optgroup label="Intent">
                     <option>base</option>
                     <option>primary</option>
-                    <option>auxiliary</option>
                     <option>danger</option>
-                    <option>attention</option>
-                    <option>info</option>
-                    <option>success</option>
+                    <option>auxiliary</option>
                   </optgroup>
                   <optgroup label="Scale">
+                    <option>compact</option>
                     <option>small</option>
                     <option>medium</option>
                     <option>large</option>
@@ -118,10 +138,12 @@ const meta: Meta = {
                   <option value="" selected>-</option>
                   <option>background</option>
                   <option>border</option>
+                  <option>text</option>
                   <option>padding</option>
                   <option>gap</option>
                   <option>size</option>
                   <option>line-height</option>
+                  <option>radius</option>
                   <option>outline</option>
                   <option>shadow</option>
                 </select>
@@ -135,8 +157,8 @@ const meta: Meta = {
                   <option>block</option>
                   <option>block-start</option>
                   <option>block-end</option>
-                  <option>inside</option>
-                  <option>outside</option>
+                  <option>inset</option>
+                  <option>outset</option>
                 </select>
               </td>
               <td>
@@ -146,10 +168,13 @@ const meta: Meta = {
                   <option>hover</option>
                   <option>focus</option>
                   <option>active</option>
+                  <option>pressed</option>
+                  <option>checked</option>
+                  <option>selected</option>
+                  <option>visited</option>
                   <option>disabled</option>
                   <option>readonly</option>
                   <option>placeholder</option>
-                  <option>valid</option>
                   <option>invalid</option>
                 </select>
               </td>

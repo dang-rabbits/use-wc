@@ -1,7 +1,14 @@
+<meta name="color-scheme" content="light dark" />
 <style>
   body {
     /* Matches --usewc-font-family-sans-serif; see .storybook/theme-fonts.ts */
     font-family: system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    html,
+    body {
+      background-color: #1b1c1d;
+    }
   }
   #storybook-preview-iframe {
     background-color: transparent !important;

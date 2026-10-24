@@ -1,18 +1,21 @@
 import type { Preview } from "@storybook/web-components-vite";
 import { setCustomElementsManifest } from "@storybook/web-components-vite";
 import { create } from "storybook/theming";
-import { createElement } from "react";
+import { createElement, useSyncExternalStore } from "react";
+import type { PropsWithChildren } from "react";
 import { fontBase, fontCode } from "./theme-fonts";
 import { sampleStrings } from "./sample-strings";
 import { registerLocales } from "../src/i18n/i18n";
 import {
   Controls,
   Description,
+  DocsContainer,
   Primary,
   Stories,
   Subtitle,
   Title,
 } from "@storybook/addon-docs/blocks";
+import type { DocsContainerProps } from "@storybook/addon-docs/blocks";
 import { addons } from "storybook/preview-api";
 import { html } from "lit";
 
@@ -132,6 +135,30 @@ channel.on(GLOBALS_UPDATED, (data: { globals: Record<string, unknown> }) =>
   applyGlobals(data.globals),
 );
 
+const darkSchemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const docsThemes = {
+  light: create({ base: "light", fontBase, fontCode }),
+  dark: create({ base: "dark", fontBase, fontCode }),
+};
+
+function subscribeToColorScheme(onChange: () => void) {
+  darkSchemeQuery.addEventListener("change", onChange);
+  return () => darkSchemeQuery.removeEventListener("change", onChange);
+}
+
+function prefersDark() {
+  return darkSchemeQuery.matches;
+}
+
+// Docs read their theme once at load; re-render the container when the system color scheme changes.
+function SystemThemeDocsContainer(properties: PropsWithChildren<DocsContainerProps>) {
+  const isDark = useSyncExternalStore(subscribeToColorScheme, prefersDark);
+  return createElement(DocsContainer, {
+    ...properties,
+    theme: isDark ? docsThemes.dark : docsThemes.light,
+  });
+}
+
 const preview: Preview = {
   argTypesEnhancers: [addStringArgTypes],
   globalTypes: {
@@ -177,11 +204,7 @@ const preview: Preview = {
           createElement(Controls, null),
           createElement(Stories, { includePrimary: false }),
         ),
-      theme: create({
-        base: window.matchMedia?.("(prefers-color-scheme: dark)").matches ? "dark" : "light",
-        fontBase,
-        fontCode,
-      }),
+      container: SystemThemeDocsContainer,
       // Keeps the `<use-theme-escape>` wrapper the preview decorator below adds (see its own
       // comment) out of "Show code" — that wrapper is preview-only scaffolding, not something a
       // consumer would ever write themselves.
@@ -194,10 +217,20 @@ const preview: Preview = {
       storySort: {
         order: [
           "About use-wc",
+          "Web Components",
+          "Design System",
+          [
+            "Overview",
+            "Token Naming",
+            "Native Elements",
+            "use-field",
+            "use-layout",
+            "use-pattern",
+            "use-prose",
+            "Tools",
+          ],
           "Localization",
           ["Overview", "Add-on"],
-          "Design System",
-          ["Overview"],
         ],
       },
     },
