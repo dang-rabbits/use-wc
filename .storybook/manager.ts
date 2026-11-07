@@ -1,5 +1,6 @@
 import { create } from "storybook/theming";
 import logo from "./logo.svg";
+import logoDark from "./logo-dark.svg";
 import { addons } from "storybook/manager-api";
 import { fontBase, fontCode } from "./theme-fonts";
 import "./brand-color-tool";
@@ -10,7 +11,7 @@ function themeFor(prefersDark: boolean) {
   return create({
     base: prefersDark ? "dark" : "light",
     brandTitle: "use-wc",
-    brandImage: logo,
+    brandImage: prefersDark ? logoDark : logo,
     fontBase,
     fontCode,
   });
