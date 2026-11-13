@@ -171,6 +171,38 @@ export const WithMenus: Story = {
   `,
 };
 
+/**
+ * A dialog opened from inside a focusgroup keeps its own keyboard behavior: `Tab` moves between its controls and the arrow keys don't move focus out of it. Press `Escape` to close the dialog and resume focusgroup navigation.
+ */
+export const WithDialog: Story = {
+  render: () => html`
+    <use-focusgroup
+      role="toolbar"
+      features="inline"
+      aria-orientation="horizontal"
+      style="display: flex; gap: 1rem;"
+    >
+      <button type="button">bold</button>
+      <button type="button" commandfor="with-dialog-dialog" command="show-modal">
+        insert link
+      </button>
+      <dialog id="with-dialog-dialog" aria-label="insert link">
+        <form method="dialog" style="display: flex; flex-direction: column; gap: 1rem;">
+          <label>
+            url
+            <input type="url" />
+          </label>
+          <div style="display: flex; gap: 1rem;">
+            <button type="button" commandfor="with-dialog-dialog" command="close">cancel</button>
+            <button>insert</button>
+          </div>
+        </form>
+      </dialog>
+      <button type="button">italic</button>
+    </use-focusgroup>
+  `,
+};
+
 export const WithWidgets: Story = {
   render: () => html`
     <use-focusgroup>

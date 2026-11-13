@@ -133,4 +133,82 @@ describe("use-focusgroup", () => {
       expect(document.activeElement).toBe(submenu.querySelector('[role="menuitem"]'));
     });
   });
+
+  describe("with a dialog", () => {
+    async function renderDialog(mode: "showModal" | "show") {
+      render(html`
+        <use-focusgroup features="inline">
+          <button type="button" id="open">open</button>
+          <dialog id="dialog">
+            <button type="button" id="one">one</button>
+            <button type="button" id="two">two</button>
+          </dialog>
+          <button type="button" id="after">after</button>
+        </use-focusgroup>
+      `);
+      await settle();
+
+      const open = document.getElementById("open") as HTMLButtonElement;
+      const dialog = document.getElementById("dialog") as HTMLDialogElement;
+      const one = document.getElementById("one") as HTMLButtonElement;
+      const two = document.getElementById("two") as HTMLButtonElement;
+
+      open.focus();
+      dialog[mode]();
+      await settle();
+
+      return { open, dialog, one, two };
+    }
+
+    for (const mode of ["showModal", "show"] as const) {
+      it(`leaves the dialog's controls out of the roving set when opened with ${mode}()`, async () => {
+        const { dialog, one, two } = await renderDialog(mode);
+
+        expect(one.hasAttribute("tabindex")).toBe(false);
+        expect(two.hasAttribute("tabindex")).toBe(false);
+
+        one.focus();
+        await userEvent.keyboard("{Tab}");
+        expect(document.activeElement).toBe(two);
+
+        dialog.close();
+      });
+
+      it(`ignores ArrowLeft and ArrowRight inside a dialog opened with ${mode}()`, async () => {
+        const { dialog, one, two } = await renderDialog(mode);
+
+        two.focus();
+        await userEvent.keyboard("{ArrowRight}");
+        expect(document.activeElement).toBe(two);
+
+        await userEvent.keyboard("{ArrowLeft}");
+        expect(document.activeElement).toBe(two);
+        expect(one.hasAttribute("tabindex")).toBe(false);
+
+        dialog.close();
+      });
+    }
+
+    it("lets Escape close a modal dialog natively", async () => {
+      const { open, dialog, two } = await renderDialog("showModal");
+
+      two.focus();
+      await userEvent.keyboard("{Escape}");
+      await settle();
+
+      expect(dialog.open).toBe(false);
+      expect(document.activeElement).toBe(open);
+    });
+
+    it("resumes navigation once the dialog closes", async () => {
+      const { open, dialog } = await renderDialog("showModal");
+
+      dialog.close();
+      await settle();
+      open.focus();
+      await userEvent.keyboard("{ArrowRight}");
+
+      expect(document.activeElement).toBe(document.getElementById("after"));
+    });
+  });
 });

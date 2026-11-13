@@ -109,7 +109,7 @@ export class UseFocusgroup extends HTMLElement {
       let moveTo = -1;
       const target = event.target as HTMLElement;
 
-      if (this.#isInsideOpenPopover(target)) {
+      if (this.#isInsideOpenOverlay(target)) {
         return;
       }
 
@@ -190,12 +190,12 @@ export class UseFocusgroup extends HTMLElement {
     );
   }
 
-  #isInsideOpenPopover(element: Element) {
+  #isInsideOpenOverlay(element: Element) {
     const root = element.getRootNode();
     const lightElement = root instanceof ShadowRoot ? root.host : element;
-    const popover = lightElement.closest(":popover-open");
+    const overlay = lightElement.closest(":popover-open, dialog[open]");
 
-    return popover != null && popover !== this && this.contains(popover);
+    return overlay != null && overlay !== this && this.contains(overlay);
   }
 
   #observer: MutationObserver | null = null;
@@ -260,7 +260,7 @@ export class UseFocusgroup extends HTMLElement {
     const filteredTabbables: FocusableElement[] = [];
 
     for (const node of allTabbables) {
-      if (this.#isInsideOpenPopover(node)) {
+      if (this.#isInsideOpenOverlay(node)) {
         continue;
       }
 
