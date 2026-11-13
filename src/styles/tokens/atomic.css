@@ -83,6 +83,7 @@
   --usewc-color-graphite-900: oklch(0.25 0.005 264);
   --usewc-color-graphite-850: oklch(0.285 0.005 264);
   --usewc-color-graphite-800: oklch(0.31 0.005 264);
+  --usewc-color-graphite-750: oklch(0.35 0.005 264);
   --usewc-color-graphite-700: oklch(0.39 0.005 264);
   --usewc-color-graphite-600: oklch(0.465 0.005 264);
   --usewc-color-graphite-550: oklch(0.505 0.005 264);
@@ -90,6 +91,7 @@
   --usewc-color-graphite-400: oklch(0.725 0.004 264);
   --usewc-color-graphite-200: oklch(0.885 0.003 264);
   --usewc-color-graphite-100: oklch(0.95 0.002 264);
+  --usewc-color-graphite-50: oklch(0.985 0.002 264);
   --usewc-color-blue-900: oklch(0.3 0.115 258);
   --usewc-color-blue-800: oklch(0.395 0.15 258);
   --usewc-color-blue-700: oklch(0.478 0.18 258);

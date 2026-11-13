@@ -693,8 +693,8 @@
 
   /* Card chrome — the one bit of floating surface treatment that isn't layout, and the only
      thing separating `.card` from the other three variants: they arrange regions, this also
-     paints a raised panel. `.outlined` keeps the border but drops the shadow, for a flatter
-     card.
+     paints a panel. It's flat by default; `.elevated` lifts it with a shadow, for a card that
+     floats above the content around it.
 
      A card nested directly in a `dialog` or `[popover]` skips the chrome: the overlay already
      paints a surface, and stacking a second border and shadow inside it reads as a panel within
@@ -706,11 +706,10 @@
     background: var(--usewc-color-surface-background);
     border: var(--usewc-layout-surface-border) solid var(--usewc-color-surface-border);
     border-radius: var(--usewc-effect-surface-border-radius);
-    box-shadow: var(--usewc-effect-surface-shadow);
     color: var(--usewc-color-document-text);
   }
 
-  use-pattern.card.outlined:not(:is(dialog, [popover]) > *) {
-    box-shadow: none;
+  use-pattern.card.elevated:not(:is(dialog, [popover]) > *) {
+    box-shadow: var(--usewc-effect-surface-shadow);
   }
 }
