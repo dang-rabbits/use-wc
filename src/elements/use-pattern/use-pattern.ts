@@ -8,7 +8,7 @@ import { customElement } from "lit/decorators.js";
  * exactly as given.
  *
  * Its variant classes (`card`, `entry`, `message`, `media`) and their modifiers (`.divided`,
- * `.compact`, `.outlined`, `.flush`) are plain classes rather than properties, the same as any
+ * `.compact`, `.elevated`, `.flush`) are plain classes rather than properties, the same as any
  * other themed class in this system, like `use-avatar`'s `.circle`/`.square`. For generic flex
  * arrangement, or a page frame, use `use-layout`, which nests freely inside a pattern's regions.
  *

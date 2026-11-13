@@ -417,10 +417,26 @@ describe("pattern region treatment", () => {
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("flex-end");
     });
 
-    it("drops the shadow when outlined", async () => {
-      render(html`<use-pattern class="card outlined" id="card">body</use-pattern>`);
+    it("paints no shadow by default", async () => {
+      render(html`<use-pattern class="card" id="card">body</use-pattern>`);
 
       expect(styleOf(document.getElementById("card")!, "box-shadow")).toBe("none");
+    });
+
+    it("paints a shadow when elevated", async () => {
+      render(html`<use-pattern class="card elevated" id="card">body</use-pattern>`);
+
+      expect(styleOf(document.getElementById("card")!, "box-shadow")).not.toBe("none");
+    });
+
+    it("drops the elevated shadow inside an overlay", async () => {
+      render(html`
+        <dialog open>
+          <use-pattern class="card elevated" id="nested">body</use-pattern>
+        </dialog>
+      `);
+
+      expect(styleOf(document.getElementById("nested")!, "box-shadow")).toBe("none");
     });
   });
 

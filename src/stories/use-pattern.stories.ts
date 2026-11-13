@@ -204,7 +204,7 @@ export const MessageAttachment: Story = {
 };
 
 /**
- * A unit in a grid or feed, at a compact density, and the only variant that paints chrome of its own (background, border, shadow); `.outlined` keeps the border and drops the shadow. A header's leading likeness is a `<use-avatar>`, or a `<figure>` when it isn't a likeness. Add `role`/ARIA to the `<use-pattern>` directly for real semantics — the tag carries none on purpose.
+ * A unit in a grid or feed, at a compact density, and the only variant that paints chrome of its own (background, border); `.elevated` adds a shadow to lift it off the page. A header's leading likeness is a `<use-avatar>`, or a `<figure>` when it isn't a likeness. Add `role`/ARIA to the `<use-pattern>` directly for real semantics — the tag carries none on purpose.
  */
 export const Card: Story = {
   render: () => html`
