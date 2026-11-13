@@ -130,6 +130,47 @@ export const Toolbar: Story = {
   },
 };
 
+/**
+ * While a menu opened from inside a focusgroup is open, the menu owns the arrow keys: `ArrowLeft` and `ArrowRight` don't move focus out of it, and `ArrowRight` on a submenu trigger opens the submenu. Press `Escape` to close the menu, return focus to its trigger, and resume focusgroup navigation.
+ */
+export const WithMenus: Story = {
+  render: () => html`
+    <use-focusgroup
+      role="toolbar"
+      features="inline"
+      aria-orientation="horizontal"
+      style="display: flex; gap: 1rem;"
+    >
+      <button type="button">bold</button>
+      <button type="button" popovertarget="with-menus-font-menu">
+        <use-caret>font</use-caret>
+      </button>
+      <use-menu id="with-menus-font-menu" aria-label="font">
+        <button type="button" role="menuitem">Arial</button>
+        <button type="button" role="menuitem">Times New Roman</button>
+        <button type="button" role="menuitem" popovertarget="with-menus-size-menu">
+          <use-caret>size</use-caret>
+        </button>
+        <use-menu id="with-menus-size-menu" aria-label="size">
+          <button type="button" role="menuitem">small</button>
+          <button type="button" role="menuitem">medium</button>
+          <button type="button" role="menuitem">large</button>
+        </use-menu>
+      </use-menu>
+      <button type="button">italic</button>
+      <button type="button" popovertarget="with-menus-insert-menu">
+        <use-caret>insert</use-caret>
+      </button>
+      <use-menu id="with-menus-insert-menu" aria-label="insert">
+        <button type="button" role="menuitem">link</button>
+        <button type="button" role="menuitem">image</button>
+        <button type="button" role="menuitem">table</button>
+      </use-menu>
+      <button type="button">underline</button>
+    </use-focusgroup>
+  `,
+};
+
 export const WithWidgets: Story = {
   render: () => html`
     <use-focusgroup>

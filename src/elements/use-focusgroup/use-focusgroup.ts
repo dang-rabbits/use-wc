@@ -108,6 +108,11 @@ export class UseFocusgroup extends HTMLElement {
     this.addEventListener("keydown", (event) => {
       let moveTo = -1;
       const target = event.target as HTMLElement;
+
+      if (this.#isInsideOpenPopover(target)) {
+        return;
+      }
+
       const parent = target.closest("use-focusgroup");
 
       switch (event.key) {
@@ -185,6 +190,14 @@ export class UseFocusgroup extends HTMLElement {
     );
   }
 
+  #isInsideOpenPopover(element: Element) {
+    const root = element.getRootNode();
+    const lightElement = root instanceof ShadowRoot ? root.host : element;
+    const popover = lightElement.closest(":popover-open");
+
+    return popover != null && popover !== this && this.contains(popover);
+  }
+
   #observer: MutationObserver | null = null;
   #watchMutations() {
     if (this.#observer) {
@@ -247,6 +260,10 @@ export class UseFocusgroup extends HTMLElement {
     const filteredTabbables: FocusableElement[] = [];
 
     for (const node of allTabbables) {
+      if (this.#isInsideOpenPopover(node)) {
+        continue;
+      }
+
       const parent = node.closest("use-focusgroup");
       if (parent && filteredTabbables.includes(parent)) {
         continue;
