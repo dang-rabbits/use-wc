@@ -187,7 +187,7 @@
   /* Button */
   /* - Color */
   /* -- Base color: fills, everything else derives from the fill below */
-  --usewc-color-button-base-background-static: var(--usewc-color-white);
+  --usewc-color-button-base-background-static: var(--usewc-color-graphite-50);
   --usewc-color-button-base-background-static-auxiliary: transparent;
   --usewc-color-button-primary-background-static: var(--usewc-color-brand-primary);
   --usewc-color-button-primary-background-static-auxiliary: transparent;
@@ -476,7 +476,7 @@
 
   /* Grid — `.table` is the default treatment a bare `use-grid` gets; `.chips` and `.list`
      (the latter still being defined) opt into their own layouts instead. */
-  --usewc-color-grid-border: var(--usewc-color-button-base-border-static);
+  --usewc-color-grid-border: var(--usewc-color-surface-border);
   /* The table itself and its header paint no fill — only the hover and selected row bands do. */
   --usewc-color-grid-background: transparent;
   --usewc-color-grid-header-background: transparent;
@@ -576,7 +576,7 @@
   --usewc-layout-popover-menu-border: var(--usewc-space-1-relative);
   --usewc-effect-popover-menu-border-style: var(--usewc-effect-border-solid);
   --usewc-color-popover-menu-background: var(--usewc-color-canvas-background);
-  --usewc-color-popover-menu-border: var(--usewc-color-button-base-border-static);
+  --usewc-color-popover-menu-border: var(--usewc-color-surface-border);
   --usewc-effect-popover-menu-border-radius: var(--usewc-effect-border-radius-8);
   --usewc-effect-popover-menu-shadow: var(--usewc-effect-surface-shadow);
   --usewc-font-popover-menu-header-size: var(--usewc-font-size-14);
@@ -735,7 +735,7 @@
      `dialog`/`[popover]` keeps from the viewport edge when sizing itself, not region padding —
      the regions inside one come from whichever `use-pattern` variant is nested there. */
   --usewc-color-surface-background: var(--usewc-color-canvas-background);
-  --usewc-color-surface-border: var(--usewc-color-button-base-border-static);
+  --usewc-color-surface-border: var(--usewc-color-gray-200);
   --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.4);
   --usewc-layout-surface-anchor-offset: var(--usewc-space-4);
   --usewc-layout-surface-border: var(--usewc-space-1);
@@ -765,8 +765,11 @@
     --usewc-color-form-helper-text-invalid: var(--usewc-color-red-400);
     /* A dark control is lighter than what surrounds it, so interaction has to
        move lightness the opposite way, and its border has to run lighter
-       than its own face rather than darker. */
-    --usewc-color-button-base-background-static: var(--usewc-color-graphite-800);
+       than its own face rather than darker. It also sits a full step above
+       the card surface, since dark shadows barely read and the fill alone has
+       to separate the two. */
+    --usewc-color-button-base-background-static: var(--usewc-color-graphite-750);
+    --usewc-color-surface-border: var(--usewc-color-graphite-700);
     --usewc-effect-button-base-shift: 1;
     --usewc-effect-button-base-border-direction: 1;
     --usewc-effect-button-base-border-step: 0.085;
