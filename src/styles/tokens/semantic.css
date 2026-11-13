@@ -744,30 +744,30 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --usewc-color-document-text: var(--usewc-color-gray-200);
-    --usewc-color-document-text-muted: var(--usewc-color-gray-300);
-    --usewc-color-document-background: var(--usewc-color-gray-950);
-    --usewc-color-canvas-background: var(--usewc-color-black);
+    --usewc-color-document-text: var(--usewc-color-graphite-200);
+    --usewc-color-document-text-muted: var(--usewc-color-graphite-400);
+    --usewc-color-document-background: var(--usewc-color-graphite-900);
+    --usewc-color-canvas-background: var(--usewc-color-graphite-850);
     /* The primary/danger fill stays the same shade in both themes — only the
        focus ring lightens in the dark. */
     --usewc-color-outline: var(--usewc-color-blue-400);
-    --usewc-color-prose-code-background: var(--usewc-color-gray-900);
-    --usewc-color-input-background-static: oklch(from var(--usewc-color-gray-100) l c h / 0.025);
-    --usewc-color-input-border-static: var(--usewc-color-gray-800);
-    --usewc-color-input-text-static: var(--usewc-color-gray-200);
-    --usewc-color-input-text-placeholder: var(--usewc-color-gray-500);
-    --usewc-color-form-label-text: var(--usewc-color-gray-100);
-    --usewc-color-form-helper-text: var(--usewc-color-gray-400);
+    --usewc-color-prose-code-background: var(--usewc-color-graphite-950);
+    --usewc-color-input-background-static: var(--usewc-color-graphite-950);
+    --usewc-color-input-border-static: var(--usewc-color-graphite-700);
+    --usewc-color-input-text-static: var(--usewc-color-graphite-200);
+    --usewc-color-input-text-placeholder: var(--usewc-color-graphite-500);
+    --usewc-color-form-label-text: var(--usewc-color-graphite-100);
+    --usewc-color-form-helper-text: var(--usewc-color-graphite-400);
     --usewc-color-form-helper-text-invalid: var(--usewc-color-red-400);
     /* A dark control is lighter than what surrounds it, so interaction has to
        move lightness the opposite way, and its border has to run lighter
        than its own face rather than darker. */
-    --usewc-color-button-base-background-static: var(--usewc-color-gray-900);
+    --usewc-color-button-base-background-static: var(--usewc-color-graphite-800);
     --usewc-effect-button-base-shift: 1;
     --usewc-effect-button-base-border-direction: 1;
-    --usewc-effect-button-base-border-step: 0.14;
-    --usewc-effect-button-base-border-step-hover: 0.16;
-    --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-gray-700);
+    --usewc-effect-button-base-border-step: 0.085;
+    --usewc-effect-button-base-border-step-hover: 0.11;
+    --usewc-color-button-base-border-static-auxiliary: var(--usewc-color-graphite-700);
     /* Solid fills are already lighter than the dark surface, so they keep the
        light-mode direction — darkening still reads as pressing toward it —
        but need a shallower border step or the derived border overpowers the
@@ -776,7 +776,7 @@
     --usewc-effect-button-primary-border-step-hover: 0.1;
     --usewc-effect-button-danger-border-step: 0.08;
     --usewc-effect-button-danger-border-step-hover: 0.1;
-    /* A low-alpha wash of the fill barely lifts off a near-black page — it
+    /* A low-alpha wash of the fill barely lifts off a dark page — it
        needs more alpha here than on white to read as a hover state at all. */
     --usewc-color-button-primary-background-hover-auxiliary: oklch(
       from var(--usewc-color-button-primary-background-static) l c h / 0.22
@@ -802,39 +802,53 @@
     --usewc-color-button-danger-border-hover-auxiliary: oklch(
       from var(--usewc-color-button-danger-background-static) l c h / 0.9
     );
-    --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-gray-700);
-    --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-gray-600);
+    --usewc-color-button-primary-text-static-auxiliary: var(--usewc-color-blue-400);
+    --usewc-color-button-danger-text-static-auxiliary: var(--usewc-color-red-400);
+    --usewc-color-button-clear-border-static-auxiliary: var(--usewc-color-graphite-700);
+    --usewc-color-button-clear-border-hover-auxiliary: var(--usewc-color-graphite-600);
     --usewc-color-button-shadow-lightness: 0;
     --usewc-color-button-shadow-chroma: 0;
-    --usewc-color-button-shadow-alpha: 0.3;
+    --usewc-color-button-shadow-alpha: 0.22;
     --usewc-color-button-shadow-inset: oklch(from var(--usewc-color-white) l c h / 0.08);
     --usewc-color-link-text-static: var(--usewc-color-blue-400);
-    --usewc-color-link-text-hover: var(--usewc-color-blue-500);
-    --usewc-color-link-text-active: var(--usewc-color-blue-600);
+    --usewc-color-link-text-hover: var(--usewc-color-blue-300);
+    --usewc-color-link-text-active: var(--usewc-color-blue-300);
+    --usewc-color-link-text-visited: var(--usewc-color-indigo-400);
+    --usewc-color-link-text-visited-hover: var(--usewc-color-indigo-300);
+    --usewc-color-link-text-visited-active: var(--usewc-color-indigo-300);
+    --usewc-color-sidebar-item-text-active: var(--usewc-color-blue-400);
+    --usewc-color-sidebar-item-text-current: var(--usewc-color-blue-400);
+    --usewc-color-sidebar-item-background-current: oklch(from var(--usewc-color-blue-400) l c h / 0.14);
     --usewc-effect-link-decoration-opacity: 0.5;
     --usewc-color-code-text: var(--usewc-color-red-200);
-    --usewc-color-input-border-hover: var(--usewc-color-gray-700);
+    --usewc-color-input-border-hover: var(--usewc-color-graphite-600);
     --usewc-color-input-border-focus: var(--usewc-color-blue-400);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
-    --usewc-color-input-segment-background-focus: var(--usewc-color-blue-100);
-    --usewc-color-input-segment-text-focus: var(--usewc-color-gray-700);
+    --usewc-color-input-segment-background-focus: oklch(from var(--usewc-color-blue-400) l c h / 0.3);
+    --usewc-color-input-segment-text-focus: var(--usewc-color-graphite-100);
     --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
     --usewc-color-range-thumb-background-hover: var(--usewc-color-blue-400);
     --usewc-color-range-thumb-background-active: var(--usewc-color-blue-300);
-    --usewc-color-range-track-background-static: var(--usewc-color-gray-800);
-    --usewc-color-range-track-border-static: var(--usewc-color-gray-700);
-    --usewc-color-range-track-border-hover: var(--usewc-color-gray-600);
-    --usewc-color-selector-background-hover: oklch(from var(--usewc-color-gray-700) l c h / 0.5);
+    --usewc-color-range-track-background-static: var(--usewc-color-graphite-950);
+    --usewc-color-range-track-border-static: var(--usewc-color-graphite-700);
+    --usewc-color-range-track-border-hover: var(--usewc-color-graphite-600);
+    --usewc-color-selector-background-focus: var(--usewc-color-graphite-800);
+    --usewc-color-selector-background-hover: oklch(from var(--usewc-color-graphite-700) l c h / 0.5);
+    --usewc-color-selector-border-static: var(--usewc-color-graphite-550);
+    --usewc-color-selector-border-hover: var(--usewc-color-graphite-400);
     --usewc-effect-select-trigger-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 16L5.0718 8.5L18.9282 8.5L12 16Z' fill='rgb(229,231,235)' /%3E%3C/svg%3E");
     --usewc-color-surface-backdrop: oklch(0% 0 0 / 0.6);
-    /* "Super light" can't float up on a near-black page — hold the primary's hue and chroma
+    --usewc-effect-surface-shadow: 0 1px 2px oklch(0% 0 0 / 0.3), 0 8px 24px oklch(0% 0 0 / 0.32);
+    --usewc-color-popover-menu-header-text: var(--usewc-color-graphite-400);
+    --usewc-color-popover-menu-shortcut: var(--usewc-color-graphite-400);
+    /* "Super light" can't float up on a dark page — hold the primary's hue and chroma
        but drop the lightness so the tint reads as a dark primary wash instead. */
-    --usewc-color-grid-row-background-selected: oklch(from var(--usewc-color-brand-primary) 0.3 0.05 h);
-    --usewc-color-grid-row-background-selected-hover: oklch(from var(--usewc-color-brand-primary) 0.36 0.06 h);
-    --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-gray-800) l c h / 0.6);
-    --usewc-color-grid-header-text: var(--usewc-color-gray-200);
-    --usewc-color-avatar-background: var(--usewc-color-gray-800);
-    --usewc-color-avatar-text: var(--usewc-color-gray-200);
+    --usewc-color-grid-row-background-selected: oklch(from var(--usewc-color-brand-primary) 0.34 0.055 h);
+    --usewc-color-grid-row-background-selected-hover: oklch(from var(--usewc-color-brand-primary) 0.38 0.065 h);
+    --usewc-color-grid-row-background-hover: oklch(from var(--usewc-color-graphite-700) l c h / 0.35);
+    --usewc-color-grid-header-text: var(--usewc-color-graphite-400);
+    --usewc-color-avatar-background: var(--usewc-color-graphite-700);
+    --usewc-color-avatar-text: var(--usewc-color-graphite-200);
     /* A cell's own text is usually light against a dark page, so hover/active need to lighten it
        further instead of darkening it toward the background — the opposite direction from light
        mode, same as the sign flip below. */
