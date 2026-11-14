@@ -11,9 +11,8 @@ function height(id: string) {
 }
 
 describe("menu", () => {
-  it("sizes menu items to the base button height", async () => {
+  it("sizes menu items to a 32px target", async () => {
     render(html`
-      <button id="button">Button</button>
       <use-menu aria-label="Menu">
         <button role="menuitem" id="item">Item</button>
         <button role="menuitemcheckbox" aria-checked="true" id="checkbox-item">
@@ -24,7 +23,7 @@ describe("menu", () => {
 
     await customElements.whenDefined("use-menu");
 
-    expect(height("item")).toBe(height("button"));
-    expect(height("checkbox-item")).toBe(height("button"));
+    expect(height("item")).toBe(32);
+    expect(height("checkbox-item")).toBe(32);
   });
 });
