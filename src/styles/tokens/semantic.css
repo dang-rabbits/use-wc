@@ -778,7 +778,11 @@
     /* Solid fills are already lighter than the dark surface, so they keep the
        light-mode direction — darkening still reads as pressing toward it —
        but need a shallower border step or the derived border overpowers the
-       fill. */
+       fill. Their borders run lighter than the fill instead: a darker one
+       melts into the dark page and makes the button read shorter than a base
+       button beside it. */
+    --usewc-effect-button-primary-border-direction: 1;
+    --usewc-effect-button-danger-border-direction: 1;
     --usewc-effect-button-primary-border-step: 0.08;
     --usewc-effect-button-primary-border-step-hover: 0.1;
     --usewc-effect-button-danger-border-step: 0.08;
