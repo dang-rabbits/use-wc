@@ -56,7 +56,7 @@
         --usewc-color-popover-menu-item-text: var(--usewc-color-popover-menu-item-text-static);
         --usewc-effect-outline-width: 0;
 
-        gap: var(--usewc-layout-popover-menu-item-padding-inline);
+        gap: var(--usewc-layout-popover-menu-item-gap);
         line-height: var(--usewc-layout-popover-menu-item-line-height);
         padding-inline: var(--usewc-layout-popover-menu-item-padding-inline);
         padding-block: var(--usewc-layout-popover-menu-item-padding-block);
