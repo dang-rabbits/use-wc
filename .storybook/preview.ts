@@ -5,6 +5,7 @@ import { createElement, useSyncExternalStore } from "react";
 import type { PropsWithChildren } from "react";
 import { fontBase, fontCode } from "./theme-fonts";
 import { sampleStrings } from "./sample-strings";
+import { ThemeTokens } from "./theme-tokens-block";
 import { registerLocales } from "../src/i18n/i18n";
 import {
   Controls,
@@ -205,6 +206,7 @@ const preview: Preview = {
           createElement(Primary, null),
           createElement(Controls, null),
           createElement(Stories, { includePrimary: false }),
+          createElement(ThemeTokens, null),
         ),
       container: SystemThemeDocsContainer,
       // Keeps the `<use-theme-escape>` wrapper the preview decorator below adds (see its own
@@ -224,6 +226,7 @@ const preview: Preview = {
           [
             "Overview",
             "Token Naming",
+            "Tokens",
             "Native Elements",
             "use-field",
             "use-layout",
