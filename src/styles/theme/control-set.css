@@ -21,8 +21,9 @@
    inside one of them would.
 
    The container only sets `display` and `isolation` — `isolation: isolate` scopes the hover
-   `z-index` below to just this set's own children, so a lifted border can't bleed into stacking
-   elsewhere on the page. Touching sides merge by default (`--usewc-layout-control-set-gap` is a
+   and focus `z-index` below to just this set's own children, so a lifted border can't bleed into
+   stacking elsewhere on the page. Focus sits a level above hover, so hovering a neighbor never
+   covers the focused child's focus ring. Touching sides merge by default (`--usewc-layout-control-set-gap` is a
    negative overlap equal to the button border, and `--usewc-effect-control-set-border-radius-sequential`
    is `0`), both themeable — see `tokens/semantic.css` for the defaults. The button border is the
    one hardcoded assumption left: it and the input border round to the same rendered pixel at
@@ -52,8 +53,12 @@
       margin-inline-start: 0;
     }
 
-    &:where(:hover, :focus-visible, :focus-within) {
+    &:hover {
       z-index: 1;
+    }
+
+    &:where(:focus-visible, :focus-within) {
+      z-index: 2;
     }
 
     use-theme-escape & {
