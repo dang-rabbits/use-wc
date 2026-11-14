@@ -1,4 +1,5 @@
 import { expect, describe, it } from "vite-plus/test";
+import { userEvent } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 
@@ -82,6 +83,23 @@ describe("control set", () => {
     expect(loneStyle.borderTopRightRadius).toBe(radius);
     expect(loneStyle.borderBottomLeftRadius).toBe(radius);
     expect(loneStyle.borderBottomRightRadius).toBe(radius);
+  });
+
+  it("keeps a focused child above a hovered sibling", async () => {
+    render(html`
+      <use-control-set>
+        <button id="focused">1</button>
+        <button id="hovered">2</button>
+      </use-control-set>
+    `);
+
+    element("focused").focus();
+    await userEvent.hover(element("hovered"));
+
+    const focusedLayer = Number(getComputedStyle(element("focused")).zIndex);
+    const hoveredLayer = Number(getComputedStyle(element("hovered")).zIndex);
+    expect(hoveredLayer).toBe(1);
+    expect(focusedLayer).toBeGreaterThan(hoveredLayer);
   });
 
   it("renders a plain span as a bordered cell matching its neighbors' height", async () => {
