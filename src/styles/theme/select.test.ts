@@ -135,7 +135,7 @@ describe.runIf(CSS.supports("appearance", "base-select"))("select base-select", 
     `);
 
     const optionStyle = style("option");
-    expect(optionStyle.paddingLeft).toBe("4px");
+    expect(optionStyle.paddingLeft).toBe("12px");
     expect(optionStyle.borderTopLeftRadius).toBe("4px");
     expect(style("option", "::checkmark").maskImage).toContain("data:image/svg+xml");
     expect(Number(style("disabled").opacity)).toBeLessThan(1);

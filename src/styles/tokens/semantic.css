@@ -564,8 +564,9 @@
   --usewc-layout-grid-list-row-selected-marker: var(--usewc-space-2);
 
   /* Menu */
-  --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-4);
-  --usewc-layout-popover-menu-item-padding-block: var(--usewc-space-2);
+  --usewc-layout-popover-menu-item-padding-inline: var(--usewc-space-12);
+  --usewc-layout-popover-menu-item-gap: var(--usewc-space-4);
+  --usewc-layout-popover-menu-item-padding-block: var(--usewc-space-4);
   --usewc-layout-popover-menu-item-line-height: var(--usewc-line-height-24);
   --usewc-color-popover-menu-item-background-static: var(--usewc-color-transparent);
   --usewc-color-popover-menu-item-background-hover: var(--usewc-color-selector-background-hover);
