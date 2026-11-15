@@ -3,12 +3,13 @@ import { customElement } from "lit/decorators.js";
 
 /**
  * `use-pattern` arranges a region-based unit of content — a card, a row in a list, a chat
- * message, a media object — styled entirely by the design system's theme layer
+ * message, a media object, an alert — styled entirely by the design system's theme layer
  * (`theme/pattern.css`) rather than by any shadow DOM here. It renders its light-DOM children
  * exactly as given.
  *
- * Its variant classes (`card`, `entry`, `message`, `media`) and their modifiers (`.divided`,
- * `.compact`, `.elevated`, `.flush`) are plain classes rather than properties, the same as any
+ * Its variant classes (`card`, `entry`, `message`, `media`, `alert`) and their modifiers
+ * (`.divided`, `.compact`, `.elevated`, `.flush`, `.banner`, and an alert's `.info`/`.success`/
+ * `.warning`/`.danger` tone) are plain classes rather than properties, the same as any
  * other themed class in this system, like `use-avatar`'s `.circle`/`.square`. For generic flex
  * arrangement, or a page frame, use `use-layout`, which nests freely inside a pattern's regions.
  *
