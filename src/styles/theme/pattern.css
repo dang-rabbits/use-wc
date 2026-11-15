@@ -5,7 +5,7 @@
    arrangement — direction, gap, padding, `fill`, and the `.page` app frame — belongs to
    `use-layout` (`layout.css`) instead, and nests freely inside any pattern's regions.
 
-   Four variant classes name what the pattern *is*, and its semantic `<figure>` / `<header>` /
+   Five variant classes name what the pattern *is*, and its semantic `<figure>` / `<header>` /
    `<main>` / `<footer>` regions are arranged to match:
 
      use-pattern.entry     a row in a list   — a leading avatar rail with the regions beside it
@@ -14,6 +14,8 @@
                                                compact, plus the chrome at end of file
      use-pattern.media     a media object    — a rail cell beside an anonymous body cell holding
                                                the stacked regions (à la Bootstrap 3's .media)
+     use-pattern.alert     a callout         — an optional icon rail beside a title, message and
+                                               actions, tinted by a tone class, plus its chrome
 
    `header`/`main`/`footer` are style hooks, not required elements — none of these regions are
    mandatory, any combination lays out correctly (`header` + `footer` is a confirm dialog, `header`
@@ -47,6 +49,10 @@
    Every variant takes `.flush`, which drops a pattern's own outer inset so it can sit directly
    inside a container that already pads itself — an `<a>` in a nav, a dialog's own padded
    surface — without doubling up.
+
+   `.alert` also takes one tone class — `.info`, `.success`, `.warning` or `.danger`, neutral
+   without one — and `.banner`, which squares it off into a full-width strip for the top of a
+   page or region.
 
    Every selector stays compound (`use-pattern.card`, never a bare `.card`) so none of these
    common words can collide with an author's own class of the same name.
@@ -119,6 +125,16 @@
     --usewc-layout-region-gap: var(--usewc-layout-media-gap);
     --usewc-layout-region-row-gap: var(--usewc-layout-media-gap);
     --usewc-layout-region-avatar-size: var(--usewc-layout-region-title-block-size);
+    --usewc-layout-footer-justify: flex-start;
+  }
+
+  /* `.alert`'s rail holds an icon rather than a likeness, so `-avatar-size` is the icon's square
+     — a title's line box, so the two sit level. */
+  use-pattern.alert {
+    --usewc-layout-region-padding: var(--usewc-layout-alert-padding);
+    --usewc-layout-region-gap: var(--usewc-layout-alert-gap);
+    --usewc-layout-region-row-gap: var(--usewc-layout-alert-row-gap);
+    --usewc-layout-region-avatar-size: var(--usewc-layout-alert-icon-size);
     --usewc-layout-footer-justify: flex-start;
   }
 
@@ -215,7 +231,7 @@
      The selector matches the variant list rather than a bare `.flush` so this out-ranks a
      two-class modifier like `.entry.compact` on specificity — `.entry.compact.flush` needs
      `.flush` to win regardless of which order the three classes are combined in. */
-  use-pattern:is(.entry, .message, .card, .media).flush {
+  use-pattern:is(.entry, .message, .card, .media, .alert).flush {
     --usewc-layout-region-padding: 0;
     padding-block: 0;
   }
@@ -343,12 +359,13 @@
     }
   }
 
-  /* ── Regions: .entry / .message ─────────────────────────────────────────────────────────────
+  /* ── Regions: .entry / .message / .alert ────────────────────────────────────────────────────
      Same header/footer/hgroup treatment as `.card`, minus the two things their own
      shape already covers elsewhere: `header`/`main`/`footer` take no padding of their own here
      either (the structural rules below own the inset), and `main`/`use-layout[fill]`'s own
-     first/last child still sheds the block margin that would otherwise stack on top of it. */
-  :where(use-pattern:is(.entry, .message)) {
+     first/last child still sheds the block margin that would otherwise stack on top of it.
+     `.alert` is the same rail-beside-regions grid, so it shares the whole block. */
+  :where(use-pattern:is(.entry, .message, .alert)) {
     min-block-size: 0;
     gap: var(--usewc-layout-region-row-gap);
 
@@ -626,11 +643,11 @@
 
   /* A `<figure>` inside the body is an attachment, not the rail — it keeps the flow but sheds the
      UA margin so the region's own spacing is the only spacing. */
-  :where(use-pattern:is(.entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure {
+  :where(use-pattern:is(.entry, .message, .card, .media, .alert)) > :is(main, use-layout[fill]) figure {
     margin-inline: 0;
   }
 
-  :where(use-pattern:is(.entry, .message, .card, .media)) > :is(main, use-layout[fill]) figure > img {
+  :where(use-pattern:is(.entry, .message, .card, .media, .alert)) > :is(main, use-layout[fill]) figure > img {
     display: block;
     inline-size: 100%;
     block-size: auto;
@@ -689,6 +706,135 @@
      first region is always child 2, the row gap only starts from the third child on. */
   :where(use-pattern.media) > :nth-child(n + 3) {
     margin-block-start: var(--usewc-layout-region-row-gap);
+  }
+
+  /* `.alert` is `.entry`'s grid with two differences. The icon rail is only reserved when a
+     `<figure>` is actually there — an alert has no run of siblings to line up with, so one
+     without an icon starts its text at the inline-start edge instead of indenting it. And the
+     rail is the leading `<figure>` alone: any other child, an author's own `<p>` included, is a
+     region in the text column, since an alert's message is as likely to be a bare paragraph as a
+     `<main>`.
+
+     The icon sits level with the title when there's a header — centred on the header row. With
+     no header it sits level with the first line of the message instead: the rail is one line box
+     of the inherited leading tall, and the icon is centred in it.
+
+     The row gap keeps a title and its message together; the actions sit a full region gap below
+     the message instead — the same room the alert pads its edges with — so they read as a
+     separate step rather than more of the message. */
+  use-pattern.alert {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--usewc-layout-region-gap);
+    row-gap: var(--usewc-layout-region-row-gap);
+    padding-inline: var(--usewc-layout-region-padding);
+    padding-block: var(--usewc-layout-region-gap);
+  }
+
+  use-pattern.alert:has(> figure:first-child) {
+    grid-template-columns: var(--usewc-layout-region-avatar-size) minmax(0, 1fr);
+  }
+
+  :where(use-pattern.alert) > :not(figure:first-child) {
+    grid-column: -2;
+  }
+
+  :where(use-pattern.alert) > figure:first-child {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: var(--usewc-layout-region-avatar-size);
+    block-size: 1lh;
+    color: var(--usewc-local-alert-icon);
+  }
+
+  :where(use-pattern.alert:has(> header)) > figure:first-child {
+    align-self: center;
+    block-size: var(--usewc-layout-region-avatar-size);
+  }
+
+  :where(use-pattern.alert) > figure:first-child > :is(svg, img) {
+    inline-size: var(--usewc-layout-region-avatar-size);
+    block-size: var(--usewc-layout-region-avatar-size);
+  }
+
+  :where(use-pattern.alert) > :not(figure, header, footer) {
+    margin-block: 0;
+  }
+
+  :where(use-pattern.alert) > header :is(h1, h2, h3, h4, h5, h6) {
+    font-size: inherit;
+    line-height: var(--usewc-layout-region-title-line-height);
+  }
+
+  :where(use-pattern.alert) > footer {
+    margin-block-start: calc(var(--usewc-layout-region-gap) - var(--usewc-layout-region-row-gap));
+  }
+
+  /* A dismiss button is taller than the title line it trails, and left alone it would stretch
+     the header row and push the message further from the title than the actions sit from the
+     message. It overhangs the title line evenly instead, by however much its own size makes it
+     taller — read from its own padding and line-height tokens, the same way `layout.css` pulls a
+     header button's edge into the gutter — so the row stays one title line tall. */
+  :where(use-pattern.alert) > header > button,
+  :where(use-pattern.alert) > header > section > button {
+    margin-block: min(
+      0px,
+      (
+          var(--usewc-layout-region-title-line-height) - var(--usewc-local-button-line-height) -
+            (var(--usewc-local-button-padding-block) + var(--usewc-layout-button-border)) * 2
+        ) /
+        2
+    );
+  }
+
+  /* Alert chrome — a tinted wash, a border one step darker and a matching icon, picked by tone.
+     Each tone only swaps the three local properties the chrome reads, so the chrome itself is one
+     rule. An alert keeps its chrome inside a `dialog` or `[popover]`, unlike `.card`: it's a
+     message within the overlay's content, not a second surface standing in for the overlay's. */
+  use-pattern.alert {
+    --usewc-local-alert-background: var(--usewc-color-alert-neutral-background);
+    --usewc-local-alert-border: var(--usewc-color-alert-neutral-border);
+    --usewc-local-alert-icon: var(--usewc-color-alert-neutral-icon);
+    background: var(--usewc-local-alert-background);
+    border: var(--usewc-layout-alert-border) solid var(--usewc-local-alert-border);
+    border-radius: var(--usewc-effect-alert-border-radius);
+    color: var(--usewc-color-document-text);
+  }
+
+  use-pattern.alert.info {
+    --usewc-local-alert-background: var(--usewc-color-alert-info-background);
+    --usewc-local-alert-border: var(--usewc-color-alert-info-border);
+    --usewc-local-alert-icon: var(--usewc-color-alert-info-icon);
+  }
+
+  use-pattern.alert.success {
+    --usewc-local-alert-background: var(--usewc-color-alert-success-background);
+    --usewc-local-alert-border: var(--usewc-color-alert-success-border);
+    --usewc-local-alert-icon: var(--usewc-color-alert-success-icon);
+  }
+
+  use-pattern.alert.warning {
+    --usewc-local-alert-background: var(--usewc-color-alert-warning-background);
+    --usewc-local-alert-border: var(--usewc-color-alert-warning-border);
+    --usewc-local-alert-icon: var(--usewc-color-alert-warning-icon);
+  }
+
+  use-pattern.alert.danger {
+    --usewc-local-alert-background: var(--usewc-color-alert-danger-background);
+    --usewc-local-alert-border: var(--usewc-color-alert-danger-border);
+    --usewc-local-alert-icon: var(--usewc-color-alert-danger-icon);
+  }
+
+  /* `.banner` is an alert spanning the edge of whatever it sits in — the top of a page, a card,
+     a dialog — so it squares off and keeps only the border facing the content below it. */
+  use-pattern.alert.banner {
+    border-radius: 0;
+    border-inline-width: 0;
+    border-block-start-width: 0;
   }
 
   /* Card chrome — the one bit of floating surface treatment that isn't layout, and the only

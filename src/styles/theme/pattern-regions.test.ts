@@ -15,7 +15,7 @@ const supportsRowRule = CSS.supports("row-rule-style", "solid");
 const imageSource =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3C/svg%3E";
 
-const variants = ["entry", "message", "card", "media"];
+const variants = ["entry", "message", "card", "media", "alert"];
 
 describe("pattern region treatment", () => {
   describe("shared across variants", () => {
@@ -174,6 +174,7 @@ describe("pattern region treatment", () => {
       expect(padding.entry).toBe("16px");
       expect(padding.message).toBe("12px");
       expect(padding.media).toBe("12px");
+      expect(padding.alert).toBe("12px");
     });
 
     it("steps padding, gap, and avatar size down when an entry is compact", async () => {
@@ -576,6 +577,176 @@ describe("pattern region treatment", () => {
 
       expect(styleOf(document.getElementById("header")!, "border-bottom-width")).toBe("0px");
       expect(styleOf(document.getElementById("footer")!, "justify-content")).toBe("flex-start");
+    });
+  });
+
+  describe("alert", () => {
+    const tones = ["neutral", "info", "success", "warning", "danger"];
+    const toneClass = (tone: string) => (tone === "neutral" ? "alert" : `alert ${tone}`);
+
+    it("puts a leading figure in an icon rail with the regions beside it", async () => {
+      render(html`
+        <use-pattern class="alert" id="alert">
+          <figure id="icon"><svg viewBox="0 0 24 24"></svg></figure>
+          <header id="header"><h4>Heads up</h4></header>
+          <main id="body"><p>Something happened.</p></main>
+          <footer id="footer"><button type="button">Undo</button></footer>
+        </use-pattern>
+      `);
+
+      expect(styleOf(document.getElementById("alert")!, "display")).toBe("grid");
+      expect(styleOf(document.getElementById("icon")!, "width")).toBe("20px");
+
+      const iconRight = document.getElementById("icon")!.getBoundingClientRect().right;
+      for (const id of ["header", "body", "footer"]) {
+        expect(document.getElementById(id)!.getBoundingClientRect().left).toBeGreaterThan(
+          iconRight,
+        );
+      }
+    });
+
+    it("reserves no rail when there is no icon", async () => {
+      render(html`
+        <use-pattern class="alert" id="alert">
+          <p id="message">Saved.</p>
+        </use-pattern>
+      `);
+      const alert = document.getElementById("alert")!;
+      const contentLeft =
+        alert.getBoundingClientRect().left +
+        parseFloat(styleOf(alert, "border-left-width")) +
+        parseFloat(styleOf(alert, "padding-left"));
+
+      expect(document.getElementById("message")!.getBoundingClientRect().left).toBeCloseTo(
+        contentLeft,
+        0,
+      );
+    });
+
+    it("takes a bare paragraph as its message and lets the grid own its spacing", async () => {
+      render(html`
+        <use-pattern class="alert">
+          <figure><svg viewBox="0 0 24 24"></svg></figure>
+          <p id="message">Saved.</p>
+        </use-pattern>
+      `);
+      const message = document.getElementById("message")!;
+
+      expect(styleOf(message, "margin-top")).toBe("0px");
+      expect(styleOf(message, "margin-bottom")).toBe("0px");
+    });
+
+    it("levels the icon with a one-line message when there is no header", async () => {
+      render(html`
+        <use-pattern class="alert">
+          <figure id="icon"><svg viewBox="0 0 24 24"></svg></figure>
+          <p id="message">Saved.</p>
+        </use-pattern>
+      `);
+      const icon = document.getElementById("icon")!.getBoundingClientRect();
+      const message = document.getElementById("message")!.getBoundingClientRect();
+
+      expect(icon.top + icon.height / 2).toBeCloseTo(message.top + message.height / 2, 0);
+    });
+
+    it("keeps a dismiss button from stretching the header and sets the actions a region gap below the message", async () => {
+      render(html`
+        <use-pattern class="alert">
+          <figure id="icon"><svg viewBox="0 0 24 24"></svg></figure>
+          <header id="header">
+            <h4 id="title">Heads up</h4>
+            <button type="button" class="clear" aria-label="Dismiss" id="dismiss">&#10005;</button>
+          </header>
+          <main><p id="message">Something happened.</p></main>
+          <footer id="footer"><button type="button">Undo</button></footer>
+        </use-pattern>
+      `);
+      const rectOf = (id: string) => document.getElementById(id)!.getBoundingClientRect();
+      const centerOf = (id: string) => rectOf(id).top + rectOf(id).height / 2;
+
+      expect(rectOf("header").height).toBe(rectOf("title").height);
+      expect(rectOf("message").top - rectOf("title").bottom).toBe(8);
+      expect(rectOf("footer").top - rectOf("message").bottom).toBe(12);
+      expect(centerOf("icon")).toBeCloseTo(centerOf("title"), 0);
+      expect(centerOf("dismiss")).toBeCloseTo(centerOf("title"), 0);
+    });
+
+    it("tints its background, border and icon by tone", async () => {
+      render(html`
+        <div>
+          ${tones.map(
+            (tone) => html`
+              <use-pattern class=${toneClass(tone)} id=${`alert-${tone}`}>
+                <figure id=${`icon-${tone}`}><svg viewBox="0 0 24 24"></svg></figure>
+                <p>Message</p>
+              </use-pattern>
+              <span
+                id=${`probe-${tone}`}
+                style=${`background-color: var(--usewc-color-alert-${tone}-background); border: 1px solid var(--usewc-color-alert-${tone}-border); color: var(--usewc-color-alert-${tone}-icon)`}
+              ></span>
+            `,
+          )}
+        </div>
+      `);
+
+      for (const tone of tones) {
+        const alert = document.getElementById(`alert-${tone}`)!;
+        const probe = document.getElementById(`probe-${tone}`)!;
+        expect(styleOf(alert, "background-color"), tone).toBe(styleOf(probe, "background-color"));
+        expect(styleOf(alert, "border-top-color"), tone).toBe(styleOf(probe, "border-top-color"));
+        expect(styleOf(document.getElementById(`icon-${tone}`)!, "color"), tone).toBe(
+          styleOf(probe, "color"),
+        );
+      }
+
+      const backgrounds = tones.map((tone) =>
+        styleOf(document.getElementById(`alert-${tone}`)!, "background-color"),
+      );
+      expect(new Set(backgrounds).size).toBe(tones.length);
+    });
+
+    it("keeps the body copy in the document's text colour whatever the tone", async () => {
+      render(html`
+        <div>
+          <p id="document">Document</p>
+          <use-pattern class="alert danger"><p id="message">Message</p></use-pattern>
+        </div>
+      `);
+
+      expect(styleOf(document.getElementById("message")!, "color")).toBe(
+        styleOf(document.getElementById("document")!, "color"),
+      );
+    });
+
+    it("keeps its chrome inside an overlay", async () => {
+      render(html`
+        <dialog open>
+          <use-pattern class="alert warning" id="alert"><p>Message</p></use-pattern>
+        </dialog>
+      `);
+
+      expect(styleOf(document.getElementById("alert")!, "border-top-width")).toBe("1px");
+    });
+
+    it("squares a banner off into a strip with only a block-end border", async () => {
+      render(html`
+        <use-pattern class="alert info banner" id="banner"><p>Maintenance tonight.</p></use-pattern>
+      `);
+      const banner = document.getElementById("banner")!;
+
+      expect(styleOf(banner, "border-radius")).toBe("0px");
+      expect(styleOf(banner, "border-top-width")).toBe("0px");
+      expect(styleOf(banner, "border-left-width")).toBe("0px");
+      expect(styleOf(banner, "border-right-width")).toBe("0px");
+      expect(styleOf(banner, "border-bottom-width")).toBe("1px");
+    });
+
+    it("drops its own inset when flush", async () => {
+      render(html` <use-pattern class="alert flush" id="alert"><p>Message</p></use-pattern> `);
+      const alert = document.getElementById("alert")!;
+
+      expect(styleOf(alert, "padding-left")).toBe("0px");
+      expect(styleOf(alert, "padding-top")).toBe("0px");
     });
   });
 

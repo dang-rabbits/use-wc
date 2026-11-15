@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
-import { html } from "lit";
+import { html, svg } from "lit";
 import "../elements/use-avatar/use-avatar";
 import "../elements/use-anchored/use-anchored";
 import "../elements/use-layout/use-layout";
@@ -11,6 +11,30 @@ const portrait =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Crect width='64' height='64' fill='%2364748b'/%3E%3C/svg%3E";
 const screenshot =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='200'%3E%3Crect width='480' height='200' fill='%23cbd5e1'/%3E%3C/svg%3E";
+
+const alertIconPaths = {
+  neutral: svg`<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"></path><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"></path>`,
+  info: svg`<circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4M12 8h.01"></path>`,
+  success: svg`<circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path>`,
+  warning: svg`<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"></path><path d="M12 9v4M12 17h.01"></path>`,
+  danger: svg`<circle cx="12" cy="12" r="10"></circle><path d="m15 9-6 6M9 9l6 6"></path>`,
+};
+
+const alertIcon = (tone: keyof typeof alertIconPaths) => html`
+  <figure>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      ${alertIconPaths[tone]}
+    </svg>
+  </figure>
+`;
 
 const meta: Meta = {
   title: "Design System/use-pattern",
@@ -24,9 +48,11 @@ const meta: Meta = {
         component: [
           "`use-pattern` arranges a region-based unit of content, styled entirely by the design-system stylesheet rather than any shadow DOM. It's a registered custom element with no properties of its own — its variant class says what it is.",
           "",
-          "Four variant classes arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions: `entry` for a row in a list, `message` for a chat or comment, `card` for a panel, and `media` for a media object — a rail that fits its content beside a wider body column. Each selector is compound (`use-pattern.card`, never a bare `.card`) so these common words can't collide with your own classes.",
+          "Five variant classes arrange its semantic `<figure>` / `<header>` / `<main>` / `<footer>` regions: `entry` for a row in a list, `message` for a chat or comment, `card` for a panel, `media` for a media object — a rail that fits its content beside a wider body column — and `alert` for a tinted callout or banner. Each selector is compound (`use-pattern.card`, never a bare `.card`) so these common words can't collide with your own classes.",
           "",
           "Add `.divided` to a `card` to rule a region off from the one before it — opt-in, not a default. `entry`/`message`/`media` don't take it, since they arrange their regions structurally rather than stacking them in one column.",
+          "",
+          "An `alert` takes one tone class — `info`, `success`, `warning` or `danger`, neutral without one — and `.banner` to square it off into a full-width strip.",
           "",
           "For generic flex arrangement, or an app frame with a scrolling body, reach for `use-layout` — it nests inside any pattern's regions, and a `use-layout[fill]` child grows and scrolls inside a card the same way it does anywhere else. For a block of authored text, reach for `use-prose`.",
         ].join("\n"),
@@ -281,6 +307,105 @@ export const Media: Story = {
         <button type="button">Book now</button>
       </footer>
     </use-pattern>
+  `,
+};
+
+/**
+ * A tinted callout for a message the reader should notice — a leading `<figure>` holds the icon, with a title, the message, and any actions beside it. Add a tone class for what kind of message it is: `info`, `success`, `warning` or `danger`, or none for a neutral note. The tone tints the background, border and icon; the message itself stays in the document's own text colour.
+ *
+ * The pattern carries no ARIA semantics, so give it the role that fits: `role="status"` for a polite update, `role="alert"` for something urgent that should interrupt. The icon is decorative — the title or message has to say what kind of alert it is on its own.
+ */
+export const Alert: Story = {
+  render: () => html`
+    <div style="display: grid; gap: 0.75rem; max-inline-size: 32rem">
+      <use-pattern class="alert" role="status">
+        ${alertIcon("neutral")}
+        <header><h4>Scheduled maintenance</h4></header>
+        <main><p>The dashboard will be read-only on Sunday from 2 to 4 AM.</p></main>
+      </use-pattern>
+      <use-pattern class="alert info" role="status">
+        ${alertIcon("info")}
+        <header><h4>New reporting view</h4></header>
+        <main><p>Weekly totals now break down by team.</p></main>
+      </use-pattern>
+      <use-pattern class="alert success" role="status">
+        ${alertIcon("success")}
+        <header><h4>Invoice sent</h4></header>
+        <main><p>A copy is on its way to billing@example.com.</p></main>
+      </use-pattern>
+      <use-pattern class="alert warning" role="status">
+        ${alertIcon("warning")}
+        <header><h4>Storage almost full</h4></header>
+        <main><p>You've used 92% of your plan. Older uploads may stop syncing.</p></main>
+      </use-pattern>
+      <use-pattern class="alert danger" role="alert">
+        ${alertIcon("danger")}
+        <header><h4>Payment failed</h4></header>
+        <main><p>The card ending in 4242 was declined.</p></main>
+      </use-pattern>
+    </div>
+  `,
+};
+
+/**
+ * A one-line alert needs no header — a bare `<p>` is the message, and the icon sits level with its first line. Without a `<figure>` there's no rail at all, so the text starts at the inline-start edge.
+ */
+export const AlertMessageOnly: Story = {
+  render: () => html`
+    <div style="display: grid; gap: 0.75rem; max-inline-size: 32rem">
+      <use-pattern class="alert success" role="status">
+        ${alertIcon("success")}
+        <p>Your changes were saved.</p>
+      </use-pattern>
+      <use-pattern class="alert info" role="status">
+        <p>Your changes were saved.</p>
+      </use-pattern>
+    </div>
+  `,
+};
+
+/**
+ * A dismiss button trails the title in the `<header>`, and the icon stays level with the title even though the button makes the row taller. Actions go in a `<footer>`, aligned with the message rather than the far edge. Wiring the dismiss button up is the app's job — the pattern only lays it out.
+ */
+export const AlertWithActions: Story = {
+  render: () => html`
+    <use-pattern class="alert warning" role="alert" style="max-inline-size: 32rem">
+      ${alertIcon("warning")}
+      <header>
+        <hgroup><h4>Your session expires in 5 minutes</h4></hgroup>
+        <button type="button" class="clear" aria-label="Dismiss">&#10005;</button>
+      </header>
+      <main><p>Unsaved changes will be lost when it does.</p></main>
+      <footer>
+        <button type="button">Stay signed in</button>
+        <button type="button" class="clear">Sign out</button>
+      </footer>
+    </use-pattern>
+  `,
+};
+
+/**
+ * `.banner` squares an alert off into a full-width strip for the top of a page, a card, or a dialog — no rounded corners, and only the border facing the content below it.
+ */
+export const AlertBanner: Story = {
+  render: () => html`
+    <div
+      style="
+        max-inline-size: 32rem;
+        border: 1px solid var(--usewc-color-surface-border);
+        border-radius: 8px;
+        overflow: hidden;
+      "
+    >
+      <use-pattern class="alert danger banner" role="alert">
+        ${alertIcon("danger")}
+        <p>This project was archived and can no longer be edited.</p>
+      </use-pattern>
+      <div style="padding: 1rem">
+        <h4 style="margin-block-start: 0">Quarterly roadmap</h4>
+        <p style="margin-block-end: 0">Three initiatives, two of them already shipped.</p>
+      </div>
+    </div>
   `,
 };
 

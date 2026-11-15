@@ -730,6 +730,34 @@
   --usewc-layout-media-padding: var(--usewc-space-12);
   --usewc-layout-media-gap: var(--usewc-space-12);
 
+  /* An alert is a tinted callout — an icon rail beside a title, a message, and any actions.
+     `-gap` is its block inset and the room between the icon and the text; `-row-gap` is one step
+     under it and keeps a title and its message together; actions sit a full `-gap` below the
+     message. The icon is sized to a title's line box so the
+     two sit level. Each tone pairs a pale wash with a border one step darker and an icon dark
+     enough to hold 3:1 against the wash; the body copy stays the document's own text colour. */
+  --usewc-layout-alert-padding: var(--usewc-space-12);
+  --usewc-layout-alert-gap: var(--usewc-space-12);
+  --usewc-layout-alert-row-gap: var(--usewc-space-8);
+  --usewc-layout-alert-icon-size: var(--usewc-layout-region-title-line-height);
+  --usewc-layout-alert-border: var(--usewc-layout-surface-border);
+  --usewc-effect-alert-border-radius: var(--usewc-effect-surface-border-radius);
+  --usewc-color-alert-neutral-background: var(--usewc-color-gray-50);
+  --usewc-color-alert-neutral-border: var(--usewc-color-gray-200);
+  --usewc-color-alert-neutral-icon: var(--usewc-color-gray-600);
+  --usewc-color-alert-info-background: var(--usewc-color-blue-100);
+  --usewc-color-alert-info-border: var(--usewc-color-blue-200);
+  --usewc-color-alert-info-icon: var(--usewc-color-blue-600);
+  --usewc-color-alert-success-background: var(--usewc-color-green-100);
+  --usewc-color-alert-success-border: var(--usewc-color-green-200);
+  --usewc-color-alert-success-icon: var(--usewc-color-green-600);
+  --usewc-color-alert-warning-background: var(--usewc-color-amber-100);
+  --usewc-color-alert-warning-border: var(--usewc-color-amber-200);
+  --usewc-color-alert-warning-icon: var(--usewc-color-amber-600);
+  --usewc-color-alert-danger-background: var(--usewc-color-red-100);
+  --usewc-color-alert-danger-border: var(--usewc-color-red-200);
+  --usewc-color-alert-danger-icon: var(--usewc-color-red-600);
+
   /* Surface — the visible chrome for a surface host (background/border/radius/shadow), the
      backdrop behind a modal `<dialog>` (non-modal `[popover]` keeps its transparent UA
      backdrop), and the gap an anchored surface keeps from its anchor. `-padding` is the inset a
@@ -828,6 +856,23 @@
     --usewc-color-input-border-hover: var(--usewc-color-graphite-600);
     --usewc-color-input-border-focus: var(--usewc-color-blue-400);
     --usewc-color-input-border-invalid: var(--usewc-color-red-300);
+    /* A pale wash glares on a dark page, so each tone becomes a low-alpha tint of its light
+       step over whatever surface it sits on, with the icon lifted to that same light step. */
+    --usewc-color-alert-neutral-background: var(--usewc-color-graphite-800);
+    --usewc-color-alert-neutral-border: var(--usewc-color-graphite-700);
+    --usewc-color-alert-neutral-icon: var(--usewc-color-graphite-400);
+    --usewc-color-alert-info-background: oklch(from var(--usewc-color-blue-400) l c h / 0.12);
+    --usewc-color-alert-info-border: oklch(from var(--usewc-color-blue-400) l c h / 0.32);
+    --usewc-color-alert-info-icon: var(--usewc-color-blue-400);
+    --usewc-color-alert-success-background: oklch(from var(--usewc-color-green-400) l c h / 0.12);
+    --usewc-color-alert-success-border: oklch(from var(--usewc-color-green-400) l c h / 0.32);
+    --usewc-color-alert-success-icon: var(--usewc-color-green-400);
+    --usewc-color-alert-warning-background: oklch(from var(--usewc-color-amber-400) l c h / 0.12);
+    --usewc-color-alert-warning-border: oklch(from var(--usewc-color-amber-400) l c h / 0.32);
+    --usewc-color-alert-warning-icon: var(--usewc-color-amber-400);
+    --usewc-color-alert-danger-background: oklch(from var(--usewc-color-red-400) l c h / 0.12);
+    --usewc-color-alert-danger-border: oklch(from var(--usewc-color-red-400) l c h / 0.32);
+    --usewc-color-alert-danger-icon: var(--usewc-color-red-400);
     --usewc-color-input-segment-background-focus: oklch(from var(--usewc-color-blue-400) l c h / 0.3);
     --usewc-color-input-segment-text-focus: var(--usewc-color-graphite-100);
     --usewc-color-range-thumb-background-static: var(--usewc-color-blue-500);
