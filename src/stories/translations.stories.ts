@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 
 const meta: Meta = {
-  title: "Localization/Add-on API",
+  title: "Localization/Translations API",
   tags: ["!dev"],
   argTypes: {
     registerLocales: {
