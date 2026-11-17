@@ -235,7 +235,7 @@ const preview: Preview = {
             "Tools",
           ],
           "Localization",
-          ["Overview", "Add-on"],
+          ["Overview", "Translations"],
         ],
       },
     },
