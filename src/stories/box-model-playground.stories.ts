@@ -21,6 +21,17 @@ const tokenLists = {
   all: allTokens,
 };
 
+function baseButtonOutsetShadow(state: "outset" | "outset-hover") {
+  const alpha =
+    state === "outset"
+      ? "calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier))"
+      : "calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier) * var(--usewc-color-button-shadow-alpha-hover-multiplier))";
+  const geometry = ["offset-x", "offset-y", "blur", "spread"]
+    .map((part) => `var(--usewc-effect-button-shadow-${state}-${part})`)
+    .join(" ");
+  return `${geometry} oklch(from var(--usewc-color-button-base-shadow-tint) var(--usewc-color-button-shadow-lightness) calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-base-shadow-chroma-multiplier)) h / ${alpha})`;
+}
+
 type TokenCategory = "color" | "space" | "layout" | "font" | "effect";
 
 type PlaygroundProperty = {
@@ -143,11 +154,9 @@ const effectProperties: ReadonlyArray<PlaygroundProperty> = [
     name: "box-shadow",
     list: "effect",
     category: "effect",
-    defaultValue:
-      "var(--usewc-effect-button-box-shadow-none), var(--usewc-effect-button-box-shadow-outset)",
+    defaultValue: `var(--usewc-effect-button-box-shadow-none), ${baseButtonOutsetShadow("outset")}`,
     stateDefaults: {
-      hover:
-        "var(--usewc-effect-button-box-shadow-none), var(--usewc-effect-button-box-shadow-outset-hover)",
+      hover: `var(--usewc-effect-button-box-shadow-none), ${baseButtonOutsetShadow("outset-hover")}`,
       active: "var(--usewc-effect-button-box-shadow-none)",
       pressed: "var(--usewc-effect-button-box-shadow-none)",
     },
