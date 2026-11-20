@@ -61,6 +61,11 @@ import { customElement } from "lit/decorators.js";
  * corners) can both be overridden — a positive gap and a small radius reads as a looser, softer
  * set instead of a fused one.
  *
+ * A set holding any shadowed button (every variant but `clear` and `auxiliary`) casts one outset
+ * shadow from the set itself, tinted by its most prominent button (primary, then danger, then
+ * base) and shaped by the same `--usewc-effect-button-shadow-outset-*` geometry tokens a lone
+ * button reads, so per-child shadows don't overlap at the seams.
+ *
  * @slot - The grouped controls.
  */
 @customElement("use-control-set")

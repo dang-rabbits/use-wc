@@ -23,7 +23,6 @@ describe("control set", () => {
     const pageStyle = getComputedStyle(element("page"));
     const currentStyle = getComputedStyle(element("current"));
     expect(currentStyle.backgroundColor).not.toBe(pageStyle.backgroundColor);
-    expect(currentStyle.boxShadow).not.toBe(pageStyle.boxShadow);
   });
 
   it("ignores aria-current set to false", async () => {
@@ -117,5 +116,89 @@ describe("control set", () => {
     expect(element("gap").getBoundingClientRect().height).toBe(
       element("page").getBoundingClientRect().height,
     );
+  });
+
+  it("casts one shadow from a set holding a primary button instead of one per child", async () => {
+    render(html`
+      <use-control-set id="set">
+        <button type="button" class="primary" id="action">Save</button>
+        <button type="button" class="primary" id="trigger" aria-label="More save options">
+          <use-caret></use-caret>
+        </button>
+      </use-control-set>
+      <button type="button" class="primary" id="lone">Save</button>
+    `);
+
+    const setShadow = getComputedStyle(element("set")).boxShadow;
+    const loneShadow = getComputedStyle(element("lone")).boxShadow;
+    expect(setShadow).not.toBe("none");
+    expect(loneShadow).toContain(setShadow);
+    for (const id of ["action", "trigger"]) {
+      expect(getComputedStyle(element(id)).boxShadow).not.toContain("1px 2px");
+      expect(getComputedStyle(element(id)).boxShadow).toContain("inset");
+    }
+
+    await userEvent.hover(element("trigger"));
+    await expect
+      .poll(() => getComputedStyle(element("set")).boxShadow)
+      .toContain("0px 2px 4px 0px");
+  });
+
+  it("tints a danger set's shadow from the danger button", async () => {
+    render(html`
+      <use-control-set id="set">
+        <button type="button" class="danger">Delete</button>
+        <button type="button" class="danger" aria-label="More delete options">
+          <use-caret></use-caret>
+        </button>
+      </use-control-set>
+      <button type="button" class="danger" id="lone">Delete</button>
+    `);
+
+    expect(getComputedStyle(element("lone")).boxShadow).toContain(
+      getComputedStyle(element("set")).boxShadow,
+    );
+  });
+
+  it("follows the button shadow geometry tokens", async () => {
+    render(html`
+      <use-control-set
+        id="set"
+        style="--usewc-effect-button-shadow-outset-offset-x: 3px; --usewc-effect-button-shadow-outset-offset-y: 3px; --usewc-effect-button-shadow-outset-blur: 0px;"
+      >
+        <button type="button" class="primary">Save</button>
+        <button type="button" class="primary" aria-label="More save options">
+          <use-caret></use-caret>
+        </button>
+      </use-control-set>
+    `);
+
+    expect(getComputedStyle(element("set")).boxShadow).toContain("3px 3px 0px 0px");
+  });
+
+  it("casts one base-tinted shadow from a set of base buttons", async () => {
+    render(html`
+      <use-control-set id="set">
+        <button type="button" id="first">Bold</button>
+        <button type="button">Italic</button>
+      </use-control-set>
+      <button type="button" id="lone">Bold</button>
+    `);
+
+    const setShadow = getComputedStyle(element("set")).boxShadow;
+    expect(setShadow).toContain("0px 1px 2px 0px");
+    expect(getComputedStyle(element("lone")).boxShadow).toContain(setShadow);
+    expect(getComputedStyle(element("first")).boxShadow).not.toContain("1px 2px");
+  });
+
+  it("leaves a set of only clear or auxiliary buttons without a shadow", async () => {
+    render(html`
+      <use-control-set id="set">
+        <button type="button" class="clear">Bold</button>
+        <button type="button" class="auxiliary">Italic</button>
+      </use-control-set>
+    `);
+
+    expect(getComputedStyle(element("set")).boxShadow).toBe("none");
   });
 });
