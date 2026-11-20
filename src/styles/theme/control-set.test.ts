@@ -201,4 +201,20 @@ describe("control set", () => {
 
     expect(getComputedStyle(element("set")).boxShadow).toBe("none");
   });
+
+  it("follows the button shadow shortcut tokens", async () => {
+    render(html`
+      <use-control-set
+        id="set"
+        style="--usewc-effect-button-box-shadow-outset: 3px 3px 0 0 rgb(255, 0, 0);"
+      >
+        <button type="button" class="primary">Save</button>
+        <button type="button" class="primary" aria-label="More save options">
+          <use-caret></use-caret>
+        </button>
+      </use-control-set>
+    `);
+
+    expect(getComputedStyle(element("set")).boxShadow).toBe("rgb(255, 0, 0) 3px 3px 0px 0px");
+  });
 });

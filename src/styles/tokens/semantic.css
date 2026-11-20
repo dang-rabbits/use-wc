@@ -392,6 +392,10 @@
   --usewc-effect-button-box-shadow-none: 0 0 transparent;
   --usewc-effect-button-box-shadow-inset: inset 0 var(--usewc-layout-button-border) 0 0
     var(--usewc-color-button-shadow-inset);
+  /* Outset shadow geometry, kept apart from its color so each variant keeps its own tint. To
+     replace a whole outset shadow in one line instead, set the undefined shortcut
+     `--usewc-effect-button-box-shadow-outset` (or `-outset-hover`); it skips these pieces and
+     the variant tint, and `initial` restores them. Buttons and `use-control-set` both read it. */
   --usewc-effect-button-shadow-outset-offset-x: 0;
   --usewc-effect-button-shadow-outset-offset-y: 1px;
   --usewc-effect-button-shadow-outset-blur: 2px;

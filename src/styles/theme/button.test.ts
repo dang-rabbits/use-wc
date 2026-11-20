@@ -158,4 +158,27 @@ describe("button", () => {
       expect(getComputedStyle(document.getElementById(id)!).boxShadow).toBe("none");
     }
   });
+
+  it("replaces the whole outset shadow with the shortcut tokens", async () => {
+    render(html`
+      <div
+        style="
+          --usewc-effect-button-box-shadow-outset: 3px 3px 0 0 rgb(255, 0, 0);
+          --usewc-effect-button-box-shadow-outset-hover: 6px 6px 0 0 rgb(0, 0, 255);
+        "
+      >
+        <button type="button" id="base">Base</button>
+        <button type="button" class="primary" id="primary">Primary</button>
+      </div>
+    `);
+
+    for (const id of ["base", "primary"]) {
+      const button = document.getElementById(id)!;
+      expect(getComputedStyle(button).boxShadow).toContain("rgb(255, 0, 0) 3px 3px 0px 0px");
+      await userEvent.hover(button);
+      await expect
+        .poll(() => getComputedStyle(button).boxShadow)
+        .toContain("rgb(0, 0, 255) 6px 6px 0px 0px");
+    }
+  });
 });

@@ -43,12 +43,18 @@
             var(--usewc-color-button-shadow-alpha-hover-multiplier)
         )
     );
-    --usewc-local-button-box-shadow-outset: var(--usewc-effect-button-shadow-outset-offset-x)
-      var(--usewc-effect-button-shadow-outset-offset-y) var(--usewc-effect-button-shadow-outset-blur)
-      var(--usewc-effect-button-shadow-outset-spread) var(--usewc-local-button-shadow-outset);
-    --usewc-local-button-box-shadow-outset-hover: var(--usewc-effect-button-shadow-outset-hover-offset-x)
-      var(--usewc-effect-button-shadow-outset-hover-offset-y) var(--usewc-effect-button-shadow-outset-hover-blur)
-      var(--usewc-effect-button-shadow-outset-hover-spread) var(--usewc-local-button-shadow-outset-hover);
+    --usewc-local-button-box-shadow-outset: var(
+      --usewc-effect-button-box-shadow-outset,
+      var(--usewc-effect-button-shadow-outset-offset-x) var(--usewc-effect-button-shadow-outset-offset-y)
+        var(--usewc-effect-button-shadow-outset-blur) var(--usewc-effect-button-shadow-outset-spread)
+        var(--usewc-local-button-shadow-outset)
+    );
+    --usewc-local-button-box-shadow-outset-hover: var(
+      --usewc-effect-button-box-shadow-outset-hover,
+      var(--usewc-effect-button-shadow-outset-hover-offset-x) var(--usewc-effect-button-shadow-outset-hover-offset-y)
+        var(--usewc-effect-button-shadow-outset-hover-blur) var(--usewc-effect-button-shadow-outset-hover-spread)
+        var(--usewc-local-button-shadow-outset-hover)
+    );
     --usewc-local-button-box-shadow-layer: var(--usewc-effect-button-box-shadow-none);
     --usewc-local-button-box-shadow-static:
       var(--usewc-local-button-box-shadow-layer), var(--usewc-local-button-box-shadow-outset);

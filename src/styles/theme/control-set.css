@@ -84,21 +84,25 @@
     --usewc-local-control-set-shadow-alpha: calc(
       var(--usewc-color-button-shadow-alpha) * var(--usewc-local-control-set-shadow-alpha-multiplier)
     );
-    --usewc-local-control-set-box-shadow-static: var(--usewc-effect-button-shadow-outset-offset-x)
-      var(--usewc-effect-button-shadow-outset-offset-y) var(--usewc-effect-button-shadow-outset-blur)
-      var(--usewc-effect-button-shadow-outset-spread)
-      oklch(
-        from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
-          var(--usewc-local-control-set-shadow-chroma) h / var(--usewc-local-control-set-shadow-alpha)
-      );
-    --usewc-local-control-set-box-shadow-hover: var(--usewc-effect-button-shadow-outset-hover-offset-x)
-      var(--usewc-effect-button-shadow-outset-hover-offset-y) var(--usewc-effect-button-shadow-outset-hover-blur)
-      var(--usewc-effect-button-shadow-outset-hover-spread)
-      oklch(
-        from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
-          var(--usewc-local-control-set-shadow-chroma) h /
-          calc(var(--usewc-local-control-set-shadow-alpha) * var(--usewc-color-button-shadow-alpha-hover-multiplier))
-      );
+    --usewc-local-control-set-box-shadow-static: var(
+      --usewc-effect-button-box-shadow-outset,
+      var(--usewc-effect-button-shadow-outset-offset-x) var(--usewc-effect-button-shadow-outset-offset-y)
+        var(--usewc-effect-button-shadow-outset-blur) var(--usewc-effect-button-shadow-outset-spread)
+        oklch(
+          from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
+            var(--usewc-local-control-set-shadow-chroma) h / var(--usewc-local-control-set-shadow-alpha)
+        )
+    );
+    --usewc-local-control-set-box-shadow-hover: var(
+      --usewc-effect-button-box-shadow-outset-hover,
+      var(--usewc-effect-button-shadow-outset-hover-offset-x) var(--usewc-effect-button-shadow-outset-hover-offset-y)
+        var(--usewc-effect-button-shadow-outset-hover-blur) var(--usewc-effect-button-shadow-outset-hover-spread)
+        oklch(
+          from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
+            var(--usewc-local-control-set-shadow-chroma) h /
+            calc(var(--usewc-local-control-set-shadow-alpha) * var(--usewc-color-button-shadow-alpha-hover-multiplier))
+        )
+    );
     --usewc-local-control-set-box-shadow: var(--usewc-local-control-set-box-shadow-static);
     border-radius: var(--usewc-effect-button-border-radius);
     box-shadow: var(--usewc-local-control-set-box-shadow);
