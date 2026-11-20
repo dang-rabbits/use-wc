@@ -1,4 +1,5 @@
 import { expect, describe, it } from "vite-plus/test";
+import { userEvent } from "vite-plus/test/browser";
 import { render } from "vitest-browser-lit";
 import { html } from "lit";
 
@@ -123,5 +124,61 @@ describe("button", () => {
     expect(getComputedStyle(document.getElementById("on")!).backgroundColor).not.toBe(
       getComputedStyle(document.getElementById("off")!).backgroundColor,
     );
+  });
+
+  it("reads its outset shadow geometry from the shadow tokens", async () => {
+    render(html`
+      <div
+        style="
+          --usewc-effect-button-shadow-outset-offset-x: 3px;
+          --usewc-effect-button-shadow-outset-offset-y: 3px;
+          --usewc-effect-button-shadow-outset-blur: 0px;
+          --usewc-effect-button-shadow-outset-spread: 0px;
+          --usewc-effect-button-shadow-outset-hover-offset-x: 5px;
+          --usewc-effect-button-shadow-outset-hover-offset-y: 5px;
+          --usewc-effect-button-shadow-outset-hover-blur: 0px;
+          --usewc-effect-button-shadow-outset-hover-spread: 1px;
+        "
+      >
+        <button type="button" id="base">Base</button>
+        <button type="button" class="primary" id="primary">Primary</button>
+        <button type="button" class="danger" id="danger">Danger</button>
+        <button type="button" class="clear" id="clear">Clear</button>
+        <button type="button" class="auxiliary" id="auxiliary">Auxiliary</button>
+      </div>
+    `);
+
+    for (const id of ["base", "primary", "danger"]) {
+      const button = document.getElementById(id)!;
+      expect(getComputedStyle(button).boxShadow).toContain("3px 3px 0px 0px");
+      await userEvent.hover(button);
+      await expect.poll(() => getComputedStyle(button).boxShadow).toContain("5px 5px 0px 1px");
+    }
+    for (const id of ["clear", "auxiliary"]) {
+      expect(getComputedStyle(document.getElementById(id)!).boxShadow).toBe("none");
+    }
+  });
+
+  it("replaces the whole outset shadow with the shortcut tokens", async () => {
+    render(html`
+      <div
+        style="
+          --usewc-effect-button-box-shadow-outset: 3px 3px 0 0 rgb(255, 0, 0);
+          --usewc-effect-button-box-shadow-outset-hover: 6px 6px 0 0 rgb(0, 0, 255);
+        "
+      >
+        <button type="button" id="base">Base</button>
+        <button type="button" class="primary" id="primary">Primary</button>
+      </div>
+    `);
+
+    for (const id of ["base", "primary"]) {
+      const button = document.getElementById(id)!;
+      expect(getComputedStyle(button).boxShadow).toContain("rgb(255, 0, 0) 3px 3px 0px 0px");
+      await userEvent.hover(button);
+      await expect
+        .poll(() => getComputedStyle(button).boxShadow)
+        .toContain("rgb(0, 0, 255) 6px 6px 0px 0px");
+    }
   });
 });

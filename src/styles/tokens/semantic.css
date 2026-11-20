@@ -392,21 +392,18 @@
   --usewc-effect-button-box-shadow-none: 0 0 transparent;
   --usewc-effect-button-box-shadow-inset: inset 0 var(--usewc-layout-button-border) 0 0
     var(--usewc-color-button-shadow-inset);
-  --usewc-effect-button-box-shadow-outset: 0 1px 2px 0
-    oklch(
-      from var(--usewc-color-button-base-shadow-tint) var(--usewc-color-button-shadow-lightness)
-        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-base-shadow-chroma-multiplier)) h /
-        calc(var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier))
-    );
-  --usewc-effect-button-box-shadow-outset-hover: 0 2px 4px 0
-    oklch(
-      from var(--usewc-color-button-base-shadow-tint) var(--usewc-color-button-shadow-lightness)
-        calc(var(--usewc-color-button-shadow-chroma) * var(--usewc-effect-button-base-shadow-chroma-multiplier)) h /
-        calc(
-          var(--usewc-color-button-shadow-alpha) * var(--usewc-effect-button-base-shadow-alpha-multiplier) *
-            var(--usewc-color-button-shadow-alpha-hover-multiplier)
-        )
-    );
+  /* Outset shadow geometry, kept apart from its color so each variant keeps its own tint. To
+     replace a whole outset shadow in one line instead, set the undefined shortcut
+     `--usewc-effect-button-box-shadow-outset` (or `-outset-hover`); it skips these pieces and
+     the variant tint, and `initial` restores them. Buttons and `use-control-set` both read it. */
+  --usewc-effect-button-shadow-outset-offset-x: 0;
+  --usewc-effect-button-shadow-outset-offset-y: 1px;
+  --usewc-effect-button-shadow-outset-blur: 2px;
+  --usewc-effect-button-shadow-outset-spread: 0;
+  --usewc-effect-button-shadow-outset-hover-offset-x: 0;
+  --usewc-effect-button-shadow-outset-hover-offset-y: 2px;
+  --usewc-effect-button-shadow-outset-hover-blur: 4px;
+  --usewc-effect-button-shadow-outset-hover-spread: 0;
   /* - Sizes */
   /* -- Base size */
   --usewc-layout-button-base-padding-block: calc(var(--usewc-space-6) - var(--usewc-layout-button-border));
