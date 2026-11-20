@@ -228,6 +228,7 @@ const preview: Preview = {
             "Token Naming",
             "Tokens",
             "Native Elements",
+            "use-control-set",
             "use-field",
             "use-layout",
             "use-pattern",
