@@ -139,9 +139,8 @@ describe("control set", () => {
     }
 
     await userEvent.hover(element("trigger"));
-    await expect
-      .poll(() => getComputedStyle(element("set")).boxShadow)
-      .toContain("0px 2px 4px 0px");
+    expect(element("trigger").matches(":hover")).toBe(true);
+    expect(getComputedStyle(element("set")).boxShadow).toBe(setShadow);
   });
 
   it("tints a danger set's shadow from the danger button", async () => {
