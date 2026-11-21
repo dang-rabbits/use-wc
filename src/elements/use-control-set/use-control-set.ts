@@ -58,8 +58,7 @@ import { customElement } from "lit/decorators.js";
  * How the touching sides render is themeable rather than fixed: `--usewc-layout-control-set-gap`
  * (default: a negative overlap equal to the child's own border, for a seamless merged line) and
  * `--usewc-effect-control-set-border-radius-sequential` (default: `0`, for square touching
- * corners) can both be overridden — a positive gap and a small radius reads as a looser, softer
- * set instead of a fused one.
+ * corners) can both be overridden to tune how tightly the seam reads.
  *
  * A set holding any shadowed button (every variant but `clear` and `auxiliary`) casts one outset
  * shadow from the set itself, tinted by its most prominent button (primary, then danger, then

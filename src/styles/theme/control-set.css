@@ -72,8 +72,9 @@
      button. The children keep their inset highlight layer and drop only the outset, and the
      container borrows the most prominent child's tint (primary over danger over base) with the
      same geometry tokens a lone button reads. The container takes the button radius so its
-     shadow follows the set's outer corners, and only a button child's hover, focus, or press
-     changes it, the same states that change a lone button's shadow. */
+     shadow follows the set's outer corners. It stays at rest while a child is hovered or
+     focused, since lifting the whole set for one child reads as the whole set reacting, and
+     only flattens while a child is pressed. */
   use-control-set:has(> :is(button, .appearance-button):not(.clear, .auxiliary, [type="file"], .appearance-native)) {
     --usewc-local-control-set-shadow-tint: var(--usewc-color-button-base-shadow-tint);
     --usewc-local-control-set-shadow-chroma-multiplier: var(--usewc-effect-button-base-shadow-chroma-multiplier);
@@ -91,16 +92,6 @@
         oklch(
           from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
             var(--usewc-local-control-set-shadow-chroma) h / var(--usewc-local-control-set-shadow-alpha)
-        )
-    );
-    --usewc-local-control-set-box-shadow-hover: var(
-      --usewc-effect-button-box-shadow-outset-hover,
-      var(--usewc-effect-button-shadow-outset-hover-offset-x) var(--usewc-effect-button-shadow-outset-hover-offset-y)
-        var(--usewc-effect-button-shadow-outset-hover-blur) var(--usewc-effect-button-shadow-outset-hover-spread)
-        oklch(
-          from var(--usewc-local-control-set-shadow-tint) var(--usewc-color-button-shadow-lightness)
-            var(--usewc-local-control-set-shadow-chroma) h /
-            calc(var(--usewc-local-control-set-shadow-alpha) * var(--usewc-color-button-shadow-alpha-hover-multiplier))
         )
     );
     --usewc-local-control-set-box-shadow: var(--usewc-local-control-set-box-shadow-static);
@@ -126,10 +117,6 @@
 
     &:has(> .extra-small) {
       border-radius: var(--usewc-effect-button-extra-small-border-radius);
-    }
-
-    &:has(> :is(button, .appearance-button):is(:hover, :focus-visible)) {
-      --usewc-local-control-set-box-shadow: var(--usewc-local-control-set-box-shadow-hover);
     }
 
     &:has(> :is(button, .appearance-button):active) {

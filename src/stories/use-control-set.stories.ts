@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/web-components-vite";
 import { html } from "lit";
 
-const stack = "display: flex; flex-direction: column; gap: 1rem; align-items: start;";
-
 const meta: Meta = {
   title: "Design System/use-control-set",
   component: "use-control-set",
@@ -106,38 +104,19 @@ export const Toolbar: Story = {
 
 /**
  * Pagination doesn't need its own class: wrap `a.appearance-button` links in a set inside a labelled `nav`. `aria-current="page"` holds the current page in its pressed look, and a plain `span` renders as a static cell for the gap between page ranges.
- *
- * For separated buttons instead of one fused strip, set a positive `--usewc-layout-control-set-gap` and a matching `--usewc-effect-control-set-border-radius-sequential` on the `nav`.
  */
 export const Pagination: Story = {
   render: () => html`
-    <div style=${stack}>
-      <nav aria-label="Pagination">
-        <use-control-set>
-          <a class="appearance-button" href="#">Previous</a>
-          <a class="appearance-button" href="#">1</a>
-          <a class="appearance-button" href="#" aria-current="page">2</a>
-          <a class="appearance-button" href="#">3</a>
-          <span aria-hidden="true">&hellip;</span>
-          <a class="appearance-button" href="#">10</a>
-          <a class="appearance-button" href="#">Next</a>
-        </use-control-set>
-      </nav>
-      <nav
-        aria-label="Pagination, separated"
-        style="
-          --usewc-layout-control-set-gap: var(--usewc-space-4);
-          --usewc-effect-control-set-border-radius-sequential: var(--usewc-effect-button-border-radius);
-        "
-      >
-        <use-control-set>
-          <a class="appearance-button" href="#">Previous</a>
-          <a class="appearance-button" href="#">1</a>
-          <a class="appearance-button" href="#" aria-current="page">2</a>
-          <a class="appearance-button" href="#">3</a>
-          <a class="appearance-button" href="#">Next</a>
-        </use-control-set>
-      </nav>
-    </div>
+    <nav aria-label="Pagination">
+      <use-control-set>
+        <a class="appearance-button" href="#">Previous</a>
+        <a class="appearance-button" href="#">1</a>
+        <a class="appearance-button" href="#" aria-current="page">2</a>
+        <a class="appearance-button" href="#">3</a>
+        <span aria-hidden="true">&hellip;</span>
+        <a class="appearance-button" href="#">10</a>
+        <a class="appearance-button" href="#">Next</a>
+      </use-control-set>
+    </nav>
   `,
 };

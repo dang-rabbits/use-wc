@@ -438,10 +438,10 @@
 
   /* Control set — `use-control-set` (see `theme/control-set.css`), grouping adjacent buttons
      and/or text-style inputs into one visual unit. The gap is a negative overlap equal to the
-     button border by default, so touching borders merge into one seamless line; a theme can
-     widen it to a real positive gap instead. `-sequential` names the radius the same way
-     `grid.css`'s adjacent selected-row band does — the edge a child shares with its neighbor, `0`
-     by default (square) but able to take a small nonzero value instead of a hard corner. */
+     button border by default, so touching borders merge into one seamless line. `-sequential`
+     names the radius the same way `grid.css`'s adjacent selected-row band does — the edge a
+     child shares with its neighbor, `0` by default (square) but able to take a small nonzero
+     value instead of a hard corner. */
   --usewc-layout-control-set-gap: calc(-1 * var(--usewc-layout-button-border));
   --usewc-effect-control-set-border-radius-sequential: 0;
 
